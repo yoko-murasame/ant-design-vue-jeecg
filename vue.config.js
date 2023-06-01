@@ -86,7 +86,7 @@ module.exports = {
   },
 
   devServer: {
-    port: 3000,
+    port: 3300,
     // hot: true,
     // disableHostCheck: true,
     // overlay: {
@@ -108,9 +108,12 @@ module.exports = {
       /* 注意：jeecgboot前端做了改造，此处不需要配置跨域和后台接口（只需要改.env相关配置文件即可）
           issues/3462 很多人此处做了配置，导致刷新前端404问题，请一定注意*/
       '/jeecg-boot': {
-        target: 'http://localhost:8080',
+        target: process.env.VUE_APP_API_BASE_URL,
         ws: false,
-        changeOrigin: true
+        changeOrigin: true,
+        pathRewrite: {
+          '^/jeecg-boot': ''
+        }
       },
     }
   },

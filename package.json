@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "pre": "cnpm install || yarn --registry https://registry.npm.taobao.org || npm install --registry https://registry.npm.taobao.org ",
-    "serve": "vue-cli-service serve",
+    "serve:dev": "vue-cli-service serve",
+    "serve:yoko": "vue-cli-service serve --mode yoko",
+    "serve:prod": "vue-cli-service serve --mode production",
     "build:test": "vue-cli-service build --mode test",
-    "build": "vue-cli-service build",
+    "build:dev": "vue-cli-service build --mode development",
+    "build:prod": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
