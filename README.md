@@ -1,4 +1,4 @@
-# [Yoko分支说明文档](https://github.com/yoko-murasame/jeecg-boot/blob/yoko/document/README.md)
+# [Yoko分支说明文档](https://github.com/yoko-murasame/jeecg-boot/blob/yoko/docs/README.md)
 
 Ant Design Jeecg Vue（JeecgBoot 低代码平台）
 ====
