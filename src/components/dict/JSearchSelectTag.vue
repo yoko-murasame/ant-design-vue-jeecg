@@ -52,6 +52,12 @@
       value: [String, Number],
       dictOptions: Array,
       async: Boolean,
+      // 是否保留输入值
+      clearInput: {
+        type: [Boolean, String],
+        default: false,
+        required: false
+      },
       placeholder:{
         type:String,
         default:"请选择",
@@ -197,7 +203,12 @@
             if(currentLoad!=this.lastLoad){
               return
             }
-            this.options = res.result
+            // 是否保留输入值
+            if (!this.clearInput && res.result && !res.result.length) {
+              this.options = [{ text: value, title: value, value: value }]
+            } else {
+              this.options = res.result
+            }
             console.log("我是第一个",res)
           }else{
             this.$message.warning(res.message)
