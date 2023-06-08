@@ -53,7 +53,7 @@
       dictOptions: Array,
       async: Boolean,
       // 是否保留输入值
-      clearInput: {
+      keepInput: {
         type: [Boolean, String],
         default: false,
         required: false
@@ -204,7 +204,7 @@
               return
             }
             // 是否保留输入值
-            if (!this.clearInput && res.result && !res.result.length) {
+            if (!this.keepInput && res.result && !res.result.length) {
               this.options = [{ text: value, title: value, value: value }]
             } else {
               this.options = res.result
