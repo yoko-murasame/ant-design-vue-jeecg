@@ -32,6 +32,9 @@
         <a-button v-else-if="buttonVisible">
          <a-icon type="upload" />{{ text }}
         </a-button>
+        <div v-if="!buttonVisible && !fileList.length" style="padding: 4px 11px">
+          暂无数据
+        </div>
       </template>
     </a-upload>
     <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
@@ -394,7 +397,7 @@
           this.moveDisplay = 'none';
         });
       }
-    
+
       let picList = document.getElementById(this.containerId)?document.getElementById(this.containerId).getElementsByClassName('ant-upload-list-picture-card'):[];
       if(picList && picList.length>0){
         picList[0].addEventListener('mouseover',(ev)=>{
