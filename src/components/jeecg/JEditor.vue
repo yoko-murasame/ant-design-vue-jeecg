@@ -53,6 +53,10 @@
         type: [String, Array],
         default: 'undo redo |  formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | lists link unlink image media table | removeformat | fullscreen',
         branding:false
+      },
+      defaultHeight: {
+        type: Number,
+        default: 300
       }
     },
     data() {
@@ -62,7 +66,7 @@
           language_url: '/tinymce/langs/zh_CN.js',
           language: 'zh_CN',
           skin_url: '/tinymce/skins/lightgray',
-          height: 300,
+          height: this.defaultHeight,
           plugins: this.plugins,
           toolbar: this.toolbar,
           branding: false,
