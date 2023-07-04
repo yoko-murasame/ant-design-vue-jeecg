@@ -150,6 +150,12 @@
     components: {
     },
     data () {
+      let passwordRulePattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,./]).{8,}$/
+      if (['development', 'yoko', 'test'].includes(process.env.NODE_ENV)) {
+        console.log('开发环境下，将密码强校验去除')
+        passwordRulePattern = /^.*$/
+      }
+      const passwordMsg = '密码至少8位，且必须包含字母、数字、特殊字符'
       return {
         departDisabled: false, //是否是我的部门调用该页面
         roleDisabled: false, //是否是角色维护调用该页面
@@ -163,8 +169,15 @@
         validatorRules:{
           username:[{required: true, message: '请输入用户账号!'},
             {validator: this.validateUsername,}],
-          password: [{required: true,pattern:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,./]).{8,}$/,message: '密码由8位数字、大小写字母和特殊符号组成!'},
-            {validator: this.validateToNextPassword,trigger: 'change'}],
+          password: [
+            {
+              required: true,
+              pattern: passwordRulePattern,
+              message: passwordMsg
+            },
+            // {required: true,pattern:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,./]).{8,}$/,message: '密码由8位数字、大小写字母和特殊符号组成!'},
+            {validator: this.validateToNextPassword,trigger: 'change'}
+          ],
           confirmpassword: [{required: true, message: '请重新输入登录密码!',},
             { validator: this.compareToFirstPassword,}],
           realname:[{ required: true, message: '请输入用户名称!' }],

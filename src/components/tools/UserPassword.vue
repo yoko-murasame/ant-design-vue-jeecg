@@ -44,6 +44,12 @@
   export default {
     name: "UserPassword",
     data () {
+      let passwordRulePattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,./]).{8,}$/
+      if (['development', 'yoko', 'test'].includes(process.env.NODE_ENV)) {
+        console.log('开发环境下，将密码强校验去除')
+        passwordRulePattern = /^.*$/
+      }
+      const passwordMsg = '密码至少8位，且必须包含字母、数字、特殊字符'
       return {
         title:"修改密码",
         modalWidth:800,
@@ -58,6 +64,10 @@
           password:{
             rules: [{
               required: true, message: '请输入新密码!',
+            }, {
+              required: true,
+              pattern: passwordRulePattern,
+              message: passwordMsg
             }, {
               validator: this.validateToNextPassword,
             }],

@@ -188,8 +188,12 @@
         })
       },
       handlePasswordLevel(rule, value, callback) {
-        let level = 0
         let reg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,./]).{8,}$/;
+        if (['development', 'yoko', 'test'].includes(process.env.NODE_ENV)) {
+          console.log('开发环境下，将密码强校验去除')
+          reg = /^.*$/
+        }
+        let level = 0
         if (!reg.test(value)) {
           callback(new Error('密码由8位数字、大小写字母和特殊符号组成!'))
         }
@@ -216,7 +220,11 @@
           if (level === 0) {
             this.state.percent = 10
           }
-          callback(new Error('密码强度不够'))
+          if (['development', 'yoko', 'test'].includes(process.env.NODE_ENV)) {
+            callback()
+          } else {
+            callback(new Error('密码强度不够'))
+          }
         }
       },
 

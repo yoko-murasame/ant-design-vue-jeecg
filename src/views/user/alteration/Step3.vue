@@ -31,6 +31,12 @@
 //    },
     props: ['userList'],
     data () {
+      let passwordRulePattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,./]).{8,}$/
+      if (['development', 'yoko', 'test'].includes(process.env.NODE_ENV)) {
+        console.log('开发环境下，将密码强校验去除')
+        passwordRulePattern = /^.*$/
+      }
+      const passwordMsg = '密码至少8位，且必须包含字母、数字、特殊字符'
       return {
         model:{},
         layout: {
@@ -41,7 +47,11 @@
         accountName: this.userList.username,
         validatorRules: {
           password: [{
-            required: true, pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,}$/, message: '密码由8位数字、大小写字母和特殊符号组成!!'
+            required: true,
+            // pattern: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{8,}$/,
+            // message: '密码由8位数字、大小写字母和特殊符号组成!!'
+            pattern: passwordRulePattern,
+            message: passwordMsg
           }],
           confirmPassword: [
             { required: true, message: '密码不能为空!'},
