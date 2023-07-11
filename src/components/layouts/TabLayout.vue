@@ -183,7 +183,7 @@
        * @param title 要修改的新标题
        */
       changeTitle(title) {
-        let projectTitle = "Jeecg-Boot 企业级低代码平台"
+        let projectTitle = process.env.VUE_APP_PLATFORM_NAME
         // 首页特殊处理
         if (this.$route.path === indexKey) {
           document.title = projectTitle

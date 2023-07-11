@@ -4,12 +4,11 @@
       <div class="top">
         <div class="header">
           <a href="/">
-            <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">Jeecg Boot</span>
+            <img src="~@/assets/dark-icon.jpeg" class="logo" alt="logo">
+            <span class="title">{{ systemName }}</span>
           </a>
         </div>
-        <div class="desc">
-          Jeecg Boot 是中国最具影响力的 企业级 低代码平台
+        <div class="desc" v-html="footer">
         </div>
       </div>
 
@@ -17,12 +16,14 @@
 
       <div class="footer">
         <div class="links">
-          <a href="http://doc.jeecg.com" target="_blank">帮助</a>
-          <a href="https://github.com/zhangdaiscott/jeecg-boot" target="_blank">隐私</a>
-          <a href="https://github.com/zhangdaiscott/jeecg-boot/blob/master/LICENSE" target="_blank">条款</a>
+          <!--<a href="http://doc.jeecg.com" target="_blank">帮助</a>-->
+          <!--<a href="https://github.com/zhangdaiscott/jeecg-boot" target="_blank">隐私</a>-->
+          <!--<a href="https://github.com/zhangdaiscott/jeecg-boot/blob/master/LICENSE" target="_blank">条款</a>-->
+          <a href="#" target="_self">{{ title }}</a>
         </div>
+        <!--Todo 测试下html是否可以放入环境配置文件-->
         <div class="copyright">
-          Copyright &copy; 2019 <a href="http://www.jeecg.com" target="_blank">JEECG开源社区</a> 出品
+          Copyright &copy; {{ year }} <span v-html="footer"></span>
         </div>
       </div>
     </div>
@@ -38,7 +39,11 @@
     components: { RouteView },
     mixins: [mixinDevice],
     data () {
-      return {}
+      return {
+        footer: process.env.VUE_APP_FOOTER_TEXT,
+        systemName: process.env.VUE_APP_PLATFORM_NAME,
+        year: new Date().getFullYear()
+      }
     },
     mounted () {
       document.body.classList.add('userLayout')

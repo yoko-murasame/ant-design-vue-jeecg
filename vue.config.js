@@ -115,6 +115,14 @@ module.exports = {
           '^/jeecg-boot': ''
         }
       },
+      '/main': {
+        target: process.env.VUE_APP_API_BASE_URL,
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/main': ''
+        }
+      },
     }
   },
 

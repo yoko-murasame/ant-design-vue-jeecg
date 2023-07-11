@@ -17,8 +17,11 @@
         :type="collapsed ? 'menu-unfold' : 'menu-fold'"
         @click="toggle"/>
 
-      <span v-if="device === 'desktop'">欢迎进入 Jeecg-Boot 企业级低代码平台</span>
-      <span v-else>Jeecg-Boot</span>
+      <span v-if="device === 'desktop'">欢迎进入 {{ systemName }}</span>
+      <span v-else>{{ systemName }}</span>
+
+      <!--<span class="header-button" @click="jump('1')">第三方系统1</span>-->
+      <!--<span class="header-button" @click="jump('2')">第三方系统2</span>-->
 
       <user-menu :theme="theme"/>
     </div>
@@ -99,6 +102,7 @@
           topSmenuStyle: {}
         },
         chatStatus: '',
+        systemName: process.env.VUE_APP_PLATFORM_NAME
       }
     },
     watch: {
@@ -125,6 +129,18 @@
       //update-end--author:sunjianlei---date:20190508------for: 顶部导航栏过长时显示更多按钮-----
     },
     methods: {
+      jump(name) {
+        switch (name) {
+          case '1':
+            window.open('xxx')
+            break
+          case '2':
+            window.open('xxx')
+            break
+          default:
+            break
+        }
+      },
       handleScroll() {
         if (this.autoHideHeader) {
           let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop

@@ -3,11 +3,12 @@
     <router-link :to="routerLinkTo">
 
       <!-- update-begin- author:sunjianlei --- date:20190814 --- for: logo颜色根据主题颜色变化 -->
-      <img v-if="navTheme === 'dark'" src="~@/assets/logo-white.png" alt="logo">
-      <img v-else src="~@/assets/logo.svg" alt="logo">
+      <img v-if="navTheme === 'dark'" src="~@/assets/dark-icon.jpeg" alt="logo">
+      <img v-else src="~@/assets/dark-icon.jpeg" alt="logo">
       <!-- update-begin- author:sunjianlei --- date:20190814 --- for: logo颜色根据主题颜色变化 -->
 
-      <h1 v-if="showTitle">{{ title }}</h1>
+      <!--<h1 v-if="showTitle">{{ title }}</h1>-->
+      <h1 v-if="showTitle" class="lg-title">{{ title }}<p class="sm-title">{{ titleSub }}</p></h1>
     </router-link>
   </div>
 </template>
@@ -21,7 +22,12 @@
     props: {
       title: {
         type: String,
-        default: 'Jeecg-Boot Pro',
+        default: process.env.VUE_APP_LOGO_NAME_CH,
+        required: false
+      },
+      titleSub: {
+        type: String,
+        default: process.env.VUE_APP_LOGO_NAME_EN,
         required: false
       },
       showTitle: {
@@ -59,6 +65,23 @@
 
     &.light .logo {
       background-color: @primary-color;
+    }
+
+    .title-div{
+      width: 140px;
+      height: auto;
+      max-height: 60px;
+      object-fit: scale-down;
+    }
+    .lg-title{
+      overflow: hidden;
+      font-size: 20px;
+      line-height: 1.35;
+      .sm-title{
+        margin: 0;
+        font-size: 12px;
+        font-weight: 200;
+      }
     }
   }
 </style>
