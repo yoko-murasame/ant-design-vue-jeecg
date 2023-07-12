@@ -5,12 +5,10 @@
         <div class="header">
           <a href="/">
             <!--<img src="~@/assets/login-icon.png" class="logo" alt="logo"/>-->
-            <span class="title">{{ title }}</span>
+            <span class="title">{{ systemName }}</span>
           </a>
         </div>
-        <div class="desc">
-          {{ systemName || logoNameCH || logoNameEN }}
-        </div>
+        <div class="desc" v-html="systemDesc"></div>
       </div>
 
       <route-view></route-view>
@@ -39,8 +37,7 @@ export default {
     return {
       footer: process.env.VUE_APP_FOOTER_TEXT,
       systemName: process.env.VUE_APP_PLATFORM_NAME,
-      logoNameCH: process.env.VUE_APP_LOGO_NAME_CH,
-      logoNameEN: process.env.VUE_APP_LOGO_NAME_EN
+      systemDesc: process.env.VUE_APP_PLATFORM_DESC
     }
   },
   mounted() {

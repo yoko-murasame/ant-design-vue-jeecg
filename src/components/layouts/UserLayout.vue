@@ -8,8 +8,7 @@
             <span class="title">{{ systemName }}</span>
           </a>
         </div>
-        <div class="desc" v-html="footer">
-        </div>
+        <div class="desc" v-html="systemDesc"></div>
       </div>
 
       <route-view></route-view>
@@ -19,7 +18,7 @@
           <!--<a href="http://doc.jeecg.com" target="_blank">帮助</a>-->
           <!--<a href="https://github.com/zhangdaiscott/jeecg-boot" target="_blank">隐私</a>-->
           <!--<a href="https://github.com/zhangdaiscott/jeecg-boot/blob/master/LICENSE" target="_blank">条款</a>-->
-          <a href="#" target="_self">{{ title }}</a>
+          <a href="#" target="_self">{{ systemName }}</a>
         </div>
         <!--Todo 测试下html是否可以放入环境配置文件-->
         <div class="copyright">
@@ -42,6 +41,7 @@
       return {
         footer: process.env.VUE_APP_FOOTER_TEXT,
         systemName: process.env.VUE_APP_PLATFORM_NAME,
+        systemDesc: process.env.VUE_APP_PLATFORM_DESC,
         year: new Date().getFullYear()
       }
     },
