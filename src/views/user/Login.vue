@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <a-form-model class="user-layout-login" @keyup.enter.native="handleSubmit">
-      <a-tabs :activeKey="customActiveKey" :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"  @change="handleTabClick">
+      <a-tabs :activeKey="customActiveKey" :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }" @change="handleTabClick">
         <a-tab-pane key="tab1" tab="账号密码登录">
           <login-account ref="alogin" @validateFail="validateFail" @success="requestSuccess" @fail="requestFailed"></login-account>
         </a-tab-pane>
@@ -22,7 +22,14 @@
       </a-form-model-item>
 
       <a-form-item style="margin-top:24px">
-        <a-button size="large"  type="primary"  htmlType="submit"  class="login-button"  :loading="loginBtn"  @click.stop.prevent="handleSubmit" :disabled="loginBtn">确定
+        <a-button
+          size="large"
+          type="primary"
+          htmlType="submit"
+          class="login-button"
+          :loading="loginBtn"
+          @click.stop.prevent="handleSubmit"
+          :disabled="loginBtn">确定
         </a-button>
       </a-form-item>
 
@@ -61,26 +68,28 @@ export default {
         loginBtn: false,
         requiredTwoStepCaptcha: false,
         stepCaptchaVisible: false,
-        encryptedString:{
-          key:"",
-          iv:"",
-        },
+        encryptedString: {
+          key: '',
+          iv: ''
+        }
       }
     },
     created() {
       Vue.ls.remove(ACCESS_TOKEN)
-      this.getRouterData();
+      this.getRouterData()
       this.rememberMe = true
+      // 开启登陆密码加密
+      this.getEncrypte()
     },
-    methods:{
-      handleTabClick(key){
+    methods: {
+      handleTabClick(key) {
         this.customActiveKey = key
       },
-      handleRememberMeChange(e){
+      handleRememberMeChange(e) {
         this.rememberMe = e.target.checked
       },
-      /**跳转到登录页面的参数-账号获取*/
-      getRouterData(){
+      /** 跳转到登录页面的参数-账号获取 */
+      getRouterData() {
         this.$nextTick(() => {
           let temp = this.$route.params.username || this.$route.query.username || ''
           if (temp) {
@@ -89,51 +98,51 @@ export default {
         })
       },
 
-      //登录
+      // 登录
       handleSubmit () {
-        this.loginBtn = true;
+        this.loginBtn = true
         if (this.customActiveKey === 'tab1') {
           // 使用账户密码登录
-          this.$refs.alogin.handleLogin(this.rememberMe)
+          this.$refs.alogin.handleLogin(this.rememberMe, this.encryptedString)
         } else {
-          //手机号码登录
+          // 手机号码登录
           this.$refs.plogin.handleLogin(this.rememberMe)
         }
       },
       // 校验失败
-      validateFail(){
-        this.loginBtn = false;
+      validateFail() {
+        this.loginBtn = false
       },
       // 登录后台成功
-      requestSuccess(loginResult){
+      requestSuccess(loginResult) {
         this.$refs.loginSelect.show(loginResult)
       },
-      //登录后台失败
+      // 登录后台失败
       requestFailed (err) {
-        let description = ((err.response || {}).data || {}).message || err.message || "请求出现错误，请稍后再试"
+        let description = ((err.response || {}).data || {}).message || err.message || '请求出现错误，请稍后再试'
         this.$notification[ 'error' ]({
           message: '登录失败',
           description: description,
-          duration: 4,
-        });
-        //账户密码登录错误后更新验证码
-        if(this.customActiveKey === 'tab1' && description.indexOf('密码错误')>0){
+          duration: 4
+        })
+        // 账户密码登录错误后更新验证码
+        if (this.customActiveKey === 'tab1' && description.indexOf('密码错误') > 0) {
           this.$refs.alogin.handleChangeCheckCode()
         }
-        this.loginBtn = false;
+        this.loginBtn = false
       },
-      loginSelectOk(){
+      loginSelectOk() {
         this.loginSuccess()
       },
-      //登录成功
+      // 登录成功
       loginSuccess () {
-        this.$router.push({ path: "/dashboard/analysis" }).catch(()=>{
+        this.$router.push({ path: '/dashboard/analysis' }).catch(() => {
           console.log('登录跳转首页出错,这个错误从哪里来的')
         })
         this.$notification.success({
           message: '欢迎',
-          description: `${timeFix()}，欢迎回来`,
-        });
+          description: `${timeFix()}，欢迎回来`
+        })
       },
 
       stepCaptchaSuccess () {
@@ -145,15 +154,15 @@ export default {
           this.stepCaptchaVisible = false
         })
       },
-      //获取密码加密规则
-      getEncrypte(){
-        var encryptedString = Vue.ls.get(ENCRYPTED_STRING);
-        if(encryptedString == null){
+      // 获取密码加密规则
+      getEncrypte() {
+        var encryptedString = Vue.ls.get(ENCRYPTED_STRING)
+        if (encryptedString == null) {
           getEncryptedString().then((data) => {
             this.encryptedString = data
-          });
-        }else{
-          this.encryptedString = encryptedString;
+          })
+        } else {
+          this.encryptedString = encryptedString
         }
       }
 
