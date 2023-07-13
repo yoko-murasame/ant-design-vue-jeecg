@@ -58,7 +58,7 @@ import {
   Slider,
   Transfer,
   Rate,
-  Collapse,
+  Collapse
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 

@@ -50,7 +50,7 @@
       v-bind="cellProps"
       @change="handleChangeUpload"
     >
-      <a-button icon="upload">{{originColumn.btnText || '上传图片'}}</a-button>
+      <a-button icon="upload">{{ originColumn.btnText || '上传图片' }}</a-button>
     </a-upload>
     <j-file-pop ref="filePop" @ok="handleFileSuccess" :number="number"/>
   </div>
@@ -67,18 +67,18 @@
   export default {
     name: 'JVxeImageCell',
     mixins: [JVxeCellMixins],
-    components: {JFilePop},
+    components: { JFilePop },
     props: {},
     data() {
       return {
         innerFile: null,
-        number:0
+        number: 0
       }
     },
     computed: {
       /** upload headers */
       uploadHeaders() {
-        let {originColumn: col} = this
+        let { originColumn: col } = this
         let headers = {}
         if (col.token === true) {
           headers['X-Access-Token'] = this.$ls.get(ACCESS_TOKEN)
@@ -118,7 +118,7 @@
         } else {
           return 'message'
         }
-      },
+      }
 
     },
     watch: {
@@ -130,23 +130,23 @@
           } else {
             this.innerFile = null
           }
-        },
-      },
+        }
+      }
     },
     methods: {
 
       // 点击更多按钮
       handleMoreOperation(originColumn) {
-        //update-begin-author:wangshuai date:20201021 for:LOWCOD-969 判断传过来的字段是否存在number，用于控制上传文件
+        // update-begin-author:wangshuai date:20201021 for:LOWCOD-969 判断传过来的字段是否存在number，用于控制上传文件
         if (originColumn.number) {
           this.number = originColumn.number
         } else {
           this.number = 0
         }
-        //update-end-author:wangshuai date:20201021 for:LOWCOD-969 判断传过来的字段是否存在number，用于控制上传文件
-        if(originColumn && originColumn.fieldExtendJson){
-          let json = JSON.parse(originColumn.fieldExtendJson);
-          this.number = json.uploadnum?json.uploadnum:0;
+        // update-end-author:wangshuai date:20201021 for:LOWCOD-969 判断传过来的字段是否存在number，用于控制上传文件
+        if (originColumn && originColumn.fieldExtendJson) {
+          let json = JSON.parse(originColumn.fieldExtendJson)
+          this.number = json.uploadnum ? json.uploadnum : 0
         }
         let path = ''
         if (this.innerFile) {
@@ -167,13 +167,13 @@
       handleClickShowImageError() {
         let file = this.innerFile || null
         if (file && file['message']) {
-          this.$error({title: '上传出错', content: '错误信息：' + file['message'], maskClosable: true})
+          this.$error({ title: '上传出错', content: '错误信息：' + file['message'], maskClosable: true })
         }
       },
 
       handleChangeUpload(info) {
-        let {originColumn: col} = this
-        let {file} = info
+        let { originColumn: col } = this
+        let { file } = info
         let value = {
           name: file.name,
           type: file.type,
@@ -212,14 +212,14 @@
 
       handleClickDeleteFile() {
         this.handleChangeCommon(null)
-      },
+      }
 
     },
     // 【组件增强】注释详见：JVxeCellMixins.js
     enhanced: {
-      switches: {visible: true},
+      switches: { visible: true },
       getValue: value => JVxeUploadCell.enhanced.getValue(value),
-      setValue: value => JVxeUploadCell.enhanced.setValue(value),
+      setValue: value => JVxeUploadCell.enhanced.setValue(value)
     }
   }
 </script>

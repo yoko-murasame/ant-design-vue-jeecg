@@ -23,12 +23,12 @@ export default {
         scrolling: this.renderOptions.scrolling,
         reloadEffect: this.renderOptions.reloadEffect,
 
-        triggerChange: (v) => this.handleChangeCommon(v),
+        triggerChange: (v) => this.handleChangeCommon(v)
       }
-    },
+    }
   },
   render(h) {
-    let {slot} = this.renderOptions
+    let { slot } = this.renderOptions
     if (slot) {
       return h('div', {}, slot(this.slotProps))
     } else {
@@ -39,7 +39,7 @@ export default {
   enhanced: {
     switches: {
       editRender: false
-    },
+    }
   }
 }
 

@@ -82,13 +82,13 @@
         required: false,
         default: false
       },
-      //popup动态参数 支持系统变量语法
-      param:{
+      // popup动态参数 支持系统变量语法
+      param: {
         type: Object,
         required: false,
-        default: ()=>{}
+        default: () => {}
       },
-      spliter:{
+      spliter: {
         type: String,
         required: false,
         default: ','
@@ -175,38 +175,38 @@
         if (orgFieldsArr.length > 0) {
           for (let i = 0; i < orgFieldsArr.length; i++) {
             let tempDestArr = []
-            for(let rw of rows){
+            for (let rw of rows) {
               let val = rw[orgFieldsArr[i]]
               // update--begin--autor:liusq-----date:20210713------for：处理val等于0的情况issues/I3ZL4T------
-              if(typeof val=='undefined'|| val==null || val.toString()==""){
-                val = ""
+              if (typeof val === 'undefined' || val == null || val.toString() == '') {
+                val = ''
               }
               // update--end--autor:liusq-----date:20210713------for：处理val等于0的情况issues/I3ZL4T------
               tempDestArr.push(val)
             }
-            res[destFieldsArr[i]] = tempDestArr.join(",")
+            res[destFieldsArr[i]] = tempDestArr.join(',')
           }
           if (resetText === true) {
             let tempText = []
-            for(let rw of rows){
+            for (let rw of rows) {
               let val = rw[orgFieldsArr[destFieldsArr.indexOf(this.field)]]
-              if(!val){
-                val = ""
+              if (!val) {
+                val = ''
               }
               tempText.push(val)
             }
-            this.showText = tempText.join(",")
+            this.showText = tempText.join(',')
           }
           // update--end--autor:lvdandan-----date:20200630------for：多选时未带回多个值------
         }
         if (this.triggerChange) {
-          //v-dec时即triggerChange为true时 将整个对象给form页面 让他自己setFieldsValue
+          // v-dec时即triggerChange为true时 将整个对象给form页面 让他自己setFieldsValue
           this.$emit('callback', res)
         } else {
-          //v-model时 需要传一个参数field 表示当前这个字段 从而根据这个字段的顺序找到原始值
+          // v-model时 需要传一个参数field 表示当前这个字段 从而根据这个字段的顺序找到原始值
           // this.$emit("input",row[orgFieldsArr[destFieldsArr.indexOf(this.field)]])
           let str = ''
-          if(this.showText){
+          if (this.showText) {
             str = this.showText.split(',').join(this.spliter)
           }
           this.$emit('input', str, res)

@@ -77,7 +77,7 @@
           { label: '古冶区', value: '130204', parent: '130200' },
           { label: '海港区', value: '130302', parent: '130300' },
           { label: '山海关区', value: '130303', parent: '130300' },
-          { label: '北戴河区', value: '130304', parent: '130300' },
+          { label: '北戴河区', value: '130304', parent: '130300' }
         ]
       }
     },
@@ -96,7 +96,6 @@
         const { type, row, column, value, target } = event
 
         if (type === FormTypes.select) {
-
           // 第一列
           if (column.key === 's1') {
             // 设置第二列的 options
@@ -117,7 +116,6 @@
             }])
           }
         }
-
       }
 
     }

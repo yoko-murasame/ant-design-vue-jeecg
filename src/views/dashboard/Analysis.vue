@@ -16,11 +16,11 @@
 
 <script>
   import IndexChart from './IndexChart'
-  import IndexTask from "./IndexTask"
+  import IndexTask from './IndexTask'
   import IndexBdc from './IndexBdc'
 
   export default {
-    name: "Analysis",
+    name: 'Analysis',
     components: {
       IndexChart,
       IndexTask,
@@ -28,7 +28,7 @@
     },
     data() {
       return {
-        indexStyle:1
+        indexStyle: 1
       }
     },
     created() {

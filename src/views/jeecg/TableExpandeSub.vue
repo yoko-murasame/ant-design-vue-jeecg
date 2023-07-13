@@ -62,7 +62,7 @@
         :columns="columns"
         :dataSource="dataSource"
         :pagination="false"
-        :expandedRowKeys= "expandedRowKeys"
+        :expandedRowKeys="expandedRowKeys"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange"
         @expand="handleExpand"
@@ -85,7 +85,7 @@
           rowKey="id"
           :pagination="false"
           :loading="loading"
-          >
+        >
         </a-table>
       </a-table>
     </div>
@@ -99,10 +99,10 @@
 <script>
   import { getAction } from '@/api/manage'
   import JeecgOrderDMainModal from '@/views/jeecg/tablist/form/JeecgOrderDMainModal'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
   export default {
-    name: "TableDemo",
+    name: 'TableDemo',
     mixins: [JeecgListMixin],
     components: {
       JeecgOrderDMainModal
@@ -113,35 +113,35 @@
         innerColumns: [
           {
             title: '客户名',
-            align: "center",
+            align: 'center',
             width: 100,
             dataIndex: 'name',
-            key: 'name',
+            key: 'name'
           },
           {
             title: '性别',
-            align: "center",
+            align: 'center',
             dataIndex: 'sex',
             customRender: function (text) {
               if (text == 1) {
-                return "男";
+                return '男'
               } else if (text == 2) {
-                return "女";
+                return '女'
               } else {
-                return text;
+                return text
               }
             }
           },
           {
             title: '身份证号码',
-            align: "center",
-            dataIndex: 'idcard',
+            align: 'center',
+            dataIndex: 'idcard'
           },
           {
             title: '电话',
             dataIndex: 'telphone',
-            align: "center",
-          },
+            align: 'center'
+          }
 
         ],
         innerData: [],
@@ -154,81 +154,81 @@
           dataIndex: '',
           key: 'rowIndex',
           width: 60,
-          align: "center",
+          align: 'center',
           customRender: function (t, r, index) {
-            return parseInt(index) + 1;
+            return parseInt(index) + 1
           }
         },
           {
             title: '订单号',
-            align: "center",
+            align: 'center',
             dataIndex: 'orderCode'
           },
           {
             title: '订单类型',
-            align: "center",
+            align: 'center',
             dataIndex: 'ctype',
             customRender: (text) => {
-              let re = "";
+              let re = ''
               if (text === '1') {
-                re = "国内订单";
+                re = '国内订单'
               } else if (text === '2') {
-                re = "国际订单";
+                re = '国际订单'
               }
-              return re;
+              return re
             }
           },
           {
             title: '订单日期',
-            align: "center",
+            align: 'center',
             dataIndex: 'orderDate'
           },
           {
             title: '订单金额',
-            align: "center",
+            align: 'center',
             dataIndex: 'orderMoney'
           },
           {
             title: '订单备注',
-            align: "center",
+            align: 'center',
             dataIndex: 'content'
           },
           {
             title: '操作',
             dataIndex: 'action',
-            align: "center",
-            scopedSlots: {customRender: 'action'},
+            align: 'center',
+            scopedSlots: { customRender: 'action' }
           }],
         // 分页参数
-        type: "radio",
+        type: 'radio',
         url: {
-          list: "/test/order/orderList",
-          delete: "/test/order/delete",
-          deleteBatch: "/test/order/deleteBatch",
-          customerListByMainId: "/test/order/listOrderCustomerByMainId",
-        },
+          list: '/test/order/orderList',
+          delete: '/test/order/delete',
+          deleteBatch: '/test/order/deleteBatch',
+          customerListByMainId: '/test/order/listOrderCustomerByMainId'
+        }
       }
     },
     computed: {
-      currentId(){
-        return this.id;
+      currentId() {
+        return this.id
       }
     },
     methods: {
-      handleExpand(expanded, record){
-        this.expandedRowKeys=[];
-        this.innerData=[];
-        if(expanded===true){
-          this.loading = true;
-          this.expandedRowKeys.push(record.id);
-          getAction(this.url.customerListByMainId, {mainId: record.id}).then((res) => {
+      handleExpand(expanded, record) {
+        this.expandedRowKeys = []
+        this.innerData = []
+        if (expanded === true) {
+          this.loading = true
+          this.expandedRowKeys.push(record.id)
+          getAction(this.url.customerListByMainId, { mainId: record.id }).then((res) => {
             if (res.success) {
-              this.loading = false;
-              this.innerData = res.result.records;
+              this.loading = false
+              this.innerData = res.result.records
             }
-          });
+          })
         }
-      },
+      }
     }
   }
 </script>

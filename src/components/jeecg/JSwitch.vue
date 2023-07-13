@@ -13,21 +13,21 @@
   export default {
     name: 'JSwitch',
     props: {
-      value:{
+      value: {
         type: String | Number,
         required: false
       },
-      disabled:{
+      disabled: {
         type: Boolean,
         required: false,
         default: false
       },
-      options:{
-        type:Array,
-        required:false,
-        default:()=>['Y','N']
+      options: {
+        type: Array,
+        required: false,
+        default: () => ['Y', 'N']
       },
-      query:{
+      query: {
         type: Boolean,
         required: false,
         default: false
@@ -39,40 +39,39 @@
       }
     },
     watch: {
-      value:{
+      value: {
         immediate: true,
-        handler(val){
-          if(!this.query){
-            if(!val){
+        handler(val) {
+          if (!this.query) {
+            if (!val) {
               this.checkStatus = false
-              this.$emit('change', this.options[1]);
-            }else{
-              if(this.options[0]==val){
+              this.$emit('change', this.options[1])
+            } else {
+              if (this.options[0] == val) {
                 this.checkStatus = true
-              }else{
+              } else {
                 this.checkStatus = false
               }
             }
           }
-
         }
       }
     },
-    computed:{
-      queryOption(){
+    computed: {
+      queryOption() {
         let arr = []
-        arr.push({value:this.options[0],text:'是'})
-        arr.push({value:this.options[1],text:'否'})
-        return arr;
+        arr.push({ value: this.options[0], text: '是' })
+        arr.push({ value: this.options[1], text: '否' })
+        return arr
       }
     },
     methods: {
-      handleChange(checked){
-        let flag = checked===false?this.options[1]:this.options[0];
-        this.$emit('change', flag);
+      handleChange(checked) {
+        let flag = checked === false ? this.options[1] : this.options[0]
+        this.$emit('change', flag)
       },
-      handleSelectChange(value){
-        this.$emit('change', value);
+      handleSelectChange(value) {
+        this.$emit('change', value)
       }
     },
     model: {

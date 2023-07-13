@@ -9,9 +9,9 @@
 </template>
 <script>
 // 搜索字典扩展组件: 根据用户角色code获取字典选项
-import { getAction } from '@api/manage';
-import Vue from 'vue';
-import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types';
+import { getAction } from '@api/manage'
+import Vue from 'vue'
+import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
 
 export default {
   name: 'JSearchSelectTagWithRoleCode',
@@ -53,7 +53,7 @@ export default {
       this.$emit('change', e)
     },
     getDictOptions() {
-      let dictItems = Vue.ls.get(UI_CACHE_DB_DICT_DATA)[this.dictCode];
+      let dictItems = Vue.ls.get(UI_CACHE_DB_DICT_DATA)[this.dictCode]
       if (dictItems) {
         this.dictOptions = dictItems
         console.log('-----------load cache JSearchSelectTagWithRoleCode----------roleCode=' + this.roleCode + '---- dictItems=', dictItems)

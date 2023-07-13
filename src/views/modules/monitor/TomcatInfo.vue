@@ -109,7 +109,7 @@
           getAction('actuator/metrics/tomcat.sessions.expired'),
           getAction('actuator/metrics/tomcat.sessions.active.current'),
           getAction('actuator/metrics/tomcat.sessions.active.max'),
-          getAction('actuator/metrics/tomcat.sessions.rejected'),
+          getAction('actuator/metrics/tomcat.sessions.rejected')
           // 2.3.5.RELEASE 无此API
           // getAction('actuator/metrics/tomcat.global.sent'),
           // getAction('actuator/metrics/tomcat.global.request.max'),
@@ -117,7 +117,7 @@
           // getAction('actuator/metrics/tomcat.threads.current'),
           // getAction('actuator/metrics/tomcat.threads.config.max')
           // 2.1.3.RELEASE 无此API
-          //getAction('actuator/metrics/tomcat.servlet.request'),
+          // getAction('actuator/metrics/tomcat.servlet.request'),
           // getAction('actuator/metrics/tomcat.servlet.request.max'),
         ]).then((res) => {
           let tomcatInfo = []
@@ -129,7 +129,8 @@
             more.forEach((item, idx) => {
               let param = value.name + item
               tomcatInfo.push({
-                id: param + id, param,
+                id: param + id,
+param,
                 text: 'false value',
                 value: value.measurements[idx].value
               })

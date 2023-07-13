@@ -37,20 +37,20 @@
           style['text-align'] = 'center'
         }
         return style
-      },
+      }
     },
     methods: {
       handleChange(event) {
         this.handleChangeCommon(event.target.checked)
-      },
+      }
     },
     // 【组件增强】注释详见：JVxeCellMixins.js
     enhanced: {
       switches: {
-        visible: true,
+        visible: true
       },
       getValue(value) {
-        let {own: col} = this.column
+        let { own: col } = this.column
         // 处理 customValue
         if (Array.isArray(col.customValue)) {
           let customValue = getCustomValue(col)
@@ -64,7 +64,7 @@
         }
       },
       setValue(value) {
-        let {own: col} = this.column
+        let { own: col } = this.column
         // 判断是否设定了customValue（自定义值）
         if (Array.isArray(col.customValue)) {
           let customValue = getCustomValue(col)
@@ -73,15 +73,15 @@
           return !!value
         }
       },
-      createValue({column}) {
-        let {own: col} = column
+      createValue({ column }) {
+        let { own: col } = column
         if (Array.isArray(col.customValue)) {
           let customValue = getCustomValue(col)
           return col.defaultChecked ? customValue[0] : customValue[1]
         } else {
           return !!col.defaultChecked
         }
-      },
+      }
     }
   }
 

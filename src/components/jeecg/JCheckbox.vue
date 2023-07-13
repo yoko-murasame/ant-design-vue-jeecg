@@ -6,34 +6,34 @@
   export default {
     name: 'JCheckbox',
     props: {
-      value:{
+      value: {
         type: String,
         required: false
       },
-      /*label value*/
-      options:{
+      /* label value */
+      options: {
         type: Array,
         required: true
       }
     },
-    data(){
+    data() {
       return {
-        checkboxArray:!this.value?[]:this.value.split(",")
+        checkboxArray: !this.value ? [] : this.value.split(',')
       }
     },
-    watch:{
+    watch: {
       value (val) {
-        if(!val){
+        if (!val) {
           this.checkboxArray = []
-        }else{
-          this.checkboxArray = this.value.split(",")
+        } else {
+          this.checkboxArray = this.value.split(',')
         }
       }
     },
-    methods:{
+    methods: {
       onChange (checkedValues) {
-        this.$emit('change', checkedValues.join(","));
-      },
+        this.$emit('change', checkedValues.join(','))
+      }
     },
     model: {
       prop: 'value',

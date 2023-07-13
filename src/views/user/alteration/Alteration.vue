@@ -19,7 +19,7 @@
   import Step4 from './Step4'
 
   export default {
-    name: "Alteration",
+    name: 'Alteration',
     components: {
       Step2,
       Step3,
@@ -31,20 +31,20 @@
         currentTab: 0,
         userList: {},
         // form
-        form: null,
+        form: null
       }
     },
     methods: {
 
       // handler
       nextStep(data) {
-        this.userList = data;
+        this.userList = data
         if (this.currentTab < 4) {
           this.currentTab += 1
         }
       },
       prevStep(data) {
-        this.userList = data;
+        this.userList = data
         if (this.currentTab > 0) {
           this.currentTab -= 1
         }
@@ -69,4 +69,3 @@
     }
   }
 </style>
-

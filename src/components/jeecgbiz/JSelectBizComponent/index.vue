@@ -18,7 +18,7 @@
     </a-col>
 
     <a-col v-if="buttons" class="right">
-      <a-button type="primary" icon="search" :disabled="disabled" @click="visible=true">{{selectButtonText}}</a-button>
+      <a-button type="primary" icon="search" :disabled="disabled" @click="visible=true">{{ selectButtonText }}</a-button>
     </a-col>
 
     <j-select-biz-component-modal
@@ -78,7 +78,7 @@
       selectButtonText: {
         type: String,
         default: '选择'
-      },
+      }
 
     },
     data() {
@@ -87,7 +87,7 @@
         selectOptions: [],
         dataSourceMap: {},
         visible: false,
-        selectOpen: false,
+        selectOpen: false
       }
     },
     computed: {
@@ -101,7 +101,7 @@
           returnKeys: this.returnKeys,
           displayKey: this.displayKey || this.valueKey
         }, this.$attrs)
-      },
+      }
     },
     watch: {
       value: {
@@ -138,7 +138,7 @@
         this.$nextTick(() => {
           this.selectOpen = false
         })
-      },
+      }
     }
   }
 </script>

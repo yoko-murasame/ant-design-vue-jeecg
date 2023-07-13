@@ -33,18 +33,18 @@
 
   export default {
     name: 'LoginPhone',
-    data(){
+    data() {
       return {
-        model:{
+        model: {
           mobile: '',
           captcha: ''
         },
-        //手机号登录用
+        // 手机号登录用
         state: {
           time: 60,
-          smsSendBtn: false,
+          smsSendBtn: false
         },
-        validatorRules:{
+        validatorRules: {
           mobile: [
             { required: true, message: '请输入手机号码!' },
             { validator: this.validateMobile }
@@ -56,9 +56,9 @@
 
       }
     },
-    methods:{
+    methods: {
       ...mapActions(['PhoneLogin']),
-      handleLogin(rememberMe){
+      handleLogin(rememberMe) {
         this.validateFields([ 'mobile', 'captcha' ], (err) => {
           if (!err) {
             let loginParams = {
@@ -66,97 +66,96 @@
               captcha: this.model.captcha,
               remember_me: rememberMe
             }
-            console.log("登录参数", loginParams)
+            console.log('登录参数', loginParams)
             this.PhoneLogin(loginParams).then((res) => {
               this.$emit('success', res.result)
             }).catch((err) => {
               this.$emit('fail', err)
-            });
-          }else{
+            })
+          } else {
             this.$emit('validateFail')
           }
         })
       },
       // 校验手机号
-      validateMobile(rule,value,callback){
-        if (!value || new RegExp(/^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/).test(value)){
-          callback();
-        }else{
-          callback("您的手机号码格式不正确!");
+      validateMobile(rule, value, callback) {
+        if (!value || new RegExp(/^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/).test(value)) {
+          callback()
+        } else {
+          callback('您的手机号码格式不正确!')
         }
       },
-      //获取验证码
+      // 获取验证码
       getCaptcha (e) {
-        e.preventDefault();
-        let that = this;
+        e.preventDefault()
+        let that = this
         that.validateFields([ 'mobile' ], (err) => {
             if (!err) {
-              that.state.smsSendBtn = true;
+              that.state.smsSendBtn = true
               let interval = window.setInterval(() => {
                 if (that.state.time-- <= 0) {
-                  that.state.time = 60;
-                  that.state.smsSendBtn = false;
-                  window.clearInterval(interval);
+                  that.state.time = 60
+                  that.state.smsSendBtn = false
+                  window.clearInterval(interval)
                 }
-              }, 1000);
+              }, 1000)
 
-              const hide = that.$message.loading('验证码发送中..', 0);
-              let smsParams = {};
-              smsParams.mobile=that.model.mobile;
-              smsParams.smsmode="0";
-              postAction("/sys/sms",smsParams)
+              const hide = that.$message.loading('验证码发送中..', 0)
+              let smsParams = {}
+              smsParams.mobile = that.model.mobile
+              smsParams.smsmode = '0'
+              postAction('/sys/sms', smsParams)
                 .then(res => {
-                  if(!res.success){
-                    setTimeout(hide, 0);
-                    that.cmsFailed(res.message);
+                  if (!res.success) {
+                    setTimeout(hide, 0)
+                    that.cmsFailed(res.message)
                   }
-                  console.log(res);
-                  setTimeout(hide, 500);
+                  console.log(res)
+                  setTimeout(hide, 500)
                 })
                 .catch(err => {
-                  setTimeout(hide, 1);
-                  clearInterval(interval);
-                  that.state.time = 60;
-                  that.state.smsSendBtn = false;
-                  that.requestFailed(err);
-                });
+                  setTimeout(hide, 1)
+                  clearInterval(interval)
+                  that.state.time = 60
+                  that.state.smsSendBtn = false
+                  that.requestFailed(err)
+                })
             }
           }
-        );
+        )
       },
-      cmsFailed(err){
+      cmsFailed(err) {
         this.$notification[ 'error' ]({
           message: '获取验证码失败',
-          description:err,
-          duration: 4,
-        });
+          description: err,
+          duration: 4
+        })
       },
       /**
        * 验证字段
        * @param arr
        * @param callback
        */
-      validateFields(arr, callback){
+      validateFields(arr, callback) {
         let promiseArray = []
-        for(let item of arr){
+        for (let item of arr) {
           let p = new Promise((resolve, reject) => {
-            this.$refs['form'].validateField(item, (err)=>{
-              if(!err){
-                resolve();
-              }else{
-                reject(err);
+            this.$refs['form'].validateField(item, (err) => {
+              if (!err) {
+                resolve()
+              } else {
+                reject(err)
               }
             })
-          });
+          })
           promiseArray.push(p)
         }
-        Promise.all(promiseArray).then(()=>{
+        Promise.all(promiseArray).then(() => {
           callback()
-        }).catch(err=>{
+        }).catch(err => {
           callback(err)
         })
-      },
-
+      }
 
     }
 

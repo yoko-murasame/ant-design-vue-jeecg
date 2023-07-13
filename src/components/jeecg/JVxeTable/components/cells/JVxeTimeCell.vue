@@ -46,8 +46,8 @@
       aopEvents: {
         editActived(event) {
           dispatchEvent.call(this, event, 'ant-calendar-picker', el => el.children[0].dispatchEvent(event.$event))
-        },
-      },
+        }
+      }
     }
   }
 </script>

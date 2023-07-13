@@ -23,7 +23,7 @@ export default {
     }
   },
   mixins: [VxeWebSocketMixins],
-  components: {JVxeToolbar, JVxeSubPopover, JVxeDetailsModal, JVxePagination},
+  components: { JVxeToolbar, JVxeSubPopover, JVxeDetailsModal, JVxePagination },
   props: {
     rowKey: PropTypes.string.def('id'),
     // 列信息
@@ -48,7 +48,7 @@ export default {
       // prefix 前缀；suffix 后缀；
       slots: ['prefix', 'suffix'],
       // add 新增按钮；remove 删除按钮；clearSelection 清空选择按钮；collapse 展开收起
-      btns: ['add', 'remove', 'clearSelection'],
+      btns: ['add', 'remove', 'clearSelection']
     })),
     // 是否显示行号
     rowNumber: PropTypes.bool.def(false),
@@ -66,7 +66,7 @@ export default {
     // 最大高度
     maxHeight: {
       type: Number,
-      default: () => null,
+      default: () => null
     },
     // 要禁用的行 TODO 未实现
     disabledRows: PropTypes.object.def(() => ({})),
@@ -99,7 +99,7 @@ export default {
     // 注：该参数不能动态修改；如果行、列字段多的情况下，会根据机器性能造成不同程度的卡顿。
     alwaysEdit: PropTypes.bool.def(false),
     // 联动配置，数组，详情配置见文档
-    linkageConfig: PropTypes.array.def(() => []),
+    linkageConfig: PropTypes.array.def(() => [])
   },
   data() {
     return {
@@ -111,7 +111,7 @@ export default {
       // 内置 EditRules
       innerEditRules: [],
       // 记录滚动条位置
-      scroll: {top: 0, left: 0},
+      scroll: { top: 0, left: 0 },
       // 当前是否正在滚动
       scrolling: false,
       // vxe 默认配置
@@ -125,7 +125,7 @@ export default {
         'show-header-overflow': true,
         'show-footer-overflow': true,
         // 可编辑配置
-        'edit-config': {trigger: 'click', mode: 'cell', showStatus: true},
+        'edit-config': { trigger: 'click', mode: 'cell', showStatus: true },
         'expand-config': {
           iconClose: 'ant-table-row-expand-icon ant-table-row-collapsed',
           iconOpen: 'ant-table-row-expand-icon ant-table-row-expanded'
@@ -137,8 +137,8 @@ export default {
         // 'scroll-x': {
         //   gt: 15
         // },
-        'radio-config': {highlight: true},
-        'checkbox-config': {highlight: true},
+        'radio-config': { highlight: true },
+        'checkbox-config': { highlight: true }
       },
       // 绑定左侧选择框
       selectedRows: [],
@@ -148,15 +148,15 @@ export default {
       statistics: {
         has: false,
         sum: [],
-        average: [],
+        average: []
       },
       // 允许执行刷新特效的行ID
       reloadEffectRowKeysMap: {},
-      //配置了但是没有授权的按钮和列 集合
-      excludeCode:[],
+      // 配置了但是没有授权的按钮和列 集合
+      excludeCode: [],
       // 联动下拉选项（用于隔离不同的下拉选项）
       // 内部联动配置，map
-      innerLinkageConfig: null,
+      innerLinkageConfig: null
     }
   },
   computed: {
@@ -171,7 +171,7 @@ export default {
           scrolling: this.scrolling,
           reloadEffect: this.reloadEffect,
           reloadEffectRowKeysMap: this.reloadEffectRowKeysMap,
-          listeners: this.cellListeners,
+          listeners: this.cellListeners
         }
         if (column.$type === JVXETypes.rowDragSort) {
           renderOptions.dragSortKey = this.dragSortKey
@@ -191,7 +191,7 @@ export default {
               config: this.innerLinkageConfig.get(column.key),
               getLinkageOptionsSibling: this.getLinkageOptionsSibling,
               getLinkageOptionsAsync: this.getLinkageOptionsAsync,
-              linkageSelectChange: this.linkageSelectChange,
+              linkageSelectChange: this.linkageSelectChange
             }
           }
         }
@@ -204,21 +204,21 @@ export default {
         // update--begin--autor:lvdandan-----date:20201019------for:LOWCOD-882 【新行编辑】列表上带按钮的遮挡问题
         if (column.$type === JVXETypes.file || column.$type === JVXETypes.image) {
           if (column.width && column.width.endsWith('px')) {
-            column.width = Number.parseInt(column.width.substr(0,column.width.length-2))+Number.parseInt(1)+'px';
+            column.width = Number.parseInt(column.width.substr(0, column.width.length - 2)) + Number.parseInt(1) + 'px'
           }
         }
         // update--begin--autor:lvdandan-----date:20201019------for:LOWCOD-882 【新行编辑】列表上带按钮的遮挡问题
 
         // update--begin--autor:lvdandan-----date:20201211------for:JT-118 【online】 日期、时间控件长度较小
         if (column.$type === JVXETypes.datetime || column.$type === JVXETypes.userSelect || column.$type === JVXETypes.departSelect) {
-          let width = column.width && column.width.endsWith('px')?Number.parseInt(column.width.substr(0,column.width.length-2)):0;
-          if(width <= 190){
+          let width = column.width && column.width.endsWith('px') ? Number.parseInt(column.width.substr(0, column.width.length - 2)) : 0
+          if (width <= 190) {
             column.width = '190px'
           }
         }
         if (column.$type === JVXETypes.date) {
-          let width = column.width && column.width.endsWith('px')?Number.parseInt(column.width.substr(0,column.width.length-2)):0;
-          if(width <= 135){
+          let width = column.width && column.width.endsWith('px') ? Number.parseInt(column.width.substr(0, column.width.length - 2)) : 0
+          if (width <= 135) {
             column.width = '135px'
           }
         }
@@ -235,7 +235,7 @@ export default {
       let expandConfig = Object.assign({}, this.defaultVxeProps['expand-config'], this.expandConfig)
 
       return Object.assign({}, this.defaultVxeProps, {
-        showFooter: this.statistics.has,
+        showFooter: this.statistics.has
       }, this.$attrs, {
         loading: this.loading,
         columns: this.vxeColumns,
@@ -245,7 +245,7 @@ export default {
         maxHeight: this.maxHeight,
         border: this.bordered,
         expandConfig: expandConfig,
-        footerMethod: this.handleFooterMethod,
+        footerMethod: this.handleFooterMethod
         // footerSpanMethod: this.handleFooterSpanMethod,
       })
     },
@@ -259,7 +259,7 @@ export default {
         'edit-actived': this.handleEditActived,
         'radio-change': this.handleVxeRadioChange,
         'checkbox-all': this.handleVxeCheckboxAll,
-        'checkbox-change': this.handleVxeCheckboxChange,
+        'checkbox-change': this.handleVxeCheckboxChange
       }
       // 用户传递的事件，进行合并操作
       Object.keys(this.$listeners).forEach(key => {
@@ -285,9 +285,9 @@ export default {
         /** 当前行向下移一位 */
         rowMoveDown: rowIndex => this.rowResort(rowIndex, rowIndex + 1),
         /** 在当前行下面插入一行 */
-        rowInsertDown: rowIndex => this.insertRows({}, rowIndex + 1),
+        rowInsertDown: rowIndex => this.insertRows({}, rowIndex + 1)
       }
-    },
+    }
   },
   watch: {
     dataSource: {
@@ -334,16 +334,16 @@ export default {
         //     }
         //   }
         // })
-      },
+      }
     },
     columns: {
       immediate: true,
       handler(columns) {
-        //获取不需要显示列
+        // 获取不需要显示列
         this.loadExcludeCode()
         let innerColumns = []
         let innerEditRules = {}
-        let {rowNumber, rowSelection, rowExpand, dragSort} = this
+        let { rowNumber, rowSelection, rowExpand, dragSort } = this
         let expandColumn, seqColumn, checkboxColumn, radioColumn, dragSortColumn
         if (Array.isArray(columns)) {
           this.statistics.has = false
@@ -352,11 +352,11 @@ export default {
 
           // 处理成vxe可识别的columns
           columns.forEach(column => {
-            if(this.excludeCode.indexOf(column.key)>=0){
+            if (this.excludeCode.indexOf(column.key) >= 0) {
               return false
             }
-            let col = {...column}
-            let {type} = col
+            let col = { ...column }
+            let { type } = col
             const enhanced = getEnhancedMixins(type)
             if (type === JVXETypes.rowNumber) {
               seqColumn = col
@@ -373,7 +373,7 @@ export default {
               // 防止和vxeTable自带的type起冲突
               col.$type = col.type
               delete col.type
-              let renderName = 'cellRender', renderOptions = {name: JVXETypes._prefix + type}
+              let renderName = 'cellRender'; let renderOptions = { name: JVXETypes._prefix + type }
               if (type) {
                 // hidden 是特殊的组件
                 if (type === JVXETypes.hidden) {
@@ -441,9 +441,9 @@ export default {
         }
         // 判断是否开启了序号
         if (rowNumber) {
-          let col = {type: 'seq', title: '#', width: 60, fixed: 'left', align: 'center'}
+          let col = { type: 'seq', title: '#', width: 60, fixed: 'left', align: 'center' }
           if (seqColumn) {
-            col = Object.assign(col, seqColumn, {type: 'seq'})
+            col = Object.assign(col, seqColumn, { type: 'seq' })
           }
           innerColumns.unshift(col)
         }
@@ -453,14 +453,14 @@ export default {
           if (this.statistics.has && !rowExpand && !dragSort) {
             width = 60
           }
-          let col = {type: this.rowSelectionType, width, fixed: 'left', align: 'center'}
+          let col = { type: this.rowSelectionType, width, fixed: 'left', align: 'center' }
           // radio
           if (this.rowSelectionType === 'radio' && radioColumn) {
-            col = Object.assign(col, radioColumn, {type: 'radio'})
+            col = Object.assign(col, radioColumn, { type: 'radio' })
           }
           // checkbox
           if (this.rowSelectionType === 'checkbox' && checkboxColumn) {
-            col = Object.assign(col, checkboxColumn, {type: 'checkbox'})
+            col = Object.assign(col, checkboxColumn, { type: 'checkbox' })
           }
           innerColumns.unshift(col)
         }
@@ -470,9 +470,9 @@ export default {
           if (this.statistics.has && !dragSort) {
             width = 60
           }
-          let col = {type: 'expand', title: '', width, fixed: 'left', align: 'center', slots: {content: 'expandContent'}}
+          let col = { type: 'expand', title: '', width, fixed: 'left', align: 'center', slots: { content: 'expandContent' } }
           if (expandColumn) {
-            col = Object.assign(col, expandColumn, {type: 'expand'})
+            col = Object.assign(col, expandColumn, { type: 'expand' })
           }
           innerColumns.unshift(col)
         }
@@ -482,9 +482,9 @@ export default {
           if (this.statistics.has) {
             width = 60
           }
-          let col = {type: JVXETypes.rowDragSort, title: '', width, fixed: 'left', align: 'center', cellRender: {name: JVXETypes._prefix + JVXETypes.rowDragSort}}
+          let col = { type: JVXETypes.rowDragSort, title: '', width, fixed: 'left', align: 'center', cellRender: { name: JVXETypes._prefix + JVXETypes.rowDragSort } }
           if (dragSortColumn) {
-            col = Object.assign(col, dragSortColumn, {type: JVXETypes.rowDragSort})
+            col = Object.assign(col, dragSortColumn, { type: JVXETypes.rowDragSort })
           }
           innerColumns.unshift(col)
         }
@@ -515,7 +515,8 @@ export default {
             let keys = getLcKeys(lc.key, [])
             // 多个key共享一个，引用地址
             let configItem = {
-              ...lc, keys,
+              ...lc,
+keys,
               optionsMap: new Map()
             }
             keys.forEach(k => configMap.set(k, configItem))
@@ -525,7 +526,7 @@ export default {
           this.innerLinkageConfig = null
         }
       }
-    },
+    }
   },
   created() {
   },
@@ -559,7 +560,7 @@ export default {
     },
 
     handleVxeScroll(event) {
-      let {$refs, scroll} = this
+      let { $refs, scroll } = this
 
       // 记录滚动条的位置
       scroll.top = event.scrollTop
@@ -609,8 +610,8 @@ export default {
 
     // 点击单元格时触发的事件
     handleCellClick(event) {
-      let {row, column, $event, $table} = event
-      let {$refs} = this
+      let { row, column, $event, $table } = event
+      let { $refs } = this
 
       // 点击了可编辑的
       if (column.editRender) {
@@ -651,20 +652,20 @@ export default {
     },
 
     // 单元格编辑状态下被关闭时会触发该事件
-    handleEditClosed({column}) {
+    handleEditClosed({ column }) {
       // 执行增强
       getEnhancedMixins(column.own.$type, 'aopEvents').editClosed.apply(this, arguments)
     },
 
     // 单元格被激活编辑时会触发该事件
-    handleEditActived({column}) {
+    handleEditActived({ column }) {
       // 执行增强
       getEnhancedMixins(column.own.$type, 'aopEvents').editActived.apply(this, arguments)
     },
 
     /** 表尾数据处理方法，用于显示统计信息 */
-    handleFooterMethod({columns, data}) {
-      const {statistics} = this
+    handleFooterMethod({ columns, data }) {
+      const { statistics } = this
       let footers = []
       if (statistics.has) {
         if (statistics.sum.length > 0) {
@@ -687,7 +688,7 @@ export default {
       return footers
     },
 
-    getFooterStatisticsMap({columns, title, checks, method}) {
+    getFooterStatisticsMap({ columns, title, checks, method }) {
       return columns.map((column, columnIndex) => {
         if (columnIndex === 0) {
           return title
@@ -702,11 +703,11 @@ export default {
     /** 表尾单元格合并方法 */
     handleFooterSpanMethod(event) {
       if (event.columnIndex === 0) {
-        return {colspan: 2}
+        return { colspan: 2 }
       }
     },
 
-    /*--- 外部可调用接口方法 ---*/
+    /* --- 外部可调用接口方法 --- */
 
     /**
      * 重置滚动条Top位置
@@ -723,7 +724,7 @@ export default {
      */
     async loadNewData(dataSource) {
       if (Array.isArray(dataSource)) {
-        let {xTable} = this.$refs.vxe.$refs
+        let { xTable } = this.$refs.vxe.$refs
         // issues/2784
         // 先清空所有数据
         xTable.loadData([])
@@ -749,12 +750,12 @@ export default {
     // 校验table，失败返回errMap，成功返回null
     async validateTable() {
       const errMap = await this.validate().catch(errMap => errMap)
-      return errMap ? errMap : null
+      return errMap || null
     },
     // 完整校验
     async fullValidateTable() {
       const errMap = await this.fullValidate().catch(errMap => errMap)
-      return errMap ? errMap : null
+      return errMap || null
     },
 
     /** 设置某行某列的值 */
@@ -766,8 +767,8 @@ export default {
       // 是否更新了数据
       let updated = false
       values.forEach((item, idx) => {
-        let {rowKey, values: record} = item
-        let {row} = this.getIfRowById(rowKey)
+        let { rowKey, values: record } = item
+        let { row } = this.getIfRowById(rowKey)
         if (!row) {
           return
         }
@@ -786,7 +787,7 @@ export default {
                 oldValue: oldValue,
                 col: column.own,
                 column: column,
-                isSetValues: true,
+                isSetValues: true
               })
             }
           } else {
@@ -794,13 +795,13 @@ export default {
           }
         })
       })
-      // 【issues/3828】数据更新后，重新计算统计列 
+      // 【issues/3828】数据更新后，重新计算统计列
       if (updated && this.statistics.has) {
         this.$nextTick(async () => {
-          let {xTable} = this.$refs.vxe.$refs;
-          await xTable.updateCache(true);
-          await xTable.updateData();
-        });
+          let { xTable } = this.$refs.vxe.$refs
+          await xTable.updateCache(true)
+          await xTable.updateData()
+        })
       }
     },
 
@@ -813,18 +814,18 @@ export default {
     },
     /** 获取表格表单里的值 */
     getValues(callback, rowIds) {
-      let tableData = this.getTableData({rowIds: rowIds})
+      let tableData = this.getTableData({ rowIds: rowIds })
       callback('', tableData)
     },
     /** 获取表格数据 */
     getTableData(options = {}) {
-      let {rowIds} = options
+      let { rowIds } = options
       let tableData
       // 仅查询指定id的行
       if (Array.isArray(rowIds) && rowIds.length > 0) {
         tableData = []
         rowIds.forEach(rowId => {
-          let {row} = this.getIfRowById(rowId)
+          let { row } = this.getIfRowById(rowId)
           if (row) {
             tableData.push(row)
           }
@@ -848,16 +849,16 @@ export default {
     },
     /** 根据ID获取行，新增的行也能查出来 */
     getIfRowById(id) {
-      let row = this.getRowById(id), isNew = false
+      let row = this.getRowById(id); let isNew = false
       if (!row) {
         row = this.getNewRowById(id)
         if (!row) {
           console.warn(`JVxeTable.getIfRowById：没有找到id为"${id}"的行`)
-          return {row: null}
+          return { row: null }
         }
         isNew = true
       }
-      return {row, isNew}
+      return { row, isNew }
     },
     /** 通过临时ID获取新增的行 */
     getNewRowById(id) {
@@ -905,8 +906,8 @@ export default {
      * @param options.setActive 是否激活最后一行的编辑模式
      */
     async pushRows(rows = {}, options = {}) {
-      let {xTable} = this.$refs.vxe.$refs
-      let {setActive, index} = options
+      let { xTable } = this.$refs.vxe.$refs
+      let { setActive, index } = options
       setActive = setActive == null ? false : !!setActive
       index = index == null ? -1 : index
       index = index === -1 ? index : xTable.tableFullData[index]
@@ -922,7 +923,7 @@ export default {
 
     /** 清空选择行 */
     clearSelection() {
-      let event = {$table: this.$refs.vxe, target: this}
+      let event = { $table: this.$refs.vxe, target: this }
       if (this.rowSelectionType === JVXETypes.rowRadio) {
         this.$refs.vxe.clearRadioRow()
         this.handleVxeRadioChange(event)
@@ -948,7 +949,7 @@ export default {
         rowIds = [rowId]
       }
       let rows = rowIds.map((id) => {
-        let {row} = this.getIfRowById(id)
+        let { row } = this.getIfRowById(id)
         if (!row) {
           return
         }
@@ -966,13 +967,13 @@ export default {
       return this.$refs.vxe.getColumnByField.apply(this.$refs.vxe, arguments)
     },
 
-    /* --- 辅助方法 ---*/
+    /* --- 辅助方法 --- */
 
     // 触发事件
     trigger(name, event = {}) {
       event.$target = this
       event.$table = this.$refs.vxe
-      //online增强参数兼容
+      // online增强参数兼容
       event.target = this
       this.$emit(name, event)
     },
@@ -1007,7 +1008,7 @@ export default {
     /** 【多级联动】获取联动下拉选项（异步） */
     getLinkageOptionsAsync(config, parent) {
       return new Promise(resolve => {
-        let key = parent ? parent : 'root'
+        let key = parent || 'root'
         let options
         if (config.optionsMap.has(key)) {
           options = config.optionsMap.get(key)
@@ -1056,7 +1057,7 @@ export default {
           values[config.keys[i]] = ''
         }
         // 清空后几列的数据
-        this.setValues([{rowKey: row.id, values}])
+        this.setValues([{ rowKey: row.id, values }])
       }
     },
 
@@ -1078,8 +1079,8 @@ export default {
         }
       })
     },
-    //options自定义赋值 刷新
-    virtualRefresh(){
+    // options自定义赋值 刷新
+    virtualRefresh() {
       this.scrolling = true
       this.closeScrolling()
     },
@@ -1100,7 +1101,7 @@ export default {
       for (let row of rows) {
         let item = cloneObject(row)
         if (insertRecords.includes(row)) {
-          handler ? handler({item, row, insertRecords}) : null
+          handler ? handler({ item, row, insertRecords }) : null
 
           if (remove) {
             continue
@@ -1129,9 +1130,9 @@ export default {
     _remove(rows) {
       const xTable = this.$refs.vxe.$refs.xTable
 
-      const {afterFullData, tableFullData, tableSourceData, editStore, treeConfig, checkboxOpts, selection, isInsertByRow, scrollYLoad} = xTable
-      const {actived, removeList, insertList} = editStore
-      const {checkField: property} = checkboxOpts
+      const { afterFullData, tableFullData, tableSourceData, editStore, treeConfig, checkboxOpts, selection, isInsertByRow, scrollYLoad } = xTable
+      const { actived, removeList, insertList } = editStore
+      const { checkField: property } = checkboxOpts
       let rest = []
       const nowData = afterFullData
       if (treeConfig) {
@@ -1182,7 +1183,7 @@ export default {
       }
       return xTable.$nextTick().then(() => {
         xTable.recalculate()
-        return {row: rest.length ? rest[rest.length - 1] : null, rows: rest}
+        return { row: rest.length ? rest[rest.length - 1] : null, rows: rest }
       })
     },
 
@@ -1215,7 +1216,7 @@ export default {
     },
 
     async _addOrInsert(rows = {}, index, triggerName, isOnlJs) {
-      let {xTable} = this.$refs.vxe.$refs
+      let { xTable } = this.$refs.vxe.$refs
       let records
       if (Array.isArray(rows)) {
         records = rows
@@ -1224,7 +1225,7 @@ export default {
       }
       // 遍历添加默认值
       records.forEach(record => this._createRow(record))
-      let result = await this.pushRows(records, {index: index, setActive: true})
+      let result = await this.pushRows(records, { index: index, setActive: true })
       // 遍历插入的行
       // update--begin--autor:lvdandan-----date:20201117------for:LOWCOD-987 【新行编辑】js增强附表内置方法调用问题 #1819
       // online js增强时以传过来值为准，不再赋默认值
@@ -1234,7 +1235,7 @@ export default {
           this.trigger(triggerName, {
             row: row,
             $table: xTable,
-            target: this,
+            target: this
           })
         }
       }
@@ -1243,14 +1244,14 @@ export default {
     },
     // 创建新行，自动添加默认值
     _createRow(record = {}) {
-      let {xTable} = this.$refs.vxe.$refs
+      let { xTable } = this.$refs.vxe.$refs
       // 添加默认值
       xTable.tableFullColumn.forEach(column => {
         let col = column.own
         if (col.key && (record[col.key] == null || record[col.key] === '')) {
           // 设置默认值
           let createValue = getEnhancedMixins(col.$type || col.type, 'createValue')
-          record[col.key] = createValue({row: record, column, $table: xTable})
+          record[col.key] = createValue({ row: record, column, $table: xTable })
         }
         // update-begin--author:sunjianlei---date:20210819------for: 处理联动列，联动列只能作用于 select 组件
         if (col.$type === JVXETypes.select && this.innerLinkageConfig != null) {
@@ -1265,7 +1266,7 @@ export default {
       return record
     },
 
-    /*--- 渲染函数 ---*/
+    /* --- 渲染函数 --- */
 
     // 渲染 vxe
     renderVxeGrid(h) {
@@ -1275,7 +1276,7 @@ export default {
         props: this.vxeProps,
         on: this.vxeEvents,
         // 作用域插槽的格式为
-        scopedSlots: this.$scopedSlots,
+        scopedSlots: this.$scopedSlots
       })
     },
     // 渲染工具栏
@@ -1288,7 +1289,7 @@ export default {
             size: this.size,
             disabled: this.disabled,
             disabledRows: this.disabledRows,
-            selectedRowIds: this.selectedRowIds,
+            selectedRowIds: this.selectedRowIds
           },
           on: {
             // 新增事件
@@ -1296,7 +1297,7 @@ export default {
             // 保存事件
             save: () => this.trigger('save', {
               $table: this.$refs.vxe,
-              target: this,
+              target: this
             }),
             // 删除事件
             remove: () => {
@@ -1304,7 +1305,7 @@ export default {
               let deleteRows = this.filterNewRows(this.selectedRows)
               // 触发删除事件
               if (deleteRows.length > 0) {
-                let removeEvent = {deleteRows, $table, target: this}
+                let removeEvent = { deleteRows, $table, target: this }
                 if (this.asyncRemove) {
                   // 确认删除，只有调用这个方法才会真删除
                   removeEvent.confirmRemove = () => this.removeSelection()
@@ -1321,8 +1322,8 @@ export default {
           },
           scopedSlots: {
             toolbarPrefix: this.$scopedSlots.toolbarPrefix,
-            toolbarSuffix: this.$scopedSlots.toolbarSuffix,
-          },
+            toolbarSuffix: this.$scopedSlots.toolbarSuffix
+          }
         })
       }
       return null
@@ -1340,7 +1341,7 @@ export default {
         return h('j-vxe-sub-popover', {
           ref: 'subPopover',
           scopedSlots: {
-            subForm: this.$scopedSlots.subForm,
+            subForm: this.$scopedSlots.subForm
           }
         })
       }
@@ -1369,17 +1370,17 @@ export default {
           },
           on: {
             change: (e) => this.trigger('pageChange', e)
-          },
+          }
         })
       }
       return null
     },
-    loadExcludeCode(){
-      if(!this.authPre || this.authPre.length==0){
+    loadExcludeCode() {
+      if (!this.authPre || this.authPre.length == 0) {
         this.excludeCode = []
-      }else{
+      } else {
         let pre = this.authPre
-        if(!pre.endsWith(':')){
+        if (!pre.endsWith(':')) {
           pre += ':'
         }
         this.excludeCode = getNoAuthCols(pre)
@@ -1396,7 +1397,7 @@ export default {
       this.renderToolbar(h),
       this.renderToolbarAfterSlot(),
       this.renderVxeGrid(h),
-      this.renderPagination(h),
+      this.renderPagination(h)
     ])
   },
   beforeDestroy() {
@@ -1406,23 +1407,23 @@ export default {
 
 // 兼容 online 的规则
 const fooPatterns = [
-  {title: '非空', value: '*', pattern: /^.+$/},
-  {title: '6到16位数字', value: 'n6-16', pattern: /^\d{6,16}$/},
-  {title: '6到16位任意字符', value: '*6-16', pattern: /^.{6,16}$/},
-  {title: '6到18位字母', value: 's6-18', pattern: /^[a-z|A-Z]{6,18}$/},
-  {title: '网址', value: 'url', pattern: /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/},
-  {title: '电子邮件', value: 'e', pattern: /^([\w]+\.*)([\w]+)@[\w]+\.\w{3}(\.\w{2}|)$/},
-  {title: '手机号码', value: 'm', pattern: /^1[3456789]\d{9}$/},
-  {title: '邮政编码', value: 'p', pattern: /^[0-9]{6}$/},
-  {title: '字母', value: 's', pattern: /^[A-Z|a-z]+$/},
-  {title: '数字', value: 'n', pattern: /^-?\d+(\.?\d+|\d?)$/},
-  {title: '整数', value: 'z', pattern: /^-?\d+$/},
-  {title: '金额', value: 'money', pattern: /^(([1-9][0-9]*)|([0]\.\d{0,2}|[1-9][0-9]*\.\d{0,5}))$/},
+  { title: '非空', value: '*', pattern: /^.+$/ },
+  { title: '6到16位数字', value: 'n6-16', pattern: /^\d{6,16}$/ },
+  { title: '6到16位任意字符', value: '*6-16', pattern: /^.{6,16}$/ },
+  { title: '6到18位字母', value: 's6-18', pattern: /^[a-z|A-Z]{6,18}$/ },
+  { title: '网址', value: 'url', pattern: /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/ },
+  { title: '电子邮件', value: 'e', pattern: /^([\w]+\.*)([\w]+)@[\w]+\.\w{3}(\.\w{2}|)$/ },
+  { title: '手机号码', value: 'm', pattern: /^1[3456789]\d{9}$/ },
+  { title: '邮政编码', value: 'p', pattern: /^[0-9]{6}$/ },
+  { title: '字母', value: 's', pattern: /^[A-Z|a-z]+$/ },
+  { title: '数字', value: 'n', pattern: /^-?\d+(\.?\d+|\d?)$/ },
+  { title: '整数', value: 'z', pattern: /^-?\d+$/ },
+  { title: '金额', value: 'money', pattern: /^(([1-9][0-9]*)|([0]\.\d{0,2}|[1-9][0-9]*\.\d{0,5}))$/ }
 ]
 
 /** 旧版handler转为新版Validator */
 function handlerConvertToValidator(event) {
-  const {column, rule} = event
+  const { column, rule } = event
   return new Promise((resolve, reject) => {
     rule.handler(event, (flag, msg) => {
       let message = rule.message
@@ -1431,7 +1432,7 @@ function handlerConvertToValidator(event) {
       }
       if (flag == null) {
         resolve(message)
-      } else if (!!flag) {
+      } else if (flag) {
         resolve(message)
       } else {
         reject(new Error(message))
@@ -1442,7 +1443,7 @@ function handlerConvertToValidator(event) {
 
 /** 唯一校验器 */
 function uniqueValidator(event) {
-  const {cellValue, column, rule} = event
+  const { cellValue, column, rule } = event
   let tableData = this.getTableData()
   let findCount = 0
   for (let rowData of tableData) {

@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: "SearchLayout",
+    name: 'SearchLayout',
     data () {
       return {
         tabs: {
@@ -22,7 +22,7 @@
             {
               key: '3',
               title: '应用'
-            },
+            }
           ],
           active: () => {
             switch (this.$route.path) {

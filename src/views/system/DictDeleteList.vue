@@ -25,89 +25,88 @@
 
   </a-modal>
 
-
 </template>
 
 <script>
-  import { getAction,deleteAction,putAction } from '@/api/manage'
+  import { getAction, deleteAction, putAction } from '@/api/manage'
   export default {
-    name: "DictDeleteList",
+    name: 'DictDeleteList',
     data () {
       return {
         modalWidth: '90%',
-        modalStyle: { 'top': '20px'},
+        modalStyle: { 'top': '20px' },
         title: '操作',
         visible: false,
         loading: false,
-        dataSource:[],
-        columns:[
+        dataSource: [],
+        columns: [
           {
             title: '#',
             dataIndex: '',
             key: 'rowIndex',
             width: 120,
-            align: "center",
+            align: 'center',
             customRender: function (t, r, index) {
-              return parseInt(index) + 1;
+              return parseInt(index) + 1
             }
           },
           {
             title: '字典名称',
-            align: "left",
+            align: 'left',
             dataIndex: 'dictName'
           },
           {
             title: '字典编号',
-            align: "left",
+            align: 'left',
             dataIndex: 'dictCode'
           },
           {
             title: '描述',
-            align: "left",
+            align: 'left',
             dataIndex: 'description'
           },
           {
             title: '操作',
             dataIndex: 'action',
-            align: "center",
-            scopedSlots: {customRender: 'action'}
+            align: 'center',
+            scopedSlots: { customRender: 'action' }
           }
         ]
       }
     },
 
     methods: {
-      handleCancel(){
+      handleCancel() {
         this.visible = false
-        //回收站字典列表刷新
-        this.$emit("refresh")
+        // 回收站字典列表刷新
+        this.$emit('refresh')
       },
-      show(){
+      show() {
         this.visible = true
-        this.loadData();
+        this.loadData()
       },
-      loadData(){
+      loadData() {
         this.loading = true
-        getAction("/sys/dict/deleteList").then(res=>{
+        getAction('/sys/dict/deleteList').then(res => {
           this.loading = false
-          if(res.success){
+          if (res.success) {
             this.dataSource = res.result
-          }else{
+          } else {
             this.$message.warning(res.message)
           }
         })
       },
-      handleBack(id){
-        putAction("/sys/dict/back/"+id).then(res=>{
-          if(res.success){
+      handleBack(id) {
+        putAction('/sys/dict/back/' + id).then(res => {
+          if (res.success) {
             this.$message.success(res.message)
-            this.loadData();
-          }else{
+            this.loadData()
+          } else {
             this.$message.warning(res.message)
           }
         })
       },
-      handleDelete(id){
+      handleDelete(id) {
         this.$confirm({
           title: '彻底删除字典',
           content: (<div>
@@ -116,16 +115,16 @@
             </div>),
           centered: false,
           onOk: () => {
-          var that = this;
-          deleteAction("/sys/dict/deletePhysic/"+id).then((res) => {
+          var that = this
+          deleteAction('/sys/dict/deletePhysic/' + id).then((res) => {
             if (res.success) {
               this.$message.success(res.message)
-              this.loadData();
+              this.loadData()
             } else {
-              that.$message.warning(res.message);
+              that.$message.warning(res.message)
             }
-          });
-        },
+          })
+        }
       })
       }
 

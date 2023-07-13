@@ -12,53 +12,53 @@ const api = {
 
 export default api
 
-//post
-export function postAction(url,parameter) {
-  let sign = signMd5Utils.getSign(url, parameter);
-  //将签名和时间戳，添加在请求接口 Header
+// post
+export function postAction(url, parameter) {
+  let sign = signMd5Utils.getSign(url, parameter)
+  // 将签名和时间戳，添加在请求接口 Header
   // update-begin--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
-  let signHeader = {"X-Sign": sign,"X-TIMESTAMP": signMd5Utils.getTimestamp()};
+  let signHeader = { 'X-Sign': sign, 'X-TIMESTAMP': signMd5Utils.getTimestamp() }
   // update-end--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
 
   return axios({
     url: url,
-    method:'post' ,
+    method: 'post',
     data: parameter,
     headers: signHeader
   })
 }
 
-//post method= {post | put}
-export function httpAction(url,parameter,method) {
-  let sign = signMd5Utils.getSign(url, parameter);
-  //将签名和时间戳，添加在请求接口 Header
+// post method= {post | put}
+export function httpAction(url, parameter, method) {
+  let sign = signMd5Utils.getSign(url, parameter)
+  // 将签名和时间戳，添加在请求接口 Header
   // update-begin--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
-  let signHeader = {"X-Sign": sign,"X-TIMESTAMP": signMd5Utils.getTimestamp()};
+  let signHeader = { 'X-Sign': sign, 'X-TIMESTAMP': signMd5Utils.getTimestamp() }
   // update-end--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
 
   return axios({
     url: url,
-    method:method ,
+    method: method,
     data: parameter,
     headers: signHeader
   })
 }
 
-//put
-export function putAction(url,parameter) {
+// put
+export function putAction(url, parameter) {
   return axios({
     url: url,
-    method:'put',
+    method: 'put',
     data: parameter
   })
 }
 
-//get
-export function getAction(url,parameter) {
-  let sign = signMd5Utils.getSign(url, parameter);
-  //将签名和时间戳，添加在请求接口 Header
+// get
+export function getAction(url, parameter) {
+  let sign = signMd5Utils.getSign(url, parameter)
+  // 将签名和时间戳，添加在请求接口 Header
   // update-begin--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
-  let signHeader = {"X-Sign": sign,"X-TIMESTAMP": signMd5Utils.getTimestamp()};
+  let signHeader = { 'X-Sign': sign, 'X-TIMESTAMP': signMd5Utils.getTimestamp() }
   // update-end--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
 
   return axios({
@@ -69,8 +69,8 @@ export function getAction(url,parameter) {
   })
 }
 
-//deleteAction
-export function deleteAction(url,parameter) {
+// deleteAction
+export function deleteAction(url, parameter) {
   return axios({
     url: url,
     method: 'delete',
@@ -126,15 +126,15 @@ export function saveService(parameter) {
  * @param parameter
  * @returns {*}
  */
-export function downFile(url,parameter, method='get'){
-  if(method=='get'){
+export function downFile(url, parameter, method = 'get') {
+  if (method == 'get') {
     return axios({
       url: url,
       params: parameter,
-      method: method ,
+      method: method,
       responseType: 'blob'
     })
-  }else{
+  } else {
     return axios({
       url: url,
       method: method,
@@ -142,7 +142,6 @@ export function downFile(url,parameter, method='get'){
       responseType: 'blob'
     })
   }
-
 }
 
 /**
@@ -168,8 +167,8 @@ export function downloadFile(url, fileName, parameter) {
       link.setAttribute('download', fileName)
       document.body.appendChild(link)
       link.click()
-      document.body.removeChild(link) //下载完成移除元素
-      window.URL.revokeObjectURL(url) //释放掉blob对象
+      document.body.removeChild(link) // 下载完成移除元素
+      window.URL.revokeObjectURL(url) // 释放掉blob对象
     }
   })
 }
@@ -180,14 +179,14 @@ export function downloadFile(url, fileName, parameter) {
  * @param parameter
  * @returns {*}
  */
-export function uploadAction(url,parameter){
+export function uploadAction(url, parameter) {
   return axios({
     url: url,
     data: parameter,
-    method:'post' ,
+    method: 'post',
     headers: {
-      'Content-Type': 'multipart/form-data',  // 文件上传
-    },
+      'Content-Type': 'multipart/form-data' // 文件上传
+    }
   })
 }
 
@@ -197,17 +196,17 @@ export function uploadAction(url,parameter){
  * @param subStr
  * @returns {*}
  */
-export function getFileAccessHttpUrl(avatar,subStr) {
-  if(!subStr) subStr = 'http'
+export function getFileAccessHttpUrl(avatar, subStr) {
+  if (!subStr) subStr = 'http'
   try {
-    if(avatar && avatar.startsWith(subStr)){
-      return avatar;
-    }else{
-      if(avatar &&　avatar.length>0 && avatar.indexOf('[')==-1){
-        return window._CONFIG['staticDomainURL'] + "/" + avatar;
+    if (avatar && avatar.startsWith(subStr)) {
+      return avatar
+    } else {
+      if (avatar &&　avatar.length > 0 && avatar.indexOf('[') == -1) {
+        return window._CONFIG['staticDomainURL'] + '/' + avatar
       }
     }
-  }catch(err){
-   return;
+  } catch (err) {
+
   }
 }

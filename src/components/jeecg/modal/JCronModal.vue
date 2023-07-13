@@ -1,12 +1,12 @@
 <template>
   <a-modal
-          title="cron表达式"
-          :width="modalWidth"
-          :visible="visible"
-          :confirmLoading="confirmLoading"
-          @ok="handleSubmit"
-          @cancel="close"
-          cancelText="关闭">
+    title="cron表达式"
+    :width="modalWidth"
+    :visible="visible"
+    :confirmLoading="confirmLoading"
+    @ok="handleSubmit"
+    @cancel="close"
+    cancelText="关闭">
     <div class="card-container">
       <a-tabs type="card">
         <a-tab-pane key="1" type="card">
@@ -245,281 +245,281 @@
         </a-tab-pane>
       </a-tabs>
       <div class="bottom">
-        <span class="value">{{this.cron }}</span>
+        <span class="value">{{ this.cron }}</span>
       </div>
     </div>
   </a-modal>
 </template>
 <script>
   export default {
-    name:'VueCron',
-    props:['data'],
-    data(){
+    name: 'VueCron',
+    props: ['data'],
+    data() {
       return {
         visible: false,
-        confirmLoading:false,
-        size:'large',
-        weekDays:['天','一','二','三','四','五','六'].map(val=>'星期'+val),
+        confirmLoading: false,
+        size: 'large',
+        weekDays: ['天', '一', '二', '三', '四', '五', '六'].map(val => '星期' + val),
         result: {
-          second:{},
-          minute:{},
-          hour:{},
-          day:{},
-          week:{},
-          month:{},
-          year:{}
+          second: {},
+          minute: {},
+          hour: {},
+          day: {},
+          week: {},
+          month: {},
+          year: {}
         },
         defaultValue: {
-          second:{
-            cronEvery:'',
-            incrementStart:3,
-            incrementIncrement:5,
-            rangeStart:1,
-            rangeEnd:0,
-            specificSpecific:[],
+          second: {
+            cronEvery: '',
+            incrementStart: 3,
+            incrementIncrement: 5,
+            rangeStart: 1,
+            rangeEnd: 0,
+            specificSpecific: []
           },
-          minute:{
-            cronEvery:'',
-            incrementStart:3,
-            incrementIncrement:5,
-            rangeStart:1,
-            rangeEnd:'0',
-            specificSpecific:[],
+          minute: {
+            cronEvery: '',
+            incrementStart: 3,
+            incrementIncrement: 5,
+            rangeStart: 1,
+            rangeEnd: '0',
+            specificSpecific: []
           },
-          hour:{
-            cronEvery:'',
-            incrementStart:3,
-            incrementIncrement:5,
-            rangeStart:'0',
-            rangeEnd:'0',
-            specificSpecific:[],
+          hour: {
+            cronEvery: '',
+            incrementStart: 3,
+            incrementIncrement: 5,
+            rangeStart: '0',
+            rangeEnd: '0',
+            specificSpecific: []
           },
-          day:{
-            cronEvery:'',
-            incrementStart:1,
-            incrementIncrement:'1',
-            rangeStart:'',
-            rangeEnd:'',
-            specificSpecific:[],
-            cronLastSpecificDomDay:1,
-            cronDaysBeforeEomMinus:1,
-            cronDaysNearestWeekday:1,
+          day: {
+            cronEvery: '',
+            incrementStart: 1,
+            incrementIncrement: '1',
+            rangeStart: '',
+            rangeEnd: '',
+            specificSpecific: [],
+            cronLastSpecificDomDay: 1,
+            cronDaysBeforeEomMinus: 1,
+            cronDaysNearestWeekday: 1
           },
-          week:{
-            cronEvery:'',
-            incrementStart:1,
-            incrementIncrement:1,
-            specificSpecific:[],
-            cronNthDayDay:1,
-            cronNthDayNth:1,
+          week: {
+            cronEvery: '',
+            incrementStart: 1,
+            incrementIncrement: 1,
+            specificSpecific: [],
+            cronNthDayDay: 1,
+            cronNthDayNth: 1
           },
-          month:{
-            cronEvery:'',
-            incrementStart:3,
-            incrementIncrement:5,
-            rangeStart:1,
-            rangeEnd:1,
-            specificSpecific:[],
+          month: {
+            cronEvery: '',
+            incrementStart: 3,
+            incrementIncrement: 5,
+            rangeStart: 1,
+            rangeEnd: 1,
+            specificSpecific: []
           },
-          year:{
-            cronEvery:'',
-            incrementStart:2017,
-            incrementIncrement:1,
-            rangeStart:2019,
+          year: {
+            cronEvery: '',
+            incrementStart: 2017,
+            incrementIncrement: 1,
+            rangeStart: 2019,
             rangeEnd: 2019,
-            specificSpecific:[],
+            specificSpecific: []
           },
-          label:''
+          label: ''
         }
       }
     },
     computed: {
-      modalWidth(){
-        return 608;
+      modalWidth() {
+        return 608
       },
       secondsText() {
-        let seconds = '';
-        let cronEvery=this.result.second.cronEvery||'';
-        switch (cronEvery.toString()){
+        let seconds = ''
+        let cronEvery = this.result.second.cronEvery || ''
+        switch (cronEvery.toString()) {
           case '1':
-            seconds = '*';
-            break;
+            seconds = '*'
+            break
           case '2':
-            seconds = this.result.second.incrementStart+'/'+this.result.second.incrementIncrement;
-            break;
+            seconds = this.result.second.incrementStart + '/' + this.result.second.incrementIncrement
+            break
           case '3':
-            this.result.second.specificSpecific.map(val=> {seconds += val+','});
-            seconds = seconds.slice(0, -1);
-            break;
+            this.result.second.specificSpecific.map(val => { seconds += val + ',' })
+            seconds = seconds.slice(0, -1)
+            break
           case '4':
-            seconds = this.result.second.rangeStart+'-'+this.result.second.rangeEnd;
-            break;
-        }
-        return seconds;
-      },
-      minutesText() {
-        let minutes = '';
-        let cronEvery=this.result.minute.cronEvery||'';
-        switch (cronEvery.toString()){
-          case '1':
-            minutes = '*';
-            break;
-          case '2':
-            minutes = this.result.minute.incrementStart+'/'+this.result.minute.incrementIncrement;
-            break;
-          case '3':
-            this.result.minute.specificSpecific.map(val=> {
-              minutes += val+','
-            });
-            minutes = minutes.slice(0, -1);
-            break;
-          case '4':
-            minutes = this.result.minute.rangeStart+'-'+this.result.minute.rangeEnd;
-            break;
-        }
-        return minutes;
-      },
-      hoursText() {
-        let hours = '';
-        let cronEvery=this.result.hour.cronEvery||'';
-        switch (cronEvery.toString()){
-          case '1':
-            hours = '*';
-            break;
-          case '2':
-            hours = this.result.hour.incrementStart+'/'+this.result.hour.incrementIncrement;
-            break;
-          case '3':
-            this.result.hour.specificSpecific.map(val=> {
-              hours += val+','
-            });
-            hours = hours.slice(0, -1);
-            break;
-          case '4':
-            hours = this.result.hour.rangeStart+'-'+this.result.hour.rangeEnd;
-            break;
-        }
-        return hours;
-      },
-      daysText() {
-        let days='';
-        let cronEvery=this.result.day.cronEvery||'';
-        switch (cronEvery.toString()){
-          case '1':
-            break;
-          case '2':
-          case '4':
-          case '11':
-            days = '?';
-            break;
-          case '3':
-            days = this.result.day.incrementStart+'/'+this.result.day.incrementIncrement;
-            break;
-          case '5':
-            this.result.day.specificSpecific.map(val=> {
-              days += val+','
-            });
-            days = days.slice(0, -1);
-            break;
-          case '6':
-            days = "L";
-            break;
-          case '7':
-            days = "LW";
-            break;
-          case '8':
-            days = this.result.day.cronLastSpecificDomDay + 'L';
-            break;
-          case '9':
-            days = 'L-' + this.result.day.cronDaysBeforeEomMinus;
-            break;
-          case '10':
-            days = this.result.day.cronDaysNearestWeekday+"W";
+            seconds = this.result.second.rangeStart + '-' + this.result.second.rangeEnd
             break
         }
-        return days;
+        return seconds
+      },
+      minutesText() {
+        let minutes = ''
+        let cronEvery = this.result.minute.cronEvery || ''
+        switch (cronEvery.toString()) {
+          case '1':
+            minutes = '*'
+            break
+          case '2':
+            minutes = this.result.minute.incrementStart + '/' + this.result.minute.incrementIncrement
+            break
+          case '3':
+            this.result.minute.specificSpecific.map(val => {
+              minutes += val + ','
+            })
+            minutes = minutes.slice(0, -1)
+            break
+          case '4':
+            minutes = this.result.minute.rangeStart + '-' + this.result.minute.rangeEnd
+            break
+        }
+        return minutes
+      },
+      hoursText() {
+        let hours = ''
+        let cronEvery = this.result.hour.cronEvery || ''
+        switch (cronEvery.toString()) {
+          case '1':
+            hours = '*'
+            break
+          case '2':
+            hours = this.result.hour.incrementStart + '/' + this.result.hour.incrementIncrement
+            break
+          case '3':
+            this.result.hour.specificSpecific.map(val => {
+              hours += val + ','
+            })
+            hours = hours.slice(0, -1)
+            break
+          case '4':
+            hours = this.result.hour.rangeStart + '-' + this.result.hour.rangeEnd
+            break
+        }
+        return hours
+      },
+      daysText() {
+        let days = ''
+        let cronEvery = this.result.day.cronEvery || ''
+        switch (cronEvery.toString()) {
+          case '1':
+            break
+          case '2':
+          case '4':
+          case '11':
+            days = '?'
+            break
+          case '3':
+            days = this.result.day.incrementStart + '/' + this.result.day.incrementIncrement
+            break
+          case '5':
+            this.result.day.specificSpecific.map(val => {
+              days += val + ','
+            })
+            days = days.slice(0, -1)
+            break
+          case '6':
+            days = 'L'
+            break
+          case '7':
+            days = 'LW'
+            break
+          case '8':
+            days = this.result.day.cronLastSpecificDomDay + 'L'
+            break
+          case '9':
+            days = 'L-' + this.result.day.cronDaysBeforeEomMinus
+            break
+          case '10':
+            days = this.result.day.cronDaysNearestWeekday + 'W'
+            break
+        }
+        return days
       },
       weeksText() {
-        let weeks = '';
-        let cronEvery=this.result.day.cronEvery||'';
-        switch (cronEvery.toString()){
+        let weeks = ''
+        let cronEvery = this.result.day.cronEvery || ''
+        switch (cronEvery.toString()) {
           case '1':
           case '3':
           case '5':
-            weeks = '?';
-            break;
+            weeks = '?'
+            break
           case '2':
-            weeks = this.result.week.incrementStart+'/'+this.result.week.incrementIncrement;
-            break;
+            weeks = this.result.week.incrementStart + '/' + this.result.week.incrementIncrement
+            break
           case '4':
-            this.result.week.specificSpecific.map(val=> {
-              weeks += val+','
-            });
-            weeks = weeks.slice(0, -1);
-            break;
+            this.result.week.specificSpecific.map(val => {
+              weeks += val + ','
+            })
+            weeks = weeks.slice(0, -1)
+            break
           case '6':
           case '7':
           case '8':
           case '9':
           case '10':
-            weeks = "?";
-            break;
+            weeks = '?'
+            break
           case '11':
-            weeks = this.result.week.cronNthDayDay+"#"+this.result.week.cronNthDayNth;
-            break;
+            weeks = this.result.week.cronNthDayDay + '#' + this.result.week.cronNthDayNth
+            break
         }
-        return weeks;
+        return weeks
       },
       monthsText() {
-        let months = '';
-        let cronEvery=this.result.month.cronEvery||'';
-        switch (cronEvery.toString()){
+        let months = ''
+        let cronEvery = this.result.month.cronEvery || ''
+        switch (cronEvery.toString()) {
           case '1':
-            months = '*';
-            break;
+            months = '*'
+            break
           case '2':
-            months = this.result.month.incrementStart+'/'+this.result.month.incrementIncrement;
-            break;
+            months = this.result.month.incrementStart + '/' + this.result.month.incrementIncrement
+            break
           case '3':
-            this.result.month.specificSpecific.map(val=> {
-              months += val+','
-            });
-            months = months.slice(0, -1);
-            break;
+            this.result.month.specificSpecific.map(val => {
+              months += val + ','
+            })
+            months = months.slice(0, -1)
+            break
           case '4':
-            months = this.result.month.rangeStart+'-'+this.result.month.rangeEnd;
-            break;
+            months = this.result.month.rangeStart + '-' + this.result.month.rangeEnd
+            break
         }
-        return months;
+        return months
       },
       yearsText() {
-        let years = '';
-        let cronEvery=this.result.year.cronEvery||'';
-        switch (cronEvery.toString()){
+        let years = ''
+        let cronEvery = this.result.year.cronEvery || ''
+        switch (cronEvery.toString()) {
           case '1':
-            years = '*';
-            break;
+            years = '*'
+            break
           case '2':
-            years = this.result.year.incrementStart+'/'+this.result.year.incrementIncrement;
-            break;
+            years = this.result.year.incrementStart + '/' + this.result.year.incrementIncrement
+            break
           case '3':
-            this.result.year.specificSpecific.map(val=> {
-              years += val+','
-            });
-            years = years.slice(0, -1);
-            break;
+            this.result.year.specificSpecific.map(val => {
+              years += val + ','
+            })
+            years = years.slice(0, -1)
+            break
           case '4':
-            years = this.result.year.rangeStart+'-'+this.result.year.rangeEnd;
-            break;
+            years = this.result.year.rangeStart + '-' + this.result.year.rangeEnd
+            break
         }
-        return years;
+        return years
       },
-      cron(){
-        return `${this.secondsText||'*'} ${this.minutesText||'*'} ${this.hoursText||'*'} ${this.daysText||'*'} ${this.monthsText||'*'} ${this.weeksText||'?'} ${this.yearsText||'*'}`
-      },
+      cron() {
+        return `${this.secondsText || '*'} ${this.minutesText || '*'} ${this.hoursText || '*'} ${this.daysText || '*'} ${this.monthsText || '*'} ${this.weeksText || '?'} ${this.yearsText || '*'}`
+      }
     },
-    watch:{
-      visible:{
+    watch: {
+      visible: {
         handler() {
           // if(this.data){
           //   //this. result = Object.keys(this.data.value).length>0?this.deepCopy(this.data.value):this.deepCopy(this.defaultValue);
@@ -531,299 +531,296 @@
           //   //this.result = clone(this.defaultValue);
           //   this.result = JSON.parse(JSON.stringify(this.defaultValue));
           // }
-          let label = this.data;
-          if(label){
+          let label = this.data
+          if (label) {
             this.secondsReverseExp(label)
-            this.minutesReverseExp(label);
-            this.hoursReverseExp(label);
-            this.daysReverseExp(label);
-            this.daysReverseExp(label);
-            this.monthsReverseExp(label);
-            this.yearReverseExp(label);
-            JSON.parse(JSON.stringify(label));
-          }else {
-            this.result = JSON.parse(JSON.stringify(this.defaultValue));
+            this.minutesReverseExp(label)
+            this.hoursReverseExp(label)
+            this.daysReverseExp(label)
+            this.daysReverseExp(label)
+            this.monthsReverseExp(label)
+            this.yearReverseExp(label)
+            JSON.parse(JSON.stringify(label))
+          } else {
+            this.result = JSON.parse(JSON.stringify(this.defaultValue))
           }
         }
       }
     },
     methods: {
-      show(){
-        this.visible = true;
+      show() {
+        this.visible = true
         // console.log('secondsReverseExp',this.secondsReverseExp(this.data));
         // console.log('minutesReverseExp',this.minutesReverseExp(this.data));
         // console.log('hoursReverseExp',this.hoursReverseExp(this.data));
         // console.log('daysReverseExp',this.daysReverseExp(this.data));
         // console.log('monthsReverseExp',this.monthsReverseExp(this.data));
         // console.log('yearReverseExp',this.yearReverseExp(this.data));
-
       },
-      handleSubmit(){
-        this.$emit('ok',this.cron);
-        this.close();
-        this.visible = false;
+      handleSubmit() {
+        this.$emit('ok', this.cron)
+        this.close()
+        this.visible = false
       },
-      close(){
-        this.visible = false;
+      close() {
+        this.visible = false
       },
       secondsReverseExp(seconds) {
-        let val =  seconds.split(" ")[0];
-        //alert(val);
+        let val = seconds.split(' ')[0]
+        // alert(val);
         let second = {
-          cronEvery:'',
-          incrementStart:3,
-          incrementIncrement:5,
-          rangeStart:1,
-          rangeEnd:0,
-          specificSpecific:[]
-        };
+          cronEvery: '',
+          incrementStart: 3,
+          incrementIncrement: 5,
+          rangeStart: 1,
+          rangeEnd: 0,
+          specificSpecific: []
+        }
         switch (true) {
           case val.includes('*'):
-            second.cronEvery = '1';
-            break;
+            second.cronEvery = '1'
+            break
           case val.includes('/'):
-            second.cronEvery = '2';
-            second.incrementStart = val.split('/')[0];
-            second.incrementIncrement = val.split('/')[1];
-            break;
+            second.cronEvery = '2'
+            second.incrementStart = val.split('/')[0]
+            second.incrementIncrement = val.split('/')[1]
+            break
           case val.includes(','):
-            second.cronEvery = '3';
-            second.specificSpecific = val.split(',').map(Number).sort();
-            break;
+            second.cronEvery = '3'
+            second.specificSpecific = val.split(',').map(Number).sort()
+            break
           case val.includes('-'):
-            second.cronEvery = '4';
-            second.rangeStart = val.split('-')[0];
-            second.rangeEnd = val.split('-')[1];
-            break;
+            second.cronEvery = '4'
+            second.rangeStart = val.split('-')[0]
+            second.rangeEnd = val.split('-')[1]
+            break
           default:
-            second.cronEvery = '1';
+            second.cronEvery = '1'
         }
-        this.result.second = second;
+        this.result.second = second
       },
       minutesReverseExp(minutes) {
-        let val =  minutes.split(" ")[1];
+        let val = minutes.split(' ')[1]
         let minute = {
-          cronEvery:'',
-          incrementStart:3,
-          incrementIncrement:5,
-          rangeStart:1,
-          rangeEnd:0,
-          specificSpecific:[],
+          cronEvery: '',
+          incrementStart: 3,
+          incrementIncrement: 5,
+          rangeStart: 1,
+          rangeEnd: 0,
+          specificSpecific: []
         }
         switch (true) {
           case val.includes('*'):
-            minute.cronEvery = '1';
-            break;
+            minute.cronEvery = '1'
+            break
           case val.includes('/'):
-            minute.cronEvery = '2';
-            minute.incrementStart = val.split('/')[0];
-            minute.incrementIncrement = val.split('/')[1];
-            break;
+            minute.cronEvery = '2'
+            minute.incrementStart = val.split('/')[0]
+            minute.incrementIncrement = val.split('/')[1]
+            break
           case val.includes(','):
-            minute.cronEvery = '3';
-            minute.specificSpecific = val.split(',').map(Number).sort();
-            break;
+            minute.cronEvery = '3'
+            minute.specificSpecific = val.split(',').map(Number).sort()
+            break
           case val.includes('-'):
-            minute.cronEvery = '4';
-            minute.rangeStart = val.split('-')[0];
-            minute.rangeEnd = val.split('-')[1];
-            break;
+            minute.cronEvery = '4'
+            minute.rangeStart = val.split('-')[0]
+            minute.rangeEnd = val.split('-')[1]
+            break
           default:
-            minute.cronEvery = '1';
+            minute.cronEvery = '1'
         }
-        this.result.minute = minute;
+        this.result.minute = minute
       },
       hoursReverseExp(hours) {
-        let val =  hours.split(" ")[2];
-        let hour ={
-            cronEvery:'',
-            incrementStart:3,
-            incrementIncrement:5,
-            rangeStart:1,
-            rangeEnd:'0',
-            specificSpecific:[],
-          };
+        let val = hours.split(' ')[2]
+        let hour = {
+            cronEvery: '',
+            incrementStart: 3,
+            incrementIncrement: 5,
+            rangeStart: 1,
+            rangeEnd: '0',
+            specificSpecific: []
+          }
         switch (true) {
           case val.includes('*'):
-            hour.cronEvery = '1';
-            break;
+            hour.cronEvery = '1'
+            break
           case val.includes('/'):
-            hour.cronEvery = '2';
-            hour.incrementStart = val.split('/')[0];
-            hour.incrementIncrement = val.split('/')[1];
-            break;
+            hour.cronEvery = '2'
+            hour.incrementStart = val.split('/')[0]
+            hour.incrementIncrement = val.split('/')[1]
+            break
           case val.includes(','):
-            hour.cronEvery = '3';
-            hour.specificSpecific = val.split(',').map(Number).sort();
-            break;
+            hour.cronEvery = '3'
+            hour.specificSpecific = val.split(',').map(Number).sort()
+            break
           case val.includes('-'):
-            hour.cronEvery = '4';
-            hour.rangeStart = val.split('-')[0];
-            hour.rangeEnd = val.split('-')[1];
-            break;
+            hour.cronEvery = '4'
+            hour.rangeStart = val.split('-')[0]
+            hour.rangeEnd = val.split('-')[1]
+            break
           default:
-            hour.cronEvery = '1';
+            hour.cronEvery = '1'
           }
-        this.result.hour = hour;
+        this.result.hour = hour
       },
       daysReverseExp(cron) {
-        let days =  cron.split(" ")[3];
-        let weeks =  cron.split(" ")[5];
-        let day ={
-          cronEvery:'',
-          incrementStart:1,
-          incrementIncrement:1,
-          rangeStart:1,
-          rangeEnd:1,
-          specificSpecific:[],
-          cronLastSpecificDomDay:1,
-          cronDaysBeforeEomMinus:1,
-          cronDaysNearestWeekday:1,
-        };
+        let days = cron.split(' ')[3]
+        let weeks = cron.split(' ')[5]
+        let day = {
+          cronEvery: '',
+          incrementStart: 1,
+          incrementIncrement: 1,
+          rangeStart: 1,
+          rangeEnd: 1,
+          specificSpecific: [],
+          cronLastSpecificDomDay: 1,
+          cronDaysBeforeEomMinus: 1,
+          cronDaysNearestWeekday: 1
+        }
         let week = {
-            cronEvery:'',
-            incrementStart:1,
-            incrementIncrement:1,
-            specificSpecific:[],
-            cronNthDayDay:1,
-            cronNthDayNth:'1',
-        };
+            cronEvery: '',
+            incrementStart: 1,
+            incrementIncrement: 1,
+            specificSpecific: [],
+            cronNthDayDay: 1,
+            cronNthDayNth: '1'
+        }
         if (!days.includes('?')) {
           switch (true) {
             case days.includes('*'):
-              day.cronEvery = '1';
-              break;
+              day.cronEvery = '1'
+              break
             case days.includes('?'):
               // 2、4、11
-              break;
+              break
             case days.includes('/'):
-              day.cronEvery = '3';
-              day.incrementStart = days.split('/')[0];
-              day.incrementIncrement = days.split('/')[1];
-              break;
+              day.cronEvery = '3'
+              day.incrementStart = days.split('/')[0]
+              day.incrementIncrement = days.split('/')[1]
+              break
             case days.includes(','):
-              day.cronEvery = '5';
-              day.specificSpecific = days.split(',').map(Number).sort();
+              day.cronEvery = '5'
+              day.specificSpecific = days.split(',').map(Number).sort()
               // day.specificSpecific.forEach(function (value, index) {
               //   day.specificSpecific[index] = value -1;
               // });
-              break;
+              break
             case days.includes('LW'):
-              day.cronEvery = '7';
-              break;
+              day.cronEvery = '7'
+              break
             case days.includes('L-'):
-              day.cronEvery = '9';
-              day.cronDaysBeforeEomMinus = days.split('L-')[1];
-              break;
+              day.cronEvery = '9'
+              day.cronDaysBeforeEomMinus = days.split('L-')[1]
+              break
             case days.includes('L'):
 
-              //alert(days);
-              if(days.len == 1){
-                day.cronEvery = '6';
-                day.cronLastSpecificDomDay = '1';
+              // alert(days);
+              if (days.len == 1) {
+                day.cronEvery = '6'
+                day.cronLastSpecificDomDay = '1'
+              } else {
+                day.cronEvery = '8'
+                day.cronLastSpecificDomDay = Number(days.split('L')[0])
               }
-              else
-              {
-                day.cronEvery = '8';
-                day.cronLastSpecificDomDay = Number(days.split('L')[0]);
-              }
-              break;
+              break
             case days.includes('W'):
-              day.cronEvery = '10';
-              day.cronDaysNearestWeekday = days.split('W')[0];
-              break;
+              day.cronEvery = '10'
+              day.cronDaysNearestWeekday = days.split('W')[0]
+              break
             default:
-              day.cronEvery = '1';
+              day.cronEvery = '1'
           }
-        }else {
-          switch (true){
+        } else {
+          switch (true) {
             case weeks.includes('/'):
-              day.cronEvery = '2';
-              week.incrementStart = weeks.split("/")[0];
-              week.incrementIncrement = weeks.split("/")[1];
-              break;
+              day.cronEvery = '2'
+              week.incrementStart = weeks.split('/')[0]
+              week.incrementIncrement = weeks.split('/')[1]
+              break
             case weeks.includes(','):
-              day.cronEvery = '4';
-              week.specificSpecific = weeks.split(',').map(Number).sort();
-              break;
+              day.cronEvery = '4'
+              week.specificSpecific = weeks.split(',').map(Number).sort()
+              break
             case '#':
-              day.cronEvery = '11';
-              week.cronNthDayDay = weeks.split("#")[0];
-              week.cronNthDayNth = weeks.split("#")[1];
-              break;
+              day.cronEvery = '11'
+              week.cronNthDayDay = weeks.split('#')[0]
+              week.cronNthDayNth = weeks.split('#')[1]
+              break
             default:
-              day.cronEvery = '1';
-              week.cronEvery = '1';
+              day.cronEvery = '1'
+              week.cronEvery = '1'
           }
         }
-        this.result.day = day;
-        this.result.week = week;
+        this.result.day = day
+        this.result.week = week
       },
       monthsReverseExp(cron) {
-        let months = cron.split(" ")[4];
+        let months = cron.split(' ')[4]
         let month = {
-          cronEvery:'',
-            incrementStart:3,
-            incrementIncrement:5,
-            rangeStart:1,
-            rangeEnd:1,
-            specificSpecific:[],
-        };
-        switch (true){
-          case months.includes('*'):
-            month.cronEvery = '1';
-            break;
-          case months.includes('/'):
-            month.cronEvery = '2';
-            month.incrementStart = months.split('/')[0];
-            month.incrementIncrement = months.split('/')[1];
-            break;
-          case months.includes(','):
-            month.cronEvery = '3';
-            month.specificSpecific = months.split(',').map(Number).sort();
-            break;
-          case months.includes('-'):
-            month.cronEvery = '4';
-            month.rangeStart = months.split('-')[0];
-            month.rangeEnd = months.split('-')[1];
-            break;
-          default:
-            month.cronEvery = '1';
+          cronEvery: '',
+            incrementStart: 3,
+            incrementIncrement: 5,
+            rangeStart: 1,
+            rangeEnd: 1,
+            specificSpecific: []
         }
-        this.result.month = month;
+        switch (true) {
+          case months.includes('*'):
+            month.cronEvery = '1'
+            break
+          case months.includes('/'):
+            month.cronEvery = '2'
+            month.incrementStart = months.split('/')[0]
+            month.incrementIncrement = months.split('/')[1]
+            break
+          case months.includes(','):
+            month.cronEvery = '3'
+            month.specificSpecific = months.split(',').map(Number).sort()
+            break
+          case months.includes('-'):
+            month.cronEvery = '4'
+            month.rangeStart = months.split('-')[0]
+            month.rangeEnd = months.split('-')[1]
+            break
+          default:
+            month.cronEvery = '1'
+        }
+        this.result.month = month
       },
       yearReverseExp(cron) {
-        let years = cron.split(" ")[6];
+        let years = cron.split(' ')[6]
         let year = {
-          cronEvery:'',
-          incrementStart:3,
-          incrementIncrement:5,
-          rangeStart:2019,
-          rangeEnd:2019,
-          specificSpecific:[],
-        };
-        switch (true){
-          case years.includes('*'):
-            year.cronEvery = '1';
-            break;
-          case years.includes('/'):
-            year.cronEvery = '2';
-            year.incrementStart = years.split('/')[0];
-            year.incrementIncrement = years.split('/')[1];
-            break;
-          case years.includes(','):
-            year.cronEvery = '3';
-            year.specificSpecific = years.split(',').map(Number).sort();
-            break;
-          case years.includes('-'):
-            year.cronEvery = '4';
-            year.rangeStart = years.split('-')[0];
-            year.rangeEnd = years.split('-')[1];
-            break;
-          default:
-            year.cronEvery = '1';
+          cronEvery: '',
+          incrementStart: 3,
+          incrementIncrement: 5,
+          rangeStart: 2019,
+          rangeEnd: 2019,
+          specificSpecific: []
         }
-        this.result.year = year;
+        switch (true) {
+          case years.includes('*'):
+            year.cronEvery = '1'
+            break
+          case years.includes('/'):
+            year.cronEvery = '2'
+            year.incrementStart = years.split('/')[0]
+            year.incrementIncrement = years.split('/')[1]
+            break
+          case years.includes(','):
+            year.cronEvery = '3'
+            year.specificSpecific = years.split(',').map(Number).sort()
+            break
+          case years.includes('-'):
+            year.cronEvery = '4'
+            year.rangeStart = years.split('-')[0]
+            year.rangeEnd = years.split('-')[1]
+            break
+          default:
+            year.cronEvery = '1'
+        }
+        this.result.year = year
       }
     }
   }

@@ -42,7 +42,7 @@
   import { putAction } from '@/api/manage'
 
   export default {
-    name: "UserPassword",
+    name: 'UserPassword',
     data () {
       let passwordRulePattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,./]).{8,}$/
       if (['development', 'yoko', 'test'].includes(process.env.NODE_ENV)) {
@@ -51,103 +51,102 @@
       }
       const passwordMsg = '密码至少8位，且必须包含字母、数字、特殊字符'
       return {
-        title:"修改密码",
-        modalWidth:800,
+        title: '修改密码',
+        modalWidth: 800,
         visible: false,
         confirmLoading: false,
-        validatorRules:{
-          oldpassword:{
+        validatorRules: {
+          oldpassword: {
             rules: [{
-              required: true, message: '请输入旧密码!',
-            }],
+              required: true, message: '请输入旧密码!'
+            }]
           },
-          password:{
+          password: {
             rules: [{
-              required: true, message: '请输入新密码!',
+              required: true, message: '请输入新密码!'
             }, {
               required: true,
               pattern: passwordRulePattern,
               message: passwordMsg
             }, {
-              validator: this.validateToNextPassword,
-            }],
+              validator: this.validateToNextPassword
+            }]
           },
-          confirmpassword:{
+          confirmpassword: {
             rules: [{
-              required: true, message: '请确认新密码!',
+              required: true, message: '请确认新密码!'
             }, {
-              validator: this.compareToFirstPassword,
-            }],
+              validator: this.compareToFirstPassword
+            }]
           }
         },
-        confirmDirty:false,
+        confirmDirty: false,
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
 
-        form:this.$form.createForm(this),
-        url: "sys/user/updatePassword",
-        username:"",
+        form: this.$form.createForm(this),
+        url: 'sys/user/updatePassword',
+        username: ''
       }
     },
     methods: {
-      show(uname){
-        if(!uname){
-          this.$message.warning("当前系统无登录用户!");
-          return
-        }else{
+      show(uname) {
+        if (!uname) {
+          this.$message.warning('当前系统无登录用户!')
+        } else {
           this.username = uname
-          this.form.resetFields();
-          this.visible = true;
+          this.form.resetFields()
+          this.visible = true
         }
       },
       handleCancel () {
         this.close()
       },
       close () {
-        this.$emit('close');
-        this.visible = false;
-        this.disableSubmit = false;
-        this.selectedRole = [];
+        this.$emit('close')
+        this.visible = false
+        this.disableSubmit = false
+        this.selectedRole = []
       },
       handleOk () {
-        const that = this;
+        const that = this
         // 触发表单验证
         this.form.validateFields((err, values) => {
           if (!err) {
-            that.confirmLoading = true;
-            let params = Object.assign({username:this.username},values)
-            console.log("修改密码提交数据",params)
-            putAction(this.url,params).then((res)=>{
-              if(res.success){
+            that.confirmLoading = true
+            let params = Object.assign({ username: this.username }, values)
+            console.log('修改密码提交数据', params)
+            putAction(this.url, params).then((res) => {
+              if (res.success) {
                 console.log(res)
-                that.$message.success(res.message);
-                that.close();
-              }else{
-                that.$message.warning(res.message);
+                that.$message.success(res.message)
+                that.close()
+              } else {
+                that.$message.warning(res.message)
               }
             }).finally(() => {
-              that.confirmLoading = false;
+              that.confirmLoading = false
             })
           }
         })
       },
       validateToNextPassword  (rule, value, callback) {
-        const form = this.form;
+        const form = this.form
         if (value && this.confirmDirty) {
           form.validateFields(['confirm'], { force: true })
         }
-        callback();
+        callback()
       },
       compareToFirstPassword  (rule, value, callback) {
-        const form = this.form;
+        const form = this.form
         if (value && value !== form.getFieldValue('password')) {
-          callback('两次输入的密码不一样！');
+          callback('两次输入的密码不一样！')
         } else {
           callback()
         }
@@ -164,4 +163,3 @@
 <style scoped>
 
 </style>
-

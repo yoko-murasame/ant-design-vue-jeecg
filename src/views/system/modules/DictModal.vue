@@ -131,8 +131,8 @@
               that.confirmLoading = false
               that.close()
             })
-          }else{
-            return false;
+          } else {
+            return false
           }
         })
       },
@@ -143,7 +143,7 @@
       close() {
         this.$emit('close')
         this.visible = false
-        this.$refs.form.resetFields();
+        this.$refs.form.resetFields()
       }
     }
   }

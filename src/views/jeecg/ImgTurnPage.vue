@@ -37,106 +37,109 @@
 
   export default {
     name: 'ImgTurnPage',
-    components:{
+    components: {
       draggable
     },
     data() {
       return {
         description: '图片翻页',
-        //数据集
+        // 数据集
         treeData: [{
           title: '第一页',
           key: '0-0',
           children: [{
             title: '1页',
             key: '0-0-0',
-            imgUrl:'https://static.jeecg.com/upload/test/1_1588149743473.jpg'
+            imgUrl: 'https://static.jeecg.com/upload/test/1_1588149743473.jpg'
           }, {
             title: '2页',
             key: '0-0-1',
-            imgUrl:'https://static.jeecg.com/upload/test/u27356337152749454924fm27gp0_1588149731821.jpg'
+            imgUrl: 'https://static.jeecg.com/upload/test/u27356337152749454924fm27gp0_1588149731821.jpg'
           }]
-        },{
+        }, {
           title: '第二页',
           key: '0-1',
           children: [{
             title: '1页',
             key: '0-1-0',
-            imgUrl:'https://static.jeecg.com/upload/test/u24454681402491956848fm27gp0_1588149712663.jpg'
+            imgUrl: 'https://static.jeecg.com/upload/test/u24454681402491956848fm27gp0_1588149712663.jpg'
           }, {
             title: '2页',
             key: '0-1-1',
-            imgUrl:'https://static.jeecg.com/upload/test/u8891206113801177793fm27gp0_1588149704459.jpg'
+            imgUrl: 'https://static.jeecg.com/upload/test/u8891206113801177793fm27gp0_1588149704459.jpg'
           }]
-        },{
+        }, {
           title: '第三页',
           key: '0-2',
           children: [{
             title: '1页',
             key: '0-2-0',
-            imgUrl:'https://static.jeecg.com/upload/test/1374962_1587621329085.jpg'
+            imgUrl: 'https://static.jeecg.com/upload/test/1374962_1587621329085.jpg'
           }]
         }],
-        selectedKeys:[],
-        expandedKeys:[],
-        sort:0,
-        imgUrl:'',
-        navName:'',
-        imgList:[],
+        selectedKeys: [],
+        expandedKeys: [],
+        sort: 0,
+        imgUrl: '',
+        navName: '',
+        imgList: []
       }
     },
-    created(){
-      this.getImgList();
+    created() {
+      this.getImgList()
     },
     methods: {
-      getImgList(){
-        var count = 0;
-        for(var i=0;i<this.treeData.length;i++){
-          for(var j=0;j<this.treeData[i].children.length;j++){
-            this.imgList.push({key:this.treeData[i].children[j].key,pkey:this.treeData[i].key,sort:count++,
-              imgUrl:this.treeData[i].children[j].imgUrl,navName:this.treeData[i].title+"/"+this.treeData[i].children[j].title})
+      getImgList() {
+        var count = 0
+        for (var i = 0; i < this.treeData.length; i++) {
+          for (var j = 0; j < this.treeData[i].children.length; j++) {
+            this.imgList.push({ key: this.treeData[i].children[j].key,
+pkey: this.treeData[i].key,
+sort: count++,
+              imgUrl: this.treeData[i].children[j].imgUrl,
+navName: this.treeData[i].title + '/' + this.treeData[i].children[j].title })
           }
         }
-        this.setValue(this.imgList[this.sort]);
+        this.setValue(this.imgList[this.sort])
       },
       onSelect (selectedKeys, info) {
-        for(var i=0;i<this.imgList.length;i++){
-          if(this.imgList[i].key === selectedKeys[0]){
-            this.sort = this.imgList[i].sort;
-            this.setValue(this.imgList[i]);
-            break;
+        for (var i = 0; i < this.imgList.length; i++) {
+          if (this.imgList[i].key === selectedKeys[0]) {
+            this.sort = this.imgList[i].sort
+            this.setValue(this.imgList[i])
+            break
           }
         }
       },
       onExpand (expandedKeys) {
-        this.expandedKeys = [];
-        if(expandedKeys !== null && expandedKeys !== ''){
-          this.expandedKeys[0] = expandedKeys[1];
+        this.expandedKeys = []
+        if (expandedKeys !== null && expandedKeys !== '') {
+          this.expandedKeys[0] = expandedKeys[1]
         }
       },
-      prev(){
-        if(this.sort === 0){
-          this.sort = this.imgList.length-1;
-        }else{
-          this.sort = this.sort - 1;
+      prev() {
+        if (this.sort === 0) {
+          this.sort = this.imgList.length - 1
+        } else {
+          this.sort = this.sort - 1
         }
-        this.setValue(this.imgList[this.sort]);
+        this.setValue(this.imgList[this.sort])
       },
-      next(){
-        if(this.sort === this.imgList.length-1){
-          this.sort = 0;
-        }else{
-          this.sort = this.sort + 1;
+      next() {
+        if (this.sort === this.imgList.length - 1) {
+          this.sort = 0
+        } else {
+          this.sort = this.sort + 1
         }
-        this.setValue(this.imgList[this.sort]);
+        this.setValue(this.imgList[this.sort])
       },
       // 设置受控节点值
-      setValue(value){
-        this.selectedKeys = [];
-        this.imgUrl = value.imgUrl;
-        this.selectedKeys[0] = value.key;
-        this.expandedKeys[0] = value.pkey;
-        this.navName = value.navName;
+      setValue(value) {
+        this.selectedKeys = []
+        this.imgUrl = value.imgUrl
+        this.selectedKeys[0] = value.key
+        this.expandedKeys[0] = value.pkey
+        this.navName = value.navName
       }
     }
   }

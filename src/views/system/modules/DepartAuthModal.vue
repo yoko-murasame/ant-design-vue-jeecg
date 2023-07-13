@@ -3,7 +3,7 @@
     <template v-if="this.departId">
       <a-spin :spinning="loading">
         <a-form>
-          <a-form-item label='所拥有的权限'>
+          <a-form-item label="所拥有的权限">
             <a-tree
               checkable
               @check="onCheck"
@@ -52,52 +52,52 @@
 </template>
 
 <script>
-  import {queryTreeListForRole,queryDepartPermission,saveDepartPermission} from '@/api/api'
+  import { queryTreeListForRole, queryDepartPermission, saveDepartPermission } from '@/api/api'
   import DepartDataruleModal from './DepartDataruleModal'
 
   export default {
     name: 'DepartAuthModal',
     components: { DepartDataruleModal },
-    data(){
+    data() {
       return {
-        departId:"",
+        departId: '',
         treeData: [],
-        defaultCheckedKeys:[],
-        checkedKeys:[],
-        halfCheckedKeys:[],
-        expandedKeysss:[],
-        allTreeKeys:[],
+        defaultCheckedKeys: [],
+        checkedKeys: [],
+        halfCheckedKeys: [],
+        expandedKeysss: [],
+        allTreeKeys: [],
         autoExpandParent: true,
         checkStrictly: false,
-        title:"部门权限配置",
+        title: '部门权限配置',
         visible: false,
         loading: false,
-        selectedKeys:[]
+        selectedKeys: []
       }
     },
     methods: {
-      onTreeNodeSelect(id){
-        if(id && id.length>0){
+      onTreeNodeSelect(id) {
+        if (id && id.length > 0) {
           this.selectedKeys = id
         }
-        this.$refs.datarule.show(this.selectedKeys[0],this.departId)
+        this.$refs.datarule.show(this.selectedKeys[0], this.departId)
       },
       onCheck (checkedKeys, { halfCheckedKeys }) {
         // 保存选中的和半选中的，后面保存的时候合并提交
         this.checkedKeys = checkedKeys
         this.halfCheckedKeys = halfCheckedKeys
       },
-      show(departId){
-        this.departId=departId
-        this.loadData();
+      show(departId) {
+        this.departId = departId
+        this.loadData()
       },
       close () {
         this.reset()
-        this.$emit('close');
-        this.visible = false;
+        this.$emit('close')
+        this.visible = false
       },
-      onExpand(expandedKeys){
-        this.expandedKeysss = expandedKeys;
+      onExpand(expandedKeys) {
+        this.expandedKeysss = expandedKeys
         this.autoExpandParent = false
       },
       reset () {
@@ -122,48 +122,48 @@
         this.close()
       },
       handleSubmit() {
-        let that = this;
-        if(!that.departId){
+        let that = this
+        if (!that.departId) {
           this.$message.warning('请点击选择一个部门!')
         }
         let checkedKeys = [...that.checkedKeys, ...that.halfCheckedKeys]
-        const permissionIds = checkedKeys.join(",")
-        let params =  {
-          departId:that.departId,
+        const permissionIds = checkedKeys.join(',')
+        let params = {
+          departId: that.departId,
           permissionIds,
-          lastpermissionIds:that.defaultCheckedKeys.join(","),
-        };
-        that.loading = true;
-        saveDepartPermission(params).then((res)=>{
-          if(res.success){
-            that.$message.success(res.message);
-            that.loading = false;
-            that.loadData();
-          }else {
-            that.$message.error(res.message);
-            that.loading = false;
+          lastpermissionIds: that.defaultCheckedKeys.join(',')
+        }
+        that.loading = true
+        saveDepartPermission(params).then((res) => {
+          if (res.success) {
+            that.$message.success(res.message)
+            that.loading = false
+            that.loadData()
+          } else {
+            that.$message.error(res.message)
+            that.loading = false
           }
         })
       },
       convertTreeListToKeyLeafPairs(treeList, keyLeafPair = []) {
-        for(const {key, isLeaf, children} of treeList) {
-          keyLeafPair.push({key, isLeaf})
-          if(children && children.length > 0) {
+        for (const { key, isLeaf, children } of treeList) {
+          keyLeafPair.push({ key, isLeaf })
+          if (children && children.length > 0) {
             this.convertTreeListToKeyLeafPairs(children, keyLeafPair)
           }
         }
-        return keyLeafPair;
+        return keyLeafPair
       },
       emptyCurrForm() {
         this.form.resetFields()
       },
-      loadData(){
-        this.loading = true;
+      loadData() {
+        this.loading = true
         queryTreeListForRole().then((res) => {
           this.treeData = res.result.treeList
           this.allTreeKeys = res.result.ids
           const keyLeafPairs = this.convertTreeListToKeyLeafPairs(this.treeData)
-          queryDepartPermission({departId:this.departId}).then((res)=>{
+          queryDepartPermission({ departId: this.departId }).then((res) => {
             // 过滤出 leaf node 即可，即选中的
             // Tree组件中checkStrictly默认为false的时候，选中子节点，父节点会自动设置选中或半选中
             // 保存 checkedKeys 以及 halfCheckedKeys 以便于未做任何操作时提交表单数据
@@ -175,15 +175,15 @@
               const keyLeafPair = keyLeafPairs.filter(item => item.key === key)[0]
               return keyLeafPair && !keyLeafPair.isLeaf
             })
-            this.checkedKeys = [...checkedKeys];
+            this.checkedKeys = [...checkedKeys]
             this.halfCheckedKeys = [...halfCheckedKeys]
-            this.defaultCheckedKeys = [...halfCheckedKeys, ...checkedKeys];
-            this.expandedKeysss = this.allTreeKeys;
-            this.loading = false;
+            this.defaultCheckedKeys = [...halfCheckedKeys, ...checkedKeys]
+            this.expandedKeysss = this.allTreeKeys
+            this.loading = false
           })
         })
       }
-    },
+    }
   }
 </script>
 

@@ -67,7 +67,7 @@
   import FooterToolBar from '@/components/tools/FooterToolBar'
 
   export default {
-    name: "AdvancedForm",
+    name: 'AdvancedForm',
     components: {
       FooterToolBar,
       RepositoryForm,

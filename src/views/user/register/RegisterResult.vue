@@ -15,20 +15,20 @@
   import Result from '@/views/result/Result'
 
   export default {
-    name: "RegisterResult",
+    name: 'RegisterResult',
     components: {
       Result
     },
     data () {
       return {
-        model: {},
+        model: {}
       }
     },
     computed: {
       email () {
         let v = this.model ? this.model.username || this.model.mobile : ' XXX '
         let title = `你的账户：${v} 注册成功`
-        this.username = v;
+        this.username = v
         return title
       }
     },
@@ -37,12 +37,12 @@
     },
     methods: {
       goHomeHandle () {
-        let params={};
-        params.username=this.model.username;
-        params.password=this.model.password;
-        console.log(params);
-        this.$router.push({name:'login',params})
-      },
+        let params = {}
+        params.username = this.model.username
+        params.password = this.model.password
+        console.log(params)
+        this.$router.push({ name: 'login', params })
+      }
     }
   }
 </script>

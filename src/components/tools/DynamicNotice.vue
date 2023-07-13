@@ -16,21 +16,21 @@
     },
     computed: {
       comp: function () {
-        if(!this.path){
-          return null;
+        if (!this.path) {
+          return null
         }
         return () => import(`@/views/${this.path}.vue`)
       }
     },
-    props: ['path','formData'],
+    props: ['path', 'formData'],
     methods: {
       detail () {
         setTimeout(() => {
-          if(this.path){
-            this.$refs.compModel.view(this.formData);
+          if (this.path) {
+            this.$refs.compModel.view(this.formData)
           }
         }, 200)
-      },
+      }
     }
   }
 </script>

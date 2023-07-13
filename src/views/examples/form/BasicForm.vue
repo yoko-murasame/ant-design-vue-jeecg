@@ -53,7 +53,7 @@
         label="客户"
         :labelCol="{lg: {span: 7}, sm: {span: 7}}"
         :wrapperCol="{lg: {span: 10}, sm: {span: 17} }">
-        <a-input 
+        <a-input
           placeholder="请描述你服务的客户，内部客户直接 @姓名／工号"
           v-decorator="[
             'customer',
@@ -117,7 +117,7 @@
         value: 1,
 
         // form
-        form: this.$form.createForm(this),
+        form: this.$form.createForm(this)
 
       }
     },

@@ -13,26 +13,26 @@
   export default {
     name: 'JVxeNormalCell',
     mixins: [JVxeCellMixins],
-    components: {ReloadEffect},
+    components: { ReloadEffect },
     computed: {
       reloadEffectRowKeysMap() {
         return this.renderOptions.reloadEffectRowKeysMap
       },
       reloadEffect() {
         return (this.renderOptions.reloadEffect && this.reloadEffectRowKeysMap[this.row.id]) === true
-      },
+      }
     },
     methods: {
       // 特效结束
       handleEffectEnd() {
         this.$delete(this.reloadEffectRowKeysMap, this.row.id)
-      },
+      }
     },
     // 【组件增强】注释详见：JVxeCellMixins.js
     enhanced: {
       switches: {
-        editRender: false,
-      },
+        editRender: false
+      }
     }
   }
 </script>

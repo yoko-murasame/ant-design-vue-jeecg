@@ -81,7 +81,7 @@ VXETable.interceptor.add('event.clearActived', function (params, event, target) 
  * @param span 显示组件，可空，默认为 JVxeNormalCell 组件
  */
 export function mapCell(type, cell, span) {
-  let cells = {[type]: cell}
+  let cells = { [type]: cell }
   if (span) {
     cells[type + ':span'] = span
   }

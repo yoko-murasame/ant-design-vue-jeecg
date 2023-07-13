@@ -55,7 +55,7 @@
       v-bind="cellProps"
       @change="handleChangeUpload"
     >
-      <a-button icon="upload">{{originColumn.btnText || '点击上传'}}</a-button>
+      <a-button icon="upload">{{ originColumn.btnText || '点击上传' }}</a-button>
     </a-upload>
   </div>
 </template>
@@ -71,13 +71,13 @@
     props: {},
     data() {
       return {
-        innerFile: null,
+        innerFile: null
       }
     },
     computed: {
       /** upload headers */
       uploadHeaders() {
-        let {originColumn: col} = this
+        let { originColumn: col } = this
         let headers = {}
         if (col.token === true) {
           headers['X-Access-Token'] = this.$ls.get(ACCESS_TOKEN)
@@ -87,7 +87,7 @@
 
       hasFile() {
         return this.innerFile != null
-      },
+      }
 
     },
     watch: {
@@ -99,14 +99,14 @@
           } else {
             this.innerFile = null
           }
-        },
-      },
+        }
+      }
     },
     methods: {
 
       handleChangeUpload(info) {
-        let {row, originColumn: col} = this
-        let {file} = info
+        let { row, originColumn: col } = this
+        let { file } = info
         let value = {
           name: file.name,
           type: file.type,
@@ -135,7 +135,7 @@
         this.innerFile = value
         // issues/I5FTO6 JVxeTypes.upload 文件上传的时候，触发不了事件
         if (value.path) {
-          this.handleChangeCommon(fileGetValue(value));
+          this.handleChangeCommon(fileGetValue(value))
         }
       },
 
@@ -144,7 +144,7 @@
       // },
 
       handleClickDownloadFile(id) {
-        let {path} = this.value || {}
+        let { path } = this.value || {}
         if (path) {
           let url = getFileAccessHttpUrl(path)
           window.open(url)
@@ -153,14 +153,14 @@
 
       handleClickDeleteFile() {
         this.handleChangeCommon(null)
-      },
+      }
 
     },
     // 【组件增强】注释详见：JVxeCellMixins.js
     enhanced: {
-      switches: {visible: true},
+      switches: { visible: true },
       getValue: value => fileGetValue(value),
-      setValue: value => fileSetValue(value),
+      setValue: value => fileSetValue(value)
     }
   }
 
@@ -178,7 +178,7 @@
       return {
         name: name,
         path: value,
-        status: 'done',
+        status: 'done'
       }
     }
     return value

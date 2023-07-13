@@ -42,10 +42,10 @@
         </a-form-model-item>
         <a-form-model-item>
           <a-input
-              size="large"
-              type="text"
-              placeholder="手机号"
-              v-model="thirdPhone">
+            size="large"
+            type="text"
+            placeholder="手机号"
+            v-model="thirdPhone">
             <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
           </a-input>
         </a-form-model-item>
@@ -54,21 +54,21 @@
           <a-col class="gutter-row" :span="16">
             <a-form-model-item>
               <a-input
-                  size="large"
-                  type="text"
-                  placeholder="请输入验证码"
-                  v-model="thirdCaptcha">
+                size="large"
+                type="text"
+                placeholder="请输入验证码"
+                v-model="thirdCaptcha">
                 <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>
               </a-input>
             </a-form-model-item>
           </a-col>
           <a-col class="gutter-row" :span="8">
             <a-button
-                class="getCaptcha"
-                tabindex="-1"
-                :disabled="thirdState.smsSendBtn"
-                @click.stop.prevent="getThirdCaptcha"
-                v-text="!thirdState.smsSendBtn && '获取验证码' || (thirdState.time+' s')"></a-button>
+              class="getCaptcha"
+              tabindex="-1"
+              :disabled="thirdState.smsSendBtn"
+              @click.stop.prevent="getThirdCaptcha"
+              v-text="!thirdState.smsSendBtn && '获取验证码' || (thirdState.time+' s')"></a-button>
           </a-col>
         </a-row>
       </div>
@@ -78,17 +78,17 @@
 
 <script>
 import { JeecgThirdLoginMixin } from '@views/user/third/JeecgThirdLoginMixin'
-import { Icon } from 'ant-design-vue';
+import { Icon } from 'ant-design-vue'
 
 const IconFont = Icon.createFromIconfontCN({
  // scriptUrl: '//at.alicdn.com/t/font_2316098_umqusozousr.js',
-  scriptUrl: '/cdn/font-icon/font_2316098_umqusozousr.js',
-});
+  scriptUrl: '/cdn/font-icon/font_2316098_umqusozousr.js'
+})
 export default {
-  name: 'thirdLogin',
+  name: 'ThirdLogin',
   mixins: [JeecgThirdLoginMixin],
   components: {
-    IconFont,
+    IconFont
   }
 }
 </script>

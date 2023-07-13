@@ -4,7 +4,6 @@
     <div class="table-page-search-wrapper">
       <a-form-model ref="form" :model="formData" layout="inline">
 
-
         <!--  字典下拉 -->
         <a-row :gutter="24">
           <a-col :span="12">
@@ -13,7 +12,7 @@
               <!--  <j-dict-select-tag title="性别" dictCode="sex" disabled/>-->
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.sex}}</a-col>
+          <a-col :span="12">选中值：{{ formData.sex }}</a-col>
         </a-row>
 
         <a-row :gutter="24">
@@ -22,7 +21,7 @@
               <j-dict-select-tag v-model="formData.sex2" type="radioButton" title="性别2" dictCode="sex" placeholder="请选择性别2"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.sex2}}</a-col>
+          <a-col :span="12">选中值：{{ formData.sex2 }}</a-col>
         </a-row>
 
         <!--  字典表下拉 -->
@@ -32,7 +31,7 @@
               <j-dict-select-tag v-model="formData.user" placeholder="请选择用户" dictCode="sys_user,realname,id"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.user}}</a-col>
+          <a-col :span="12">选中值：{{ formData.user }}</a-col>
         </a-row>
 
         <!--  带条件字典表下拉 -->
@@ -42,9 +41,8 @@
               <j-dict-select-tag v-model="formData.user2" placeholder="请选择用户" dictCode="sys_user,realname,id,username!='admin' order by create_time"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.user2}}</a-col>
+          <a-col :span="12">选中值：{{ formData.user2 }}</a-col>
         </a-row>
-
 
         <!-- 字典搜索  -->
         <a-row :gutter="24">
@@ -54,7 +52,7 @@
               </j-search-select-tag>
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.searchValue}}</a-col>
+          <a-col :span="12">选中值：{{ formData.searchValue }}</a-col>
         </a-row>
         <!--  字典搜索多选 -->
         <a-row :gutter="24">
@@ -64,7 +62,7 @@
               </j-search-select-tag>
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.searchMultipleValue}}</a-col>
+          <a-col :span="12">选中值：{{ formData.searchMultipleValue }}</a-col>
         </a-row>
 
         <!--  字典搜索 异步加载 -->
@@ -80,23 +78,23 @@
               </j-search-select-tag>
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.asyncSelectValue}}</a-col>
+          <a-col :span="12">选中值：{{ formData.asyncSelectValue }}</a-col>
         </a-row>
         <!--  字典搜索多选 异步加载 -->
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-model-item label="字典搜索多选(异步)" prop="asyncMultipleValue">
               <j-search-select-tag
-                  placeholder="请做出你的选择"
-                  v-model="formData.asyncMultipleValue"
-                  dict="sys_depart,depart_name,id"
-                  :pageSize="6"
-                  :async="true"
-                  mode="multiple">
+                placeholder="请做出你的选择"
+                v-model="formData.asyncMultipleValue"
+                dict="sys_depart,depart_name,id"
+                :pageSize="6"
+                :async="true"
+                mode="multiple">
               </j-search-select-tag>
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.asyncMultipleValue}}</a-col>
+          <a-col :span="12">选中值：{{ formData.asyncMultipleValue }}</a-col>
         </a-row>
 
         <!--  JMultiSelectTag -->
@@ -159,17 +157,17 @@
               <j-select-role v-model="formData.selectRole" @change="changeMe"/>
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.selectRole}}</a-col>
+          <a-col :span="12">选中值：{{ formData.selectRole }}</a-col>
         </a-row>
 
         <!-- 职务选择 -->
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-model-item label="选择职务" prop="selectPosition">
-              <j-select-position  :buttons="false" v-model="formData.selectPosition" />
+              <j-select-position :buttons="false" v-model="formData.selectPosition" />
             </a-form-model-item>
           </a-col>
-          <a-col :span="12">选中值：{{ formData.selectPosition}}</a-col>
+          <a-col :span="12">选中值：{{ formData.selectPosition }}</a-col>
         </a-row>
 
         <!--  JCheckbox -->
@@ -333,7 +331,7 @@
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-model-item label="cron表达式" prop="cronExpression">
-               <j-easy-cron v-model="formData.cronExpression"></j-easy-cron>
+              <j-easy-cron v-model="formData.cronExpression"></j-easy-cron>
             </a-form-model-item>
           </a-col>
         </a-row>
@@ -433,7 +431,6 @@
           <a-col :span="12">输入的值(v-model)：{{ formData.areaLinkage1 }}</a-col>
         </a-row>
 
-
         <!-- 省市县级联 -->
         <a-row :gutter="24">
           <a-form-model-item label="省市县级联" prop="areaLinkage2">
@@ -454,7 +451,13 @@
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-model-item label="JPopup示例" prop="jPopup">
-              <j-popup v-model="formData.jPopup" code="demo" field="name" orgFields="name" destFields="name" :multi="true"/>
+              <j-popup
+                v-model="formData.jPopup"
+                code="demo"
+                field="name"
+                orgFields="name"
+                destFields="name"
+                :multi="true"/>
             </a-form-model-item>
           </a-col>
           <a-col :span="12">选择的值(v-model)：{{ formData.jPopup }}</a-col>
@@ -480,9 +483,9 @@
   import JEllipsis from '@/components/jeecg/JEllipsis'
   import JSlider from '@/components/jeecg/JSlider'
   import JSelectMultiple from '@/components/jeecg/JSelectMultiple'
-  import JTreeDict from "../../components/jeecg/JTreeDict.vue";
-  import JCron from "@/components/jeecg/JCron.vue";
-  import JEasyCron from "@/components/jeecg/JEasyCron";
+  import JTreeDict from '../../components/jeecg/JTreeDict.vue'
+  import JCron from '@/components/jeecg/JCron.vue'
+  import JEasyCron from '@/components/jeecg/JEasyCron'
   import JTreeSelect from '@/components/jeecg/JTreeSelect'
   import JSuperQuery from '@/components/jeecg/JSuperQuery'
   import JUpload from '@/components/jeecg/JUpload'
@@ -497,7 +500,7 @@
 
   export default {
     name: 'SelectDemo',
-    inject:['closeCurrent'],
+    inject: ['closeCurrent'],
     components: {
       JMarkdownEditor,
       JAreaLinkage,
@@ -514,8 +517,16 @@
       JSelectRole,
       JCheckbox,
       JCodeEditor,
-      JDate, JEditor, JEllipsis, JSlider, JSelectMultiple,
-      JCron, JEasyCron,JTreeSelect, JSuperQuery, JMultiSelectTag,
+      JDate,
+JEditor,
+JEllipsis,
+JSlider,
+JSelectMultiple,
+      JCron,
+JEasyCron,
+JTreeSelect,
+JSuperQuery,
+JMultiSelectTag,
       JSearchSelectTag
     },
     data() {
@@ -537,45 +548,47 @@
           jEllipsis: '这是一串很长很长的文字段落。这是一串很长很长的文字段落。这是一串很长很长的文字段落。这是一串很长很长的文字段落。',
           jSlider: false,
           jSelectMultiple: 'Integer,Boolean',
-          imgList:[],
-          fileList:[],
+          imgList: [],
+          fileList: [],
           content: '',
-          cronExpression: '* * * * * ? *',
+          cronExpression: '* * * * * ? *'
         },
         jCheckboxOptions: [
-          {label: 'Jeecg', value: 'jeecg'},
-          {label: 'Jeecg-Boot', value: 'jeecgboot'},
-          {label: 'Spring', value: 'spring', disabled: true},
-          {label: 'MyBaits', value: 'mybatis'}
+          { label: 'Jeecg', value: 'jeecg' },
+          { label: 'Jeecg-Boot', value: 'jeecgboot' },
+          { label: 'Spring', value: 'spring', disabled: true },
+          { label: 'MyBaits', value: 'mybatis' }
         ],
         jSelectMultipleOptions: [
-          {text: '字符串', value: 'String'},
-          {text: '整数型', value: 'Integer'},
-          {text: '浮点型', value: 'Double'},
-          {text: '布尔型', value: 'Boolean'}
+          { text: '字符串', value: 'String' },
+          { text: '整数型', value: 'Integer' },
+          { text: '浮点型', value: 'Double' },
+          { text: '布尔型', value: 'Boolean' }
         ],
         modal: {
           title: '这里是标题',
           visible: false,
           fullscreen: true,
-          switchFullscreen: true,
+          switchFullscreen: true
         },
         cron: '',
         superQuery: {
           fieldList: [
-            { type: 'input', value: 'name', text: '姓名', },
-            { type: 'switch', value: 'switch', text: '开关', },
+            { type: 'input', value: 'name', text: '姓名' },
+            { type: 'switch', value: 'switch', text: '开关' },
             { type: 'select', value: 'sex', text: '性别', dictCode: 'sex' },
-            { type: 'number', value: 'age', text: '年龄', },
+            { type: 'number', value: 'age', text: '年龄' },
             {
-              type: 'select', value: 'hobby', text: '爱好',
+              type: 'select',
+value: 'hobby',
+text: '爱好',
               options: [
                 { label: '音乐', value: '1' },
                 { label: '游戏', value: '2' },
                 { label: '电影', value: '3' },
-                { label: '读书', value: '4' },
+                { label: '读书', value: '4' }
               ]
-            },
+            }
           ]
         },
         jInput: {
@@ -584,29 +597,28 @@
             { value: 'like', label: '模糊（like）' },
             { value: 'ne', label: '不等于（ne）' },
             { value: 'ge', label: '大于等于（ge）' },
-            { value: 'le', label: '小于等于（le)' },
-          ],
+            { value: 'le', label: '小于等于（le)' }
+          ]
         },
-        searchOptions:[{
-          text:"选项一",
-          value:"1"
-        },{
-          text:"选项二",
-          value:"2"
-        },{
-          text:"选项三",
-          value:"3"
+        searchOptions: [{
+          text: '选项一',
+          value: '1'
+        }, {
+          text: '选项二',
+          value: '2'
+        }, {
+          text: '选项三',
+          value: '3'
         }],
 
         // 选择用户查询条件配置
         selectUserQueryConfig: [
-          {key: 'phone', label: '电话'},
-        ],
+          { key: 'phone', label: '电话' }
+        ]
       }
     },
     computed: {
       nameList: function() {
-
         var names = []
         for (var a = 0; a < this.selectList.length; a++) {
           names.push(this.selectList[a].name)
@@ -635,7 +647,7 @@
       selectReset() {
         this.selectList = []
       },
-      //通过组织机构筛选选择用户
+      // 通过组织机构筛选选择用户
       onSearchDepUser() {
         this.$refs.JSearchUserByDep.showModal()
         this.selectedDepUsers = ''
@@ -652,7 +664,7 @@
         // 注意：以下代码必须存在
         // inject:['closeCurrent'],
         this.closeCurrent()
-      },
+      }
 
     }
   }

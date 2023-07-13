@@ -52,13 +52,13 @@
 
 <script>
   import { filterObj } from '@/utils/util'
-  import { getAction,putAction } from '@/api/manage'
+  import { getAction, putAction } from '@/api/manage'
   import ShowAnnouncement from '@/components/tools/ShowAnnouncement'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import DynamicNotice from '../../components/tools/DynamicNotice'
 
   export default {
-    name: "UserAnnouncementList",
+    name: 'UserAnnouncementList',
     mixins: [JeecgListMixin],
     components: {
       DynamicNotice,
@@ -70,112 +70,112 @@
         queryParam: {},
         columns: [{
           title: '标题',
-          align:"center",
+          align: 'center',
           dataIndex: 'titile'
-        },{
+        }, {
           title: '消息类型',
-          align: "center",
+          align: 'center',
           dataIndex: 'msgCategory',
           customRender: function (text) {
             if (text == '1') {
-              return "通知公告";
-            } else if (text == "2") {
-              return "系统消息";
+              return '通知公告'
+            } else if (text == '2') {
+              return '系统消息'
             } else {
-              return text;
+              return text
             }
           }
-        },{
+        }, {
           title: '发布人',
-          align:"center",
+          align: 'center',
           dataIndex: 'sender'
-        },{
+        }, {
           title: '发布时间',
-          align:"center",
+          align: 'center',
           dataIndex: 'sendTime'
-        },{
+        }, {
           title: '优先级',
-          align:"center",
+          align: 'center',
           dataIndex: 'priority',
-          customRender:function (text) {
-            if(text=='L'){
-              return "低";
-            }else if(text=="M"){
-              return "中";
-            }else if(text=="H"){
-              return "高";
+          customRender: function (text) {
+            if (text == 'L') {
+              return '低'
+            } else if (text == 'M') {
+              return '中'
+            } else if (text == 'H') {
+              return '高'
             } else {
-              return text;
+              return text
             }
           }
-        },{
+        }, {
           title: '阅读状态',
-          align:"center",
+          align: 'center',
           dataIndex: 'readFlag',
-          customRender:function (text) {
-            if(text=='0'){
-              return "未读";
-            }else if(text=="1"){
-              return "已读";
+          customRender: function (text) {
+            if (text == '0') {
+              return '未读'
+            } else if (text == '1') {
+              return '已读'
             } else {
-              return text;
+              return text
             }
           }
-        },{
+        }, {
           title: '操作',
           dataIndex: 'action',
-          align:"center",
-          scopedSlots: { customRender: 'action' },
+          align: 'center',
+          scopedSlots: { customRender: 'action' }
         }],
 		    url: {
-          list: "/sys/sysAnnouncementSend/getMyAnnouncementSend",
-          editCementSend:"sys/sysAnnouncementSend/editByAnntIdAndUserId",
-          readAllMsg:"sys/sysAnnouncementSend/readAll",
+          list: '/sys/sysAnnouncementSend/getMyAnnouncementSend',
+          editCementSend: 'sys/sysAnnouncementSend/editByAnntIdAndUserId',
+          readAllMsg: 'sys/sysAnnouncementSend/readAll'
         },
-        loading:false,
-        openPath:'',
-        formData:''
+        loading: false,
+        openPath: '',
+        formData: ''
       }
     },
     methods: {
-      handleDetail: function(record){
-        this.$refs.sysAnnouncementModal.detail(record);
-        this.$refs.sysAnnouncementModal.title="查看";
+      handleDetail: function(record) {
+        this.$refs.sysAnnouncementModal.detail(record)
+        this.$refs.sysAnnouncementModal.title = '查看'
       },
-      showAnnouncement(record){
-        putAction(this.url.editCementSend,{anntId:record.anntId}).then((res)=>{
-          if(res.success){
-            this.loadData();
+      showAnnouncement(record) {
+        putAction(this.url.editCementSend, { anntId: record.anntId }).then((res) => {
+          if (res.success) {
+            this.loadData()
             this.syncHeadNotic(record.anntId)
           }
-        });
-        if(record.openType==='component'){
-          this.openPath = record.openPage;
-          this.formData = {id:record.busId};
-          this.$refs.showDynamNotice.detail();
-        }else{
-          this.$refs.ShowAnnouncement.detail(record);
+        })
+        if (record.openType === 'component') {
+          this.openPath = record.openPage
+          this.formData = { id: record.busId }
+          this.$refs.showDynamNotice.detail()
+        } else {
+          this.$refs.ShowAnnouncement.detail(record)
         }
       },
-      syncHeadNotic(anntId){
-        getAction("sys/annountCement/syncNotic",{anntId:anntId})
+      syncHeadNotic(anntId) {
+        getAction('sys/annountCement/syncNotic', { anntId: anntId })
       },
-      readAll(){
-        var that = this;
+      readAll() {
+        var that = this
         that.$confirm({
-          title:"确认操作",
-          content:"是否全部标注已读?",
-          onOk: function(){
-            putAction(that.url.readAllMsg).then((res)=>{
-              if(res.success){
-                that.$message.success(res.message);
-                that.loadData();
-                that.syncHeadNotic();
+          title: '确认操作',
+          content: '是否全部标注已读?',
+          onOk: function() {
+            putAction(that.url.readAllMsg).then((res) => {
+              if (res.success) {
+                that.$message.success(res.message)
+                that.loadData()
+                that.syncHeadNotic()
               }
-            });
+            })
           }
-        });
-      },
+        })
+      }
     }
   }
 </script>

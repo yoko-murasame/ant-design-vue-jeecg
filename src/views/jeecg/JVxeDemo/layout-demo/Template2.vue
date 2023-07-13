@@ -73,7 +73,7 @@
             // 可切换的条数
             pageSizeOptions: ['10', '20', '30', '100', '200'],
             // 数据总数（目前并不知道真实的总数，所以先填写0，在后台查出来后再赋值）
-            total: 0,
+            total: 0
           },
           // 最后选中的行
           lastRow: null,
@@ -83,7 +83,7 @@
           dataSource: [],
           // 列配置，控制表格显示的列
           columns: [
-            {key: 'num', title: '序号', width: '80px'},
+            { key: 'num', title: '序号', width: '80px' },
             {
               // 字段key，跟后台数据的字段名匹配
               key: 'ship_name',
@@ -94,11 +94,11 @@
               // 如果加上了该属性，就代表当前单元格是可编辑的，type就是表单的类型，input就是简单的输入框
               type: JVXETypes.input
             },
-            {key: 'call', title: '呼叫', width: '80px', type: JVXETypes.input},
-            {key: 'len', title: '长', width: '80px', type: JVXETypes.input},
-            {key: 'ton', title: '吨', width: '120px', type: JVXETypes.input},
-            {key: 'payer', title: '付款方', width: '120px', type: JVXETypes.input},
-            {key: 'count', title: '数', width: '40px'},
+            { key: 'call', title: '呼叫', width: '80px', type: JVXETypes.input },
+            { key: 'len', title: '长', width: '80px', type: JVXETypes.input },
+            { key: 'ton', title: '吨', width: '120px', type: JVXETypes.input },
+            { key: 'payer', title: '付款方', width: '120px', type: JVXETypes.input },
+            { key: 'count', title: '数', width: '40px' },
             {
               key: 'company',
               title: '公司',
@@ -107,36 +107,36 @@
               minWidth: '180px',
               type: JVXETypes.input
             },
-            {key: 'trend', title: '动向', width: '120px', type: JVXETypes.input},
-          ],
+            { key: 'trend', title: '动向', width: '120px', type: JVXETypes.input }
+          ]
         },
         // 子级表的配置信息 （配置和主表的完全一致，就不写冗余的注释了）
         table2: {
           loading: false,
-          pagination: {current: 1, pageSize: 200, pageSizeOptions: ['100', '200'], total: 0},
+          pagination: { current: 1, pageSize: 200, pageSizeOptions: ['100', '200'], total: 0 },
           selectedRows: [],
           dataSource: [],
           columns: [
-            {key: 'dd_num', title: '调度序号', width: '120px'},
-            {key: 'tug', title: '拖轮', width: '180px', type: JVXETypes.input},
-            {key: 'work_start_time', title: '作业开始时间', width: '180px', type: JVXETypes.input},
-            {key: 'work_stop_time', title: '作业结束时间', width: '180px', type: JVXETypes.input},
-            {key: 'type', title: '船舶分类', width: '120px', type: JVXETypes.input},
-            {key: 'port_area', title: '所属港区', width: '120px', type: JVXETypes.input},
-          ],
+            { key: 'dd_num', title: '调度序号', width: '120px' },
+            { key: 'tug', title: '拖轮', width: '180px', type: JVXETypes.input },
+            { key: 'work_start_time', title: '作业开始时间', width: '180px', type: JVXETypes.input },
+            { key: 'work_stop_time', title: '作业结束时间', width: '180px', type: JVXETypes.input },
+            { key: 'type', title: '船舶分类', width: '120px', type: JVXETypes.input },
+            { key: 'port_area', title: '所属港区', width: '120px', type: JVXETypes.input }
+          ]
         },
         // 查询url地址
         url: {
-          getData: '/mock/vxe/getData',
-        },
+          getData: '/mock/vxe/getData'
+        }
       }
     },
     // 监听器
     watch: {
       // 监听table1 【主表】选择的数据发生了变化
-      ['table1.lastRow']() {
+      'table1.lastRow'() {
         this.loadTable2Data()
-      },
+      }
 
     },
     created() {
@@ -162,14 +162,13 @@
             // 重置选择
             this.table1.selectedRows = []
           } else {
-            this.$error({title: '主表查询失败', content: res.message})
+            this.$error({ title: '主表查询失败', content: res.message })
           }
         }).finally(() => {
           // 这里是无论成功或失败都会执行的方法，在这里关闭loading
           this.table1.loading = false
         })
       },
-
 
       // 加载table2【子表】的数据，根据主表的id进行查询
       loadTable2Data() {
@@ -195,7 +194,7 @@
             this.table2.dataSource = res.result.records
             this.table2.selectedRows = []
           } else {
-            this.$error({title: '子表查询失败', content: res.message})
+            this.$error({ title: '子表查询失败', content: res.message })
           }
         }).finally(() => {
           this.table2.loading = false
@@ -232,7 +231,7 @@
 
       /** 公共方法：处理表格选中变化事件 */
       handleTableSelectRowChange(table, event) {
-        let {row, action, selectedRows, $table} = event
+        let { row, action, selectedRows, $table } = event
         // 获取最后一个选中的
         let lastSelected = selectedRows[selectedRows.length - 1]
         if (action === 'selected') {
@@ -249,7 +248,7 @@
         }
         $table.setCurrentRow(table.lastRow)
         table.selectedRows = selectedRows
-      },
+      }
 
     }
   }

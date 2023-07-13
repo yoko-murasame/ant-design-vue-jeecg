@@ -47,9 +47,9 @@
         <a-card :title="'已选' + name" :bordered="false" :head-style="{padding:0}" :body-style="{padding:0}">
 
           <a-table size="middle" :rowKey="rowKey" bordered v-bind="selectedTable">
-              <span slot="action" slot-scope="text, record, index">
-                <a @click="handleDeleteSelected(record, index)">删除</a>
-              </span>
+            <span slot="action" slot-scope="text, record, index">
+              <a @click="handleDeleteSelected(record, index)">删除</a>
+            </span>
           </a-table>
 
         </a-card>
@@ -64,12 +64,12 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { pushIfNotExist } from '@/utils/util'
   import JSelectBizQueryItem from './JSelectBizQueryItem'
-  import {cloneDeep} from 'lodash'
+  import { cloneDeep } from 'lodash'
 
   export default {
     name: 'JSelectBizComponentModal',
     mixins: [JeecgListMixin],
-    components: {Ellipsis, JSelectBizQueryItem},
+    components: { Ellipsis, JSelectBizQueryItem },
     props: {
       value: {
         type: Array,
@@ -138,7 +138,7 @@
       ellipsisLength: {
         type: Number,
         default: 12
-      },
+      }
     },
     data() {
       return {
@@ -150,11 +150,11 @@
           columns: [
             {
               ...this.columns[0],
-              width: this.columns[0].widthRight || this.columns[0].width,
+              width: this.columns[0].widthRight || this.columns[0].width
             },
-            { title: '操作', dataIndex: 'action', align: 'center', width: 60, scopedSlots: { customRender: 'action' }, }
+            { title: '操作', dataIndex: 'action', align: 'center', width: 60, scopedSlots: { customRender: 'action' } }
           ],
-          dataSource: [],
+          dataSource: []
         },
         renderEllipsis: (value) => (<ellipsis length={this.ellipsisLength}>{value}</ellipsis>),
         url: { list: this.listUrl },
@@ -172,7 +172,7 @@
         },
         options: [],
         dataSourceMap: {},
-        showMoreQueryItems: false,
+        showMoreQueryItems: false
       }
     },
     computed: {
@@ -199,7 +199,7 @@
           }
         })
         return columns
-      },
+      }
     },
     watch: {
       value: {
@@ -223,11 +223,11 @@
         immediate: true,
         deep: true,
         handler(val) {
-          //update--begin--autor:scott-----date:20200927------for：选取职务名称出现全选 #1753-----
-          if(this.innerValue){
-            this.innerValue.length=0;
+          // update--begin--autor:scott-----date:20200927------for：选取职务名称出现全选 #1753-----
+          if (this.innerValue) {
+            this.innerValue.length = 0
           }
-          //update--end--autor:scott-----date:20200927------for：选取职务名称出现全选 #1753-----
+          // update--end--autor:scott-----date:20200927------for：选取职务名称出现全选 #1753-----
           this.selectedTable.dataSource = val.map(key => {
             for (let data of this.dataSource) {
               if (data[this.rowKey] === key) {
@@ -244,7 +244,7 @@
             console.warn('未找到选择的行信息，key：' + key)
             return {}
           })
-        },
+        }
       }
     },
 
@@ -324,12 +324,12 @@
       /** 删除已选择的 */
       handleDeleteSelected(record, index) {
         this.selectedRowKeys.splice(this.selectedRowKeys.indexOf(record[this.rowKey]), 1)
-        //update--begin--autor:wangshuai-----date:20200722------for：JSelectBizComponent组件切换页数值问题------
+        // update--begin--autor:wangshuai-----date:20200722------for：JSelectBizComponent组件切换页数值问题------
         this.selectedTable.dataSource.splice(this.selectedTable.dataSource.indexOf(record), 1)
         this.innerValue.splice(this.innerValue.indexOf(record[this.valueKey]), 1)
-        console.log("this.selectedRowKeys:",this.selectedRowKeys)
-        console.log("this.selectedTable.dataSource:",this.selectedTable.dataSource)
-        //update--begin--autor:wangshuai-----date:20200722------for：JSelectBizComponent组件切换页数值问题------
+        console.log('this.selectedRowKeys:', this.selectedRowKeys)
+        console.log('this.selectedTable.dataSource:', this.selectedTable.dataSource)
+        // update--begin--autor:wangshuai-----date:20200722------for：JSelectBizComponent组件切换页数值问题------
       },
 
       customRowFn(record) {
@@ -352,7 +352,7 @@
             }
           }
         }
-      },
+      }
 
     }
   }

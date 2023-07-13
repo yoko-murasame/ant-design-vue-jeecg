@@ -79,14 +79,14 @@ export default {
       destroyOnClose: {
         type: Boolean,
         default: true
-      },
+      }
     },
     data() {
       return {
         // 内部使用的 slots ，不再处理
         usedSlots: ['title'],
         // 实际控制是否全屏的参数
-        innerFullscreen: this.fullscreen,
+        innerFullscreen: this.fullscreen
       }
     },
     computed: {
@@ -104,7 +104,7 @@ export default {
           'j-modal-box': true,
           'fullscreen': this.innerFullscreen,
           'no-title': this.isNoTitle,
-          'no-footer': this.isNoFooter,
+          'no-footer': this.isNoFooter
         }
       },
       modalStyle() {
@@ -133,7 +133,7 @@ export default {
       // 切换全屏的按钮图标
       fullscreenButtonIcon() {
         return this.innerFullscreen ? 'fullscreen-exit' : 'fullscreen'
-      },
+      }
     },
     watch: {
       visible() {
@@ -143,7 +143,7 @@ export default {
       },
       innerFullscreen(val) {
         this.$emit('update:fullscreen', val)
-      },
+      }
     },
     methods: {
 
@@ -184,14 +184,14 @@ export default {
             this.dragSettings.headerEl.style.cursor = 'move'
           }
         }
-      },
+      }
 
     }
   }
 </script>
 
 <style lang="less">
-  
+
   .j-modal-box {
     &.fullscreen {
       top: 0;

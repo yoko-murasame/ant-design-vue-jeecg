@@ -61,10 +61,10 @@
         type: Boolean,
         default: true
       },
-      condition:{
-        type:String,
-        default:'',
-        required:false
+      condition: {
+        type: String,
+        default: '',
+        required: false
       }
     },
     data() {
@@ -107,7 +107,7 @@
     },
     methods: {
 
-      /** 加载数据*/
+      /** 加载数据 */
       loadData(id = this.topValue, first = true, url = this.url) {
         this.$emit('requestBefore', { first })
 
@@ -117,7 +117,7 @@
 
         let params = Object.assign({}, this.queryParams || {})
         params[this.queryKey] = id
-        if(this.condition && this.condition.length>0){
+        if (this.condition && this.condition.length > 0) {
           params['condition'] = this.condition
         }
 

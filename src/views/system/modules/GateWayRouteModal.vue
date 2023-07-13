@@ -25,29 +25,39 @@
 
       <a-form-model-item prop="predicates" label="路由条件">
         <div v-for="(item,index) in router.predicates">
-          <a-divider>{{item.name}}
+          <a-divider>{{ item.name }}
             <a-icon type="delete" size="22" @click="removePredicate(router,index)"/>
           </a-divider>
           <!--当name在 genKeyRouter 时不需要指定key，后台自动拼key -->
           <div v-if="genKeyRouter.includes(item.name)">
             <template v-for="(tag, tagIndex) in item.args">
-              <a-input v-if="tagIndex==currentTagIndex&&index==currentNameIndex" ref="input" type="text" size="small"
-                       :style="{ width: '190px' }"
-                       :value="tag"
-                       @change="handleInputChange" @blur="handleInputEditConfirm(item,tag,tagIndex)"
-                       @keyup.enter="handleInputEditConfirm(item,tag,tagIndex)"/>
+              <a-input
+                v-if="tagIndex==currentTagIndex&&index==currentNameIndex"
+                ref="input"
+                type="text"
+                size="small"
+                :style="{ width: '190px' }"
+                :value="tag"
+                @change="handleInputChange"
+                @blur="handleInputEditConfirm(item,tag,tagIndex)"
+                @keyup.enter="handleInputEditConfirm(item,tag,tagIndex)"/>
               <a-tag v-else :key="tag" :closable="true" @close="() => removeTag(item,tag)" @click="editTag(tag,tagIndex,index)">
                 {{ tag }}
               </a-tag>
             </template>
-            <a-input v-if="inputVisible&&index==currentNameIndex" ref="input" type="text" size="small"
-                     :style="{ width: '100px' }"
-                     :value="inputValue"
-                     @change="handleInputChange" @blur="handleInputConfirm(item)"
-                     @keyup.enter="handleInputConfirm(item)"/>
+            <a-input
+              v-if="inputVisible&&index==currentNameIndex"
+              ref="input"
+              type="text"
+              size="small"
+              :style="{ width: '100px' }"
+              :value="inputValue"
+              @change="handleInputChange"
+              @blur="handleInputConfirm(item)"
+              @keyup.enter="handleInputConfirm(item)"/>
             <a-tag v-else style="background: #fff; borderStyle: dashed;" @click="showInput(item,index)">
               <a-icon type="plus"/>
-              新建{{item.name}}
+              新建{{ item.name }}
             </a-tag>
           </div>
           <!--当name不在 genKeyRouter 时需要指定key-->
@@ -70,7 +80,7 @@
         <p class="btn" style="padding-top: 10px">
           <a-dropdown>
             <a-menu slot="overlay">
-              <a-menu-item :key="item.name" v-for="item in tagArray" @click="predicatesHandleMenuClick(item)">{{item.name}}</a-menu-item>
+              <a-menu-item :key="item.name" v-for="item in tagArray" @click="predicatesHandleMenuClick(item)">{{ item.name }}</a-menu-item>
             </a-menu>
             <a-button type="dashed" style="margin-left: 8px;width:100%"> 添加路由条件
               <a-icon type="down"/>
@@ -80,7 +90,7 @@
       </a-form-model-item>
       <a-form-model-item prop="predicates" label="过滤器">
         <div v-for="(item,index) in router.filters">
-          <a-divider>{{item.name}}
+          <a-divider>{{ item.name }}
             <a-icon type="delete" size="22" @click="removeFilter(router,index)"/>
           </a-divider>
           <div v-for="(tag, index) in item.args" :key="tag.key">
@@ -96,7 +106,7 @@
         <p class="btn" style="padding-top: 10px">
           <a-dropdown>
             <a-menu slot="overlay" @click="filterHandleMenuClick">
-              <a-menu-item :key="item.key" :name="item.name" v-for="item in filterArray">{{item.name}}</a-menu-item>
+              <a-menu-item :key="item.key" :name="item.name" v-for="item in filterArray">{{ item.name }}</a-menu-item>
             </a-menu>
             <a-button type="dashed" style="margin-left: 8px;width:100%"> 添加过滤器
               <a-icon type="down"/>
@@ -128,59 +138,59 @@
         labelCol: { span: 3 },
         wrapperCol: { span: 14 },
         currentNameIndex: 0,
-        currentTagIndex:-1,
+        currentTagIndex: -1,
         predicates: {},
         filterArray: [ { key: 1, name: '限流过滤器' }],
-        //gateway对应的规则key
+        // gateway对应的规则key
         tagArray: [
           {
-            name:'Path',
-            args:[]
+            name: 'Path',
+            args: []
           },
           {
-            name:'Header',
-            args:{
-              header:'',
-              regexp:''
+            name: 'Header',
+            args: {
+              header: '',
+              regexp: ''
             }
           },
           {
-            name:'Query',
-            args:{
-              param:'',
-              regexp:''
+            name: 'Query',
+            args: {
+              param: '',
+              regexp: ''
             }
           },
           {
-            name:'Method',
-            args:[]
+            name: 'Method',
+            args: []
           },
           {
-            name:'Host',
-            args:[]
+            name: 'Host',
+            args: []
           },
           {
-            name:'Cookie',
-            args:{
-              name:'',
-              regexp:''
+            name: 'Cookie',
+            args: {
+              name: '',
+              regexp: ''
             }
           },
           {
-            name:'After',
-            args:[]
+            name: 'After',
+            args: []
           },
           {
-            name:'Before',
-            args:[]
+            name: 'Before',
+            args: []
           },
           {
-            name:'Between',
-            args:[]
+            name: 'Between',
+            args: []
           },
           {
-            name:'RemoteAddr',
-            args:[]
+            name: 'RemoteAddr',
+            args: []
           }
         ],
         inputVisible: false,
@@ -193,7 +203,7 @@
         title: '路由编辑',
         visible: false,
         loading: false,
-        genKeyRouter:["Path","Host","Method","After","Before","Between","RemoteAddr"]
+        genKeyRouter: ['Path', 'Host', 'Method', 'After', 'Before', 'Between', 'RemoteAddr']
       }
     },
     methods: {
@@ -208,15 +218,15 @@
       },
       show(router) {
         if (router) {
-          router.status=Boolean(router.status)
+          router.status = Boolean(router.status)
           this.router = router
         } else {
           this.router = this.getRouter()
-          this.inputValue=''
+          this.inputValue = ''
         }
         this.visible = true
-        this.currentTagIndex=-1
-        this.currentNameIndex=-1
+        this.currentTagIndex = -1
+        this.currentNameIndex = -1
       },
       close() {
         this.reset()
@@ -224,21 +234,21 @@
         this.$refs['form'].resetFields()
         this.visible = false
       },
-      //删除路由条件配置项
+      // 删除路由条件配置项
       removeTag(item, removedTag) {
         const tags = item.args.filter(tag => tag !== removedTag)
         item.args = tags
       },
-      //添加路由选项
+      // 添加路由选项
       predicatesHandleMenuClick(e) {
         this.router.predicates.push({
           args: e.args,
-          name: e.name,
+          name: e.name
         })
       },
-      editTag(tag, tagIndex,index){
-        this.currentNameIndex = index;
-        this.currentTagIndex=tagIndex
+      editTag(tag, tagIndex, index) {
+        this.currentNameIndex = index
+        this.currentTagIndex = tagIndex
       },
       /**
        * 值修改事件
@@ -246,49 +256,49 @@
        * @param item
        * @param key
        */
-      valueChange(e,item,key){
-         item[key]=e.target.value
+      valueChange(e, item, key) {
+         item[key] = e.target.value
       },
-      //显示输入框
+      // 显示输入框
       showInput(item, index) {
         this.inputVisible = true
         this.currentNameIndex = index
       },
-      //路由选项输入框失去焦点事件
+      // 路由选项输入框失去焦点事件
       handleInputChange(e) {
         this.inputValue = e.target.value
       },
-      //删除路由条件
+      // 删除路由条件
       removePredicate(item, index) {
         item.predicates.splice(index, 1)
       },
-      //删除过滤器参数
+      // 删除过滤器参数
       removeFilterParams(item, index) {
         item.args.splice(index, 1)
       },
-      //删除过滤器
+      // 删除过滤器
       removeFilter(item, index) {
         item.filters.splice(index, 1)
       },
-      //添加过滤器参数
+      // 添加过滤器参数
       addFilterParams(item) {
         item.args.push({
           key: 'key' + item.args.length + 1,
           value: ''
         })
       },
-      //过滤器添加事件
+      // 过滤器添加事件
       filterHandleMenuClick(e) {
         if (e.key == 0) {
           this.router.filters.push({
-            args: [  {
+            args: [ {
               key: 'name',
               value: 'default'
-            },{
+            }, {
               key: 'fallbackUri',
               value: 'forward:/fallback'
             }],
-            name:'Hystrix',
+            name: 'Hystrix',
             title: this.filterArray[0].name
           })
         }
@@ -304,12 +314,12 @@
               key: 'redis-rate-limiter.burstCapacity',
               value: 20
             }],
-            name:"RequestRateLimiter",
+            name: 'RequestRateLimiter',
             title: this.filterArray[0].name
           })
         }
       },
-      //输入框确认
+      // 输入框确认
       handleInputConfirm(item) {
         const inputValue = this.inputValue
         let tags = item.args
@@ -322,17 +332,15 @@
           inputVisible: false,
           inputValue: ''
         })
-        this.currentTagIndex=-1
+        this.currentTagIndex = -1
       },
-      //输入框确认
-      handleInputEditConfirm(item,tag,index) {
-        if(this.inputValue)
-        {
+      // 输入框确认
+      handleInputEditConfirm(item, tag, index) {
+        if (this.inputValue) {
           const inputValue = this.inputValue
-          item.args[index]=inputValue
+          item.args[index] = inputValue
         }
-        this.currentTagIndex=-1
-
+        this.currentTagIndex = -1
       },
       reset() {
         this.expandedKeysss = []
@@ -340,11 +348,11 @@
         this.defaultCheckedKeys = []
         this.loading = false
       },
-      //关闭弹窗
+      // 关闭弹窗
       handleCancel() {
         this.close()
       },
-      //提交路由
+      // 提交路由
       handleSubmit() {
         let { predicates, filters, ...other } = this.router
         let router = other
@@ -361,7 +369,6 @@
             this.$message.error(res.message)
           }
         })
-
       }
     }
   }

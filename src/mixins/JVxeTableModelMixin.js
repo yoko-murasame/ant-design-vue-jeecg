@@ -1,4 +1,4 @@
-import { VALIDATE_FAILED, getRefPromise, validateFormAndTables,validateFormModelAndTables} from '@/components/jeecg/JVxeTable/utils/vxeUtils.js'
+import { VALIDATE_FAILED, getRefPromise, validateFormAndTables, validateFormModelAndTables } from '@/components/jeecg/JVxeTable/utils/vxeUtils.js'
 import { httpAction, getAction } from '@/api/manage'
 
 export const JVxeTableModelMixin = {
@@ -34,7 +34,7 @@ export const JVxeTableModelMixin = {
     eachAllTable(callback) {
       // 开始遍历
       this.getAllTable().then(tables => {
-        console.log("tables",tables)
+        console.log('tables', tables)
         tables.forEach((item, index) => {
           if (typeof callback === 'function') {
             callback(item, index)
@@ -55,11 +55,11 @@ export const JVxeTableModelMixin = {
       if (rowNum > 0) {
         let newRows = new Array(rowNum).fill({})
         this.eachAllTable((item) => {
-          //update-begin-author:taoyan date:20210315 for: 一对多jvex 默认几行不好使了 LOWCOD-1349
-          setTimeout(()=>{
+          // update-begin-author:taoyan date:20210315 for: 一对多jvex 默认几行不好使了 LOWCOD-1349
+          setTimeout(() => {
             item.addRows(newRows)
           }, 30)
-          //update-end-author:taoyan date:20210315 for: 一对多jvex 默认几行不好使了 LOWCOD-1349
+          // update-end-author:taoyan date:20210315 for: 一对多jvex 默认几行不好使了 LOWCOD-1349
         })
       }
       if (typeof this.addAfter === 'function') this.addAfter(this.model)
@@ -104,13 +104,13 @@ export const JVxeTableModelMixin = {
     },
     /** 发起请求，自动判断是执行新增还是修改操作 */
     request(formData) {
-      let url = this.url.add, method = 'post'
+      let url = this.url.add; let method = 'post'
       if (this.model.id) {
         url = this.url.edit
         method = 'put'
       }
       this.confirmLoading = true
-      console.log("formData===>",formData);
+      console.log('formData===>', formData)
       httpAction(url, formData, method).then((res) => {
         if (res.success) {
           this.$message.success(res.message)
@@ -142,7 +142,7 @@ export const JVxeTableModelMixin = {
       /** 触发表单验证 */
       this.getAllTable().then(tables => {
         /** 一次性验证主表和所有的次表 */
-        return validateFormModelAndTables(this.$refs.form,this.model, tables)
+        return validateFormModelAndTables(this.$refs.form, this.model, tables)
       }).then(allValues => {
         /** 一次性验证一对一的所有子表 */
         return this.validateSubForm(allValues)
@@ -162,8 +162,8 @@ export const JVxeTableModelMixin = {
         }
       })
     },
-//校验所有子表表单
-    validateSubForm(allValues){
+// 校验所有子表表单
+    validateSubForm(allValues) {
       return new Promise((resolve) => {
         resolve(allValues)
       })

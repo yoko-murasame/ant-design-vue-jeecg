@@ -43,7 +43,13 @@
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('职务表')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+      <a-upload
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
       <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -154,7 +160,7 @@
             title: '操作',
             dataIndex: 'action',
             align: 'center',
-            scopedSlots: { customRender: 'action' },
+            scopedSlots: { customRender: 'action' }
           }
         ],
         url: {
@@ -162,8 +168,8 @@
           delete: '/sys/position/delete',
           deleteBatch: '/sys/position/deleteBatch',
           exportXlsUrl: '/sys/position/exportXls',
-          importExcelUrl: 'sys/position/importExcel',
-        },
+          importExcelUrl: 'sys/position/importExcel'
+        }
       }
     },
     computed: {

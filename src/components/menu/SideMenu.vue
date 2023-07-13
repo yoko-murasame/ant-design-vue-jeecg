@@ -26,7 +26,7 @@
   import { mixin, mixinDevice } from '@/utils/mixin.js'
 
   export default {
-    name: "SideMenu",
+    name: 'SideMenu',
     components: { ALayoutSider, Logo, SMenu },
     mixins: [mixin, mixinDevice],
     props: {
@@ -55,7 +55,7 @@
         required: true
       }
     },
-    computed:{
+    computed: {
       smenuStyle() {
         let style = { 'padding': '0' }
         if (this.fixSiderbar) {

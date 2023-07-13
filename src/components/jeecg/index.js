@@ -27,14 +27,14 @@ import JSwitch from './JSwitch.vue'
 import JTime from './JTime.vue'
 import JTreeTable from './JTreeTable.vue'
 import JEasyCron from '@/components/jeecg/JEasyCron'
-//jeecgbiz
+// jeecgbiz
 import JSelectDepart from '../jeecgbiz/JSelectDepart.vue'
 import JSelectMultiUser from '../jeecgbiz/JSelectMultiUser.vue'
 import JSelectPosition from '../jeecgbiz/JSelectPosition.vue'
 import JSelectRole from '../jeecgbiz/JSelectRole.vue'
 import JSelectUserByDep from '../jeecgbiz/JSelectUserByDep.vue'
-//引入需要全局注册的js函数和变量
-import { Modal, notification,message } from 'ant-design-vue'
+// 引入需要全局注册的js函数和变量
+import { Modal, notification, message } from 'ant-design-vue'
 import lodash_object from 'lodash'
 import debounce from 'lodash/debounce'
 import pick from 'lodash.pick'
@@ -72,7 +72,7 @@ export default {
     Vue.component('JTreeTable', JTreeTable)
     Vue.component('JUpload', JUpload)
 
-    //jeecgbiz
+    // jeecgbiz
     Vue.component('JSelectDepart', JSelectDepart)
     Vue.component('JSelectMultiUser', JSelectMultiUser)
     Vue.component('JSelectPosition', JSelectPosition)
@@ -80,12 +80,12 @@ export default {
     Vue.component('JSelectUserByDep', JSelectUserByDep)
     Vue.component(JEasyCron.name, JEasyCron)
 
-    //注册全局js函数和变量
+    // 注册全局js函数和变量
     Vue.prototype.$Jnotification = notification
     Vue.prototype.$Jmodal = Modal
     Vue.prototype.$Jmessage = message
     Vue.prototype.$Jlodash = lodash_object
-    Vue.prototype.$Jdebounce= debounce
+    Vue.prototype.$Jdebounce = debounce
     Vue.prototype.$Jpick = pick
     Vue.prototype.$Jpcaa = data
     Vue.prototype.$signMd5Utils = signMd5Utils

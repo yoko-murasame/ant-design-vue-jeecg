@@ -59,10 +59,10 @@ export default {
   data() {
     return {
       loading: false,
-      labelCol: {span: 6},
-      wrapperCol: {span: 12},
+      labelCol: { span: 6 },
+      wrapperCol: { span: 12 },
       model: {
-        sendAll: false,
+        sendAll: false
       },
       enabledTypes: {},
       columns: [
@@ -115,19 +115,19 @@ export default {
           align: 'center',
           fixed: 'right',
           width: 80,
-          scopedSlots: {customRender: 'action'}
+          scopedSlots: { customRender: 'action' }
         }
       ],
-      dataSource: [],
+      dataSource: []
     }
   },
   computed: {
     rules() {
       return {
-        app: [{required: true, message: '请选择测试APP'}],
-        url: [{required: this.show, message: '请输入菜单路径!'}],
-        receiver: [{required: !this.model.sendAll, message: '请选择接收人'}],
-        content: [{required: true, message: '消息内容不能为空'}]
+        app: [{ required: true, message: '请选择测试APP' }],
+        url: [{ required: this.show, message: '请输入菜单路径!' }],
+        receiver: [{ required: !this.model.sendAll, message: '请选择接收人' }],
+        content: [{ required: true, message: '消息内容不能为空' }]
       }
     },
     appOptions() {
@@ -141,9 +141,9 @@ export default {
           label: `钉钉${this.enabledTypes.dingtalk ? '' : '（已禁用）'}`,
           value: 'DINGTALK',
           disabled: !this.enabledTypes.dingtalk
-        },
+        }
       ]
-    },
+    }
   },
   created() {
     this.loadEnabledTypes()
@@ -163,7 +163,7 @@ export default {
       this.$refs.form.validate((ok, err) => {
         if (ok) {
           this.loading = true
-          postAction('/sys/thirdApp/sendMessageTest', this.model).then(({success, result, message}) => {
+          postAction('/sys/thirdApp/sendMessageTest', this.model).then(({ success, result, message }) => {
             if (success) {
               let response = ''
               try {
@@ -171,7 +171,7 @@ export default {
               } catch (e) {
                 response = result
               }
-              this.dataSource.unshift(Object.assign({id: randomUUID()}, this.model, {response}))
+              this.dataSource.unshift(Object.assign({ id: randomUUID() }, this.model, { response }))
             } else {
               this.$message.warning(message)
             }
@@ -197,9 +197,9 @@ export default {
       } catch (e) {
         this.$message.warning(e.message || e)
       }
-    },
+    }
 
-  },
+  }
 }
 </script>
 

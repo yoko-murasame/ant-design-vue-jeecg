@@ -35,7 +35,7 @@
       },
       disabledMoveDown() {
         return this.rowIndex === (this.fullDataLength - 1)
-      },
+      }
     },
     methods: {
       /** 向上移 */
@@ -55,15 +55,15 @@
       /** 插入一行 */
       handleRowInsertDown() {
         this.trigger('rowInsertDown', this.rowIndex)
-      },
+      }
     },
     // 【组件增强】注释详见：JVxeCellMixins.js
     enhanced: {
       // 【功能开关】
       switches: {
         editRender: false
-      },
-    },
+      }
+    }
   }
 </script>
 

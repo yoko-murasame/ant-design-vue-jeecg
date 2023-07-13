@@ -1,7 +1,7 @@
 <template>
   <a-tooltip placement="topLeft">
     <template slot="title">
-      <span>{{value}}</span>
+      <span>{{ value }}</span>
     </template>
     {{ value | ellipsis(length) }}
   </a-tooltip>
@@ -13,12 +13,12 @@
     props: {
       value: {
         type: String,
-        required: false,
+        required: false
       },
       length: {
         type: Number,
         required: false,
-        default: 25,
+        default: 25
       }
     }
   }

@@ -83,16 +83,16 @@
   import pick from 'lodash.pick'
 
   export default {
-    name: "RoleModal",
+    name: 'RoleModal',
     data () {
       return {
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
         visible: false,
         confirmLoading: false,
@@ -130,7 +130,6 @@
           this.form.setFieldsValue(pick(this.mdl, 'id', 'name', 'status', 'describe'))
         })
         console.log('this.mdl', this.mdl)
-
       },
       close () {
         this.$emit('close')

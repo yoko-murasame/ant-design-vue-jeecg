@@ -110,18 +110,18 @@
 </template>
 
 <script>
-  import { timeFix } from "@/utils/util"
-  import {mapGetters} from "vuex"
+  import { timeFix } from '@/utils/util'
+  import { mapGetters } from 'vuex'
 
   import PageLayout from '@/components/page/PageLayout'
   import HeadInfo from '@/components/tools/HeadInfo'
   import Radar from '@/components/chart/Radar'
-  import { getRoleList, getServiceList, getFileAccessHttpUrl } from "@/api/manage"
+  import { getRoleList, getServiceList, getFileAccessHttpUrl } from '@/api/manage'
 
   const DataSet = require('@antv/data-set')
 
   export default {
-    name: "Workplace",
+    name: 'Workplace',
     components: {
       PageLayout,
       HeadInfo,
@@ -186,7 +186,7 @@
     created() {
       this.user = this.userInfo
       this.avatar = getFileAccessHttpUrl(this.userInfo.avatar)
-      console.log('this.avatar :'+ this.avatar)
+      console.log('this.avatar :' + this.avatar)
 
       getRoleList().then(res => {
         console.log('workplace -> call getRoleList()', res)
@@ -203,7 +203,7 @@
       this.initRadar()
     },
     methods: {
-      ...mapGetters(["nickname", "welcome"]),
+      ...mapGetters(['nickname', 'welcome']),
       getProjects() {
         this.$http.get('/mock/api/list/search/projects')
           .then(res => {
@@ -228,7 +228,6 @@
 
         this.$http.get('/mock/api/workplace/radar')
           .then(res => {
-
             const dv = new DataSet.View().source(res.result)
             dv.transform({
               type: 'fold',

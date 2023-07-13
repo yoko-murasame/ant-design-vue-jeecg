@@ -186,7 +186,6 @@
 
         </a-tabs>
 
-
       </a-card>
     </a-row>
   </div>
@@ -194,8 +193,8 @@
 
 <script>
   import ChartCard from '@/components/ChartCard'
-  import ACol from "ant-design-vue/es/grid/Col"
-  import ATooltip from "ant-design-vue/es/tooltip/Tooltip"
+  import ACol from 'ant-design-vue/es/grid/Col'
+  import ATooltip from 'ant-design-vue/es/tooltip/Tooltip'
   import MiniArea from '@/components/chart/MiniArea'
   import MiniBar from '@/components/chart/MiniBar'
   import LineChartMultid from '@/components/chart/LineChartMultid'
@@ -213,128 +212,127 @@
   const rankList = []
   for (let i = 0; i < 7; i++) {
     rankList.push({
-      name: '白鹭岛 ' + (i+1) + ' 号店',
+      name: '白鹭岛 ' + (i + 1) + ' 号店',
       total: 1234.56 - i * 100
     })
   }
 
   const dataCol1 = [{
     title: '业务号',
-    align:"center",
+    align: 'center',
     dataIndex: 'reBizCode'
-  },{
+  }, {
     title: '权利类型',
-    align:"center",
+    align: 'center',
     dataIndex: 'droitType'
-  },{
+  }, {
     title: '登记类型',
-    align:"center",
+    align: 'center',
     dataIndex: 'registeType'
-  },{
+  }, {
     title: '座落',
-    align:"center",
+    align: 'center',
     dataIndex: 'beLocated'
-  },{
+  }, {
     title: '权利人',
-    align:"center",
+    align: 'center',
     dataIndex: 'qlr'
-  },{
+  }, {
     title: '义务人',
-    align:"center",
+    align: 'center',
     dataIndex: 'ywr'
-  },{
+  }, {
     title: '受理人',
-    align:"center",
+    align: 'center',
     dataIndex: 'acceptBy'
-  },{
+  }, {
     title: '受理时间',
-    align:"center",
+    align: 'center',
     dataIndex: 'acceptDate'
-  },{
+  }, {
     title: '当前节点',
-    align:"center",
+    align: 'center',
     dataIndex: 'curNode'
-  },{
+  }, {
     title: '办理进度',
-    align:"center",
+    align: 'center',
     dataIndex: 'flowRate',
     scopedSlots: { customRender: 'flowRate' }
-  }];
+  }]
 
   const dataCol2 = [{
     title: '业务号',
-    align:"center",
+    align: 'center',
     dataIndex: 'reBizCode'
-  },{
+  }, {
     title: '权利类型',
-    align:"center",
+    align: 'center',
     dataIndex: 'droitType'
-  },{
+  }, {
     title: '登记类型',
-    align:"center",
+    align: 'center',
     dataIndex: 'registeType'
-  },{
+  }, {
     title: '座落',
-    align:"center",
+    align: 'center',
     dataIndex: 'beLocated'
-  },{
+  }, {
     title: '权利人',
-    align:"center",
+    align: 'center',
     dataIndex: 'qlr'
-  },{
+  }, {
     title: '义务人',
-    align:"center",
+    align: 'center',
     dataIndex: 'ywr'
-  },{
+  }, {
     title: '受理人',
-    align:"center",
+    align: 'center',
     dataIndex: 'acceptBy'
-  },{
+  }, {
     title: '发起时间',
-    align:"center",
+    align: 'center',
     dataIndex: 'acceptDate'
-  },{
+  }, {
     title: '当前节点',
-    align:"center",
+    align: 'center',
     dataIndex: 'curNode'
-  },{
+  }, {
     title: '超时时间',
-    align:"center",
+    align: 'center',
     dataIndex: 'flowRate',
     scopedSlots: { customRender: 'flowRate' }
-  }];
+  }]
 
   const jhjgData = [
-    { type: '房管', '一月': 900, '二月': 1120, '三月': 1380, '四月': 1480, '五月': 1450, '六月': 1100, '七月':1300, '八月':900,'九月':1000 ,'十月':1200 ,'十一月':600 ,'十二月':900 },
-    { type: '税务', '一月':1200, '二月': 1500, '三月': 1980, '四月': 2000, '五月': 1000, '六月': 600, '七月':900, '八月':1100,'九月':1300 ,'十月':2000 ,'十一月':900 ,'十二月':1100 },
-    { type: '不动产', '一月':2000, '二月': 1430, '三月': 1300, '四月': 1400, '五月': 900, '六月': 500, '七月':600, '八月':1000,'九月':600 ,'十月':1000 ,'十一月':1500 ,'十二月':1200 }
+    { type: '房管', '一月': 900, '二月': 1120, '三月': 1380, '四月': 1480, '五月': 1450, '六月': 1100, '七月': 1300, '八月': 900, '九月': 1000, '十月': 1200, '十一月': 600, '十二月': 900 },
+    { type: '税务', '一月': 1200, '二月': 1500, '三月': 1980, '四月': 2000, '五月': 1000, '六月': 600, '七月': 900, '八月': 1100, '九月': 1300, '十月': 2000, '十一月': 900, '十二月': 1100 },
+    { type: '不动产', '一月': 2000, '二月': 1430, '三月': 1300, '四月': 1400, '五月': 900, '六月': 500, '七月': 600, '八月': 1000, '九月': 600, '十月': 1000, '十一月': 1500, '十二月': 1200 }
   ]
-  const jhjgFields=[
-    '一月','二月','三月','四月','五月','六月',
-    '七月','八月','九月','十月','十一月','十二月'
+  const jhjgFields = [
+    '一月', '二月', '三月', '四月', '五月', '六月',
+    '七月', '八月', '九月', '十月', '十一月', '十二月'
   ]
-
 
   const xljgData = [
-    {type:'一月',"房管":1.12,"税务":1.55,"不动产":1.2},
-    {type:'二月',"房管":1.65,"税务":1.32,"不动产":1.42},
-    {type:'三月',"房管":1.85,"税务":1.1,"不动产":1.5},
+    { type: '一月', '房管': 1.12, '税务': 1.55, '不动产': 1.2 },
+    { type: '二月', '房管': 1.65, '税务': 1.32, '不动产': 1.42 },
+    { type: '三月', '房管': 1.85, '税务': 1.1, '不动产': 1.5 },
 
-    {type:'四月',"房管":1.33,"税务":1.63,"不动产":1.4},
-    {type:'五月',"房管":1.63,"税务":1.8,"不动产":1.7},
-    {type:'六月',"房管":1.85,"税务":1.98,"不动产":1.8},
+    { type: '四月', '房管': 1.33, '税务': 1.63, '不动产': 1.4 },
+    { type: '五月', '房管': 1.63, '税务': 1.8, '不动产': 1.7 },
+    { type: '六月', '房管': 1.85, '税务': 1.98, '不动产': 1.8 },
 
-    {type:'七月',"房管":1.98,"税务":1.5,"不动产":1.76},
-    {type:'八月',"房管":1.48,"税务":1.2,"不动产":1.3},
-    {type:'九月',"房管":1.41,"税务":1.9,"不动产":1.6},
+    { type: '七月', '房管': 1.98, '税务': 1.5, '不动产': 1.76 },
+    { type: '八月', '房管': 1.48, '税务': 1.2, '不动产': 1.3 },
+    { type: '九月', '房管': 1.41, '税务': 1.9, '不动产': 1.6 },
 
-    {type:'十月',"房管":1.1,"税务":1.1,"不动产":1.4},
-    {type:'十一月',"房管":1.85,"税务":1.6,"不动产":1.5},
-    {type:'十二月',"房管":1.5,"税务":1.4,"不动产":1.3}
+    { type: '十月', '房管': 1.1, '税务': 1.1, '不动产': 1.4 },
+    { type: '十一月', '房管': 1.85, '税务': 1.6, '不动产': 1.5 },
+    { type: '十二月', '房管': 1.5, '税务': 1.4, '不动产': 1.3 }
   ]
-  const xljgFields=["房管","税务","不动产"]
+  const xljgFields = ['房管', '税务', '不动产']
   export default {
-    name: "Analysis",
+    name: 'Analysis',
     components: {
       ATooltip,
       ACol,
@@ -358,256 +356,252 @@
         jhjgFields,
         loading: true,
         rankList,
-        zsll:0,
-        zbjl:0,
-        todaySll:0,
-        todayBjl:0,
-        todayISll:0,
-        todayIBjl:0,
-      registerTypeList:[{
-          text:"业务受理"
-        },{
-          text:"业务管理"
-        },{
-          text:"文件管理"
-        },{
-          text:"信息查询"
+        zsll: 0,
+        zbjl: 0,
+        todaySll: 0,
+        todayBjl: 0,
+        todayISll: 0,
+        todayIBjl: 0,
+      registerTypeList: [{
+          text: '业务受理'
+        }, {
+          text: '业务管理'
+        }, {
+          text: '文件管理'
+        }, {
+          text: '信息查询'
         }],
         // 分页参数
-        ipagination:{
+        ipagination: {
           current: 1,
           pageSize: 5,
           pageSizeOptions: ['10', '20', '30'],
           showTotal: (total, range) => {
-            return range[0] + "-" + range[1] + " 共" + total + "条"
+            return range[0] + '-' + range[1] + ' 共' + total + '条'
           },
           showQuickJumper: true,
           showSizeChanger: true,
           total: 0
         },
-        //数据集
-        dataSource:[],
-        dataSource1:[],
-        dataSource2:[],
-        url:{
-          analysis:"/sps/register/analysis",
-          list:"sps/register/virtualList",
-          countSll:"sps/register/sllTenDaysCount",
-          countBjl:"sps/register/bjlTenDaysCount",
-          countISll:'sps/register/ISllTenDaysCount',
-          countIBjl:'sps/register/IBjlTenDaysCount',
-          queryDiskInfo:'sys/actuator/redis/queryDiskInfo'
+        // 数据集
+        dataSource: [],
+        dataSource1: [],
+        dataSource2: [],
+        url: {
+          analysis: '/sps/register/analysis',
+          list: 'sps/register/virtualList',
+          countSll: 'sps/register/sllTenDaysCount',
+          countBjl: 'sps/register/bjlTenDaysCount',
+          countISll: 'sps/register/ISllTenDaysCount',
+          countIBjl: 'sps/register/IBjlTenDaysCount',
+          queryDiskInfo: 'sys/actuator/redis/queryDiskInfo'
         },
-        chartData:{
-          sll:[],
-          bjl:[],
-          isll:[],
-          ibjl:[]
+        chartData: {
+          sll: [],
+          bjl: [],
+          isll: [],
+          ibjl: []
         },
-        cardCount:{
-          sll:0,
-          bjl:0,
-          isll:0,
-          ibjl:0
+        cardCount: {
+          sll: 0,
+          bjl: 0,
+          isll: 0,
+          ibjl: 0
         },
-        columns:dataCol1,
-        columns2:dataCol2,
-        diskInfo:[]
+        columns: dataCol1,
+        columns2: dataCol2,
+        diskInfo: []
       }
     },
-    methods:{
-      goPage(index){
-        if(index==0){
+    methods: {
+      goPage(index) {
+        if (index == 0) {
           this.$router.push({
             path: '/isps/registerStepForm',
-            name: 'isps-registerStepForm',
-          });
-        }else if(index==1){
+            name: 'isps-registerStepForm'
+          })
+        } else if (index == 1) {
           this.$router.push({
             path: '/isps/registerList',
-            name: 'isps-registerList',
-          });
-
-        }else if(index==2){
+            name: 'isps-registerList'
+          })
+        } else if (index == 2) {
           this.$router.push({
             path: '/isps/fileManage',
-            name: 'isps-fileManage',
-          });
-        }else if(index==3){
+            name: 'isps-fileManage'
+          })
+        } else if (index == 3) {
           this.$router.push({
             path: '/isps/infoSearch',
-            name: 'isps-infoSearch',
-          });
+            name: 'isps-infoSearch'
+          })
         }
       },
-      loadList (arg){
-        if(arg===1){
-          this.ipagination.current = 1;
+      loadList (arg) {
+        if (arg === 1) {
+          this.ipagination.current = 1
         }
-        var params = this.getQueryParams();//查询条件
-        getAction(this.url.list,params).then((res)=>{
-          console.log("dsdsd",res.result)
-          this.dataSource1 = res.result.data1;
-          this.dataSource2 = res.result.data2;
-          this.ipagination.total = 5;
-        });
+        var params = this.getQueryParams()// 查询条件
+        getAction(this.url.list, params).then((res) => {
+          console.log('dsdsd', res.result)
+          this.dataSource1 = res.result.data1
+          this.dataSource2 = res.result.data2
+          this.ipagination.total = 5
+        })
       },
-      getQueryParams(){
-        var param = {flowStatus:"-3"};
-        param.pageNo = this.ipagination.current;
-        param.pageSize = this.ipagination.pageSize;
-        return filterObj(param);
+      getQueryParams() {
+        var param = { flowStatus: '-3' }
+        param.pageNo = this.ipagination.current
+        param.pageSize = this.ipagination.pageSize
+        return filterObj(param)
       },
-      formatRespectiveHoldCert(value){
-        return (value=="1"||eval(value))?"是":"否"
+      formatRespectiveHoldCert(value) {
+        return (value == '1' || eval(value)) ? '是' : '否'
       },
-      formatCertFormat(value){
-        if(value=="1"){
-          return "单一版"
-        }else if(value=="2"){
-          return "集成版"
-        }else{
-          return value;
+      formatCertFormat(value) {
+        if (value == '1') {
+          return '单一版'
+        } else if (value == '2') {
+          return '集成版'
+        } else {
+          return value
         }
       },
-      getFlowRateNumber(value){
+      getFlowRateNumber(value) {
         return Number(value)
       },
-      getFlowPercent(record){
-        if(record.flowStatus=="3"){
+      getFlowPercent(record) {
+        if (record.flowStatus == '3') {
           return 100
-        }else if(record.flowStatus=="0"){
+        } else if (record.flowStatus == '0') {
           return 0
-        }else{
+        } else {
           return record.flowRate
         }
       },
-      getFlowStatus(status){
-        if(status=="4"){
-          return "exception";
-        }else if(status=="0"){
-          return "normal";
-        }else if(status=="3"){
-          return "success";
-        }else{
-          return "active";
+      getFlowStatus(status) {
+        if (status == '4') {
+          return 'exception'
+        } else if (status == '0') {
+          return 'normal'
+        } else if (status == '3') {
+          return 'success'
+        } else {
+          return 'active'
         }
-
       },
-      queryCount(){
-        getAction(this.url.analysis).then((res)=>{
-          if(res.success){
+      queryCount() {
+        getAction(this.url.analysis).then((res) => {
+          if (res.success) {
             this.cardCount = res.result
           }
-          console.log(res);
-        });
+          console.log(res)
+        })
       },
 
-      loadDiskInfo(){
-        getAction(this.url.queryDiskInfo).then((res)=>{
-          if(res.success){
+      loadDiskInfo() {
+        getAction(this.url.queryDiskInfo).then((res) => {
+          if (res.success) {
             console.log(res.result)
-            let one=0,two="";
-            for(let a in res.result){
+            let one = 0; let two = ''
+            for (let a in res.result) {
               let tempNum = Number(res.result[a].max)
-              if(tempNum>one){
+              if (tempNum > one) {
                 one = tempNum
                 two = res.result[a].name
               }
             }
-            let ontItem = res.result.filter((item)=>{return item.name == two})[0]
-            ontItem.restPPT = ontItem.restPPT/10
-            this.diskInfo.push(ontItem);
+            let ontItem = res.result.filter((item) => { return item.name == two })[0]
+            ontItem.restPPT = ontItem.restPPT / 10
+            this.diskInfo.push(ontItem)
 
-            if(res.result.length>1){
-              let one2=0,two2="";
-              for(let a in res.result){
-                if(res.result[a].name == two){
-                  continue;
+            if (res.result.length > 1) {
+              let one2 = 0; let two2 = ''
+              for (let a in res.result) {
+                if (res.result[a].name == two) {
+                  continue
                 }
                 let tempNum = Number(res.result[a].max)
-                if(tempNum>one2){
+                if (tempNum > one2) {
                   one2 = tempNum
                   two2 = res.result[a].name
                 }
               }
-              let one2Item = res.result.filter((item)=>{return item.name == two2})[0]
-              one2Item.restPPT = one2Item.restPPT/10
-              this.diskInfo.push(one2Item);
+              let one2Item = res.result.filter((item) => { return item.name == two2 })[0]
+              one2Item.restPPT = one2Item.restPPT / 10
+              this.diskInfo.push(one2Item)
             }
-
-          }else{
+          } else {
             console.log(res.message)
           }
         })
       },
-      loadChartData(){
-        getAction(this.url.countSll).then((res)=>{
-          if(res.success){
-            let map = res.result;
-            for(var key in map){
-              let dataStr = key;
-              let value = map[key];
-              let today = moment(new Date()).format('YYYY-MM-DD');
-              if(dataStr == today){
-                this.todaySll = map[today];
+      loadChartData() {
+        getAction(this.url.countSll).then((res) => {
+          if (res.success) {
+            let map = res.result
+            for (var key in map) {
+              let dataStr = key
+              let value = map[key]
+              let today = moment(new Date()).format('YYYY-MM-DD')
+              if (dataStr == today) {
+                this.todaySll = map[today]
               }
               this.chartData.sll.push({
                 x: dataStr,
                 y: value
-              });
+              })
             }
           }
-
         }),
-          getAction(this.url.countBjl).then((res)=>{
-            if(res.success){
-              let map = res.result;
-              for(var key in map){
-                let dataStr = key;
-                let value = map[key];
-                let today = moment(new Date()).format('YYYY-MM-DD');
-                if(dataStr == today){
-                  this.todayBjl = map[today];
+          getAction(this.url.countBjl).then((res) => {
+            if (res.success) {
+              let map = res.result
+              for (var key in map) {
+                let dataStr = key
+                let value = map[key]
+                let today = moment(new Date()).format('YYYY-MM-DD')
+                if (dataStr == today) {
+                  this.todayBjl = map[today]
                 }
                 this.chartData.bjl.push({
                   x: dataStr,
                   y: value
-                });
+                })
               }
             }
           }),
-          getAction(this.url.countISll).then((res)=>{
-            if(res.success){
-              let map = res.result;
-              for(var key in map){
-                let dataStr = key;
-                let value = map[key];
-                let today = moment(new Date()).format('YYYY-MM-DD');
-                if(dataStr == today){
-                  this.todayISll = map[today];
+          getAction(this.url.countISll).then((res) => {
+            if (res.success) {
+              let map = res.result
+              for (var key in map) {
+                let dataStr = key
+                let value = map[key]
+                let today = moment(new Date()).format('YYYY-MM-DD')
+                if (dataStr == today) {
+                  this.todayISll = map[today]
                 }
                 this.chartData.isll.push({
                   x: key,
                   y: value
-                });
+                })
               }
             }
           }),
-          getAction(this.url.countIBjl).then((res)=>{
-            if(res.success){
-              let map = res.result;
-              for(var key in map){
-                let dataStr = key;
-                let value = map[key];
-                let today = moment(new Date()).format('YYYY-MM-DD');
-                if(dataStr == today){
-                  this.todayIBjl = map[today];
+          getAction(this.url.countIBjl).then((res) => {
+            if (res.success) {
+              let map = res.result
+              for (var key in map) {
+                let dataStr = key
+                let value = map[key]
+                let today = moment(new Date()).format('YYYY-MM-DD')
+                if (dataStr == today) {
+                  this.todayIBjl = map[today]
                 }
                 this.chartData.ibjl.push({
                   x: key,
                   y: value
-                });
+                })
               }
             }
           })
@@ -615,9 +609,9 @@
     },
     created() {
       this.loadDiskInfo()
-      this.queryCount();
-      this.loadChartData();
-      this.loadList(1);
+      this.queryCount()
+      this.loadChartData()
+      this.loadList(1)
       setTimeout(() => {
         this.loading = !this.loading
       }, 1000)
@@ -693,6 +687,5 @@
   .anty-list-cust {
     .ant-list-item-content{flex:1 !important; justify-content:flex-start !important;margin-left: 20px;}
   }
-
 
 </style>

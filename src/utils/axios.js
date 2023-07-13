@@ -3,35 +3,35 @@ const VueAxios = {
     // eslint-disable-next-line no-unused-vars
     install(Vue, router = {}, instance) {
         if (this.installed) {
-            return;
+            return
         }
-        this.installed = true;
+        this.installed = true
 
         if (!instance) {
             // eslint-disable-next-line no-console
-            console.error('You have to install axios');
-            return;
+            console.error('You have to install axios')
+            return
         }
 
-        Vue.axios = instance;
+        Vue.axios = instance
 
         Object.defineProperties(Vue.prototype, {
             axios: {
                 get: function get() {
-                    return instance;
+                    return instance
                 }
             },
             $http: {
                 get: function get() {
-                    return instance;
+                    return instance
                 }
             }
-        });
+        })
     }
-};
+}
 
 export {
-    VueAxios,
+    VueAxios
     // eslint-disable-next-line no-undef
-    //instance as axios
+    // instance as axios
 }

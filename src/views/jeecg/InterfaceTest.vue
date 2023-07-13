@@ -36,26 +36,26 @@
 </template>
 <script>
   import { axios } from '@/utils/request'
-  import { ACCESS_TOKEN } from "@/store/mutation-types"
+  import { ACCESS_TOKEN } from '@/store/mutation-types'
   import Vue from 'vue'
   export default {
     name: 'FlowTest',
-    data(){
+    data() {
       return {
-        url:"",
-        paramJson:"",
-        resultJson:{},
-        requestMethod:"POST"
+        url: '',
+        paramJson: '',
+        resultJson: {},
+        requestMethod: 'POST'
       }
     },
     methods: {
       onSearch (value) {
         let that = this
-        if(!value){
-          that.$message.error("请填写路径")
+        if (!value) {
+          that.$message.error('请填写路径')
           return false
         }
-        this.resultJson = {};
+        this.resultJson = {}
           axios({
             url: value,
             method: this.requestMethod,
@@ -64,28 +64,27 @@
             console.log(res)
             this.resultJson = res
           }).catch((err) => {
-            that.$message.error("请求异常："+err)
+            that.$message.error('请求异常：' + err)
           })
       },
-      changeVal(e){
+      changeVal(e) {
         try {
-          let json = e.target.value;
-          if(json.indexOf(",}")>0){
-            json = json.replace(",}","}");
+          let json = e.target.value
+          if (json.indexOf(',}') > 0) {
+            json = json.replace(',}', '}')
           }
-          this.paramJson = JSON.parse(json);
-        }catch (e) {
-          console.log(e);
-          this.$message.error("非法的JSON字符串")
+          this.paramJson = JSON.parse(json)
+        } catch (e) {
+          console.log(e)
+          this.$message.error('非法的JSON字符串')
         }
       },
       handleChange(value) {
-        this.requestMethod = value;
+        this.requestMethod = value
       },
       created () {
-        const token = Vue.ls.get(ACCESS_TOKEN);
-        this.headers = {"X-Access-Token":token}
-
+        const token = Vue.ls.get(ACCESS_TOKEN)
+        this.headers = { 'X-Access-Token': token }
       }
     }
   }

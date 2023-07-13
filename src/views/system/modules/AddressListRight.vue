@@ -10,7 +10,6 @@
             </a-form-model-item>
           </a-col>
 
-
           <a-col :md="6" :sm="12">
             <a-form-model-item label="工号" prop="workNo" style="margin-left:8px">
               <a-input placeholder="请输入工号查询" v-model="queryParam.workNo"></a-input>
@@ -19,7 +18,7 @@
 
           <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
             <a-col :md="6" :sm="24">
-             <a-button type="primary" @click="searchQuery" icon="search" style="margin-left: 18px">查询</a-button>
+              <a-button type="primary" @click="searchQuery" icon="search" style="margin-left: 18px">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
             </a-col>
           </span>
@@ -122,7 +121,7 @@
           this.dataSource = []
           this.loadData(1, orgCode)
         }
-      },
+      }
     },
     created() {
       this.queryPositionInfo()
@@ -148,8 +147,8 @@
                 this.cardLoading = false
             })
           // update-end- --- author:wangshuai ------ date:20200102 ---- for:传过来的部门编码为空全查
-        }else{
-        //加载数据 若传入参数1则加载第一页的内容
+        } else {
+        // 加载数据 若传入参数1则加载第一页的内容
         getAction(this.url.list, {
           orgCode,
           ...this.getQueryParams()
@@ -176,7 +175,7 @@
       handleTableChange(pagination, filters, sorter) {
         if (Object.keys(sorter).length > 0) {
           this.isorter.column = sorter.field
-          this.isorter.order = 'ascend' === sorter.order ? 'asc' : 'desc'
+          this.isorter.order = sorter.order === 'ascend' ? 'asc' : 'desc'
         }
         this.ipagination = pagination
         this.loadData(null, this.value)

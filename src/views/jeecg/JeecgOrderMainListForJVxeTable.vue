@@ -91,7 +91,7 @@
     <!-- table区域-end -->
 
     <!-- 表单区域 -->
-    <jeecg-order-modal-for-j-vextable ref="modalForm"  @ok="modalFormOk"></jeecg-order-modal-for-j-vextable>
+    <jeecg-order-modal-for-j-vextable ref="modalForm" @ok="modalFormOk"></jeecg-order-modal-for-j-vextable>
 
   </a-card>
 </template>

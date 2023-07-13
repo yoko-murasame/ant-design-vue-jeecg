@@ -1,8 +1,8 @@
 <script>
   import { colorList } from '@/components/tools/setting'
   import ASwitch from 'ant-design-vue/es/switch'
-  import AList from "ant-design-vue/es/list"
-  import AListItem from "ant-design-vue/es/list/Item"
+  import AList from 'ant-design-vue/es/list'
+  import AListItem from 'ant-design-vue/es/list/Item'
   import { mixin } from '@/utils/mixin.js'
 
   const Meta = AListItem.Meta
@@ -26,7 +26,7 @@
           'light': '白色'
         }
         return themeMap[theme]
-      },
+      }
     },
     methods: {
       colorFilter(color) {
@@ -36,9 +36,9 @@
 
       onChange (checked) {
         if (checked) {
-          this.$store.dispatch('ToggleTheme',  'dark')
+          this.$store.dispatch('ToggleTheme', 'dark')
         } else {
-          this.$store.dispatch('ToggleTheme',  'light')
+          this.$store.dispatch('ToggleTheme', 'light')
         }
       }
     },

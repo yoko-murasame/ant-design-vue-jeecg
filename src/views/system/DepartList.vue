@@ -8,7 +8,13 @@
           <a-button @click="handleAdd(1)" type="primary">添加部门</a-button>
           <a-button @click="handleAdd(2)" type="primary">添加下级</a-button>
           <a-button type="primary" icon="download" @click="handleExportXls('部门信息')">导出</a-button>
-          <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+          <a-upload
+            name="file"
+            :showUploadList="false"
+            :multiple="false"
+            :headers="tokenHeader"
+            :action="importExcelUrl"
+            @change="handleImportExcel">
             <a-button type="primary" icon="import">导入</a-button>
           </a-upload>
           <a-button title="删除多条数据" @click="batchDel" type="default">批量删除</a-button>
@@ -26,20 +32,20 @@
           <a-col :md="10" :sm="24">
             <template>
               <a-dropdown :trigger="[this.dropTrigger]" @visibleChange="dropStatus">
-               <span style="user-select: none">
-            <a-tree
-              checkable
-              multiple
-              @select="onSelect"
-              @check="onCheck"
-              @rightClick="rightHandle"
-              :selectedKeys="selectedKeys"
-              :checkedKeys="checkedKeys"
-              :treeData="departTree"
-              :checkStrictly="checkStrictly"
-              :expandedKeys="iExpandedKeys"
-              :autoExpandParent="autoExpandParent"
-              @expand="onExpand"/>
+                <span style="user-select: none">
+                  <a-tree
+                    checkable
+                    multiple
+                    @select="onSelect"
+                    @check="onCheck"
+                    @rightClick="rightHandle"
+                    :selectedKeys="selectedKeys"
+                    :checkedKeys="checkedKeys"
+                    :treeData="departTree"
+                    :checkStrictly="checkStrictly"
+                    :expandedKeys="iExpandedKeys"
+                    :autoExpandParent="autoExpandParent"
+                    @expand="onExpand"/>
                 </span>
                 <!--新增右键点击事件,和增加添加和删除功能-->
                 <a-menu slot="overlay">
@@ -119,7 +125,7 @@
               <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="手机号" prop="mobile">
                 <a-input placeholder="请输入手机号" v-model="model.mobile" />
               </a-form-model-item>
-              <a-form-model-item  :labelCol="labelCol" :wrapperCol="wrapperCol"  label="地址">
+              <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="地址">
                 <a-input placeholder="请输入地址" v-model="model.address"/>
               </a-form-model-item>
               <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="备注">
@@ -148,9 +154,9 @@
 </template>
 <script>
   import DepartModal from './modules/DepartModal'
-  import {queryDepartTreeList, searchByKeywords, deleteByDepartId} from '@/api/api'
-  import {httpAction, deleteAction} from '@/api/manage'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
+  import { queryDepartTreeList, searchByKeywords, deleteByDepartId } from '@/api/api'
+  import { httpAction, deleteAction } from '@/api/manage'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import DepartAuthModal from './modules/DepartAuthModal'
   import Vue from 'vue'
   // 表头
@@ -166,7 +172,7 @@
     },
     {
       title: '机构编码',
-      dataIndex: 'orgCode',
+      dataIndex: 'orgCode'
     },
     {
       title: '手机号',
@@ -189,7 +195,7 @@
       title: '操作',
       align: 'center',
       dataIndex: 'action',
-      scopedSlots: {customRender: 'action'}
+      scopedSlots: { customRender: 'action' }
     }
   ]
   export default {
@@ -222,45 +228,45 @@
         selectedKeys: [],
         autoIncr: 1,
         currSelected: {},
-        allTreeKeys:[],
+        allTreeKeys: [],
         checkStrictly: true,
         labelCol: {
-          xs: {span: 24},
-          sm: {span: 5}
+          xs: { span: 24 },
+          sm: { span: 5 }
         },
         wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16}
+          xs: { span: 24 },
+          sm: { span: 16 }
         },
         graphDatasource: {
           nodes: [],
           edges: []
         },
         validatorRules: {
-          departName: [{required: true, message: '请输入机构/部门名称!'}],
-          orgCode: [{required: true, message: '请输入机构编码!'}],
-          orgCategory:[{required: true, message: '请选择机构类型!'}],
+          departName: [{ required: true, message: '请输入机构/部门名称!' }],
+          orgCode: [{ required: true, message: '请输入机构编码!' }],
+          orgCategory: [{ required: true, message: '请选择机构类型!' }],
           mobile: Vue.prototype.rules.mobile2
         },
         url: {
           delete: '/sys/sysDepart/delete',
           edit: '/sys/sysDepart/edit',
           deleteBatch: '/sys/sysDepart/deleteBatch',
-          exportXlsUrl: "sys/sysDepart/exportXls",
-          importExcelUrl: "sys/sysDepart/importExcel",
+          exportXlsUrl: 'sys/sysDepart/exportXls',
+          importExcelUrl: 'sys/sysDepart/importExcel'
         },
-        orgCategoryDisabled:false,
-        oldDirectorUserIds:""
+        orgCategoryDisabled: false,
+        oldDirectorUserIds: ''
       }
     },
     computed: {
       importExcelUrl: function () {
-        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
       }
     },
     methods: {
       loadData() {
-        this.refresh();
+        this.refresh()
       },
       loadTree() {
         var that = this
@@ -268,14 +274,14 @@
         that.departTree = []
         queryDepartTreeList().then((res) => {
           if (res.success) {
-            //部门全选后，再添加部门，选中数量增多
-            this.allTreeKeys = [];
+            // 部门全选后，再添加部门，选中数量增多
+            this.allTreeKeys = []
             for (let i = 0; i < res.result.length; i++) {
               let temp = res.result[i]
               that.treeData.push(temp)
               that.departTree.push(temp)
               that.setThisExpandedKeys(temp)
-              that.getAllKeys(temp);
+              that.getAllKeys(temp)
               // console.log(temp.id)
             }
             this.loading = false
@@ -336,7 +342,7 @@
             title: '确认删除',
             content: '确定要删除所选中的 ' + this.checkedKeys.length + ' 条数据，以及子节点数据吗?',
             onOk: function () {
-              deleteAction(that.url.deleteBatch, {ids: ids}).then((res) => {
+              deleteAction(that.url.deleteBatch, { ids: ids }).then((res) => {
                 if (res.success) {
                   that.$message.success(res.message)
                   that.loadTree()
@@ -352,7 +358,7 @@
       onSearch(value) {
         let that = this
         if (value) {
-          searchByKeywords({keyWord: value}).then((res) => {
+          searchByKeywords({ keyWord: value }).then((res) => {
             if (res.success) {
               that.departTree = []
               for (let i = 0; i < res.result.length; i++) {
@@ -366,7 +372,6 @@
         } else {
           that.loadTree()
         }
-
       },
       nodeModalOk() {
         this.loadTree()
@@ -380,13 +385,13 @@
       onCheck(checkedKeys, info) {
         console.log('onCheck', checkedKeys, info)
         this.hiding = false
-        //---- author:os_chengtgen -- date:20190827 --  for:切换父子勾选模式 =======------
-        if(this.checkStrictly){
-          this.checkedKeys = checkedKeys.checked;
-        }else{
+        // ---- author:os_chengtgen -- date:20190827 --  for:切换父子勾选模式 =======------
+        if (this.checkStrictly) {
+          this.checkedKeys = checkedKeys.checked
+        } else {
           this.checkedKeys = checkedKeys
         }
-        //---- author:os_chengtgen -- date:20190827 --  for:切换父子勾选模式 =======------
+        // ---- author:os_chengtgen -- date:20190827 --  for:切换父子勾选模式 =======------
       },
       onSelect(selectedKeys, e) {
         console.log('selected', selectedKeys, e)
@@ -398,21 +403,21 @@
         this.selectedKeys = [record.key]
         this.model.parentId = record.parentId
         this.setValuesToForm(record)
-        this.$refs.departAuth.show(record.id);
+        this.$refs.departAuth.show(record.id)
         this.oldDirectorUserIds = record.directorUserIds
 
-        //update-beign-author:taoyan date:20220316 for: VUEN-329【bug】为什么不是失去焦点的时候，触发手机号校验
-        this.$nextTick(()=>{
+        // update-beign-author:taoyan date:20220316 for: VUEN-329【bug】为什么不是失去焦点的时候，触发手机号校验
+        this.$nextTick(() => {
           this.$refs.form.validateField('mobile')
         })
-        //update-end-author:taoyan date:20220316 for: VUEN-329【bug】为什么不是失去焦点的时候，触发手机号校验
+        // update-end-author:taoyan date:20220316 for: VUEN-329【bug】为什么不是失去焦点的时候，触发手机号校验
       },
       // 触发onSelect事件时,为部门树右侧的form表单赋值
       setValuesToForm(record) {
-        if(record.orgCategory == '1'){
-          this.orgCategoryDisabled = true;
-        }else{
-          this.orgCategoryDisabled = false;
+        if (record.orgCategory == '1') {
+          this.orgCategoryDisabled = true
+        } else {
+          this.orgCategoryDisabled = false
         }
       },
       getCurrSelectedTitle() {
@@ -442,10 +447,10 @@
               return
             }
 
-            //update-begin---author:wangshuai ---date:20200308  for：[JTC-119]在部门管理菜单下设置部门负责人
+            // update-begin---author:wangshuai ---date:20200308  for：[JTC-119]在部门管理菜单下设置部门负责人
             this.currSelected.oldDirectorUserIds = this.oldDirectorUserIds
-            //update-end---author:wangshuai ---date:20200308  for：[JTC-119]在部门管理菜单下设置部门负责人
-            
+            // update-end---author:wangshuai ---date:20200308  for：[JTC-119]在部门管理菜单下设置部门负责人
+
             httpAction(this.url.edit, this.currSelected, 'put').then((res) => {
               if (res.success) {
                 this.$message.success('保存成功!')
@@ -458,8 +463,8 @@
         })
       },
       emptyCurrForm() {
-        this.$refs.form.resetFields();
-        this.model={}
+        this.$refs.form.resetFields()
+        this.model = {}
       },
       nodeSettingFormSubmit() {
         this.$refs.form.validate(valid => {
@@ -494,15 +499,15 @@
           title: '确认删除',
           content: '确定要删除此部门以及子节点数据吗?',
           onOk: function () {
-            deleteByDepartId({id: that.rightClickSelectedKey}).then((resp) => {
+            deleteByDepartId({ id: that.rightClickSelectedKey }).then((resp) => {
               if (resp.success) {
-                //删除成功后，去除已选中中的数据
-                that.checkedKeys.splice(that.checkedKeys.findIndex(key => key === that.rightClickSelectedKey), 1);
+                // 删除成功后，去除已选中中的数据
+                that.checkedKeys.splice(that.checkedKeys.findIndex(key => key === that.rightClickSelectedKey), 1)
                 that.$message.success('删除成功!')
                 that.loadTree()
-                //删除后同步清空右侧基本信息内容
-                let orgCode=that.model.orgCode;
-                if(orgCode && orgCode === that.rightClickSelectedOrgCode){
+                // 删除后同步清空右侧基本信息内容
+                let orgCode = that.model.orgCode
+                if (orgCode && orgCode === that.rightClickSelectedOrgCode) {
                   that.onClearSelected()
                 }
               } else {
@@ -514,7 +519,7 @@
       },
       selectDirectiveOk(record) {
         console.log('选中指令数据', record)
-        this.nodeSettingForm.setFieldsValue({directiveCode: record.directiveCode})
+        this.nodeSettingForm.setFieldsValue({ directiveCode: record.directiveCode })
         this.currSelected.sysCode = record.sysCode
       },
       getFlowGraphData(node) {
@@ -533,7 +538,7 @@
           }
         }
       },
-     //---- author:os_chengtgen -- date:20190827 --  for:切换父子勾选模式 =======------
+     // ---- author:os_chengtgen -- date:20190827 --  for:切换父子勾选模式 =======------
       expandAll () {
         this.iExpandedKeys = this.allTreeKeys
       },
@@ -545,13 +550,13 @@
         this.checkedKeys = this.allTreeKeys
       },
       cancelCheckALL () {
-        //this.checkedKeys = this.defaultCheckedKeys
+        // this.checkedKeys = this.defaultCheckedKeys
         this.checkedKeys = []
       },
       switchCheckStrictly (v) {
-        if(v==1){
+        if (v == 1) {
           this.checkStrictly = false
-        }else if(v==2){
+        } else if (v == 2) {
           this.checkStrictly = true
         }
       },
@@ -564,14 +569,14 @@
           }
         }
       }
-      //---- author:os_chengtgen -- date:20190827 --  for:切换父子勾选模式 =======------
-      
+      // ---- author:os_chengtgen -- date:20190827 --  for:切换父子勾选模式 =======------
+
     },
     created() {
       this.currFlowId = this.$route.params.id
       this.currFlowName = this.$route.params.name
       // this.loadTree()
-    },
+    }
 
   }
 </script>

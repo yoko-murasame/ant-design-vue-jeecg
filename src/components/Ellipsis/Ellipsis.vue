@@ -10,11 +10,11 @@
       },
       tooltip: {
         type: Boolean,
-        default: true,
+        default: true
       },
       length: {
         type: Number,
-        default: 25,
+        default: 25
       },
       lines: {
         type: Number,

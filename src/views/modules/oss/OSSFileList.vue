@@ -28,13 +28,13 @@
     <div class="table-operator">
       <!--      <a-button type="primary" icon="download" @click="handleExportXls('文件列表')">导出</a-button>-->
       <a-upload
-          name="file"
-          :multiple="false"
-          :action="uploadAction"
-          :headers="tokenHeader"
-          :showUploadList="false"
-          :beforeUpload="beforeUpload"
-          @change="handleChange">
+        name="file"
+        :multiple="false"
+        :action="uploadAction"
+        :headers="tokenHeader"
+        :showUploadList="false"
+        :beforeUpload="beforeUpload"
+        @change="handleChange">
         <a-button>
           <a-icon type="upload"/>
           OSS文件上传
@@ -61,21 +61,21 @@
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a
           style="font-weight: 600">{{
-        selectedRowKeys.length }}</a>项
+          selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
       <a-table
-          ref="table"
-          size="middle"
-          bordered
-          rowKey="id"
-          :columns="columns"
-          :dataSource="dataSource"
-          :pagination="ipagination"
-          :loading="loading"
-          :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-          @change="handleTableChange">
+        ref="table"
+        size="middle"
+        bordered
+        rowKey="id"
+        :columns="columns"
+        :dataSource="dataSource"
+        :pagination="ipagination"
+        :loading="loading"
+        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        @change="handleTableChange">
 
         <span slot="action" slot-scope="text, record">
           <a @click="handlePreview(record)">预览</a>
@@ -90,10 +90,10 @@
 </template>
 
 <script>
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
   export default {
-    name: "OSSFileList",
+    name: 'OSSFileList',
     mixins: [JeecgListMixin],
     data() {
       return {
@@ -105,56 +105,56 @@
             dataIndex: '',
             key: 'rowIndex',
             width: 60,
-            align: "center",
+            align: 'center',
             customRender: function (t, r, index) {
-              return parseInt(index) + 1;
+              return parseInt(index) + 1
             }
           },
           {
             title: '文件名称',
-            align: "center",
+            align: 'center',
             dataIndex: 'fileName'
           },
           {
             title: '文件地址',
-            align: "center",
+            align: 'center',
             dataIndex: 'url'
           },
           {
             title: '操作',
             dataIndex: 'action',
-            align: "center",
-            scopedSlots: {customRender: 'action'},
+            align: 'center',
+            scopedSlots: { customRender: 'action' }
           }
         ],
         url: {
-          upload: "/sys/oss/file/upload",
-          list: "/sys/oss/file/list",
-          delete: "/sys/oss/file/delete",
-          minioUpload: "/sys/upload/uploadMinio"
+          upload: '/sys/oss/file/upload',
+          list: '/sys/oss/file/list',
+          delete: '/sys/oss/file/delete',
+          minioUpload: '/sys/upload/uploadMinio'
         }
       }
     },
     computed: {
       uploadAction() {
-        return window._CONFIG['domianURL'] + this.url.upload;
+        return window._CONFIG['domianURL'] + this.url.upload
       },
       minioUploadAction() {
-        return window._CONFIG['domianURL'] + this.url.minioUpload;
-      },
+        return window._CONFIG['domianURL'] + this.url.minioUpload
+      }
     },
     methods: {
       beforeUpload(file) {
-        var fileType = file.type;
+        var fileType = file.type
         if (fileType === 'image') {
           if (fileType.indexOf('image') < 0) {
-            this.$message.warning('请上传图片');
-            return false;
+            this.$message.warning('请上传图片')
+            return false
           }
         } else if (fileType === 'file') {
           if (fileType.indexOf('image') >= 0) {
-            this.$message.warning('请上传文件');
-            return false;
+            this.$message.warning('请上传文件')
+            return false
           }
         }
         return true
@@ -163,23 +163,23 @@
         if (info.file.status === 'done') {
           if (info.file.response.success) {
             this.loadData()
-            this.$message.success(`${info.file.name} 上传成功!`);
+            this.$message.success(`${info.file.name} 上传成功!`)
           } else {
-            this.$message.error(`${info.file.response.message}`);
+            this.$message.error(`${info.file.response.message}`)
           }
         } else if (info.file.status === 'error') {
-          this.$message.error(`${info.file.response.message}`);
+          this.$message.error(`${info.file.response.message}`)
         }
       },
       ossDelete(id) {
-        var that = this;
+        var that = this
         that.$confirm({
-          title: "确认删除",
-          content: "是否删除选中文件?",
+          title: '确认删除',
+          content: '是否删除选中文件?',
           onOk: function () {
             that.handleDelete(id)
           }
-        });
+        })
       },
       handlePreview(record) {
         if (record && record.url) {

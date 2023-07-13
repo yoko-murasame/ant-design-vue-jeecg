@@ -30,7 +30,7 @@
         visible: false,
         fullscreen: false,
         row: null,
-        column: null,
+        column: null
       }
     },
     created() {
@@ -38,7 +38,7 @@
     methods: {
 
       open(event) {
-        let {row, column} = event
+        let { row, column } = event
         this.row = cloneObject(row)
         this.column = column
         this.visible = true
@@ -54,11 +54,11 @@
           column: this.column,
           callback: (success) => {
             this.visible = !success
-          },
+          }
         })
-      },
+      }
 
-    },
+    }
   }
 </script>
 <style lang="less">

@@ -23,7 +23,7 @@
     props: {},
     data() {
       return {
-        innerDateValue: null,
+        innerDateValue: null
       }
     },
     computed: {
@@ -32,8 +32,8 @@
       },
       dateFormat() {
         let format = this.originColumn.format
-        return format ? format : (this.isDatetime ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD')
-      },
+        return format || (this.isDatetime ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD')
+      }
     },
     watch: {
       innerValue: {
@@ -57,8 +57,8 @@
       aopEvents: {
         editActived(event) {
           dispatchEvent.call(this, event, 'ant-calendar-picker', el => el.children[0].dispatchEvent(event.$event))
-        },
-      },
+        }
+      }
     }
   }
 </script>

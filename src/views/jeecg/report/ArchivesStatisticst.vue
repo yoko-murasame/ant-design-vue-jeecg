@@ -91,162 +91,162 @@
         pieDate: ['month', 'month'],
         pieValue: [],
         // 统计图类型
-        tabStatus:"bar",
+        tabStatus: 'bar',
         url: {
-          getYearCountInfo: "/mock/api/report/getYearCountInfo",
-          getMonthCountInfo:"/mock/api/report/getMonthCountInfo",
-          getCntrNoCountInfo:"/mock/api/report/getCntrNoCountInfo",
-          getCabinetCountInfo:"/mock/api/report/getCabinetCountInfo",
-        },
+          getYearCountInfo: '/mock/api/report/getYearCountInfo',
+          getMonthCountInfo: '/mock/api/report/getMonthCountInfo',
+          getCntrNoCountInfo: '/mock/api/report/getCntrNoCountInfo',
+          getCabinetCountInfo: '/mock/api/report/getCabinetCountInfo'
+        }
       }
     },
     created() {
-      let url = this.url.getYearCountInfo;
-      this.loadDate(url,'year',{});
+      let url = this.url.getYearCountInfo
+      this.loadDate(url, 'year', {})
     },
     methods: {
-      loadDate(url,type,param) {
-        getAction(url,param,'get').then((res) => {
+      loadDate(url, type, param) {
+        getAction(url, param, 'get').then((res) => {
           if (res.success) {
-            this.countSource = [];
-            if(type === 'year'){
-              this.getYearCountSource(res.result);
+            this.countSource = []
+            if (type === 'year') {
+              this.getYearCountSource(res.result)
             }
-            if(type === 'month'){
-              this.getMonthCountSource(res.result);
+            if (type === 'month') {
+              this.getMonthCountSource(res.result)
             }
-            if(type === 'category'){
-              this.getCategoryCountSource(res.result);
+            if (type === 'category') {
+              this.getCategoryCountSource(res.result)
             }
-            if(type === 'cabinet'){
-              this.getCabinetCountSource(res.result);
+            if (type === 'cabinet') {
+              this.getCabinetCountSource(res.result)
             }
-          }else{
-            var that=this;
-            that.$message.warning(res.message);
+          } else {
+            var that = this
+            that.$message.warning(res.message)
           }
         })
       },
-      getYearCountSource(data){
+      getYearCountSource(data) {
         for (let i = 0; i < data.length; i++) {
-          if(this.tabStatus === "bar"){
+          if (this.tabStatus === 'bar') {
             this.countSource.push({
               x: `${data[i].year}年`,
               y: data[i].yearcount
             })
-          }else{
+          } else {
             this.countSource.push({
               item: `${data[i].year}年`,
-              count:data[i].yearcount
+              count: data[i].yearcount
             })
           }
         }
       },
-      getMonthCountSource(data){
+      getMonthCountSource(data) {
         for (let i = 0; i < data.length; i++) {
-          if(this.tabStatus === "bar"){
+          if (this.tabStatus === 'bar') {
             this.countSource.push({
               x: data[i].month,
               y: data[i].monthcount
             })
-          }else{
+          } else {
             this.countSource.push({
               item: data[i].month,
-              count:data[i].monthcount
+              count: data[i].monthcount
             })
           }
         }
       },
-      getCategoryCountSource(data){
+      getCategoryCountSource(data) {
         for (let i = 0; i < data.length; i++) {
-          if(this.tabStatus ==="bar"){
+          if (this.tabStatus === 'bar') {
             this.countSource.push({
               x: data[i].classifyname,
               y: data[i].cntrnocount
             })
-          }else{
+          } else {
             this.countSource.push({
               item: data[i].classifyname,
-              count:data[i].cntrnocount
+              count: data[i].cntrnocount
             })
           }
         }
       },
-      getCabinetCountSource(data){
+      getCabinetCountSource(data) {
         for (let i = 0; i < data.length; i++) {
-          if(this.tabStatus === "bar"){
+          if (this.tabStatus === 'bar') {
             this.countSource.push({
               x: data[i].cabinetname,
               y: data[i].cabinetcocunt
             })
-          }else{
+          } else {
             this.countSource.push({
               item: data[i].cabinetname,
-              count:data[i].cabinetcocunt
+              count: data[i].cabinetcocunt
             })
           }
         }
       },
       // 选择统计图类别
       callback(key) {
-        if(key === "1"){
-          this.tabStatus = "bar";
-          this.queryDatebar();
-        }else{
-          this.tabStatus = "pie";
-          this.queryDatepie();
+        if (key === '1') {
+          this.tabStatus = 'bar'
+          this.queryDatebar()
+        } else {
+          this.tabStatus = 'pie'
+          this.queryDatepie()
         }
       },
       // 选择统计类别
       statisticst(e) {
-        if(this.tabStatus === "pie"){
-          this.pieType = e.target.value;
-          this.queryDatepie();
-        }else{
-          this.barType = e.target.value;
-          this.queryDatebar();
+        if (this.tabStatus === 'pie') {
+          this.pieType = e.target.value
+          this.queryDatepie()
+        } else {
+          this.barType = e.target.value
+          this.queryDatebar()
         }
       },
       // 按月份查询
-      queryDatebar(){
-        if(this.barValue.length>0){
-          this.getUrl(this.barType,{startTime:this.barValue[0]._d,endTime:this.barValue[1]._d});
-        }else{
-          this.getUrl(this.barType,{});
+      queryDatebar() {
+        if (this.barValue.length > 0) {
+          this.getUrl(this.barType, { startTime: this.barValue[0]._d, endTime: this.barValue[1]._d })
+        } else {
+          this.getUrl(this.barType, {})
         }
       },
-      queryDatepie(){
-        if(this.pieValue.length>0){
-          this.getUrl(this.pieType,{startTime:this.pieValue[0]._d,endTime:this.pieValue[1]._d});
-        }else{
-          this.getUrl(this.pieType,{});
+      queryDatepie() {
+        if (this.pieValue.length > 0) {
+          this.getUrl(this.pieType, { startTime: this.pieValue[0]._d, endTime: this.pieValue[1]._d })
+        } else {
+          this.getUrl(this.pieType, {})
         }
       },
-      searchReset(){
-        console.log(this.tabStatus);
-        if(this.tabStatus === "pie"){
-          this.pieValue = [];
-        }else{
-          this.barValue = [];
+      searchReset() {
+        console.log(this.tabStatus)
+        if (this.tabStatus === 'pie') {
+          this.pieValue = []
+        } else {
+          this.barValue = []
         }
-        this.getUrl(this.barType,{});
+        this.getUrl(this.barType, {})
       },
       // 选择请求url
-      getUrl(type,param){
-        let url = "";
-        if(type === 'year'){
-          url = this.url.getYearCountInfo;
+      getUrl(type, param) {
+        let url = ''
+        if (type === 'year') {
+          url = this.url.getYearCountInfo
         }
-        if(type === 'month'){
-          url = this.url.getMonthCountInfo;
+        if (type === 'month') {
+          url = this.url.getMonthCountInfo
         }
-        if(type === 'category'){
-          url = this.url.getCntrNoCountInfo;
+        if (type === 'category') {
+          url = this.url.getCntrNoCountInfo
         }
-        if(type === 'cabinet'){
-          url = this.url.getCabinetCountInfo;
+        if (type === 'cabinet') {
+          url = this.url.getCabinetCountInfo
         }
-        this.loadDate(url,type,param);
+        this.loadDate(url, type, param)
       },
       // 选择月份日期
       handleBarDate(value, mode) {
@@ -262,7 +262,7 @@
           mode[0] === 'date' ? 'month' : mode[0],
           mode[1] === 'date' ? 'month' : mode[1]
         ]
-      },
+      }
     }
   }
 </script>

@@ -10,13 +10,13 @@
         从
         <a-select v-model="valueRange.start" class="w80" :disabled="type!==TYPE_RANGE || disableChoice">
           <template v-for="(v, k) of WEEK_MAP">
-            <a-select-option :value="v">{{k}}</a-select-option>
+            <a-select-option :value="v">{{ k }}</a-select-option>
           </template>
         </a-select>
         至
         <a-select v-model="valueRange.end" class="w80" :disabled="type!==TYPE_RANGE || disableChoice">
           <template v-for="(v, k) of WEEK_MAP">
-            <a-select-option :value="v">{{k}}</a-select-option>
+            <a-select-option :value="v">{{ k }}</a-select-option>
           </template>
         </a-select>
       </div>
@@ -25,11 +25,17 @@
         从
         <a-select v-model="valueLoop.start" class="w80" :disabled="type!==TYPE_LOOP || disableChoice">
           <template v-for="(v, k) of WEEK_MAP">
-            <a-select-option :value="v">{{k}}</a-select-option>
+            <a-select-option :value="v">{{ k }}</a-select-option>
           </template>
         </a-select>
         开始，间隔
-        <a-input-number :disabled="type!==TYPE_LOOP || disableChoice" :max="maxValue" :min="minValue" :precision="0" class="w60" v-model="valueLoop.interval"/>
+        <a-input-number
+          :disabled="type!==TYPE_LOOP || disableChoice"
+          :max="maxValue"
+          :min="minValue"
+          :precision="0"
+          class="w60"
+          v-model="valueLoop.interval"/>
         天
       </div>
       <div class="item">
@@ -37,7 +43,7 @@
         <div class="list">
           <a-checkbox-group v-model="valueList">
             <template v-for="(v,k) in WEEK_MAP">
-              <a-checkbox class="list-check-item" :key="`key-${v}`" :value="v" :disabled="type!==TYPE_SPECIFY || disabled">{{k}}</a-checkbox>
+              <a-checkbox class="list-check-item" :key="`key-${v}`" :value="v" :disabled="type!==TYPE_SPECIFY || disabled">{{ k }}</a-checkbox>
             </template>
           </a-checkbox-group>
         </div>
@@ -58,11 +64,11 @@ const WEEK_MAP = {
   '周五': 6,
   '周六': 7,
   // 按照国人习惯，将周日放到每周的最后一天
-  '周日': 1,
+  '周日': 1
 }
 
 export default {
-  name: 'week',
+  name: 'Week',
   mixins: [mixin],
   props: {
     day: {

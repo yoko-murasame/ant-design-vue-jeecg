@@ -33,7 +33,7 @@
     <div>
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">
-          {{selectedRowKeys.length }}</a>项
+          {{ selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
       <a-table
@@ -63,7 +63,7 @@
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
-             </a-menu>
+            </a-menu>
           </a-dropdown>
         </span>
       </a-table>
@@ -76,8 +76,8 @@
 </template>
 
 <script>
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
-  import {getAction} from '@/api/manage'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import { getAction } from '@/api/manage'
   import SysDepartRoleModal from './SysDepartRoleModal'
   import DeptRoleAuthModal from './DeptRoleAuthModal'
 
@@ -92,35 +92,35 @@
         // 表头
         columns: [{
           title: '部门角色名称',
-          align: "center",
+          align: 'center',
           dataIndex: 'roleName'
         },
         {
           title: '部门角色编码',
-          align: "center",
+          align: 'center',
           dataIndex: 'roleCode'
         },
         {
           title: '部门',
-          align: "center",
+          align: 'center',
           dataIndex: 'departId_dictText'
         },
         {
           title: '备注',
-          align: "center",
+          align: 'center',
           dataIndex: 'description'
         },
         {
           title: '操作',
           dataIndex: 'action',
-          scopedSlots: {customRender: 'action'},
-          align: "center",
+          scopedSlots: { customRender: 'action' },
+          align: 'center',
           width: 170
         }],
         url: {
-          list: "/sys/sysDepartRole/list",
-          delete: "/sys/sysDepartRole/delete",
-          deleteBatch: "/sys/sysDepartRole/deleteBatch",
+          list: '/sys/sysDepartRole/list',
+          delete: '/sys/sysDepartRole/delete',
+          deleteBatch: '/sys/sysDepartRole/deleteBatch'
         }
       }
     },
@@ -129,59 +129,59 @@
     methods: {
       searchReset() {
         this.queryParam = {}
-        this.loadData(1);
+        this.loadData(1)
       },
       loadData(arg) {
         if (!this.url.list) {
-          this.$message.error("请设置url.list属性!")
+          this.$message.error('请设置url.list属性!')
           return
         }
-        //加载数据 若传入参数1则加载第一页的内容
+        // 加载数据 若传入参数1则加载第一页的内容
         if (arg === 1) {
-          this.ipagination.current = 1;
+          this.ipagination.current = 1
         }
-        let params = this.getQueryParams();//查询条件
-        params.deptId = this.currentDeptId;
+        let params = this.getQueryParams()// 查询条件
+        params.deptId = this.currentDeptId
         getAction(this.url.list, params).then((res) => {
           if (res.success && res.result) {
-            this.dataSource = res.result.records;
-            this.ipagination.total = res.result.total;
+            this.dataSource = res.result.records
+            this.ipagination.total = res.result.total
           }
         })
       },
       open(record) {
-        this.currentDeptId = record.id;
-        this.loadData(1);
+        this.currentDeptId = record.id
+        this.loadData(1)
       },
       clearList() {
-        this.currentDeptId = '';
-        this.dataSource = [];
+        this.currentDeptId = ''
+        this.dataSource = []
       },
       hasSelectDept() {
         if (this.currentDeptId == '') {
-          this.$message.error("请选择一个部门!")
-          return false;
+          this.$message.error('请选择一个部门!')
+          return false
         }
-        return true;
+        return true
       },
       handleEdit: function (record) {
-        this.$refs.modalForm.title = "编辑";
-        this.$refs.modalForm.departDisabled = true;
-        this.$refs.modalForm.disableSubmit = false;
-        this.$refs.modalForm.edit(record,record.departId);
+        this.$refs.modalForm.title = '编辑'
+        this.$refs.modalForm.departDisabled = true
+        this.$refs.modalForm.disableSubmit = false
+        this.$refs.modalForm.edit(record, record.departId)
       },
       handleAdd: function () {
         if (this.currentDeptId == '') {
-          this.$message.error("请选择一个部门!")
+          this.$message.error('请选择一个部门!')
         } else {
-          this.$refs.modalForm.departDisabled = true;
-          this.$refs.modalForm.add(this.currentDeptId);
-          this.$refs.modalForm.title = "新增";
+          this.$refs.modalForm.departDisabled = true
+          this.$refs.modalForm.add(this.currentDeptId)
+          this.$refs.modalForm.title = '新增'
         }
       },
-      handlePerssion: function(record){
-        this.$refs.modalDeptRole.show(record.id,record.departId);
-      },
+      handlePerssion: function(record) {
+        this.$refs.modalDeptRole.show(record.id, record.departId)
+      }
     }
   }
 </script>

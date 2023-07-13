@@ -94,10 +94,9 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import TenantModal from './modules/TenantModal'
 
-
   export default {
-    name: "TenantList",
-    mixins:[JeecgListMixin, mixinDevice],
+    name: 'TenantList',
+    mixins: [JeecgListMixin, mixinDevice],
     components: {
       TenantModal
     },
@@ -107,15 +106,15 @@
         // 表头
         columns: [
           {
-            title:'租户名称',
-            align:"center",
+            title: '租户名称',
+            align: 'center',
             dataIndex: 'name'
-          },{
-            title:'租户编号',
-            align:"center",
+          }, {
+            title: '租户编号',
+            align: 'center',
             dataIndex: 'id'
           },
-          /*{
+          /* {
             title:'开始时间',
             align:"center",
             dataIndex: 'beginDate'
@@ -124,38 +123,38 @@
             title:'结束时间',
             align:"center",
             dataIndex: 'endDate'
-          },*/
+          }, */
           {
-            title:'状态',
-            align:"center",
+            title: '状态',
+            align: 'center',
             dataIndex: 'status_dictText'
           },
           {
             title: '操作',
             dataIndex: 'action',
-            align:"center",
-            fixed:"right",
-            width:147,
+            align: 'center',
+            fixed: 'right',
+            width: 147,
             scopedSlots: { customRender: 'action' }
           }
         ],
         url: {
-          list: "/sys/tenant/list",
-          delete: "/sys/tenant/delete",
-          deleteBatch: "/sys/tenant/deleteBatch"
+          list: '/sys/tenant/list',
+          delete: '/sys/tenant/delete',
+          deleteBatch: '/sys/tenant/deleteBatch'
         },
-        dictOptions:{},
+        dictOptions: {}
       }
     },
     created() {
     },
     computed: {
-      importExcelUrl: function(){
-        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-      },
+      importExcelUrl: function() {
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
+      }
     },
     methods: {
-      initDictConfig(){
+      initDictConfig() {
       }
     }
   }

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { USER_AUTH } from '@/store/mutation-types';
+import { USER_AUTH } from '@/store/mutation-types'
 
 /**
  * 禁用效果包裹组件
@@ -49,7 +49,7 @@ export default {
         return
       }
       const permissions = this.permission.split(',')
-      let authList = JSON.parse(sessionStorage.getItem(USER_AUTH) || '[]');
+      let authList = JSON.parse(sessionStorage.getItem(USER_AUTH) || '[]')
       for (let auth of authList) {
         if (permissions.includes(auth.action)) {
           this.innerDisable = false

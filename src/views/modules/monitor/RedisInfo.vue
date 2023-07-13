@@ -142,7 +142,6 @@
           this.memory.max = Math.floor(memoryPole[0]) + 100
           this.memory.min = Math.floor(memoryPole[1]) - 100
           if (this.memory.min < 0) this.memory.min = 0
-
         }).catch((e) => {
           console.error(e)
           this.closeTimer()
@@ -150,12 +149,11 @@
         }).finally(() => {
           this.loading = false
         })
-
       },
 
       // 获取一组数据中最大和最小的值
       getMaxAndMin(dataSource, field) {
-        let maxValue = null, minValue = null
+        let maxValue = null; let minValue = null
         dataSource.forEach(item => {
           let value = Number.parseInt(item[field])
           // max

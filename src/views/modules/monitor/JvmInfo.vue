@@ -118,7 +118,6 @@
           getAction('actuator/metrics/jvm.gc.live.data.size'),
           getAction('actuator/metrics/jvm.gc.pause')
         ]).then((res) => {
-
           let info = []
           res.forEach((value, id) => {
             let more = this.moreInfo[value.name]
@@ -129,14 +128,14 @@
               let param = value.name + item
               let val = value.measurements[idx].value
 
-              if (param === 'jvm.memory.max'
-                || param === 'jvm.memory.committed'
-                || param === 'jvm.memory.used'
-                || param === 'jvm.buffer.memory.used'
-                || param === 'jvm.gc.memory.allocated'
-                || param === 'jvm.gc.memory.promoted'
-                || param === 'jvm.gc.max.data.size'
-                || param === 'jvm.gc.live.data.size'
+              if (param === 'jvm.memory.max' ||
+                param === 'jvm.memory.committed' ||
+                param === 'jvm.memory.used' ||
+                param === 'jvm.buffer.memory.used' ||
+                param === 'jvm.gc.memory.allocated' ||
+                param === 'jvm.gc.memory.promoted' ||
+                param === 'jvm.gc.max.data.size' ||
+                param === 'jvm.gc.live.data.size'
               ) {
                 val = this.convert(val, Number)
               }
@@ -144,8 +143,6 @@
             })
           })
           this.dataSource = info
-
-
         }).catch((e) => {
           console.error(e)
           this.$message.error('获取JVM信息失败')

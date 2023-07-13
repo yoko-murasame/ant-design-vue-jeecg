@@ -25,7 +25,7 @@
     </span>
   </div>
 
- <!-- <j-select-user-by-dep
+  <!-- <j-select-user-by-dep
     v-bind="custProps"
     @change="handleChange"
     :trigger-change="true">
@@ -42,15 +42,15 @@
     components: { JSelectUserByDepModal },
     data() {
       return {
-        userIds:'',
-        userNames:'',
+        userIds: '',
+        userNames: '',
         innerUserValue: '',
         selectedOptions: []
       }
     },
     computed: {
       custProps() {
-        const {userIds, originColumn: col, caseId, cellProps} = this
+        const { userIds, originColumn: col, caseId, cellProps } = this
         return {
           ...cellProps,
           value: userIds,
@@ -59,45 +59,45 @@
           class: 'jvxe-select'
         }
       },
-      componentDisabled(){
-        console.log('333',this.cellProps)
-        if(this.cellProps.disabled==true){
+      componentDisabled() {
+        console.log('333', this.cellProps)
+        if (this.cellProps.disabled == true) {
           return true
         }
         return false
       },
-      modalWidth(){
-        if(this.cellProps.modalWidth){
+      modalWidth() {
+        if (this.cellProps.modalWidth) {
           return this.cellProps.modalWidth
-        }else{
+        } else {
           return 1250
         }
       },
-      multi(){
-        if(this.cellProps.multi==false){
+      multi() {
+        if (this.cellProps.multi == false) {
           return false
-        }else{
+        } else {
           return true
         }
       },
-      storeField(){
-        if(this.originColumn){
+      storeField() {
+        if (this.originColumn) {
           const str = this.originColumn.fieldExtendJson
-          if(str){
+          if (str) {
             let json = JSON.parse(str)
-            if(json && json.store){
+            if (json && json.store) {
               return json.store
             }
           }
         }
         return 'username'
       },
-      textField(){
-        if(this.originColumn){
+      textField() {
+        if (this.originColumn) {
           const str = this.originColumn.fieldExtendJson
-          if(str){
+          if (str) {
             let json = JSON.parse(str)
-            if(json && json.text){
+            if (json && json.text) {
               return json.text
             }
           }
@@ -126,8 +126,8 @@
         this.$refs.selectModal.showModal()
       },
       selectOK(rows, idstr) {
-        console.log("当前选中用户", rows)
-        console.log("当前选中用户ID", idstr)
+        console.log('当前选中用户', rows)
+        console.log('当前选中用户ID', idstr)
         if (!rows) {
           this.userNames = ''
           this.userIds = ''
@@ -137,12 +137,12 @@
         }
         this.handleChangeCommon(this.userIds)
       },
-      handleEmpty(){
+      handleEmpty() {
         this.selectOK('')
       },
       initComp(userNames) {
         this.userNames = userNames
-      },
+      }
     },
     enhanced: {
       switches: {

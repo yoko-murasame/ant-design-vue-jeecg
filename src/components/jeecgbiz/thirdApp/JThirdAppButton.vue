@@ -17,37 +17,37 @@ const backEndUrl = {
   // 企业微信
   wechatEnterprise: {
     user: '/sys/thirdApp/sync/wechatEnterprise/user',
-    depart: '/sys/thirdApp/sync/wechatEnterprise/depart',
+    depart: '/sys/thirdApp/sync/wechatEnterprise/depart'
   },
   // 钉钉
   dingtalk: {
     user: '/sys/thirdApp/sync/dingtalk/user',
-    depart: '/sys/thirdApp/sync/dingtalk/depart',
+    depart: '/sys/thirdApp/sync/dingtalk/depart'
   }
 }
 
 export default {
   name: 'JThirdAppButton',
-  components: {JThirdAppDropdown},
+  components: { JThirdAppDropdown },
   props: {
     // 同步类型，可以是 user、depart
     bizType: {
       type: String,
-      required: true,
+      required: true
     },
     // 是否允许同步到第三方APP
     syncToApp: Boolean,
     // 是否允许第三方APP同步到本地
     syncToLocal: Boolean,
     // 选择的行
-    selectedRowKeys: Array,
+    selectedRowKeys: Array
   },
   data() {
     return {
       enabledTypes: {},
       attrs: {
-        dingtalk: {},
-      },
+        dingtalk: {}
+      }
     }
   },
   computed: {
@@ -60,9 +60,9 @@ export default {
     bindEvents() {
       return {
         'to-app': this.onToApp,
-        'to-local': this.onToLocal,
+        'to-local': this.onToLocal
       }
-    },
+    }
   },
   created() {
     this.loadEnabledTypes()
@@ -105,7 +105,7 @@ export default {
             model.update({
               keyboard: false,
               okText: '同步中…',
-              cancelButtonProps: {props: {disabled: true}}
+              cancelButtonProps: { props: { disabled: true } }
             })
             return getAction(url, {
               ids: selectedRowKeys.join(',')
@@ -119,20 +119,20 @@ export default {
                     let nodes
                     let successInfo = [
                       `成功信息如下：`,
-                      this.renderTextarea(h, res.result.successInfo.map((v, i) => `${i + 1}. ${v}`).join('\n')),
+                      this.renderTextarea(h, res.result.successInfo.map((v, i) => `${i + 1}. ${v}`).join('\n'))
                     ]
                     if (res.success) {
                       nodes = [
                         ...successInfo,
                         h('br'),
-                        `无失败信息！`,
+                        `无失败信息！`
                       ]
                     } else {
                       nodes = [
                         `失败信息如下：`,
                         this.renderTextarea(h, res.result.failInfo.map((v, i) => `${i + 1}. ${v}`).join('\n')),
                         h('br'),
-                        ...successInfo,
+                        ...successInfo
                       ]
                     }
                     return nodes
@@ -160,13 +160,13 @@ export default {
                 type,
                 direction,
                 isToApp: direction === '/toApp',
-                isToLocal: direction === '/toLocal',
+                isToLocal: direction === '/toLocal'
               })
             })
           },
           onCancel() {
             resolve()
-          },
+          }
         })
       })
     },
@@ -175,16 +175,16 @@ export default {
         props: {
           value: value,
           readOnly: true,
-          autosize: {minRows: 5, maxRows: 10},
+          autosize: { minRows: 5, maxRows: 10 }
         },
         style: {
           // 关闭textarea的自动换行，使其可以左右滚动
           whiteSpace: 'pre',
-          overflow: 'auto',
+          overflow: 'auto'
         }
       })
     }
-  },
+  }
 }
 
 // 启用了哪些第三方App（在此缓存）
@@ -196,7 +196,7 @@ export async function loadEnabledTypes() {
   if (enabledTypes != null) {
     return cloneObject(enabledTypes)
   } else {
-    let {success, result} = await getAction(backEndUrl.getEnabledType)
+    let { success, result } = await getAction(backEndUrl.getEnabledType)
     if (success) {
       // 在此缓存
       enabledTypes = cloneObject(result)

@@ -31,7 +31,7 @@
 
   export default {
     name: 'ImgDragSort',
-    components:{
+    components: {
       ACol,
       ARow,
       draggable
@@ -40,31 +40,31 @@
       return {
         description: '图片拖拽排序',
         spinning: false,
-        //数据集
+        // 数据集
         dataSource: [
-          {id:'000',sort: 0,filePath: 'https://static.jeecg.com/upload/test/1_1588149743473.jpg'},
-          {id:'111',sort: 1,filePath: 'https://static.jeecg.com/upload/test/u27356337152749454924fm27gp0_1588149731821.jpg'},
-          {id:'222',sort: 2,filePath: 'https://static.jeecg.com/upload/test/u24454681402491956848fm27gp0_1588149712663.jpg'},
-          {id:'333',sort: 3,filePath: 'https://static.jeecg.com/temp/国炬软件logo_1606575029126.png'},
-          {id:'444',sort: 4,filePath: 'https://static.jeecg.com/upload/test/u8891206113801177793fm27gp0_1588149704459.jpg'}
+          { id: '000', sort: 0, filePath: 'https://static.jeecg.com/upload/test/1_1588149743473.jpg' },
+          { id: '111', sort: 1, filePath: 'https://static.jeecg.com/upload/test/u27356337152749454924fm27gp0_1588149731821.jpg' },
+          { id: '222', sort: 2, filePath: 'https://static.jeecg.com/upload/test/u24454681402491956848fm27gp0_1588149712663.jpg' },
+          { id: '333', sort: 3, filePath: 'https://static.jeecg.com/temp/国炬软件logo_1606575029126.png' },
+          { id: '444', sort: 4, filePath: 'https://static.jeecg.com/upload/test/u8891206113801177793fm27gp0_1588149704459.jpg' }
         ],
-        oldDateSource:[],
-        newDateSource:[],
+        oldDateSource: [],
+        newDateSource: []
       }
     },
-    created(){
-      this.oldDateSource = this.dataSource;
+    created() {
+      this.oldDateSource = this.dataSource
     },
-    methods:{
+    methods: {
       end: function (evt) {
-        console.log("拖动前的位置"+evt.oldIndex);
-        console.log("拖动后的位置"+evt.newIndex);
+        console.log('拖动前的位置' + evt.oldIndex)
+        console.log('拖动后的位置' + evt.newIndex)
       },
-      sureChange(){
-        for(var i=0;i<this.dataSource.length;i++){
-          this.dataSource[i].sort = i;
+      sureChange() {
+        for (var i = 0; i < this.dataSource.length; i++) {
+          this.dataSource[i].sort = i
         }
-        this.newDateSource = this.dataSource;
+        this.newDateSource = this.dataSource
       }
     }
   }

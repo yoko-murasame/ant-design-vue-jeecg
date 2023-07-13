@@ -44,9 +44,9 @@
   import Breadcrumb from '@/components/tools/Breadcrumb'
 
   export default {
-    name: "PageHeader",
+    name: 'PageHeader',
     components: {
-      "s-breadcrumb": Breadcrumb
+      's-breadcrumb': Breadcrumb
     },
     props: {
       title: {
@@ -73,7 +73,7 @@
     data() {
       return {
         name: '',
-        breadList: [],
+        breadList: []
       }
     },
     created() {
@@ -81,7 +81,6 @@
     },
     methods: {
       getBreadcrumb() {
-
         this.breadList = []
         // this.breadList.push({name: 'index', path: '/dashboard/', meta: {title: '首页'}})
 

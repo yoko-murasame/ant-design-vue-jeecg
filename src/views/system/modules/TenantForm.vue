@@ -8,14 +8,14 @@
               <a-input v-model="model.name" placeholder="请输入租户名称"></a-input>
             </a-form-model-item>
           </a-col>
-          
+
           <a-col :span="24">
             <a-form-model-item label="租户编号" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="id">
               <a-input-number style="width: 100%" :min="1" v-model="model.id" placeholder="请输入租户编号" :disabled="disabledId"></a-input-number>
             </a-form-model-item>
           </a-col>
-          
-<!--          <a-col :span="24">
+
+          <!--          <a-col :span="24">
             <a-form-model-item label="开始时间" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <j-date placeholder="请选择开始时间" v-model="model.beginDate" :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" style="width: 100%"/>
             </a-form-model-item>
@@ -25,7 +25,7 @@
               <j-date placeholder="请选择结束时间" v-model="model.endDate" :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" style="width: 100%"/>
             </a-form-model-item>
           </a-col>-->
-          
+
           <a-col :span="24">
             <a-form-model-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-radio-group name="tenantStatus" v-model="model.status">
@@ -48,19 +48,19 @@
   import { validateDuplicateValue } from '@/utils/util'
   import JFormContainer from '@/components/jeecg/JFormContainer'
   import JDate from '@/components/jeecg/JDate'
-  import JDictSelectTag from "@/components/dict/JDictSelectTag"
-  
+  import JDictSelectTag from '@/components/dict/JDictSelectTag'
+
   export default {
-    name: "TenantForm",
+    name: 'TenantForm',
     components: {
       JFormContainer,
       JDate,
-      JDictSelectTag,
+      JDictSelectTag
     },
     props: {
       formData: {
         type: Object,
-        default: ()=>{},
+        default: () => {},
         required: false
       },
       normal: {
@@ -76,109 +76,108 @@
     },
     data () {
       return {
-        model: {status:1},
-        id:'',
+        model: { status: 1 },
+        id: '',
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
         confirmLoading: false,
         validatorRules: {
-          id:[ { required: true, message: '请输入租户编号!' },]
+          id: [ { required: true, message: '请输入租户编号!' }]
         },
         url: {
-          add: "/sys/tenant/add",
-          edit: "/sys/tenant/edit",
-          queryById: "/sys/tenant/queryById"
+          add: '/sys/tenant/add',
+          edit: '/sys/tenant/edit',
+          queryById: '/sys/tenant/queryById'
         }
       }
     },
     computed: {
-      formDisabled(){
-        if(this.normal===false){
-          if(this.formData.disabled===false){
+      formDisabled() {
+        if (this.normal === false) {
+          if (this.formData.disabled === false) {
             return false
-          }else{
+          } else {
             return true
           }
         }
         return this.disabled
       },
-      disabledId(){
-        return this.id?true : false;
+      disabledId() {
+        return !!this.id
       },
-      showFlowSubmitButton(){
-        if(this.normal===false){
-          if(this.formData.disabled===false){
+      showFlowSubmitButton() {
+        if (this.normal === false) {
+          if (this.formData.disabled === false) {
             return true
-          }else{
+          } else {
             return false
           }
-        }else{
+        } else {
           return false
         }
       }
     },
     created () {
-      this.showFlowData();
+      this.showFlowData()
     },
     methods: {
       show (record) {
-        this.model = record?Object.assign({}, record):this.model;
-        this.id = record?record.id:'';
-        this.visible = true;
+        this.model = record ? Object.assign({}, record) : this.model
+        this.id = record ? record.id : ''
+        this.visible = true
       },
-      showFlowData(){
-        if(this.normal === false){
-          let params = {id:this.formData.dataId};
-          getAction(this.url.queryById,params).then((res)=>{
-            if(res.success){
-              this.edit (res.result);
+      showFlowData() {
+        if (this.normal === false) {
+          let params = { id: this.formData.dataId }
+          getAction(this.url.queryById, params).then((res) => {
+            if (res.success) {
+              this.edit(res.result)
             }
-          });
+          })
         }
       },
       submitForm () {
-        const that = this;
+        const that = this
         // 触发表单验证
         that.$refs.form.validate(valid => {
           if (valid) {
-            that.confirmLoading = true;
-            let httpurl = '';
-            let method = '';
-            if(!this.id){
-              httpurl+=this.url.add;
-              method = 'post';
-            }else{
-              httpurl+=this.url.edit;
-              method = 'put';
+            that.confirmLoading = true
+            let httpurl = ''
+            let method = ''
+            if (!this.id) {
+              httpurl += this.url.add
+              method = 'post'
+            } else {
+              httpurl += this.url.edit
+              method = 'put'
             }
-            httpAction(httpurl,this.model,method).then((res)=>{
-              if(res.success){
-                that.$message.success(res.message);
-                that.$emit('ok');
-              }else{
-                if("该编号已存在!" == res.message){
-                  this.model.id=""
+            httpAction(httpurl, this.model, method).then((res) => {
+              if (res.success) {
+                that.$message.success(res.message)
+                that.$emit('ok')
+              } else {
+                if (res.message == '该编号已存在!') {
+                  this.model.id = ''
                 }
-                that.$message.warning(res.message);
+                that.$message.warning(res.message)
               }
             }).finally(() => {
-              that.confirmLoading = false;
+              that.confirmLoading = false
             })
-          }else{
-            return false;
+          } else {
+            return false
           }
-
         })
       },
-      popupCallback(row){
-        this.model = Object.assign(this.model, row);
-      },
+      popupCallback(row) {
+        this.model = Object.assign(this.model, row)
+      }
     }
   }
 </script>

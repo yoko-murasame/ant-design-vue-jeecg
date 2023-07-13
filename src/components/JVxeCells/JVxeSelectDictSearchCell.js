@@ -15,7 +15,7 @@ const common = {
     return {
       loading: false,
       innerSelectValue: null,
-      innerOptions: [],
+      innerOptions: []
     }
   },
   /** 公共计算属性 */
@@ -34,7 +34,7 @@ const common = {
     isAsync() {
       let isAsync = this.originColumn.async
       return (isAsync != null && isAsync !== '') ? !!isAsync : true
-    },
+    }
   },
   /** 公共属性监听 */
   watch: {
@@ -62,9 +62,9 @@ const common = {
           if (common.labelMap.has(value)) {
             this.innerOptions = cloneObject(common.labelMap.get(value))
           } else {
-            let {success, result} = await getAction(`/sys/dict/loadDictItem/${this.dict}`, {key: value})
+            let { success, result } = await getAction(`/sys/dict/loadDictItem/${this.dict}`, { key: value })
             if (success && result && result.length > 0) {
-              this.innerOptions = [{value: value, text: result[0]}]
+              this.innerOptions = [{ value: value, text: result[0] }]
               common.labelMap.set(value, cloneObject(this.innerOptions))
             }
           }
@@ -89,23 +89,23 @@ const common = {
               dictStr = this.dict
             }
             if (this.dict.indexOf(',') === -1) {
-              //优先从缓存中读取字典配置
+              // 优先从缓存中读取字典配置
               let cache = getDictItemsFromCache(this.dict)
               if (cache) {
                 this.innerOptions = cache
                 return
               }
             }
-            let {success, result} = await ajaxGetDictItems(dictStr, null)
+            let { success, result } = await ajaxGetDictItems(dictStr, null)
             if (success) {
               this.innerOptions = result
             }
           }
         }
       }
-    },
+    }
 
-  },
+  }
 
 }
 
@@ -115,23 +115,23 @@ export const DictSearchSpanCell = {
   mixins: [JVxeCellMixins],
   data() {
     return {
-      ...common.data.apply(this),
+      ...common.data.apply(this)
     }
   },
   computed: {
-    ...common.computed,
+    ...common.computed
   },
   watch: {
-    ...common.watch,
+    ...common.watch
   },
   methods: {
-    ...common.methods,
+    ...common.methods
   },
   render(h) {
     return h('span', {}, [
       filterDictText(this.innerOptions, this.innerSelectValue || this.innerValue)
     ])
-  },
+  }
 }
 
 // 请求id
@@ -169,13 +169,13 @@ export const DictSearchInputCell = {
         return null
       }
       return (input, option) => option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-    },
+    }
   },
   watch: {
-    ...common.watch,
+    ...common.watch
   },
   created() {
-    this.loadData = debounce(this.loadData, 300)//消抖
+    this.loadData = debounce(this.loadData, 300)// 消抖
   },
   methods: {
     ...common.methods,
@@ -191,11 +191,11 @@ export const DictSearchInputCell = {
       }
       // 字典code格式：table,text,code
       this.hasRequest = true
-      getAction(`/sys/dict/loadDict/${this.dict}`, {keyword: value}).then(res => {
+      getAction(`/sys/dict/loadDict/${this.dict}`, { keyword: value }).then(res => {
         if (currentRequestId !== requestId) {
           return
         }
-        let {success, result, message} = res
+        let { success, result, message } = res
         if (success) {
           this.innerOptions = result
           result.forEach((item) => {
@@ -226,13 +226,13 @@ export const DictSearchInputCell = {
 
     renderOptionItem() {
       let options = []
-      this.options.forEach(({value, text, label, title, disabled}) => {
+      this.options.forEach(({ value, text, label, title, disabled }) => {
         options.push(
           <a-select-option key={value} value={value} disabled={disabled}>{text || label || title}</a-select-option>
         )
       })
       return options
-    },
+    }
   },
   render() {
     return (
@@ -256,7 +256,7 @@ export const DictSearchInputCell = {
     aopEvents: {
       editActived(event) {
         dispatchEvent.call(this, event, 'ant-select')
-      },
-    },
+      }
+    }
   }
 }

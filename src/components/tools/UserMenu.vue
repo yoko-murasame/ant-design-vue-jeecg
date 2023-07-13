@@ -6,7 +6,14 @@
       <a-icon type="search"></a-icon>
     </span>
     <!-- update-begin author:sunjianlei date:20200219 for: 菜单搜索改为动态组件，在手机端呈现出弹出框 -->
-    <component :is="searchMenuComp" v-show="searchMenuVisible || isMobile()" class="borders" :visible="searchMenuVisible" title="搜索菜单" :footer="null" @cancel="searchMenuVisible=false">
+    <component
+      :is="searchMenuComp"
+      v-show="searchMenuVisible || isMobile()"
+      class="borders"
+      :visible="searchMenuVisible"
+      title="搜索菜单"
+      :footer="null"
+      @cancel="searchMenuVisible=false">
       <a-select
         class="search-input"
         showSearch
@@ -20,7 +27,7 @@
         @change="searchMethods"
         @blur="hiddenClick"
       >
-        <a-select-option v-for="(site,index) in searchMenuOptions" :key="index" :value="site.id">{{site.meta.title}}</a-select-option>
+        <a-select-option v-for="(site,index) in searchMenuOptions" :key="index" :value="site.id">{{ site.meta.title }}</a-select-option>
       </a-select>
     </component>
     <!-- update-end author:sunjianlei date:20200219 for: 菜单搜索改为动态组件，在手机端呈现出弹出框 -->
@@ -50,9 +57,9 @@
             <span>账户设置</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="3"  @click="systemSetting">
-           <a-icon type="tool"/>
-           <span>系统设置</span>
+        <a-menu-item key="3" @click="systemSetting">
+          <a-icon type="tool"/>
+          <span>系统设置</span>
         </a-menu-item>
         <a-menu-item key="4" @click="updatePassword">
           <a-icon type="setting"/>
@@ -66,7 +73,7 @@
           <a-icon type="sync"/>
           <span>清理缓存</span>
         </a-menu-item>
-       <!-- <a-menu-item key="2" disabled>
+        <!-- <a-menu-item key="2" disabled>
           <a-icon type="setting"/>
           <span>测试</span>
         </a-menu-item>
@@ -94,23 +101,23 @@
 <script>
   import HeaderNotice from './HeaderNotice'
   import UserPassword from './UserPassword'
-  import SettingDrawer from "@/components/setting/SettingDrawer";
+  import SettingDrawer from '@/components/setting/SettingDrawer'
   import DepartSelect from './DepartSelect'
-  import { mapActions, mapGetters,mapState } from 'vuex'
+  import { mapActions, mapGetters, mapState } from 'vuex'
   import { mixinDevice } from '@/utils/mixin.js'
-  import { getFileAccessHttpUrl,getAction } from "@/api/manage"
+  import { getFileAccessHttpUrl, getAction } from '@/api/manage'
   import Vue from 'vue'
-  import { UI_CACHE_DB_DICT_DATA } from "@/store/mutation-types"
+  import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
 
   export default {
-    name: "UserMenu",
+    name: 'UserMenu',
     mixins: [mixinDevice],
-    data(){
-      return{
+    data() {
+      return {
         // update-begin author:sunjianlei date:20200219 for: 头部菜单搜索规范命名 --------------
-        searchMenuOptions:[],
+        searchMenuOptions: [],
         searchMenuComp: 'span',
-        searchMenuVisible: false,
+        searchMenuVisible: false
         // update-begin author:sunjianlei date:20200219 for: 头部菜单搜索规范命名 --------------
       }
     },
@@ -127,14 +134,14 @@
         default: 'dark'
       }
     },
-    /* update_begin author:zhaoxin date:20191129 for: 做头部菜单栏导航*/
+    /* update_begin author:zhaoxin date:20191129 for: 做头部菜单栏导航 */
     created() {
       let lists = []
-      this.searchMenus(lists,this.permissionMenuList)
-      this.searchMenuOptions=[...lists]
+      this.searchMenus(lists, this.permissionMenuList)
+      this.searchMenuOptions = [...lists]
     },
     mounted() {
-      //如果是单点登录模式
+      // 如果是单点登录模式
       if (process.env.VUE_APP_SSO == 'true') {
         let depart = this.userInfo().orgCode
         if (!depart) {
@@ -149,7 +156,7 @@
 
       })
     },
-    /* update_end author:zhaoxin date:20191129 for: 做头部菜单栏导航*/
+    /* update_end author:zhaoxin date:20191129 for: 做头部菜单栏导航 */
     watch: {
       // update-begin author:sunjianlei date:20200219 for: 菜单搜索改为动态组件，在手机端呈现出弹出框
       device: {
@@ -157,22 +164,22 @@
         handler() {
           this.searchMenuVisible = false
           this.searchMenuComp = this.isMobile() ? 'a-modal' : 'span'
-        },
-      },
+        }
+      }
       // update-end author:sunjianlei date:20200219 for: 菜单搜索改为动态组件，在手机端呈现出弹出框
     },
     methods: {
-      /* update_begin author:zhaoxin date:20191129 for: 做头部菜单栏导航*/
+      /* update_begin author:zhaoxin date:20191129 for: 做头部菜单栏导航 */
       showClick() {
         this.searchMenuVisible = true
       },
-      hiddenClick(){
+      hiddenClick() {
         this.shows = false
       },
-      /* update_end author:zhaoxin date:20191129 for: 做头部菜单栏导航*/
-      ...mapActions(["Logout"]),
-      ...mapGetters(["nickname", "avatar","userInfo"]),
-      getAvatar(){
+      /* update_end author:zhaoxin date:20191129 for: 做头部菜单栏导航 */
+      ...mapActions(['Logout']),
+      ...mapGetters(['nickname', 'avatar', 'userInfo']),
+      getAvatar() {
         return getFileAccessHttpUrl(this.avatar())
       },
       handleLogout() {
@@ -184,7 +191,7 @@
           onOk() {
             return that.Logout({}).then(() => {
               // update-begin author:scott date:20211223 for:【JTC-198】退出登录体验不好
-              //that.$router.push({ path: '/user/login' });
+              // that.$router.push({ path: '/user/login' });
               window.location.reload()
               // update-end author:scott date:20211223 for:【JTC-198】退出登录体验不好
             }).catch(err => {
@@ -195,27 +202,27 @@
             })
           },
           onCancel() {
-          },
-        });
+          }
+        })
       },
-      updatePassword(){
+      updatePassword() {
         let username = this.userInfo().username
         this.$refs.userPassword.show(username)
       },
-      updateCurrentDepart(){
+      updateCurrentDepart() {
         this.$refs.departSelect.show()
       },
-      systemSetting(){
+      systemSetting() {
         this.$refs.settingDrawer.showDrawer()
       },
-      /* update_begin author:zhaoxin date:20191129 for: 做头部菜单栏导航*/
-      searchMenus(arr,menus){
-        for(let i of menus){
-          if(!i.hidden && "layouts/RouteView"!==i.component){
+      /* update_begin author:zhaoxin date:20191129 for: 做头部菜单栏导航 */
+      searchMenus(arr, menus) {
+        for (let i of menus) {
+          if (!i.hidden && i.component !== 'layouts/RouteView') {
            arr.push(i)
           }
-          if(i.children&& i.children.length>0){
-            this.searchMenus(arr,i.children)
+          if (i.children && i.children.length > 0) {
+            this.searchMenus(arr, i.children)
           }
         }
       },
@@ -225,36 +232,36 @@
       // update_begin author:sunjianlei date:20191230 for: 解决外部链接打开失败的问题
       searchMethods(value) {
         let route = this.searchMenuOptions.filter(item => item.id === value)[0]
-        //update-begin-author:sunjianlei date:20220111 for: 【JTC-702】【菜单搜索】菜单搜索里点击跳转的菜单，无法将Token信息传递过去
-        if(route.component.includes('layouts/IframePageView')){
+        // update-begin-author:sunjianlei date:20220111 for: 【JTC-702】【菜单搜索】菜单搜索里点击跳转的菜单，无法将Token信息传递过去
+        if (route.component.includes('layouts/IframePageView')) {
           this.$router.push(route)
-        }else{
+        } else {
           this.$router.push({ path: route.path })
         }
-        //update-end-author:sunjianlei date:20220111 for: 【JTC-702】【菜单搜索】菜单搜索里点击跳转的菜单，无法将Token信息传递过去
+        // update-end-author:sunjianlei date:20220111 for: 【JTC-702】【菜单搜索】菜单搜索里点击跳转的菜单，无法将Token信息传递过去
         this.searchMenuVisible = false
       },
       // update_end author:sunjianlei date:20191230 for: 解决外部链接打开失败的问题
-      /*update_end author:zhaoxin date:20191129 for: 做头部菜单栏导航*/
-      /*update_begin author:liushaoqian date:20200507 for: 刷新缓存*/
-      clearCache(){
-        getAction("sys/dict/refleshCache").then((res) => {
+      /* update_end author:zhaoxin date:20191129 for: 做头部菜单栏导航 */
+      /* update_begin author:liushaoqian date:20200507 for: 刷新缓存 */
+      clearCache() {
+        getAction('sys/dict/refleshCache').then((res) => {
           if (res.success) {
-            //重新加载缓存
-            getAction("sys/dict/queryAllDictItems").then((res) => {
+            // 重新加载缓存
+            getAction('sys/dict/queryAllDictItems').then((res) => {
               if (res.success) {
                 Vue.ls.remove(UI_CACHE_DB_DICT_DATA)
                 Vue.ls.set(UI_CACHE_DB_DICT_DATA, res.result, 7 * 24 * 60 * 60 * 1000)
               }
             })
-            this.$message.success("刷新缓存完成！");
+            this.$message.success('刷新缓存完成！')
           }
-        }).catch(e=>{
-          this.$message.warn("刷新缓存失败！");
-          console.log("刷新失败",e)
+        }).catch(e => {
+          this.$message.warn('刷新缓存失败！')
+          console.log('刷新失败', e)
         })
       }
-      /*update_end author:liushaoqian date:20200507 for: 刷新缓存*/
+      /* update_end author:liushaoqian date:20200507 for: 刷新缓存 */
     }
   }
 </script>

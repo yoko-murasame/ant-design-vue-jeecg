@@ -91,9 +91,21 @@
   export default {
     name: 'ViserChartDemo',
     components: {
-      Bar, MiniBar, BarMultid, AreaChartTy, LineChartMultid,
-      Pie, Radar, DashChartDemo, MiniProgress, RankList,
-      TransferBar, Trend, Liquid, MiniArea, BarAndLine
+      Bar,
+MiniBar,
+BarMultid,
+AreaChartTy,
+LineChartMultid,
+      Pie,
+Radar,
+DashChartDemo,
+MiniProgress,
+RankList,
+      TransferBar,
+Trend,
+Liquid,
+MiniArea,
+BarAndLine
     },
     data() {
       return {

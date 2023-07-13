@@ -30,7 +30,7 @@
           'j-vxe-radio': true,
           'no-animation': this.scrolling
         }
-      },
+      }
     },
     methods: {
       handleRadioClick(item) {
@@ -40,11 +40,11 @@
             this.handleChangeCommon(null)
           }
         }
-      },
+      }
     },
     // 【组件增强】注释详见：JVxeCellMixins.js
     enhanced: {
-      switches: {visible: true},
+      switches: { visible: true }
     }
   }
 </script>

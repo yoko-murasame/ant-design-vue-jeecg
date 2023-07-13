@@ -19,16 +19,16 @@
 
       <div class="title">退货商品</div>
       <s-table
-        style="margin-bottom: 24px" 
-        :columns="goodsColumns" 
+        style="margin-bottom: 24px"
+        :columns="goodsColumns"
         :data="loadGoodsData">
 
       </s-table>
 
       <div class="title">退货进度</div>
       <s-table
-        style="margin-bottom: 24px" 
-        :columns="scheduleColumns" 
+        style="margin-bottom: 24px"
+        :columns="scheduleColumns"
         :data="loadScheduleData">
 
         <template
@@ -46,7 +46,7 @@
   import PageLayout from '@/components/page/PageLayout'
   import STable from '@/components/table/'
   import DetailList from '@/components/tools/DetailList'
-  import ABadge from "ant-design-vue/es/badge/Badge"
+  import ABadge from 'ant-design-vue/es/badge/Badge'
   const DetailListItem = DetailList.Item
 
   export default {
@@ -96,7 +96,7 @@
         ],
         // 加载数据方法 必须为 Promise 对象
         loadGoodsData: () => {
-          return new Promise((resolve => {
+          return new Promise(resolve => {
             resolve({
               data: [
                 {
@@ -137,7 +137,7 @@
               totalPage: 1,
               totalCount: 10
             })
-          })).then(res => {
+          }).then(res => {
             return res
           })
         },
@@ -157,7 +157,7 @@
             title: '状态',
             dataIndex: 'status',
             key: 'status',
-            scopedSlots: { customRender: 'status' },
+            scopedSlots: { customRender: 'status' }
           },
           {
             title: '操作员ID',
@@ -171,7 +171,7 @@
           }
         ],
         loadScheduleData: () => {
-          return new Promise((resolve => {
+          return new Promise(resolve => {
             resolve({
               data: [
                 {
@@ -220,10 +220,10 @@
               totalPage: 1,
               totalCount: 10
             })
-          })).then(res => {
+          }).then(res => {
             return res
           })
-        },
+        }
       }
     },
     filters: {
@@ -240,7 +240,7 @@
       title () {
         return this.$route.meta.title
       }
-    },
+    }
 
   }
 </script>

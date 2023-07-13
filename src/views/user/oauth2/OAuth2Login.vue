@@ -21,14 +21,14 @@ export default {
       env: {
         thirdApp: false,
         wxWork: false,
-        dingtalk: false,
-      },
+        dingtalk: false
+      }
     }
   },
   beforeCreate() {
     // 如果当前 不是 OAuth2APP环境，就重定向到 /user/login 页面
     if (!isOAuth2AppEnv()) {
-      this.$router.replace({path: '/user/login'})
+      this.$router.replace({ path: '/user/login' })
     }
   },
   created() {
@@ -83,11 +83,11 @@ export default {
     },
     loginSuccess() {
       // 登陆成功，重定向到主页
-      this.$router.replace({path: INDEX_MAIN_PAGE_PATH})
+      this.$router.replace({ path: INDEX_MAIN_PAGE_PATH })
       // TODO 这个提示是否还需要？
       this.$notification.success({
         message: '欢迎',
-        description: `${timeFix()}，欢迎回来`,
+        description: `${timeFix()}，欢迎回来`
       })
     },
     requestFailed(err) {
@@ -100,7 +100,7 @@ export default {
         },
         onCancel() {
           window.location.reload()
-        },
+        }
       })
     },
 
@@ -119,9 +119,9 @@ export default {
       let url = `${window._CONFIG['domianURL']}/sys/thirdLogin/oauth2/${source}/login`
       url += `?state=${encodeURIComponent(window.location.origin)}`
       window.location.href = url
-    },
+    }
 
-  },
+  }
 }
 </script>
 

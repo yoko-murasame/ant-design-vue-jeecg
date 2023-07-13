@@ -40,7 +40,7 @@
                   <div style="float: left;width:104px;height:104px;margin-right: 10px;margin: 0 8px 8px 0;">
                     <div
                       style="width: 100%;height: 100%;position: relative;padding: 8px;border: 1px solid #d9d9d9;border-radius: 4px;">
-                      <img style="width: 100%;" :src="fileDetail.imgUrl"  :preview="dataSource[1].key">
+                      <img style="width: 100%;" :src="fileDetail.imgUrl" :preview="dataSource[1].key">
                     </div>
                   </div>
                 </div>
@@ -66,26 +66,26 @@
     data() {
       return {
         description: '图片预览页面',
-        spinning:false,
-        //数据集
+        spinning: false,
+        // 数据集
         dataSource: [{
-          key:0,
-          fileDetails:[
+          key: 0,
+          fileDetails: [
             {
-              imgUrl:"https://static.jeecg.com/upload/test/3a4490d5d1cd495b826e528537a47cc1.jpg"
+              imgUrl: 'https://static.jeecg.com/upload/test/3a4490d5d1cd495b826e528537a47cc1.jpg'
             },
             {
-              imgUrl:"https://static.jeecg.com/temp/国炬软件logo_1606575029126.png"
+              imgUrl: 'https://static.jeecg.com/temp/国炬软件logo_1606575029126.png'
             }
           ]
-        },{
-          key:1,
-          fileDetails:[
+        }, {
+          key: 1,
+          fileDetails: [
             {
-              imgUrl:"https://static.jeecg.com/upload/test/u27356337152749454924fm27gp0_1588149731821.jpg"
+              imgUrl: 'https://static.jeecg.com/upload/test/u27356337152749454924fm27gp0_1588149731821.jpg'
             },
             {
-              imgUrl:"https://static.jeecg.com/upload/test/1_1588149743473.jpg"
+              imgUrl: 'https://static.jeecg.com/upload/test/1_1588149743473.jpg'
             }
           ]
         }

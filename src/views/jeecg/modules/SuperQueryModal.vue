@@ -15,7 +15,7 @@
         <div>
           <a-row type="flex" style="margin-bottom:10px" :gutter="16" v-for="(item, index) in queryParamsModel" :key="index">
             <a-col :span="6">
-              <a-select  placeholder="选择查询字段" v-model="item.field">
+              <a-select placeholder="选择查询字段" v-model="item.field">
                 <a-select-option value="name">用户名</a-select-option>
                 <a-select-option value="key_word">关键词</a-select-option>
                 <a-select-option value="birthday">生日</a-select-option>
@@ -23,7 +23,7 @@
               </a-select>
             </a-col>
             <a-col :span="6">
-              <a-select placeholder="选择匹配规则"  v-model="item.rule">
+              <a-select placeholder="选择匹配规则" v-model="item.rule">
                 <a-select-option value="=">等于</a-select-option>
                 <a-select-option value="!=">不等于</a-select-option>
                 <a-select-option value=">">大于</a-select-option>
@@ -39,8 +39,8 @@
 
             <a-col :span="6"><a-input placeholder="请输入值" v-model="item.val"/></a-col>
             <a-col :span="6">
-              <a-button @click="handleAdd"  icon="plus"></a-button>&nbsp;
-              <a-button @click="handleDel( index )"  icon="minus"></a-button>
+              <a-button @click="handleAdd" icon="plus"></a-button>&nbsp;
+              <a-button @click="handleDel( index )" icon="minus"></a-button>
             </a-col>
           </a-row>
         </div>
@@ -54,11 +54,11 @@
   import { httpAction } from '@/api/manage'
 
   export default {
-    name: "SuperQueryModal",
+    name: 'SuperQueryModal',
     data () {
       return {
         visible: false,
-        queryParamsModel: [{},{}],
+        queryParamsModel: [{}, {}],
         confirmLoading: false
       }
     },
@@ -66,11 +66,11 @@
     },
     methods: {
       show () {
-        this.visible = true;
+        this.visible = true
       },
       close () {
-        this.$emit('close');
-        this.visible = false;
+        this.$emit('close')
+        this.visible = false
       },
       handleOk () {
         console.log(this.queryParamsModel)
@@ -81,11 +81,11 @@
         this.close()
       },
       handleAdd () {
-        this.queryParamsModel.push({});
+        this.queryParamsModel.push({})
       },
       handleDel (index) {
         console.log(index)
-        this.queryParamsModel.splice(index,1);
+        this.queryParamsModel.splice(index, 1)
       }
     }
   }

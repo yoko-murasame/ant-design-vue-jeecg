@@ -1,4 +1,4 @@
-import { VALIDATE_FAILED, getRefPromise, validateFormAndTables} from '@/components/jeecg/JVxeTable/utils/vxeUtils.js'
+import { VALIDATE_FAILED, getRefPromise, validateFormAndTables } from '@/components/jeecg/JVxeTable/utils/vxeUtils.js'
 import { httpAction, getAction } from '@/api/manage'
 
 export const JVxeTableMixin = {
@@ -52,16 +52,16 @@ export const JVxeTableMixin = {
         rowNum = 1
         console.warn('由于你没有在 data 中定义 addDefaultRowNum 或 addDefaultRowNum 不是数字，所以默认添加一条空数据，如果不想默认添加空数据，请将定义 addDefaultRowNum 为 0')
       }
-      //update-begin-author:taoyan date:20210315 for: 一对多jvex 默认几行不好使了 LOWCOD-1349
+      // update-begin-author:taoyan date:20210315 for: 一对多jvex 默认几行不好使了 LOWCOD-1349
       if (rowNum > 0) {
         let newRows = new Array(rowNum).fill({})
         this.eachAllTable((item) => {
-          setTimeout(()=>{
+          setTimeout(() => {
             item.addRows(newRows)
           }, 30)
         })
       }
-       //update-end-author:taoyan date:20210315 for: 一对多jvex 默认几行不好使了 LOWCOD-1349
+       // update-end-author:taoyan date:20210315 for: 一对多jvex 默认几行不好使了 LOWCOD-1349
       if (typeof this.addAfter === 'function') this.addAfter(this.model)
       this.edit({})
     },
@@ -104,13 +104,13 @@ export const JVxeTableMixin = {
     },
     /** 发起请求，自动判断是执行新增还是修改操作 */
     request(formData) {
-      let url = this.url.add, method = 'post'
+      let url = this.url.add; let method = 'post'
       if (this.model.id) {
         url = this.url.edit
         method = 'put'
       }
       this.confirmLoading = true
-      console.log("formData===>",formData);
+      console.log('formData===>', formData)
       httpAction(url, formData, method).then((res) => {
         if (res.success) {
           this.$message.success(res.message)

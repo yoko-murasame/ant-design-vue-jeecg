@@ -27,7 +27,7 @@
 </template>
 
 <script>
-  import {ajaxGetDictItems,getDictItemsFromCache} from '@/api/api'
+  import { ajaxGetDictItems, getDictItemsFromCache } from '@/api/api'
   export default {
     name: 'JMultiSelectTag',
     props: {
@@ -36,85 +36,84 @@
       disabled: Boolean,
       value: String,
       type: String,
-      options:Array,
-      spliter:{
+      options: Array,
+      spliter: {
         type: String,
         required: false,
         default: ','
       },
-      popContainer:{
-        type:String,
-        default:'',
-        required:false
-      },
+      popContainer: {
+        type: String,
+        default: '',
+        required: false
+      }
     },
     data() {
       return {
         dictOptions: [],
-        tagType:"",
-        arrayValue:!this.value?[]:this.value.split(this.spliter)
+        tagType: '',
+        arrayValue: !this.value ? [] : this.value.split(this.spliter)
       }
     },
     created() {
-      if(!this.type || this.type==="list_multi"){
-        this.tagType = "select"
-      }else{
+      if (!this.type || this.type === 'list_multi') {
+        this.tagType = 'select'
+      } else {
         this.tagType = this.type
       }
-      //获取字典数据
-      //this.initDictData();
+      // 获取字典数据
+      // this.initDictData();
     },
-    watch:{
-      options: function(val){
-        this.setCurrentDictOptions(val);
+    watch: {
+      options: function(val) {
+        this.setCurrentDictOptions(val)
       },
-      dictCode:{
-        immediate:true,
+      dictCode: {
+        immediate: true,
         handler() {
           this.initDictData()
-        },
+        }
       },
       value (val) {
-        if(!val){
+        if (!val) {
           this.arrayValue = []
-        }else{
+        } else {
           this.arrayValue = this.value.split(this.spliter)
         }
       }
     },
     methods: {
       initDictData() {
-        if(this.options && this.options.length>0){
+        if (this.options && this.options.length > 0) {
           this.dictOptions = [...this.options]
-        }else{
-          //优先从缓存中读取字典配置
+        } else {
+          // 优先从缓存中读取字典配置
           let cacheOption = getDictItemsFromCache(this.dictCode)
-          if(cacheOption && cacheOption.length>0){
+          if (cacheOption && cacheOption.length > 0) {
             this.dictOptions = cacheOption
             return
           }
-          //根据字典Code, 初始化字典数组
+          // 根据字典Code, 初始化字典数组
           ajaxGetDictItems(this.dictCode, null).then((res) => {
             if (res.success) {
-              this.dictOptions = res.result;
+              this.dictOptions = res.result
             }
           })
         }
-
       },
       onChange (selectedValue) {
-        this.$emit('change', selectedValue.join(this.spliter));
+        this.$emit('change', selectedValue.join(this.spliter))
       },
-      setCurrentDictOptions(dictOptions){
+      setCurrentDictOptions(dictOptions) {
         this.dictOptions = dictOptions
       },
-      getCurrentDictOptions(){
+      getCurrentDictOptions() {
         return this.dictOptions
       },
-      getParentContainer(node){
-        if(!this.popContainer){
+      getParentContainer(node) {
+        if (!this.popContainer) {
           return node.parentNode
-        }else{
+        } else {
           return document.querySelector(this.popContainer)
         }
       },

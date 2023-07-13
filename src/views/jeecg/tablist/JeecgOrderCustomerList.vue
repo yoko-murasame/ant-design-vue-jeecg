@@ -67,11 +67,11 @@
 <script>
   import JeecgOrderCustomerModal from './form/JeecgOrderCustomerModal'
   import JeecgOrderDMainList from './JeecgOrderDMainList'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
-  import {getAction} from '@/api/manage'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import { getAction } from '@/api/manage'
 
   export default {
-    name: "JeecgOrderCustomerList",
+    name: 'JeecgOrderCustomerList',
     mixins: [JeecgListMixin],
     components: {
       JeecgOrderDMainList,
@@ -84,77 +84,77 @@
         columns: [
           {
             title: '客户名',
-            align: "center",
+            align: 'center',
             width: 100,
             dataIndex: 'name',
-            key: 'name',
+            key: 'name'
           },
           {
             title: '性别',
-            align: "center",
+            align: 'center',
             dataIndex: 'sex',
             customRender: function (text) {
               if (text == 1) {
-                return "男";
+                return '男'
               } else if (text == 2) {
-                return "女";
+                return '女'
               } else {
-                return text;
+                return text
               }
             }
           },
           {
             title: '身份证号码',
-            align: "center",
-            dataIndex: 'idcard',
+            align: 'center',
+            dataIndex: 'idcard'
           },
           {
             title: '电话',
             dataIndex: 'telphone',
-            align: "center",
+            align: 'center'
           },
           {
             title: '操作',
             key: 'operation',
             align: 'center',
             width: 130,
-            scopedSlots: {customRender: 'action'},
-          },
+            scopedSlots: { customRender: 'action' }
+          }
         ],
         url: {
-          list: "/test/order/listOrderCustomerByMainId",
-          delete: "/test/order/deleteCustomer",
-          deleteBatch: "/test/order/deleteBatchCustomer",
+          list: '/test/order/listOrderCustomerByMainId',
+          delete: '/test/order/deleteCustomer',
+          deleteBatch: '/test/order/deleteBatchCustomer'
         }
       }
     },
     methods: {
       loadData(arg) {
         if (arg === 1) {
-          this.ipagination.current = 1;
+          this.ipagination.current = 1
         }
-        //update-begin--Author:kangxiaolin  Date:20190905 for：[442]主子表分开维护，生成的代码子表的分页改为真实的分页--------------------
-        var params = this.getQueryParams();
-        getAction(this.url.list, {orderId: params.mainId, pageNo : this.ipagination.current,
-          pageSize :this.ipagination.pageSize}).then((res) => {
+        // update-begin--Author:kangxiaolin  Date:20190905 for：[442]主子表分开维护，生成的代码子表的分页改为真实的分页--------------------
+        var params = this.getQueryParams()
+        getAction(this.url.list, { orderId: params.mainId,
+pageNo: this.ipagination.current,
+          pageSize: this.ipagination.pageSize }).then((res) => {
           if (res.success) {
-            this.dataSource = res.result.records;
-            this.ipagination.total = res.result.total;
+            this.dataSource = res.result.records
+            this.ipagination.total = res.result.total
           } else {
-            this.dataSource = null;
+            this.dataSource = null
           }
         })
-        //update-end--Author:kangxiaolin  Date:20190905 for：[442]主子表分开维护，生成的代码子表的分页改为真实的分页--------------------
-
+        // update-end--Author:kangxiaolin  Date:20190905 for：[442]主子表分开维护，生成的代码子表的分页改为真实的分页--------------------
       },
       getOrderMain(orderId) {
-        this.queryParam.mainId = orderId;
-        this.loadData(1);
+        this.queryParam.mainId = orderId
+        this.loadData(1)
       },
       handleAdd: function () {
-        this.$refs.modalForm.add(this.queryParam.mainId);
-        this.$refs.modalForm.title = "添加客户信息";
-      },
+        this.$refs.modalForm.add(this.queryParam.mainId)
+        this.$refs.modalForm.title = '添加客户信息'
+      }
     }
   }
 </script>

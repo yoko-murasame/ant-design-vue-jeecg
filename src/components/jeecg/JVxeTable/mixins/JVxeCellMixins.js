@@ -5,7 +5,7 @@ import { getEnhancedMixins, JVXERenderType, replaceProps } from '@/components/je
 // noinspection JSUnusedLocalSymbols
 export default {
   inject: {
-    getParentContainer: {default: () => ((node) => node.parentNode)},
+    getParentContainer: { default: () => (node) => node.parentNode }
   },
   props: {
     value: PropTypes.any,
@@ -16,11 +16,11 @@ export default {
     // 渲染选项
     renderOptions: PropTypes.object,
     // 渲染类型
-    renderType: PropTypes.string.def('default'),
+    renderType: PropTypes.string.def('default')
   },
   data() {
     return {
-      innerValue: null,
+      innerValue: null
     }
   },
   computed: {
@@ -46,7 +46,7 @@ export default {
       return this.params.columnIndex
     },
     cellProps() {
-      let {originColumn: col, renderOptions} = this
+      let { originColumn: col, renderOptions } = this
 
       let props = {}
 
@@ -75,16 +75,16 @@ export default {
 
       // update-begin-author:taoyan date:20211011 for: online表单，附表用户选择器{"multiSelect":false}不生效，单表可以生效 #3036
       let jsonStr = col['fieldExtendJson']
-      if(jsonStr){
+      if (jsonStr) {
         let fieldExtendJson = JSON.parse(jsonStr)
-        if(fieldExtendJson && fieldExtendJson['multiSelect']==false){
+        if (fieldExtendJson && fieldExtendJson['multiSelect'] == false) {
           props['multi'] = false
         }
       }
       // update-end-author:taoyan date:20211011 for: online表单，附表用户选择器{"multiSelect":false}不生效，单表可以生效 #3036
 
       return props
-    },
+    }
   },
   watch: {
     $type: {
@@ -92,7 +92,7 @@ export default {
       handler($type) {
         this.enhanced = getEnhancedMixins($type)
         this.listeners = getListeners.call(this)
-      },
+      }
     },
     value: {
       immediate: true,
@@ -120,8 +120,8 @@ export default {
             this.innerValue = res
           }
         }
-      },
-    },
+      }
+    }
   },
   created() {
   },
@@ -130,7 +130,7 @@ export default {
     /** 通用处理change事件 */
     handleChangeCommon(value) {
       let handle = this.enhanced.getValue.call(this, value)
-      this.trigger('change', {value: handle})
+      this.trigger('change', { value: handle })
       // 触发valueChange事件
       this.parentTrigger('valueChange', {
         type: this.$type,
@@ -138,12 +138,12 @@ export default {
         oldValue: this.value,
         col: this.originColumn,
         rowIndex: this.params.rowIndex,
-        columnIndex: this.params.columnIndex,
+        columnIndex: this.params.columnIndex
       })
     },
     /** 通用处理blur事件 */
     handleBlurCommon(value) {
-      this.trigger('blur', {value})
+      this.trigger('blur', { value })
     },
 
     /**
@@ -168,7 +168,7 @@ export default {
     packageEvent(name, event = {}) {
       event.row = this.row
       event.column = this.column
-      //online增强参数兼容
+      // online增强参数兼容
       event.column['key'] = this.column['property']
       event.cellTarget = this
       if (!event.type) {
@@ -182,7 +182,7 @@ export default {
         event.validate = true
       }
       return event
-    },
+    }
 
   },
   model: {
@@ -200,20 +200,20 @@ export default {
     // 注册参数（详见：https://xuliangzhan_admin.gitee.io/vxe-table/#/table/renderer/edit）
     installOptions: {
       // 自动聚焦的 class 类名
-      autofocus: '',
+      autofocus: ''
     },
     // 事件拦截器（用于兼容）
     interceptor: {
       // 已实现：event.clearActived
       // 说明：比如点击了某个组件的弹出层面板之后，此时被激活单元格不应该被自动关闭，通过返回 false 可以阻止默认的行为。
-      ['event.clearActived'](params, event, target) {
+      'event.clearActived'(params, event, target) {
         return true
       },
       // 自定义：event.clearActived.className
       // 说明：比原生的多了一个参数：className，用于判断点击的元素的样式名（递归到顶层）
-      ['event.clearActived.className'](params, event, target) {
+      'event.clearActived.className'(params, event, target) {
         return true
-      },
+      }
     },
     // 【功能开关】
     switches: {
@@ -221,7 +221,7 @@ export default {
       // 如果设为true，则表头上方会出现一个可编辑的图标
       editRender: true,
       // false = 组件触发后可视）；true = 组件一直可视
-      visible: false,
+      visible: false
     },
     // 【切面增强】切面事件处理，一般在某些方法执行后同步执行
     aopEvents: {
@@ -230,7 +230,7 @@ export default {
       },
       // 单元格编辑状态下被关闭时会触发该事件
       editClosed() {
-      },
+      }
     },
     // 【翻译增强】可以实现例如select组件保存的value，但是span模式下需要显示成text
     translate: {
@@ -243,10 +243,10 @@ export default {
        * @param value 需要翻译的值
        * @returns{*} 返回翻译后的数据
        */
-      handler(value,) {
+      handler(value) {
         // 默认翻译方法
         return filterDictText(this.column.own.options, value)
-      },
+      }
     },
     /**
      * 【获取值增强】组件抛出的值
@@ -279,9 +279,9 @@ export default {
      *
      * @returns 返回新值
      */
-    createValue({row, column, $table, renderOptions, params}) {
+    createValue({ row, column, $table, renderOptions, params }) {
       return column.own.defaultValue
-    },
+    }
   }
 }
 
@@ -309,7 +309,7 @@ export function vModel(value, row, property) {
 }
 
 /** 模拟触发事件 */
-export function dispatchEvent({cell, $event}, className, handler) {
+export function dispatchEvent({ cell, $event }, className, handler) {
   // alwaysEdit 下不模拟触发事件，否者会导致触发两次
   if (this && this.alwaysEdit) {
     return
@@ -321,7 +321,7 @@ export function dispatchEvent({cell, $event}, className, handler) {
         handler(element[0])
       } else {
         // 模拟触发点击事件
-        if($event){
+        if ($event) {
           element[0].dispatchEvent($event)
         }
       }

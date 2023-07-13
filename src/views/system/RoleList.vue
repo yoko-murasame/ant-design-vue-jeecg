@@ -29,10 +29,16 @@
     </div>
 
     <!-- 操作按钮区域 -->
-    <div class="table-operator"  style="margin-top: 5px">
+    <div class="table-operator" style="margin-top: 5px">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('角色信息')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+      <a-upload
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
 
@@ -69,7 +75,6 @@
           <a @click="handleEdit(record)">编辑</a>
           <a-divider type="vertical" />
 
-
           <a-dropdown>
             <a class="ant-dropdown-link">
               更多 <a-icon type="down" />
@@ -86,7 +91,6 @@
             </a-menu>
           </a-dropdown>
         </span>
-
 
       </a-table>
     </div>
@@ -105,8 +109,8 @@
   import JDate from '@/components/jeecg/JDate'
 
   export default {
-    name: "RoleList",
-    mixins:[JeecgListMixin],
+    name: 'RoleList',
+    mixins: [JeecgListMixin],
     components: {
       RoleModal,
       UserRoleModal,
@@ -117,75 +121,75 @@
 
         description: '角色管理页面',
         // 查询条件
-        queryParam: {roleName:'',},
+        queryParam: { roleName: '' },
         // 表头
         columns: [
           {
             title: '#',
             dataIndex: '',
-            key:'rowIndex',
-            width:60,
-            align:"center",
-            customRender:function (t,r,index) {
-              return parseInt(index)+1;
+            key: 'rowIndex',
+            width: 60,
+            align: 'center',
+            customRender: function (t, r, index) {
+              return parseInt(index) + 1
             }
           },
           {
             title: '角色名称',
-            align:"center",
+            align: 'center',
             dataIndex: 'roleName'
           },
           {
             title: '角色编码',
-            align:"center",
+            align: 'center',
             dataIndex: 'roleCode'
           },
           {
             title: '备注',
-            align:"center",
+            align: 'center',
             dataIndex: 'description'
           },
           {
             title: '创建时间',
             dataIndex: 'createTime',
-            align:"center",
+            align: 'center',
             sorter: true
           },
           {
             title: '更新时间',
             dataIndex: 'updateTime',
-            align:"center",
+            align: 'center',
             sorter: true
           },
           {
             title: '操作',
             dataIndex: 'action',
-            align:"center",
-            scopedSlots: { customRender: 'action' },
+            align: 'center',
+            scopedSlots: { customRender: 'action' }
           }
         ],
         url: {
-          list: "/sys/role/list",
-          delete: "/sys/role/delete",
-          deleteBatch: "/sys/role/deleteBatch",
-          exportXlsUrl: "/sys/role/exportXls",
-          importExcelUrl: "sys/role/importExcel",
-        },
+          list: '/sys/role/list',
+          delete: '/sys/role/delete',
+          deleteBatch: '/sys/role/deleteBatch',
+          exportXlsUrl: '/sys/role/exportXls',
+          importExcelUrl: 'sys/role/importExcel'
+        }
       }
     },
     computed: {
-      importExcelUrl: function(){
-        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+      importExcelUrl: function() {
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
       }
     },
     methods: {
-      handlePerssion: function(roleId){
+      handlePerssion: function(roleId) {
        // alert(roleId);
-        this.$refs.modalUserRole.show(roleId);
+        this.$refs.modalUserRole.show(roleId)
       },
       onChangeDate(date, dateString) {
-        console.log(date, dateString);
-      },
+        console.log(date, dateString)
+      }
     }
   }
 </script>

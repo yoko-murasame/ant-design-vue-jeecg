@@ -39,8 +39,8 @@
 
           <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
             <a-col :md="6" :sm="24" >
-                <a-button type="primary"  style="left: 10px" @click="searchQuery" icon="search">查询</a-button>
-                <a-button type="primary"  @click="searchReset" icon="reload" style="margin-left: 8px;left: 10px">重置</a-button>
+              <a-button type="primary" style="left: 10px" @click="searchQuery" icon="search">查询</a-button>
+              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px;left: 10px">重置</a-button>
             </a-col>
           </span>
 
@@ -68,21 +68,21 @@
 
       <!-- 字符串超长截取省略号显示-->
       <span slot="logContent" slot-scope="text, record">
-          <j-ellipsis :value="text" :length="40"/>
-        </span>
+        <j-ellipsis :value="text" :length="40"/>
+      </span>
     </a-table>
     <!-- table区域-end -->
   </a-card>
 </template>
 
 <script>
-  import { filterObj } from '@/utils/util';
+  import { filterObj } from '@/utils/util'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import JEllipsis from '@/components/jeecg/JEllipsis'
 
   export default {
-    name: "LogList",
-    mixins:[JeecgListMixin],
+    name: 'LogList',
+    mixins: [JeecgListMixin],
     components: {
       JEllipsis
     },
@@ -91,26 +91,26 @@
         description: '这是日志管理页面',
         // 查询条件
         queryParam: {
-          ipInfo:'',
-          createTimeRange:[],
-          logType:'1',
-          keyWord:'',
+          ipInfo: '',
+          createTimeRange: [],
+          logType: '1',
+          keyWord: ''
         },
-        tabKey: "1",
+        tabKey: '1',
         // 表头
         columns: [
           {
             title: '#',
             dataIndex: '',
-            key:'rowIndex',
-            align:"center",
-            customRender:function (t,r,index) {
-              return parseInt(index)+1;
+            key: 'rowIndex',
+            align: 'center',
+            customRender: function (t, r, index) {
+              return parseInt(index) + 1
             }
           },
           {
             title: '日志内容',
-            align:"left",
+            align: 'left',
             dataIndex: 'logContent',
             scopedSlots: { customRender: 'logContent' },
             sorter: true
@@ -118,31 +118,31 @@
           {
             title: '操作人ID',
             dataIndex: 'userid',
-            align:"center",
+            align: 'center',
             sorter: true
           },
           {
             title: '操作人名称',
             dataIndex: 'username',
-            align:"center",
+            align: 'center',
             sorter: true
           },
           {
             title: 'IP',
             dataIndex: 'ip',
-            align:"center",
+            align: 'center',
             sorter: true
           },
           {
             title: '耗时(毫秒)',
             dataIndex: 'costTime',
-            align:"center",
+            align: 'center',
             sorter: true
           },
           {
             title: '日志类型',
             dataIndex: 'logType_dictText',
-            /*customRender:function (text) {
+            /* customRender:function (text) {
               if(text==1){
                 return "登录日志";
               }else if(text==2){
@@ -150,13 +150,13 @@
               }else{
                 return text;
               }
-            },*/
-            align:"center",
+            }, */
+            align: 'center'
           },
           {
             title: '创建时间',
             dataIndex: 'createTime',
-            align:"center",
+            align: 'center',
             sorter: true
           }
         ],
@@ -164,72 +164,70 @@
         {
           title: '操作类型',
           dataIndex: 'operateType_dictText',
-          align:"center",
+          align: 'center'
         },
         labelCol: {
           xs: { span: 1 },
-          sm: { span: 2 },
+          sm: { span: 2 }
         },
         wrapperCol: {
           xs: { span: 10 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
         url: {
-          list: "/sys/log/list",
-        },
+          list: '/sys/log/list'
+        }
       }
     },
     methods: {
-      getQueryParams(){
-        var param = Object.assign({}, this.queryParam,this.isorter);
-        param.field = this.getQueryField();
-        param.pageNo = this.ipagination.current;
-        param.pageSize = this.ipagination.pageSize;
-        delete param.createTimeRange; // 时间参数不传递后台
+      getQueryParams() {
+        var param = Object.assign({}, this.queryParam, this.isorter)
+        param.field = this.getQueryField()
+        param.pageNo = this.ipagination.current
+        param.pageSize = this.ipagination.pageSize
+        delete param.createTimeRange // 时间参数不传递后台
         if (this.superQueryParams) {
           param['superQueryParams'] = encodeURI(this.superQueryParams)
           param['superQueryMatchType'] = this.superQueryMatchType
         }
-        //登录日志没有操作类型
+        // 登录日志没有操作类型
         if (this.tabKey === '1') {
           param.operateType = ''
         }
-        return filterObj(param);
+        return filterObj(param)
       },
 
       // 重置
-      searchReset(){
-        var that = this;
-        var logType = that.queryParam.logType;
-        that.queryParam = {}; //清空查询区域参数
-        that.queryParam.logType = logType;
-        that.loadData(this.ipagination.current);
+      searchReset() {
+        var that = this
+        var logType = that.queryParam.logType
+        that.queryParam = {} // 清空查询区域参数
+        that.queryParam.logType = logType
+        that.loadData(this.ipagination.current)
       },
       // 日志类型
-      callback(key){
-
+      callback(key) {
         // 动态添加操作类型列
         if (key == 2) {
-          this.tabKey = '2';
-          this.columns.splice(7, 0, this.operateColumn);
-        }else if(this.columns.length == 9)
-        {
-          this.tabKey = '1';
-          this.columns.splice(7,1);
+          this.tabKey = '2'
+          this.columns.splice(7, 0, this.operateColumn)
+        } else if (this.columns.length == 9) {
+          this.tabKey = '1'
+          this.columns.splice(7, 1)
         }
 
-        let that=this;
-        that.queryParam.logType=key;
-        that.loadData(1);
+        let that = this
+        that.queryParam.logType = key
+        that.loadData(1)
       },
       onDateChange: function (value, dateString) {
-        console.log(dateString[0],dateString[1]);
-        this.queryParam.createTime_begin=dateString[0];
-        this.queryParam.createTime_end=dateString[1];
+        console.log(dateString[0], dateString[1])
+        this.queryParam.createTime_begin = dateString[0]
+        this.queryParam.createTime_end = dateString[1]
       },
       onDateOk(value) {
-        console.log(value);
-      },
+        console.log(value)
+      }
     }
   }
 </script>

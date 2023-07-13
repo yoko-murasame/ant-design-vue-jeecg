@@ -12,13 +12,13 @@ const FormTypes = {
   upload: 'upload',
   file: 'file',
   image: 'image',
-  popup:'popup',
-  list_multi:"list_multi",
-  sel_search:"sel_search",
-  sel_search_async:"sel_search_async",
-  radio:'radio',
-  checkbox_meta:"checkbox_meta",
-  input_pop:'input_pop',
+  popup: 'popup',
+  list_multi: 'list_multi',
+  sel_search: 'sel_search',
+  sel_search_async: 'sel_search_async',
+  radio: 'radio',
+  checkbox_meta: 'checkbox_meta',
+  input_pop: 'input_pop',
   sel_depart: 'sel_depart',
   sel_user: 'sel_user',
   slot: 'slot',
@@ -56,7 +56,6 @@ export function getRefPromise(vm, name) {
  * @author sunjianlei
  */
 export function validateFormAndTables(form, cases) {
-
   if (!(form && typeof form.validateFields === 'function')) {
     throw `form 参数需要的是一个form对象，而传入的却是${typeof form}`
   }
@@ -77,7 +76,6 @@ export function validateFormAndTables(form, cases) {
   }).catch(error => {
     return Promise.reject(error)
   })
-
 }
 /**
  * 一次性验证主表单和所有的次表单(新版本)
@@ -86,16 +84,15 @@ export function validateFormAndTables(form, cases) {
  * @returns {Promise<any>}
  * @author sunjianlei
  */
-export function validateFormModelAndTables(form,values, cases) {
-
+export function validateFormModelAndTables(form, values, cases) {
   if (!(form && typeof form.validate === 'function')) {
     throw `form 参数需要的是一个form对象，而传入的却是${typeof form}`
   }
   let options = {}
   return new Promise((resolve, reject) => {
     // 验证主表表单
-    form.validate((valid,obj) => {
-      valid ?resolve(values):reject({ error: VALIDATE_NO_PASSED })
+    form.validate((valid, obj) => {
+      valid ? resolve(values) : reject({ error: VALIDATE_NO_PASSED })
     })
   }).then(values => {
     Object.assign(options, { formValue: values })
@@ -107,7 +104,6 @@ export function validateFormModelAndTables(form,values, cases) {
   }).catch(error => {
     return Promise.reject(error)
   })
-
 }
 
 /**
@@ -122,8 +118,8 @@ export function validateTables(cases, deleteTempId) {
   }
   return new Promise((resolve, reject) => {
     let tables = []
-    let index = 0;
-    if(!cases || cases.length === 0){
+    let index = 0
+    if (!cases || cases.length === 0) {
       resolve()
     }
     (function next() {
@@ -133,19 +129,21 @@ export function validateTables(cases, deleteTempId) {
         // 判断校验是否全部完成，完成返回成功，否则继续进行下一步校验
         if (++index === cases.length) {
           resolve(tables)
-        } else (
+        } else {
+ (
           next()
         )
+}
       }, error => {
         // 出现未验证通过的表单，不再进行下一步校验，直接返回失败并跳转到该表格
         if (error === VALIDATE_NO_PASSED) {
           // 尝试获取tabKey，如果在ATab组件内即可获取
-          let paneKey;
+          let paneKey
           let tabPane = getVmParentByName(vm, 'ATabPane')
           if (tabPane) {
             paneKey = tabPane.$vnode.key
           }
-          reject({error: VALIDATE_NO_PASSED, index, paneKey})
+          reject({ error: VALIDATE_NO_PASSED, index, paneKey })
         }
         reject(error)
       })

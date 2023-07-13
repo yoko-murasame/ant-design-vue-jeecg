@@ -48,7 +48,7 @@
 
 <script>
   export default {
-    name: "Step2",
+    name: 'Step2',
     data () {
       return {
         loading: false

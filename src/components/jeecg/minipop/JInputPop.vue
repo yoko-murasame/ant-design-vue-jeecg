@@ -19,90 +19,89 @@
 <script>
   export default {
     name: 'JInputPop',
-    props:{
-      title:{
-        type:String,
-        default:'',
-        required:false
+    props: {
+      title: {
+        type: String,
+        default: '',
+        required: false
       },
-      position:{
-        type:String,
-        default:'right',
-        required:false
+      position: {
+        type: String,
+        default: 'right',
+        required: false
       },
-      height:{
-        type:Number,
-        default:200,
-        required:false
+      height: {
+        type: Number,
+        default: 200,
+        required: false
       },
-      width:{
-        type:Number,
-        default:150,
-        required:false
+      width: {
+        type: Number,
+        default: 150,
+        required: false
       },
-      value:{
-        type:String,
-        required:false
+      value: {
+        type: String,
+        required: false
       },
-      popContainer:{
-        type:String,
-        default:'',
-        required:false
+      popContainer: {
+        type: String,
+        default: '',
+        required: false
       },
       disabled: {
         type: Boolean,
-        default: false,
+        default: false
       },
-      placeholder:{
-        type:String,
-        required:false
+      placeholder: {
+        type: String,
+        required: false
       }
 
     },
-    data(){
+    data() {
       return {
-        visible:false,
-        inputContent:''
+        visible: false,
+        inputContent: ''
 
       }
     },
 
-    watch:{
-      value:{
-        immediate:true,
-        handler:function(){
-          if(this.value && this.value.length>0){
-            this.inputContent = this.value;
+    watch: {
+      value: {
+        immediate: true,
+        handler: function() {
+          if (this.value && this.value.length > 0) {
+            this.inputContent = this.value
           }
         }
-      },
+      }
     },
     model: {
       prop: 'value',
       event: 'change'
     },
-    methods:{
-      handleInputChange(event){
+    methods: {
+      handleInputChange(event) {
         this.inputContent = event.target.value
-        this.$emit('change',this.inputContent)
+        this.$emit('change', this.inputContent)
       },
-      pop(){
+      pop() {
         // disabled 不弹窗
         if (this.disabled) {
           return
         }
-        this.visible=true
+        this.visible = true
         this.$nextTick(() => {
           this.$refs.textarea.focus()
         })
       },
-      getPopupContainer(node){
-        if(!this.popContainer){
+      getPopupContainer(node) {
+        if (!this.popContainer) {
           return node.parentNode
-        }else{
+        } else {
           return document.getElementById(this.popContainer)
         }
-
       }
     }
   }

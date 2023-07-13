@@ -33,7 +33,7 @@
 
   export default {
     name: 'LayoutDemo',
-    components: {Template5, Template4, Template3, Template2, Template1, ErpTemplate}
+    components: { Template5, Template4, Template3, Template2, Template1, ErpTemplate }
   }
 </script>
 

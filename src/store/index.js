@@ -16,7 +16,7 @@ export default new Vuex.Store({
     user,
     permission,
     enhance,
-    online,
+    online
   },
   state: {
 

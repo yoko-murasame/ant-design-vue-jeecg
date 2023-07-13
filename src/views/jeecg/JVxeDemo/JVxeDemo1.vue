@@ -52,7 +52,7 @@
             type: JVXETypes.normal,
             width: '180px',
             fixed: 'left',
-            defaultValue: 'normal-new',
+            defaultValue: 'normal-new'
           },
           {
             title: '单行文本',
@@ -75,14 +75,14 @@
                 message: '${title}不能重复'
               },
               {
-                handler({cellValue, row, column}, callback, target) {
+                handler({ cellValue, row, column }, callback, target) {
                   // cellValue 当前校验的值
                   // callback(flag, message) 方法必须执行且只能执行一次
                   //          flag = 是否通过了校验，不填写或者填写 null 代表不进行任何操作
                   //          message = 提示的类型，默认使用配置的 message
                   // target 行编辑的实例对象
                   if (cellValue === 'abc') {
-                    callback(false, '${title}不能是abc')  // false = 未通过校验
+                    callback(false, '${title}不能是abc') // false = 未通过校验
                   } else {
                     callback(true) // true = 通过验证
                   }
@@ -95,7 +95,7 @@
             title: '多行文本',
             key: 'textarea',
             type: JVXETypes.textarea,
-            width: '200px',
+            width: '200px'
           },
           {
             title: '数字',
@@ -104,7 +104,7 @@
             width: '80px',
             defaultValue: 32,
             // 【统计列】sum = 求和、average = 平均值
-            statistics: ['sum', 'average'],
+            statistics: ['sum', 'average']
           },
           {
             title: '下拉框',
@@ -113,10 +113,10 @@
             width: '180px',
             // 下拉选项
             options: [
-              {title: 'String', value: 'string'},
-              {title: 'Integer', value: 'int'},
-              {title: 'Double', value: 'double'},
-              {title: 'Boolean', value: 'boolean'}
+              { title: 'String', value: 'string' },
+              { title: 'Integer', value: 'int' },
+              { title: 'Double', value: 'double' },
+              { title: 'Boolean', value: 'boolean' }
             ],
             allowInput: true,
             placeholder: '请选择'
@@ -128,7 +128,7 @@
             width: '180px',
             options: [],
             dictCode: 'sex',
-            placeholder: '请选择',
+            placeholder: '请选择'
           },
           {
             title: '下拉框_多选',
@@ -136,14 +136,14 @@
             type: JVXETypes.selectMultiple,
             width: '205px',
             options: [
-              {title: 'String', value: 'string'},
-              {title: 'Integer', value: 'int'},
-              {title: 'Double', value: 'double'},
-              {title: 'Boolean', value: 'boolean'}
+              { title: 'String', value: 'string' },
+              { title: 'Integer', value: 'int' },
+              { title: 'Double', value: 'double' },
+              { title: 'Boolean', value: 'boolean' }
             ],
             defaultValue: ['int', 'boolean'], // 多个默认项
             // defaultValue: 'string,double,int', // 也可使用这种方式
-            placeholder: '多选',
+            placeholder: '多选'
           },
 
           {
@@ -152,11 +152,11 @@
             type: JVXETypes.selectSearch,
             width: '180px',
             options: [
-              {title: 'String', value: 'string'},
-              {title: 'Integer', value: 'int'},
-              {title: 'Double', value: 'double'},
-              {title: 'Boolean', value: 'boolean'}
-            ],
+              { title: 'String', value: 'string' },
+              { title: 'Integer', value: 'int' },
+              { title: 'Double', value: 'double' },
+              { title: 'Boolean', value: 'boolean' }
+            ]
           },
           {
             title: '日期时间',
@@ -164,7 +164,7 @@
             type: JVXETypes.datetime,
             width: '200px',
             defaultValue: '2019-4-30 14:52:22',
-            placeholder: '请选择',
+            placeholder: '请选择'
           },
           {
             title: '复选框',
@@ -172,7 +172,7 @@
             type: JVXETypes.checkbox,
             width: '100px',
             customValue: ['Y', 'N'], // true ,false
-            defaultChecked: false,
+            defaultChecked: false
           },
           {
             title: '操作',
@@ -181,12 +181,11 @@
             fixed: 'right',
             minWidth: '100px',
             align: 'center',
-            slotName: 'action',
+            slotName: 'action'
           }
         ],
-        dataSource: [],
+        dataSource: []
       }
-
     },
 
     created() {
@@ -208,7 +207,7 @@
         // props.caseId         JVXE实例唯一ID
         // props.scrolling      是否正在滚动
         // props.triggerChange  触发change事件，用于更改slot的值
-        console.log('查看: ', {props})
+        console.log('查看: ', { props })
       },
 
       handleDL(props) {
@@ -224,7 +223,7 @@
       handleTableCheck() {
         this.$refs.vTable.validateTable().then(errMap => {
           if (errMap) {
-            console.log('表单验证未通过：', {errMap})
+            console.log('表单验证未通过：', { errMap })
             this.$message.error('验证未通过，请在控制台查看详细')
           } else {
             this.$message.success('验证通过')
@@ -235,7 +234,7 @@
       /** 获取值，忽略表单验证 */
       handleTableGet() {
         const values = this.$refs.vTable.getTableData()
-        console.log('获取值:', {values})
+        console.log('获取值:', { values })
         this.$message.success('获取值成功，请看控制台输出')
       },
 
@@ -293,7 +292,6 @@
             this.loading = false
           }, pageSize - diff)
         }
-
       }
     }
   }

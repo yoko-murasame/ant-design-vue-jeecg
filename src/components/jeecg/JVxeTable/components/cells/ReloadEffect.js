@@ -6,7 +6,7 @@ export default {
   props: {
     vNode: null,
     // 是否启用特效
-    effect: Boolean,
+    effect: Boolean
   },
   data() {
     return {
@@ -14,7 +14,7 @@ export default {
       innerEffect: false,
       // 应付同时多个特效
       effectIdx: 0,
-      effectList: [],
+      effectList: []
     }
   },
   watch: {
@@ -27,8 +27,8 @@ export default {
           let topLayer = this.renderSpan(old, 'top')
           this.effectList.push(topLayer)
         }
-      },
-    },
+      }
+    }
   },
   methods: {
 
@@ -67,18 +67,18 @@ export default {
       let options = {
         key: layer + this.effectIdx + randomString(6),
         class: ['j-vxe-reload-effect-span', `layer-${layer}`],
-        style: {},
+        style: {}
       }
       if (layer === 'top') {
         // 最新渲染的在下面
         options.style['z-index'] = (9999 - this.effectIdx)
       }
       return this.$createElement('span', options, [vNode])
-    },
+    }
   },
   render(h) {
     return h('div', {
-      class: ['j-vxe-reload-effect-box'],
+      class: ['j-vxe-reload-effect-box']
     }, [this.renderVNode()])
-  },
+  }
 }

@@ -35,83 +35,83 @@
 <script>
   import ARow from 'ant-design-vue/es/grid/Row'
   import ACol from 'ant-design-vue/es/grid/Col'
-  import { getAction,postAction } from '@/api/manage'
+  import { getAction, postAction } from '@/api/manage'
 
   export default {
     name: 'DeptRoleDataruleModal',
     components: { ACol, ARow },
-    data(){
+    data() {
       return {
-        departId:'',
-        functionId:'',
-        roleId:'',
-        visible:false,
+        departId: '',
+        functionId: '',
+        roleId: '',
+        visible: false,
         tabList: [{
           key: '1',
-          tab: '数据规则',
+          tab: '数据规则'
         }, {
           key: '2',
-          tab: '按钮权限',
+          tab: '按钮权限'
         }],
         activeTabKey: '1',
-        url:{
-          datarule:"/sys/sysDepartRole/datarule",
+        url: {
+          datarule: '/sys/sysDepartRole/datarule'
         },
-        dataruleList:[],
-        dataruleChecked:[]
+        dataruleList: [],
+        dataruleChecked: []
       }
     },
-    methods:{
-      loadData(){
-        getAction(`${this.url.datarule}/${this.functionId}/${this.departId}/${this.roleId}`).then(res=>{
+    methods: {
+      loadData() {
+        getAction(`${this.url.datarule}/${this.functionId}/${this.departId}/${this.roleId}`).then(res => {
           console.log(res)
-          if(res.success){
+          if (res.success) {
             this.dataruleList = res.result.datarule
             let drChecked = res.result.drChecked
-            if(drChecked){
-              this.dataruleChecked = drChecked.split(",")
+            if (drChecked) {
+              this.dataruleChecked = drChecked.split(',')
             }
           }
         })
       },
-      saveDataruleForRole(){
-        if(!this.dataruleChecked || this.dataruleChecked.length==0){
-          this.$message.warning("请注意，现未勾选任何数据权限!")
+      saveDataruleForRole() {
+        if (!this.dataruleChecked || this.dataruleChecked.length == 0) {
+          this.$message.warning('请注意，现未勾选任何数据权限!')
         }
         let params = {
-          permissionId:this.functionId,
-          roleId:this.roleId,
-          dataRuleIds:this.dataruleChecked.join(",")
+          permissionId: this.functionId,
+          roleId: this.roleId,
+          dataRuleIds: this.dataruleChecked.join(',')
         }
-        console.log("保存数据权限",params)
-        postAction(this.url.datarule,params).then(res=>{
-          if(res.success){
+        console.log('保存数据权限', params)
+        postAction(this.url.datarule, params).then(res => {
+          if (res.success) {
             this.$message.success(res.message)
-          }else{
+          } else {
             this.$message.error(res.message)
           }
         })
       },
-      show(functionId,departId,roleId){
+      show(functionId, departId, roleId) {
         this.onReset()
         this.departId = departId
         this.functionId = functionId
         this.roleId = roleId
-        this.visible=true
+        this.visible = true
         this.loadData()
       },
-      onClose(){
-        this.visible=false
+      onClose() {
+        this.visible = false
         this.onReset()
       },
       onTabChange (key) {
         this.activeTabKey = key
       },
-      onReset(){
-        this.functionId=''
-        this.roleId=''
-        this.dataruleList=[]
-        this.dataruleChecked=[]
+      onReset() {
+        this.functionId = ''
+        this.roleId = ''
+        this.dataruleList = []
+        this.dataruleChecked = []
       }
     }
   }

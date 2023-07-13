@@ -48,10 +48,10 @@ export const JEditableTableMixin = {
 
     /** 当点击新增按钮时调用此方法 */
     add() {
-      //update-begin-author:lvdandan date:20201113 for:LOWCOD-1049 JEditaTable,子表默认添加一条数据，addDefaultRowNum设置无效 #1930
+      // update-begin-author:lvdandan date:20201113 for:LOWCOD-1049 JEditaTable,子表默认添加一条数据，addDefaultRowNum设置无效 #1930
       return new Promise((resolve) => {
-        this.tableReset();
-        resolve();
+        this.tableReset()
+        resolve()
       }).then(() => {
         if (typeof this.addBefore === 'function') this.addBefore()
         // 默认新增空数据
@@ -66,12 +66,12 @@ export const JEditableTableMixin = {
         if (typeof this.addAfter === 'function') this.addAfter(this.model)
         this.edit({})
       })
-      //update-end-author:lvdandan date:20201113 for:LOWCOD-1049 JEditaTable,子表默认添加一条数据，addDefaultRowNum设置无效 #1930
+      // update-end-author:lvdandan date:20201113 for:LOWCOD-1049 JEditaTable,子表默认添加一条数据，addDefaultRowNum设置无效 #1930
     },
     /** 当点击了编辑（修改）按钮时调用此方法 */
     edit(record) {
-      if(record && '{}'!=JSON.stringify(record)){
-        this.tableReset();
+      if (record && JSON.stringify(record) != '{}') {
+        this.tableReset()
       }
       if (typeof this.editBefore === 'function') this.editBefore(record)
       this.visible = true
@@ -85,8 +85,8 @@ export const JEditableTableMixin = {
       this.visible = false
       this.$emit('close')
     },
-    //清空子表table的数据
-    tableReset(){
+    // 清空子表table的数据
+    tableReset() {
       this.eachAllTable((item) => {
         item.clearRow()
       })
@@ -112,7 +112,7 @@ export const JEditableTableMixin = {
     },
     /** 发起请求，自动判断是执行新增还是修改操作 */
     request(formData) {
-      let url = this.url.add, method = 'post'
+      let url = this.url.add; let method = 'post'
       if (this.model.id) {
         url = this.url.edit
         method = 'put'

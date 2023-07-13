@@ -41,8 +41,14 @@
     <div class="table-operator">
       <a-button @click="handleAdd" v-show="show" type="primary" icon="plus">新增</a-button>
       <a-button type="primary" v-show="show" icon="download" @click="handleExportXls('消息')">导出</a-button>
-      <a-upload v-show="show" name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl"
-                @change="handleImportExcel">
+      <a-upload
+        v-show="show"
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
       <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -62,7 +68,7 @@
     <div>
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{
-        selectedRowKeys.length }}</a>项
+          selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
@@ -89,8 +95,8 @@
           <a-dropdown>
             <a class="ant-dropdown-link">更多<a-icon type="down"/></a>
             <a-menu slot="overlay">
-               <a-menu-item v-show="show">
-                <a  @click="handleEdit(record)">编辑</a>
+              <a-menu-item v-show="show">
+                <a @click="handleEdit(record)">编辑</a>
               </a-menu-item>
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
@@ -112,11 +118,11 @@
 
 <script>
   import SysMessageModal from './modules/SysMessageModal'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
-  import JEllipsis from "@/components/jeecg/JEllipsis";
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import JEllipsis from '@/components/jeecg/JEllipsis'
 
   export default {
-    name: "SysMessageList",
+    name: 'SysMessageList',
     mixins: [JeecgListMixin],
     components: {
       JEllipsis,
@@ -134,30 +140,30 @@
             dataIndex: '',
             key: 'rowIndex',
             width: 60,
-            align: "center",
+            align: 'center',
             customRender: function (t, r, index) {
-              return parseInt(index) + 1;
+              return parseInt(index) + 1
             }
           },
           {
             title: '消息标题',
-            align: "center",
+            align: 'center',
             dataIndex: 'esTitle'
           },
           {
             title: '发送内容',
-            align: "center",
+            align: 'center',
             dataIndex: 'esContent',
-            scopedSlots: {customRender: 'esContent'},
+            scopedSlots: { customRender: 'esContent' }
           },
           {
             title: '接收人',
-            align: "center",
+            align: 'center',
             dataIndex: 'esReceiver'
           },
           {
             title: '发送次数',
-            align: "center",
+            align: 'center',
             dataIndex: 'esSendNum'
           },
           {
@@ -167,7 +173,7 @@
           },
           {
             title: '发送时间',
-            align: "center",
+            align: 'center',
             dataIndex: 'esSendTime'
           },
           {
@@ -178,22 +184,22 @@
           {
             title: '操作',
             dataIndex: 'action',
-            align: "center",
-            scopedSlots: {customRender: 'action'},
+            align: 'center',
+            scopedSlots: { customRender: 'action' }
           }
         ],
         url: {
-          list: "/sys/message/sysMessage/list",
-          delete: "/sys/message/sysMessage/delete",
-          deleteBatch: "/sys/message/sysMessage/deleteBatch",
-          exportXlsUrl: "sys/message/sysMessage/exportXls",
-          importExcelUrl: "sys/message/sysMessage/importExcel",
-        },
+          list: '/sys/message/sysMessage/list',
+          delete: '/sys/message/sysMessage/delete',
+          deleteBatch: '/sys/message/sysMessage/deleteBatch',
+          exportXlsUrl: 'sys/message/sysMessage/exportXls',
+          importExcelUrl: 'sys/message/sysMessage/importExcel'
+        }
       }
     },
     computed: {
       importExcelUrl: function () {
-        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
       }
     },
     methods: {}

@@ -32,9 +32,9 @@
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('系统通告')">导出</a-button>
-<!--      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">-->
-<!--        <a-button type="primary" icon="import">导入</a-button>-->
-<!--      </a-upload>-->
+      <!--      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">-->
+      <!--        <a-button type="primary" icon="import">导入</a-button>-->
+      <!--      </a-upload>-->
       <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
@@ -68,7 +68,7 @@
         @change="handleTableChange">
 
         <span slot="action" slot-scope="text, record">
-          <a  v-if="record.sendStatus == 0" @click="handleEdit(record)">编辑</a>
+          <a v-if="record.sendStatus == 0" @click="handleEdit(record)">编辑</a>
 
           <a-divider type="vertical" v-if="record.sendStatus == 0"/>
           <a-dropdown>
@@ -90,7 +90,7 @@
                 </a-popconfirm>
               </a-menu-item>
               <a-menu-item>
-                  <a @click="handleDetail(record)">查看</a>
+                <a @click="handleDetail(record)">查看</a>
               </a-menu-item>
             </a-menu>
           </a-dropdown>
@@ -103,7 +103,14 @@
     <!-- 表单区域 -->
     <sysAnnouncement-modal ref="modalForm" @ok="modalFormOk"></sysAnnouncement-modal>
     <!-- 查看详情 -->
-    <j-modal class="detail-modal" title="查看详情" :visible.sync="detailModal.visible" :top="50" :width="600" switchFullscreen :footer="null">
+    <j-modal
+      class="detail-modal"
+      title="查看详情"
+      :visible.sync="detailModal.visible"
+      :top="50"
+      :width="600"
+      switchFullscreen
+      :footer="null">
       <iframe v-if="detailModal.url" class="detail-iframe" :src="detailModal.url"/>
     </j-modal>
 
@@ -112,13 +119,13 @@
 
 <script>
   import SysAnnouncementModal from './modules/SysAnnouncementModal'
-  import {doReleaseData, doReovkeData} from '@/api/api'
-  import {getAction} from '@/api/manage'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
+  import { doReleaseData, doReovkeData } from '@/api/api'
+  import { getAction } from '@/api/manage'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { ACCESS_TOKEN } from '@/store/mutation-types'
 
   export default {
-    name: "SysAnnouncementList",
+    name: 'SysAnnouncementList',
     mixins: [JeecgListMixin],
     components: {
       SysAnnouncementModal
@@ -135,32 +142,32 @@
             dataIndex: '',
             key: 'rowIndex',
             width: 60,
-            align: "center",
+            align: 'center',
             customRender: function (t, r, index) {
-              return parseInt(index) + 1;
+              return parseInt(index) + 1
             }
           },
 
           {
             title: '标题',
-            align: "center",
+            align: 'center',
             dataIndex: 'titile'
           },
           {
             title: '消息类型',
-            align: "center",
+            align: 'center',
             dataIndex: 'msgCategory',
             customRender: function (text) {
               if (text == '1') {
-                return "通知公告";
-              } else if (text == "2") {
-                return "系统消息";
+                return '通知公告'
+              } else if (text == '2') {
+                return '系统消息'
               } else {
-                return text;
+                return text
               }
             }
           },
-          /*{
+          /* {
             title: '开始时间',
             align: "center",
             dataIndex: 'startTime'
@@ -169,133 +176,133 @@
             title: '结束时间',
             align: "center",
             dataIndex: 'endTime'
-          },*/
+          }, */
           {
             title: '发布人',
-            align: "center",
+            align: 'center',
             dataIndex: 'sender'
           },
           {
             title: '优先级',
-            align: "center",
+            align: 'center',
             dataIndex: 'priority',
             customRender: function (text) {
               if (text == 'L') {
-                return "低";
-              } else if (text == "M") {
-                return "中";
-              } else if (text == "H") {
-                return "高";
+                return '低'
+              } else if (text == 'M') {
+                return '中'
+              } else if (text == 'H') {
+                return '高'
               } else {
-                return text;
+                return text
               }
             }
           },
           {
             title: '通告对象',
-            align: "center",
+            align: 'center',
             dataIndex: 'msgType',
             customRender: function (text) {
               if (text == 'USER') {
-                return "指定用户";
-              } else if (text == "ALL") {
-                return "全体用户";
+                return '指定用户'
+              } else if (text == 'ALL') {
+                return '全体用户'
               } else {
-                return text;
+                return text
               }
             }
           },
           {
             title: '发布状态',
-            align: "center",
+            align: 'center',
             dataIndex: 'sendStatus',
             customRender: function (text) {
               if (text == 0) {
-                return "未发布";
+                return '未发布'
               } else if (text == 1) {
-                return "已发布";
+                return '已发布'
               } else if (text == 2) {
-                return "已撤销";
+                return '已撤销'
               } else {
-                return text;
+                return text
               }
             }
           },
           {
             title: '发布时间',
-            align: "center",
+            align: 'center',
             dataIndex: 'sendTime'
           },
           {
             title: '撤销时间',
-            align: "center",
+            align: 'center',
             dataIndex: 'cancelTime'
           },
-          /*{
+          /* {
                 title: '删除状态（0，正常，1已删除）',
                 align:"center",
                 dataIndex: 'delFlag'
-              },*/
+              }, */
           {
             title: '操作',
             dataIndex: 'action',
-            align: "center",
-            scopedSlots: {customRender: 'action'},
+            align: 'center',
+            scopedSlots: { customRender: 'action' }
           }
         ],
-        detailModal: {visible: false, url: '',},
+        detailModal: { visible: false, url: '' },
         url: {
-          list: "/sys/annountCement/list",
-          delete: "/sys/annountCement/delete",
-          deleteBatch: "/sys/annountCement/deleteBatch",
-          releaseDataUrl: "/sys/annountCement/doReleaseData",
-          reovkeDataUrl: "sys/annountCement/doReovkeData",
-          exportXlsUrl: "sys/annountCement/exportXls",
-          importExcelUrl: "sys/annountCement/importExcel",
-        },
+          list: '/sys/annountCement/list',
+          delete: '/sys/annountCement/delete',
+          deleteBatch: '/sys/annountCement/deleteBatch',
+          releaseDataUrl: '/sys/annountCement/doReleaseData',
+          reovkeDataUrl: 'sys/annountCement/doReovkeData',
+          exportXlsUrl: 'sys/annountCement/exportXls',
+          importExcelUrl: 'sys/annountCement/importExcel'
+        }
       }
     },
     computed: {
-      importExcelUrl: function(){
-        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+      importExcelUrl: function() {
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
       }
     },
     methods: {
-      //执行发布操作
+      // 执行发布操作
       releaseData: function (id) {
-        console.log(id);
-        var that = this;
-        doReleaseData({id: id}).then((res) => {
+        console.log(id)
+        var that = this
+        doReleaseData({ id: id }).then((res) => {
           if (res.success) {
-            that.$message.success(res.message);
-            that.loadData(1);
+            that.$message.success(res.message)
+            that.loadData(1)
           } else {
-            that.$message.warning(res.message);
+            that.$message.warning(res.message)
           }
-        });
+        })
       },
-      //执行撤销操作
+      // 执行撤销操作
       reovkeData: function (id) {
-        var that = this;
-        doReovkeData({id: id}).then((res) => {
+        var that = this
+        doReovkeData({ id: id }).then((res) => {
           if (res.success) {
-            that.$message.success(res.message);
-            that.loadData(1);
+            that.$message.success(res.message)
+            that.loadData(1)
             this.syncHeadNotic(id)
           } else {
-            that.$message.warning(res.message);
+            that.$message.warning(res.message)
           }
-        });
+        })
       },
-      syncHeadNotic(anntId){
-        getAction("sys/annountCement/syncNotic",{anntId:anntId})
+      syncHeadNotic(anntId) {
+        getAction('sys/annountCement/syncNotic', { anntId: anntId })
       },
-      handleDetail:function(record){
+      handleDetail: function(record) {
         const domain = window._CONFIG['domianURL']
         const token = this.$ls.get(ACCESS_TOKEN)
         this.detailModal.url = `${domain}/sys/annountCement/show/${record.id}?token=${token}`
         this.detailModal.visible = true
-      },
+      }
     }
   }
 </script>

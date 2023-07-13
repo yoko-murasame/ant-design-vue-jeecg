@@ -84,7 +84,7 @@
   import RoleModal from './modules/RoleModal'
 
   export default {
-    name: "TableList",
+    name: 'TableList',
     components: {
       STable,
       RoleModal
@@ -110,7 +110,7 @@
           },
           {
             title: '角色名称',
-            dataIndex: 'name',
+            dataIndex: 'name'
           },
           {
             title: '状态',
@@ -124,7 +124,7 @@
             title: '操作',
             width: '150px',
             dataIndex: 'action',
-            scopedSlots: { customRender: 'action' },
+            scopedSlots: { customRender: 'action' }
           }
         ],
         // 加载数据方法 必须为 Promise 对象
@@ -163,7 +163,7 @@
       },
       toggleAdvanced () {
         this.advanced = !this.advanced
-      },
+      }
     },
     watch: {
       /*

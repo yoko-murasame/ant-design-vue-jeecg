@@ -11,24 +11,54 @@
       <div class="item">
         <a-radio value="TYPE_RANGE" class="choice" :disabled="disableChoice">区间</a-radio>
         从
-        <a-input-number :disabled="type!==TYPE_RANGE || disableChoice" :max="maxValue" :min="minValue" :precision="0" class="w60" v-model="valueRange.start"/>
+        <a-input-number
+          :disabled="type!==TYPE_RANGE || disableChoice"
+          :max="maxValue"
+          :min="minValue"
+          :precision="0"
+          class="w60"
+          v-model="valueRange.start"/>
         日
         至
-        <a-input-number :disabled="type!==TYPE_RANGE || disableChoice" :max="maxValue" :min="minValue" :precision="0" class="w60" v-model="valueRange.end"/>
+        <a-input-number
+          :disabled="type!==TYPE_RANGE || disableChoice"
+          :max="maxValue"
+          :min="minValue"
+          :precision="0"
+          class="w60"
+          v-model="valueRange.end"/>
         日
       </div>
       <div class="item">
         <a-radio value="TYPE_LOOP" class="choice" :disabled="disableChoice">循环</a-radio>
         从
-        <a-input-number :disabled="type!==TYPE_LOOP || disableChoice" :max="maxValue" :min="minValue" :precision="0" class="w60" v-model="valueLoop.start"/>
+        <a-input-number
+          :disabled="type!==TYPE_LOOP || disableChoice"
+          :max="maxValue"
+          :min="minValue"
+          :precision="0"
+          class="w60"
+          v-model="valueLoop.start"/>
         日开始，间隔
-        <a-input-number :disabled="type!==TYPE_LOOP || disableChoice" :max="maxValue" :min="minValue" :precision="0" class="w60" v-model="valueLoop.interval"/>
+        <a-input-number
+          :disabled="type!==TYPE_LOOP || disableChoice"
+          :max="maxValue"
+          :min="minValue"
+          :precision="0"
+          class="w60"
+          v-model="valueLoop.interval"/>
         日
       </div>
       <div class="item">
         <a-radio value="TYPE_WORK" class="choice" :disabled="disableChoice">工作日</a-radio>
         本月
-        <a-input-number :disabled="type!==TYPE_WORK || disableChoice" :max="maxValue" :min="minValue" :precision="0" class="w60" v-model="valueWork"/>
+        <a-input-number
+          :disabled="type!==TYPE_WORK || disableChoice"
+          :max="maxValue"
+          :min="minValue"
+          :precision="0"
+          class="w60"
+          v-model="valueWork"/>
         日，最近的工作日
       </div>
       <div class="item">
@@ -39,7 +69,7 @@
         <div class="list">
           <a-checkbox-group v-model="valueList">
             <template v-for="i of specifyRange">
-              <a-checkbox class="list-check-item" :key="`key-${i}`" :value="i" :disabled="type!==TYPE_SPECIFY || disabled">{{i}}</a-checkbox>
+              <a-checkbox class="list-check-item" :key="`key-${i}`" :value="i" :disabled="type!==TYPE_SPECIFY || disabled">{{ i }}</a-checkbox>
             </template>
           </a-checkbox-group>
         </div>
@@ -52,7 +82,7 @@
 import mixin from './mixin'
 
 export default {
-  name: 'day',
+  name: 'Day',
   mixins: [mixin],
   props: {
     week: {

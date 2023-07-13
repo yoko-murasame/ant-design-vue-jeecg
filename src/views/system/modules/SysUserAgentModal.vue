@@ -68,104 +68,100 @@
 <script>
   import pick from 'lodash.pick'
   import { httpAction, getAction } from '@/api/manage'
-  import JDate from '@/components/jeecg/JDate.vue';
+  import JDate from '@/components/jeecg/JDate.vue'
   import JSelectUserByDep from '@/components/jeecgbiz/JSelectUserByDep'
 
   export default {
-    name: "SysUserAgentModal",
+    name: 'SysUserAgentModal',
     components: {
       JDate,
       JSelectUserByDep
     },
     data () {
       return {
-        title:"操作",
+        title: '操作',
         visible: false,
         model: {},
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
-        username:"",
+        username: '',
         confirmLoading: false,
         form: this.$form.createForm(this),
-        validatorRules:{
-          agentUserName:{rules: [{ required: true, message: '请输入代理人用户名!' }]},
-          startTime:{rules: [{ required: true, message: '请输入代理开始时间!' }]},
-          endTime:{rules: [{ required: true, message: '请输入代理结束时间!' }]},
+        validatorRules: {
+          agentUserName: { rules: [{ required: true, message: '请输入代理人用户名!' }] },
+          startTime: { rules: [{ required: true, message: '请输入代理开始时间!' }] },
+          endTime: { rules: [{ required: true, message: '请输入代理结束时间!' }] }
         },
         url: {
-          add: "/sys/sysUserAgent/add",
-          edit: "/sys/sysUserAgent/edit",
-          queryByUserName:"/sys/sysUserAgent/queryByUserName",
-        },
+          add: '/sys/sysUserAgent/add',
+          edit: '/sys/sysUserAgent/edit',
+          queryByUserName: '/sys/sysUserAgent/queryByUserName'
+        }
       }
     },
     created () {
     },
     methods: {
-      agentSettings(username){
-        this.username = username;
-        this.init();
-
+      agentSettings(username) {
+        this.username = username
+        this.init()
       },
       init () {
-        var params = {userName:this.username};//查询条件
-        getAction(this.url.queryByUserName,params).then((res)=>{
-          if(res.success){
-            console.log("获取流程节点信息",res);
-            this.edit (res.result);
-          }else{
-            this.edit({userName:this.username,status:"0"});
+        var params = { userName: this.username }// 查询条件
+        getAction(this.url.queryByUserName, params).then((res) => {
+          if (res.success) {
+            console.log('获取流程节点信息', res)
+            this.edit(res.result)
+          } else {
+            this.edit({ userName: this.username, status: '0' })
           }
         })
       },
       edit (record) {
-        this.form.resetFields();
-        this.model = Object.assign({}, record);
-        this.visible = true;
+        this.form.resetFields()
+        this.model = Object.assign({}, record)
+        this.visible = true
         this.$nextTick(() => {
-          this.form.setFieldsValue(pick(this.model,'userName','agentUserName','status','startTime','endTime'))
-        });
+          this.form.setFieldsValue(pick(this.model, 'userName', 'agentUserName', 'status', 'startTime', 'endTime'))
+        })
       },
       close () {
-        this.$emit('close');
-        this.visible = false;
+        this.$emit('close')
+        this.visible = false
       },
       handleOk () {
-        const that = this;
+        const that = this
         // 触发表单验证
         this.form.validateFields((err, values) => {
           if (!err) {
-            that.confirmLoading = true;
-            let httpurl = '';
-            let method = '';
-            if(!this.model.id){
-              httpurl+=this.url.add;
-              method = 'post';
-            }else{
-              httpurl+=this.url.edit;
-               method = 'put';
+            that.confirmLoading = true
+            let httpurl = ''
+            let method = ''
+            if (!this.model.id) {
+              httpurl += this.url.add
+              method = 'post'
+            } else {
+              httpurl += this.url.edit
+               method = 'put'
             }
-            let formData = Object.assign(this.model, values);
-            httpAction(httpurl,formData,method).then((res)=>{
-              if(res.success){
-                that.$message.success(res.message);
-                //this.init();
-              }else{
-                that.$message.warning(res.message);
+            let formData = Object.assign(this.model, values)
+            httpAction(httpurl, formData, method).then((res) => {
+              if (res.success) {
+                that.$message.success(res.message)
+                // this.init();
+              } else {
+                that.$message.warning(res.message)
               }
             }).finally(() => {
-              that.confirmLoading = false;
-              that.close();
+              that.confirmLoading = false
+              that.close()
             })
-
-
-
           }
         })
       },

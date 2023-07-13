@@ -42,14 +42,13 @@
     methods: {
 
       toggle(event) {
-
-        //update-begin-author:taoyan date:20200921 for: 弹出子表时，子表会闪一下，类似重新计算子表的位置
-        if(document.body.clientHeight - event.$event.clientY > 350){
+        // update-begin-author:taoyan date:20200921 for: 弹出子表时，子表会闪一下，类似重新计算子表的位置
+        if (document.body.clientHeight - event.$event.clientY > 350) {
           this.placement = 'bottom'
-        }else{
+        } else {
           this.placement = 'top'
         }
-        //update-end-author:taoyan date:20200921 for: 弹出子表时，子表会闪一下，类似重新计算子表的位置
+        // update-end-author:taoyan date:20200921 for: 弹出子表时，子表会闪一下，类似重新计算子表的位置
         if (this.row == null) {
           this.open(event)
         } else {
@@ -64,7 +63,7 @@
           return
         }
 
-        let {row, column, $table, $event: {target}} = event
+        let { row, column, $table, $event: { target } } = event
         this.row = cloneObject(row)
         this.column = column
 
@@ -72,7 +71,7 @@
         className = typeof className === 'string' ? className : className.toString()
 
         // 获取 td 父级
-        let td = getParentNodeByTagName(target, 'td');
+        let td = getParentNodeByTagName(target, 'td')
         // 点击的是拖拽排序列，不做处理
         if (td && td.querySelector('.j-vxe-ds-icons')) {
           return
@@ -98,12 +97,12 @@
           this.$refs.div.style.height = clientHeight + 'px'
           this.overlayStyle.width = Number.parseInt((clientWidth - clientWidth * 0.04)) + 'px'
           this.overlayStyle.maxWidth = this.overlayStyle.width
-          //update-begin-author:taoyan date:20200921 for: 子表弹出位置存在现实位置问题。
-          //let realTable = getParentNodeByTagName(tr, 'table')
-          //let left = realTable.parentNode.scrollLeft
+          // update-begin-author:taoyan date:20200921 for: 子表弹出位置存在现实位置问题。
+          // let realTable = getParentNodeByTagName(tr, 'table')
+          // let left = realTable.parentNode.scrollLeft
           let h = event.$event.clientY
-          if(h){
-            h = h-140
+          if (h) {
+            h = h - 140
           }
           let toolbar = this.$refs.div.nextSibling
           domAlign(this.$refs.div, toolbar, {
@@ -111,9 +110,9 @@
             offset: [0, h],
             overflow: {
               alwaysByViewport: true
-            },
+            }
           })
-          //update-end-author:taoyan date:20200921 for: 子表弹出位置存在现实位置问题。
+          // update-end-author:taoyan date:20200921 for: 子表弹出位置存在现实位置问题。
           this.$nextTick(() => {
             this.visible = true
             this.$nextTick(() => {
@@ -122,7 +121,7 @@
           })
         } else {
           let num = ++level
-          console.warn('【JVxeSubPopover】table or tr 获取失败，正在进行第 ' + num + '次重试', {event, table, tr})
+          console.warn('【JVxeSubPopover】table or tr 获取失败，正在进行第 ' + num + '次重试', { event, table, tr })
           window.setTimeout(() => this.open(event, num), 100)
         }
       },
@@ -135,8 +134,8 @@
       reopen(event) {
         this.close()
         this.open(event)
-      },
-    },
+      }
+    }
   }
 </script>
 <style scoped lang="less">

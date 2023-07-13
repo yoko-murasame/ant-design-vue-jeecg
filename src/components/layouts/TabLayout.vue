@@ -41,7 +41,7 @@
   import { triggerWindowResizeEvent } from '@/utils/util'
   import Vue from 'vue'
   import { CACHE_INCLUDED_ROUTES } from '@/store/mutation-types'
-  import registerApps from "@/qiankun";
+  import registerApps from '@/qiankun'
 
   const indexKey = '/dashboard/analysis'
 
@@ -64,21 +64,21 @@
           { key: '2', icon: 'arrow-right', text: '关闭右侧' },
           { key: '3', icon: 'close', text: '关闭其它' }
         ],
-        reloadFlag:true
+        reloadFlag: true
       }
     },
     /* update_begin author:wuxianquan date:20190828 for: 关闭当前tab页，供子页面调用 ->望菜单能配置外链，直接弹出新页面而不是嵌入iframe #428 */
-    provide(){
-      return{
-        closeCurrent:this.closeCurrent,
+    provide() {
+      return {
+        closeCurrent: this.closeCurrent,
         changeTitle: this.changeTitle,
-        changeTabTitle: this.changeTabTitle,
+        changeTabTitle: this.changeTabTitle
       }
     },
     /* update_end author:wuxianquan date:20190828 for: 关闭当前tab页，供子页面调用->望菜单能配置外链，直接弹出新页面而不是嵌入iframe #428 */
     computed: {
       multipage() {
-        //判断如果是手机模式，自动切换为单页面模式
+        // 判断如果是手机模式，自动切换为单页面模式
         if (this.isMobile()) {
           return false
         } else {
@@ -99,40 +99,40 @@
     },
     mounted() {
       if (process.env.VUE_APP_QIANKUN == 'true') {
-        //update-begin-author:zyf date:20211129 for:qiankun 注册子应用
+        // update-begin-author:zyf date:20211129 for:qiankun 注册子应用
         if (!window.qiankunStarted) {
-          window.qiankunStarted = true;
-          registerApps();
+          window.qiankunStarted = true
+          registerApps()
         }
-        //update-end-author:zyf date:20211129 for:qiankun 注册子应用
+        // update-end-author:zyf date:20211129 for:qiankun 注册子应用
       }
     },
     watch: {
       '$route': function(newRoute) {
-        //console.log("新的路由",newRoute)
+        // console.log("新的路由",newRoute)
         this.activePage = newRoute.fullPath
         if (!this.multipage) {
           this.linkList = [newRoute.fullPath]
-          this.pageList = [Object.assign({},newRoute)]
+          this.pageList = [Object.assign({}, newRoute)]
         // update-begin-author:taoyan date:20200211 for: TASK #3368 【路由缓存】首页的缓存设置有问题，需要根据后台的路由配置来实现是否缓存
-        } else if(indexKey==newRoute.fullPath) {
-          //首页时 判断是否缓存 没有缓存 刷新之
+        } else if (indexKey == newRoute.fullPath) {
+          // 首页时 判断是否缓存 没有缓存 刷新之
           if (newRoute.meta.keepAlive === false) {
             this.routeReload()
           }
         // update-end-author:taoyan date:20200211 for: TASK #3368 【路由缓存】首页的缓存设置有问题，需要根据后台的路由配置来实现是否缓存
-        }else if (this.linkList.indexOf(newRoute.fullPath) < 0) {
+        } else if (this.linkList.indexOf(newRoute.fullPath) < 0) {
           this.linkList.push(newRoute.fullPath)
-          this.pageList.push(Object.assign({},newRoute))
-          //// update-begin-author:sunjianlei date:20200103 for: 如果新增的页面配置了缓存路由，那么就强制刷新一遍 #842
+          this.pageList.push(Object.assign({}, newRoute))
+          /// / update-begin-author:sunjianlei date:20200103 for: 如果新增的页面配置了缓存路由，那么就强制刷新一遍 #842
           // if (newRoute.meta.keepAlive) {
           //   this.routeReload()
           // }
-          //// update-end-author:sunjianlei date:20200103 for: 如果新增的页面配置了缓存路由，那么就强制刷新一遍 #842
+          /// / update-end-author:sunjianlei date:20200103 for: 如果新增的页面配置了缓存路由，那么就强制刷新一遍 #842
         } else if (this.linkList.indexOf(newRoute.fullPath) >= 0) {
           let oldIndex = this.linkList.indexOf(newRoute.fullPath)
           let oldPositionRoute = this.pageList[oldIndex]
-          this.pageList.splice(oldIndex, 1, Object.assign({},newRoute,{meta:oldPositionRoute.meta}))
+          this.pageList.splice(oldIndex, 1, Object.assign({}, newRoute, { meta: oldPositionRoute.meta }))
         }
       },
       'activePage': function(key) {
@@ -145,7 +145,7 @@
         this.changeTitle(waitRouter.meta.title)
       },
       'multipage': function(newVal) {
-        if(this.reloadFlag){
+        if (this.reloadFlag) {
           if (!newVal) {
             this.linkList = [this.$route.fullPath]
             this.pageList = [this.$route]
@@ -157,7 +157,7 @@
         if (this.multipage && this.linkList.indexOf(indexKey) === -1) {
           this.addIndexToFirst()
         }
-      },
+      }
       // update-end-author:sunjianlei date:20191223 for: 修复从单页模式切换回多页模式后首页不居第一位的 BUG
     },
     methods: {
@@ -198,9 +198,9 @@
        */
       changeTabTitle(title, fullPath = '') {
         if (title) {
-          let currentRoute = this.pageList.find((r) => r.fullPath === (fullPath ? fullPath : this.$route.fullPath))
+          let currentRoute = this.pageList.find((r) => r.fullPath === (fullPath || this.$route.fullPath))
           if (currentRoute != null) {
-            currentRoute.meta = {...currentRoute.meta, title}
+            currentRoute.meta = { ...currentRoute.meta, title }
           }
         }
       },
@@ -211,12 +211,12 @@
       },
       tabCallBack() {
         this.$nextTick(() => {
-          //update-begin-author:taoyan date: 20201211 for:【新版】online报错 JT-100
-         setTimeout(()=>{
-           //省市区组件里面给window绑定了个resize事件 导致切换页面的时候触发了他的resize，但是切换页面，省市区组件还没被销毁前就触发了该事件，导致控制台报错，加个延迟
+          // update-begin-author:taoyan date: 20201211 for:【新版】online报错 JT-100
+         setTimeout(() => {
+           // 省市区组件里面给window绑定了个resize事件 导致切换页面的时候触发了他的resize，但是切换页面，省市区组件还没被销毁前就触发了该事件，导致控制台报错，加个延迟
            triggerWindowResizeEvent()
-         },20)
-          //update-end-author:taoyan date: 20201211 for:【新版】online报错 JT-100
+         }, 20)
+          // update-end-author:taoyan date: 20201211 for:【新版】online报错 JT-100
         })
       },
       editPage(key, action) {
@@ -231,7 +231,7 @@
           this.$message.warning('这是最后一页，不能再关闭了啦')
           return
         }
-        console.log("this.pageList ",this.pageList );
+        console.log('this.pageList ', this.pageList)
         let removeRoute = this.pageList.filter(item => item.fullPath == key)
         this.pageList = this.pageList.filter(item => item.fullPath !== key)
         let index = this.linkList.indexOf(key)
@@ -239,21 +239,20 @@
         index = index >= this.linkList.length ? this.linkList.length - 1 : index
         this.activePage = this.linkList[index]
 
-        //update-begin--Author:scott  Date:20201015 for：路由缓存问题，关闭了tab页时再打开就不刷新 #842
-        //关闭页面则从缓存cache_included_routes中删除路由，下次点击菜单会重新加载页面
+        // update-begin--Author:scott  Date:20201015 for：路由缓存问题，关闭了tab页时再打开就不刷新 #842
+        // 关闭页面则从缓存cache_included_routes中删除路由，下次点击菜单会重新加载页面
         let cacheRouterArray = Vue.ls.get(CACHE_INCLUDED_ROUTES) || []
         if (removeRoute && removeRoute[0]) {
           let componentName = removeRoute[0].meta.componentName
-          console.log("key: ", key);
-          console.log("componentName: ", componentName);
-          if(cacheRouterArray.includes(componentName)){
+          console.log('key: ', key)
+          console.log('componentName: ', componentName)
+          if (cacheRouterArray.includes(componentName)) {
             cacheRouterArray.splice(cacheRouterArray.findIndex(item => item === componentName), 1)
             Vue.ls.set(CACHE_INCLUDED_ROUTES, cacheRouterArray)
           }
           this.emitPageClosed(removeRoute[0])
         }
-        //update-end--Author:scott  Date:20201015 for：路由缓存问题，关闭了tab页时再打开就不刷新 #842
-
+        // update-end--Author:scott  Date:20201015 for：路由缓存问题，关闭了tab页时再打开就不刷新 #842
       },
       // 触发 page-closed （页面关闭）全局事件
       emitPageClosed(closedRoute) {
@@ -300,13 +299,13 @@
         }
       },
       /* update_begin author:wuxianquan date:20190828 for: 关闭当前tab页，供子页面调用->望菜单能配置外链，直接弹出新页面而不是嵌入iframe #428 */
-      closeCurrent(){
-        this.remove(this.activePage);
+      closeCurrent() {
+        this.remove(this.activePage)
       },
       /* update_end author:wuxianquan date:20190828 for: 关闭当前tab页，供子页面调用->望菜单能配置外链，直接弹出新页面而不是嵌入iframe #428 */
       closeOthers(pageKey) {
         let index = this.linkList.indexOf(pageKey)
-        if (pageKey == indexKey || pageKey.indexOf('?ticke=')>=0) {
+        if (pageKey == indexKey || pageKey.indexOf('?ticke=') >= 0) {
           this.linkList = this.linkList.slice(index, index + 1)
           this.pageList = this.pageList.slice(index, index + 1)
           this.activePage = this.linkList[0]
@@ -342,35 +341,35 @@
           this.activePage = this.linkList[this.linkList.length - 1]
         }
       },
-      //update-begin-author:taoyan date:20190430 for:动态路由title显示配置的菜单title而不是其对应路由的title
-      dynamicRouterShow(key,title){
+      // update-begin-author:taoyan date:20190430 for:动态路由title显示配置的菜单title而不是其对应路由的title
+      dynamicRouterShow(key, title) {
         let keyIndex = this.linkList.indexOf(key)
-        if(keyIndex>=0){
+        if (keyIndex >= 0) {
           let currRouter = this.pageList[keyIndex]
-          let meta = Object.assign({},currRouter.meta,{title:title})
-          this.pageList.splice(keyIndex, 1, Object.assign({},currRouter,{meta:meta}))
+          let meta = Object.assign({}, currRouter.meta, { title: title })
+          this.pageList.splice(keyIndex, 1, Object.assign({}, currRouter, { meta: meta }))
           if (key === this.activePage) {
             this.changeTitle(title)
           }
         }
       },
-      //update-end-author:taoyan date:20190430 for:动态路由title显示配置的菜单title而不是其对应路由的title
+      // update-end-author:taoyan date:20190430 for:动态路由title显示配置的菜单title而不是其对应路由的title
 
-      //update-begin-author:taoyan date:20191008 for:路由刷新
-      routeReload(){
+      // update-begin-author:taoyan date:20191008 for:路由刷新
+      routeReload() {
         this.reloadFlag = false
-        let ToggleMultipage = "ToggleMultipage"
-        this.$store.dispatch(ToggleMultipage,false)
-        this.$nextTick(()=>{
-          this.$store.dispatch(ToggleMultipage,true)
+        let ToggleMultipage = 'ToggleMultipage'
+        this.$store.dispatch(ToggleMultipage, false)
+        this.$nextTick(() => {
+          this.$store.dispatch(ToggleMultipage, true)
           this.reloadFlag = true
         })
       },
-      //update-end-author:taoyan date:20191008 for:路由刷新
-      //新增一个返回方法
-      excuteCallback(callback){
+      // update-end-author:taoyan date:20191008 for:路由刷新
+      // 新增一个返回方法
+      excuteCallback(callback) {
         callback()
-      },
+      }
     }
   }
 </script>
@@ -456,6 +455,5 @@
       border-color: @primary-color!important;
     }
   }
-
 
 </style>

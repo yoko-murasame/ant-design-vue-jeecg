@@ -17,7 +17,7 @@
           label="订单号"
           required
           hasFeedback>
-          <a-input placeholder="请输入订单号" v-model="orderMainModel.orderCode"  />
+          <a-input placeholder="请输入订单号" v-model="orderMainModel.orderCode" />
         </a-form-model-item>
         <a-form-model-item
           :labelCol="labelCol"
@@ -32,7 +32,7 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="订单日期">
-          <a-date-picker showTime valueFormat='YYYY-MM-DD HH:mm:ss' v-model="orderMainModel.orderDate"/>
+          <a-date-picker showTime valueFormat="YYYY-MM-DD HH:mm:ss" v-model="orderMainModel.orderDate"/>
         </a-form-model-item>
         <a-form-model-item
           :labelCol="labelCol"
@@ -52,31 +52,31 @@
 </template>
 
 <script>
-  import {httpAction} from '@/api/manage'
+  import { httpAction } from '@/api/manage'
   import JDate from '@/components/jeecg/JDate'
   import pick from 'lodash.pick'
-  import moment from "moment"
+  import moment from 'moment'
 
   export default {
-    name: "JeecgOrderDMainModal",
+    name: 'JeecgOrderDMainModal',
     components: {
       JDate
     },
     data() {
       return {
-        title: "操作",
+        title: '操作',
         visible: false,
         orderMainModel: {
           jeecgOrderCustomerList: [{}],
           jeecgOrderTicketList: [{}]
         },
         labelCol: {
-          xs: {span: 24},
-          sm: {span: 5},
+          xs: { span: 24 },
+          sm: { span: 5 }
         },
         wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16},
+          xs: { span: 24 },
+          sm: { span: 16 }
         },
         confirmLoading: false,
         validatorRules: {
@@ -85,57 +85,57 @@
           ]
         },
         url: {
-          add: "/test/order/add",
-          edit: "/test/order/edit",
-          orderCustomerList: "/test/order/listOrderCustomerByMainId",
-          orderTicketList: "/test/order/listOrderTicketByMainId",
-        },
+          add: '/test/order/add',
+          edit: '/test/order/edit',
+          orderCustomerList: '/test/order/listOrderCustomerByMainId',
+          orderTicketList: '/test/order/listOrderTicketByMainId'
+        }
       }
     },
     methods: {
       add() {
-        this.edit({});
+        this.edit({})
       },
       edit(record) {
-        this.orderMainModel = Object.assign({}, record);
+        this.orderMainModel = Object.assign({}, record)
         console.log(this.orderMainModel)
-        //初始化明细表数据
-        this.visible = true;
+        // 初始化明细表数据
+        this.visible = true
       },
       close() {
-        this.$emit('close');
-        this.visible = false;
-        this.$refs.form.resetFields();
+        this.$emit('close')
+        this.visible = false
+        this.$refs.form.resetFields()
       },
       handleOk() {
-        const that = this;
+        const that = this
         // 触发表单验证
         this.$refs.form.validate(valid => {
           if (valid) {
-            that.confirmLoading = true;
-            let httpurl = '';
-            let method = '';
+            that.confirmLoading = true
+            let httpurl = ''
+            let method = ''
             if (!this.orderMainModel.id) {
-              httpurl += this.url.add;
-              method = 'post';
+              httpurl += this.url.add
+              method = 'post'
             } else {
-              httpurl += this.url.edit;
-              method = 'put';
+              httpurl += this.url.edit
+              method = 'put'
             }
-           
+
             httpAction(httpurl, this.orderMainModel, method).then((res) => {
               if (res.success) {
-                that.$message.success(res.message);
-                that.$emit('ok');
+                that.$message.success(res.message)
+                that.$emit('ok')
               } else {
-                that.$message.warning(res.message);
+                that.$message.warning(res.message)
               }
             }).finally(() => {
-              that.confirmLoading = false;
-              that.close();
+              that.confirmLoading = false
+              that.close()
             })
-          }else{
-            return false;
+          } else {
+            return false
           }
         })
       },

@@ -1,4 +1,4 @@
-import { asyncRouterMap, constantRouterMap } from "@/config/router.config"
+import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
 
 /**
  * 过滤账户是否拥有某一个权限，并将菜单从加载列表移除
@@ -50,7 +50,6 @@ function filterAsyncRouter(routerMap, roles) {
   return accessedRouters
 }
 
-
 const permission = {
   state: {
     routers: constantRouterMap,
@@ -60,7 +59,7 @@ const permission = {
     SET_ROUTERS: (state, data) => {
       state.addRouters = data
       state.routers = constantRouterMap.concat(data)
-      //console.log('-----mutations---SET_ROUTERS----', data)
+      // console.log('-----mutations---SET_ROUTERS----', data)
     }
   },
   actions: {
@@ -78,8 +77,8 @@ const permission = {
     // 动态添加主界面路由，需要缓存
     UpdateAppRouter({ commit }, routes) {
       return new Promise(resolve => {
-        //const [ roles ] = routes.constRoutes
-        let routelist = routes.constRoutes;
+        // const [ roles ] = routes.constRoutes
+        let routelist = routes.constRoutes
         commit('SET_ROUTERS', routelist)
         resolve()
       })

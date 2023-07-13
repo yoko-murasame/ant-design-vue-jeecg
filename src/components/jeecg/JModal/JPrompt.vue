@@ -1,5 +1,11 @@
 <template>
-  <j-modal :visible="visible" :confirmLoading="loading" :after-close="afterClose" v-bind="modalProps" @ok="onOk" @cancel="onCancel">
+  <j-modal
+    :visible="visible"
+    :confirmLoading="loading"
+    :after-close="afterClose"
+    v-bind="modalProps"
+    @ok="onOk"
+    @cancel="onCancel">
     <a-spin :spinning="loading">
       <div v-html="content"></div>
       <a-form-model ref="form" :model="model" :rules="rules">
@@ -23,19 +29,19 @@ export default {
       content: '',
       // 弹窗参数
       modalProps: {
-        title: '',
+        title: ''
       },
       inputProps: {
-        placeholder: '',
+        placeholder: ''
       },
       // form model
       model: {
-        input: '',
+        input: ''
       },
       // 校验
       rule: [],
       // 回调函数
-      callback: {},
+      callback: {}
     }
   },
   computed: {
@@ -43,7 +49,7 @@ export default {
       return {
         input: this.rule
       }
-    },
+    }
   },
   methods: {
     show(options) {
@@ -69,7 +75,7 @@ export default {
     onOk() {
       this.$refs.form.validate((ok, err) => {
         if (ok) {
-          let event = {value: this.model.input, target: this}
+          let event = { value: this.model.input, target: this }
           // 异步方法优先级高于同步方法
           if (typeof this.callback.onOkAsync === 'function') {
             this.callback.onOkAsync(event)
@@ -113,9 +119,9 @@ export default {
         this.modalProps.afterClose(e)
       }
       this.$emit('after-close', e)
-    },
+    }
 
-  },
+  }
 }
 </script>
 

@@ -23,7 +23,7 @@
       @change="handleChange"
     />
     <div v-else>
-      <span style="color:red;"> Bad type value: {{_type}}</span>
+      <span style="color:red;"> Bad type value: {{ _type }}</span>
     </div>
   </div>
 </template>
@@ -36,7 +36,7 @@
     props: {
       value: {
         type: String,
-        required:false
+        required: false
       },
       // 组件的类型，可选值：
       // select 下拉样式
@@ -59,7 +59,7 @@
           type: ['cascader', 'select']
         },
         reloading: false,
-        areaData:''
+        areaData: ''
       }
     },
     computed: {
@@ -78,7 +78,7 @@
           console.error(`JAreaLinkage的type属性只能接收指定的值（${this.enums.type.join('|')}）`)
           return this.enums.type[0]
         }
-      },
+      }
     },
     watch: {
       value: {
@@ -86,10 +86,10 @@
         handler() {
           this.loadDataByValue(this.value)
         }
-      },
+      }
     },
     created() {
-      this.initAreaData();
+      this.initAreaData()
     },
     methods: {
 
@@ -117,7 +117,7 @@
         if (data) {
           for (let key in data) {
             if (data.hasOwnProperty(key)) {
-              options.push({ value: key, label: data[key], })
+              options.push({ value: key, label: data[key] })
             }
           }
           return options
@@ -136,14 +136,14 @@
         let value = values[values.length - 1]
         this.$emit('change', value)
       },
-      initAreaData(){
-        if(!this.areaData){
-          this.areaData = new Area(this.$Jpcaa);
+      initAreaData() {
+        if (!this.areaData) {
+          this.areaData = new Area(this.$Jpcaa)
         }
-      },
+      }
 
     },
-    model: { prop: 'value', event: 'change' },
+    model: { prop: 'value', event: 'change' }
   }
 </script>
 

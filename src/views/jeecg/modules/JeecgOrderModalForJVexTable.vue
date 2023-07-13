@@ -10,16 +10,16 @@
     @cancel="handleCancel">
 
     <a-spin :spinning="confirmLoading">
-      <a-form-model ref="form" :label-col="labelCol" :wrapper-col="wrapperCol"  :model="model" >
+      <a-form-model ref="form" :label-col="labelCol" :wrapper-col="wrapperCol" :model="model" >
         <!-- 主表单区域 -->
         <a-row class="form-row" :gutter="0">
           <a-col :lg="8">
-            <a-form-model-item  label="订单号" prop="orderCode" :rules="[{ required: true, message: '请输入订单号!' }]">
+            <a-form-model-item label="订单号" prop="orderCode" :rules="[{ required: true, message: '请输入订单号!' }]">
               <a-input placeholder="请输入订单号" v-model="model.orderCode"/>
             </a-form-model-item>
           </a-col>
           <a-col :lg="8">
-            <a-form-model-item  label="订单类型">
+            <a-form-model-item label="订单类型">
               <a-select placeholder="请选择订单类型" v-model="model.ctype">
                 <a-select-option value="1">国内订单</a-select-option>
                 <a-select-option value="2">国际订单</a-select-option>
@@ -27,19 +27,19 @@
             </a-form-model-item>
           </a-col>
           <a-col :lg="8">
-            <a-form-model-item  label="订单日期">
+            <a-form-model-item label="订单日期">
               <a-date-picker showTime valueFormat="YYYY-MM-DD HH:mm:ss" style="width: 100%" v-model="model.orderDate"/>
             </a-form-model-item>
           </a-col>
         </a-row>
         <a-row class="form-row" :gutter="0">
           <a-col :lg="8">
-            <a-form-model-item  label="订单金额">
+            <a-form-model-item label="订单金额">
               <a-input-number placeholder="请输入订单金额" style="width: 100%" v-model="model.orderMoney"/>
             </a-form-model-item>
           </a-col>
           <a-col :lg="8">
-            <a-form-model-item  label="订单备注">
+            <a-form-model-item label="订单备注">
               <a-input placeholder="请输入订单备注" v-model="model.content"/>
             </a-form-model-item>
           </a-col>
@@ -209,8 +209,8 @@
       add() {
         // 默认新增一条数据
         this.getAllTable().then(editableTables => {
-          //editableTables[0].add()
-          //editableTables[1].add()
+          // editableTables[0].add()
+          // editableTables[1].add()
         })
         this.edit({})
       },
@@ -224,13 +224,12 @@
           this.requestTableData(this.url.orderCustomerList, params, this.table1)
           this.requestTableData(this.url.orderTicketList, params, this.table2)
         }
-
       },
       close() {
         this.visible = false
         this.getAllTable().then(editableTables => {
-          this.table1.dataSource=[];
-          this.table2.dataSource=[];
+          this.table1.dataSource = []
+          this.table2.dataSource = []
         })
         this.$emit('close')
       },
@@ -260,7 +259,7 @@
       validateFields() {
         this.getAllTable().then(tables => {
           /** 一次性验证主表和所有的次表 */
-          return validateFormModelAndTables(this.$refs.form,this.model, tables)
+          return validateFormModelAndTables(this.$refs.form, this.model, tables)
         }).then(allValues => {
           let formData = this.classifyIntoFormData(allValues)
           // 发起请求
@@ -285,7 +284,7 @@
       },
       /** 发起新增或修改的请求 */
       requestAddOrEdit(formData) {
-        let url = this.url.add, method = 'post'
+        let url = this.url.add; let method = 'post'
         if (this.model.id) {
           url = this.url.edit
           method = 'put'

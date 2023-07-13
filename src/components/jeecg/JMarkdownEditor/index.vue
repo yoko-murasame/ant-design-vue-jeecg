@@ -27,10 +27,10 @@
 
 <script>
 import 'codemirror/lib/codemirror.css'
-import '@toast-ui/editor/dist/toastui-editor.css';
-import '@toast-ui/editor/dist/i18n/zh-cn';
+import '@toast-ui/editor/dist/toastui-editor.css'
+import '@toast-ui/editor/dist/i18n/zh-cn'
 
-import Editor from '@toast-ui/editor';
+import Editor from '@toast-ui/editor'
 import defaultOptions from './default-options'
 import JUpload from '@/components/jeecg/JUpload'
 import { getFileAccessHttpUrl } from '@/api/manage'
@@ -38,7 +38,7 @@ import { getFileAccessHttpUrl } from '@/api/manage'
 export default {
   name: 'JMarkdownEditor',
   components: {
-    JUpload,
+    JUpload
   },
   props: {
     value: {
@@ -76,15 +76,15 @@ export default {
   data() {
     return {
       editor: null,
-      isShow:false,
-      activeIndex:"1",
-      dialogVisible:false,
-      index:"1",
-      fileList:[],
-      remark:"",
-      imageName:"",
-      imageUrl:"",
-      networkPic:""
+      isShow: false,
+      activeIndex: '1',
+      dialogVisible: false,
+      index: '1',
+      fileList: [],
+      remark: '',
+      imageName: '',
+      imageUrl: '',
+      networkPic: ''
     }
   },
   computed: {
@@ -131,20 +131,20 @@ export default {
       this.editor.on('change', () => {
         this.$emit('change', this.editor.getMarkdown())
       })
-      //--begin 添加自定义上传按钮
+      // --begin 添加自定义上传按钮
       /*
        * 添加自定义按钮
        */
-      //获取编辑器上的功能条
-      let toolbar = this.editor.getUI().getToolbar();
-      let fileDom = this.$refs.files;
-      //添加图片点击事件
-      this.editor.eventManager.addEventType('isShowClickEvent');
+      // 获取编辑器上的功能条
+      let toolbar = this.editor.getUI().getToolbar()
+      let fileDom = this.$refs.files
+      // 添加图片点击事件
+      this.editor.eventManager.addEventType('isShowClickEvent')
       this.editor.eventManager.listen('isShowClickEvent', () => {
         this.isShow = true
         this.dialogVisible = true
-      });
-      //addImageBlobHook图片上传、剪切、拖拽都会走此方法
+      })
+      // addImageBlobHook图片上传、剪切、拖拽都会走此方法
       // 删除默认监听事件
       this.editor.eventManager.removeEventHandler('addImageBlobHook')
       // 添加自定义监听事件
@@ -154,17 +154,17 @@ export default {
         })
       })
       // 添加自定义按钮 第二个参数代表位置，不传默认放在最后
-      toolbar.insertItem(15,{
+      toolbar.insertItem(15, {
         type: 'button',
-        options:{
+        options: {
           name: 'customize',
           className: 'tui-image tui-toolbar-icons',
           event: 'isShowClickEvent',
-          tooltip: '上传图片',
+          tooltip: '上传图片'
         }
         //
-      });
-      //--end 添加自定义上传按钮
+      })
+      // --end 添加自定义上传按钮
     },
     destroyEditor() {
       if (!this.editor) return
@@ -183,56 +183,56 @@ export default {
     getHtml() {
       return this.editor.getHtml()
     },
-    handleOk(){
-      if(this.index=='1'){
+    handleOk() {
+      if (this.index == '1') {
         this.imageUrl = getFileAccessHttpUrl(this.fileList)
-        if(this.remark){
-          this.addImgToMd(this.imageUrl,this.remark)
-        }else{
-          this.addImgToMd(this.imageUrl,"")
+        if (this.remark) {
+          this.addImgToMd(this.imageUrl, this.remark)
+        } else {
+          this.addImgToMd(this.imageUrl, '')
         }
-      }else{
-        if(this.remark){
-          this.addImgToMd(this.networkPic,this.remark)
-        }else{
-          this.addImgToMd(this.networkPic,"")
+      } else {
+        if (this.remark) {
+          this.addImgToMd(this.networkPic, this.remark)
+        } else {
+          this.addImgToMd(this.networkPic, '')
         }
       }
-      this.index="1"
-      this.fileList=[]
-      this.imageName="";
-      this.imageUrl="";
-      this.remark=""
-      this.networkPic=""
-      this.dialogVisible=false
-      this.isShow=false;
+      this.index = '1'
+      this.fileList = []
+      this.imageName = ''
+      this.imageUrl = ''
+      this.remark = ''
+      this.networkPic = ''
+      this.dialogVisible = false
+      this.isShow = false
     },
     handleClose(done) {
-      done();
+      done()
     },
-    handleChange(val){
-      this.fileList=[]
-      this.remark=""
-      this.imageName=""
-      this.imageUrl=""
-      this.networkPic=""
-      this.index=val
+    handleChange(val) {
+      this.fileList = []
+      this.remark = ''
+      this.imageName = ''
+      this.imageUrl = ''
+      this.networkPic = ''
+      this.index = val
     },
-    //添加图片到markdown
-    addImgToMd(data,name) {
-      let editor = this.editor.getCodeMirror();
-      let editorHtml = this.editor.getCurrentModeEditor();
-      let isMarkdownMode = this.editor.isMarkdownMode();
+    // 添加图片到markdown
+    addImgToMd(data, name) {
+      let editor = this.editor.getCodeMirror()
+      let editorHtml = this.editor.getCurrentModeEditor()
+      let isMarkdownMode = this.editor.isMarkdownMode()
       if (isMarkdownMode) {
-        editor.replaceSelection(`![${name}](${data})`);
+        editor.replaceSelection(`![${name}](${data})`)
       } else {
-        let range = editorHtml.getRange();
-        let img = document.createElement('img');
-        img.src = `${data}`;
-        img.alt = name;
-        range.insertNode(img);
+        let range = editorHtml.getRange()
+        let img = document.createElement('img')
+        img.src = `${data}`
+        img.alt = name
+        range.insertNode(img)
       }
-    },
+    }
   },
   model: {
     prop: 'value',

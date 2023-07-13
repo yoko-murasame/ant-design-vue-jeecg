@@ -11,7 +11,7 @@
             @openChange="onOpenChange"
           >
             <a-menu-item key="settings">
-              <a  @click="settingsClick()">
+              <a @click="settingsClick()">
                 基本设置
               </a>
             </a-menu-item>
@@ -46,11 +46,11 @@
 
 <script>
   import PageLayout from '@/components/page/PageLayout'
-  import RouteView from "@/components/layouts/RouteView"
+  import RouteView from '@/components/layouts/RouteView'
   import { mixinDevice } from '@/utils/mixin.js'
   import security from './Security'
   import baseSetting from './BaseSetting'
-  import  custom from  './Custom'
+  import custom from './Custom'
   import notification from './Notification'
   import binding from './Binding'
   export default {
@@ -68,7 +68,7 @@
       return {
         // horizontal  inline
         mode: 'inline',
-        mainInfoHeight:"100%",
+        mainInfoHeight: '100%',
         openKeys: [],
         defaultSelectedKeys: [],
 
@@ -91,19 +91,19 @@
         },
 
         pageTitle: '',
-        title:"基本设置",
-        security:false,
-        baseSetting:true,
-        custom:false,
-        notification:false,
-        binding:false
+        title: '基本设置',
+        security: false,
+        baseSetting: true,
+        custom: false,
+        notification: false,
+        binding: false
       }
     },
     created () {
       this.updateMenu()
     },
-    mounted(){
-      this.mainInfoHeight = (window.innerHeight-285)+"px";
+    mounted() {
+      this.mainInfoHeight = (window.innerHeight - 285) + 'px'
     },
     methods: {
       onOpenChange (openKeys) {
@@ -113,49 +113,49 @@
         let routes = this.$route.matched.concat()
         this.defaultSelectedKeys = [ routes.pop().path ]
       },
-      //update-begin--Author:wangshuai  Date:20200729 for：聚合路由错误 issues#1441--------------------
-      settingsClick(){
-        this.security=false
-        this.custom=false
-        this.notification=false
-        this.binding=false
-        this.baseSetting=true
-        this.title="基本设置"
+      // update-begin--Author:wangshuai  Date:20200729 for：聚合路由错误 issues#1441--------------------
+      settingsClick() {
+        this.security = false
+        this.custom = false
+        this.notification = false
+        this.binding = false
+        this.baseSetting = true
+        this.title = '基本设置'
       },
-      securityClick(){
-        this.baseSetting=false
-        this.custom=false;
-        this.notification=false
-        this.binding=false
-        this.security=true
-        this.title="安全设置"
+      securityClick() {
+        this.baseSetting = false
+        this.custom = false
+        this.notification = false
+        this.binding = false
+        this.security = true
+        this.title = '安全设置'
       },
-      notificationClick(){
-        this.security=false
-        this.custom=false
-        this.baseSetting=false
-        this.binding=false
-        this.notification=true
-        this.title="新消息通知"
+      notificationClick() {
+        this.security = false
+        this.custom = false
+        this.baseSetting = false
+        this.binding = false
+        this.notification = true
+        this.title = '新消息通知'
       },
-      bindingClick(){
-        this.security=false
-        this.baseSetting=false
-        this.notification=false;
-        this.custom=false;
-        this.binding=true
-        this.title="账号绑定"
+      bindingClick() {
+        this.security = false
+        this.baseSetting = false
+        this.notification = false
+        this.custom = false
+        this.binding = true
+        this.title = '账号绑定'
       },
-      customClick(){
-        this.security=false
-        this.baseSetting=false
-        this.notification=false;
-        this.binding=false
-        this.custom=true;
-        this.title="个性化"
+      customClick() {
+        this.security = false
+        this.baseSetting = false
+        this.notification = false
+        this.binding = false
+        this.custom = true
+        this.title = '个性化'
       }
-      //update-end--Author:wangshuai  Date:20200729 for：聚合路由错误 issues#1441--------------------
-    },
+      // update-end--Author:wangshuai  Date:20200729 for：聚合路由错误 issues#1441--------------------
+    }
   }
 </script>
 

@@ -77,7 +77,7 @@
           // 是否展开
           expand: true,
           // 是否自动展开
-          autoExpand: true,
+          autoExpand: true
         },
 
         table1: {
@@ -111,7 +111,7 @@
                 // 直接返回单个dom
                 return text
               }
-            },
+            }
           },
           // 选择的行
           selectedRows: [],
@@ -119,7 +119,7 @@
           dataSource: [],
           // 列配置，控制表格显示的列
           columns: [
-            {key: 'num', title: '序号', width: '80px'},
+            { key: 'num', title: '序号', width: '80px' },
             {
               // 字段key，跟后台数据的字段名匹配
               key: 'ship_name',
@@ -130,11 +130,11 @@
               // 如果加上了该属性，就代表当前单元格是可编辑的，type就是表单的类型，input就是简单的输入框
               type: JVXETypes.input
             },
-            {key: 'call', title: '呼叫', width: '990px', type: JVXETypes.input},
-            {key: 'len', title: '长', width: '80px', type: JVXETypes.inputNumber},
-            {key: 'ton', title: '吨', width: '120px', type: JVXETypes.inputNumber},
-            {key: 'payer', title: '付款方', width: '120px', type: JVXETypes.input},
-            {key: 'count', title: '数', width: '40px'},
+            { key: 'call', title: '呼叫', width: '990px', type: JVXETypes.input },
+            { key: 'len', title: '长', width: '80px', type: JVXETypes.inputNumber },
+            { key: 'ton', title: '吨', width: '120px', type: JVXETypes.inputNumber },
+            { key: 'payer', title: '付款方', width: '120px', type: JVXETypes.input },
+            { key: 'count', title: '数', width: '40px' },
             {
               key: 'company',
               title: '公司',
@@ -143,37 +143,37 @@
               minWidth: '180px',
               type: JVXETypes.input
             },
-            {key: 'trend', title: '动向', width: '120px', type: JVXETypes.input},
-          ],
+            { key: 'trend', title: '动向', width: '120px', type: JVXETypes.input }
+          ]
         },
         // 子级表的配置信息 （配置和主表的完全一致，就不写冗余的注释了）
         table2: {
           currentRowId: null,
           loading: false,
-          pagination: {current: 1, pageSize: 10, pageSizeOptions: ['5', '10', '20', '30'], total: 0},
+          pagination: { current: 1, pageSize: 10, pageSizeOptions: ['5', '10', '20', '30'], total: 0 },
           selectedRows: [],
           dataSource: [],
           columns: [
-            {key: 'dd_num', title: '调度序号', width: '120px'},
-            {key: 'tug', title: '拖轮', width: '180px', type: JVXETypes.input},
-            {key: 'work_start_time', title: '作业开始时间', width: '180px', type: JVXETypes.input},
-            {key: 'work_stop_time', title: '作业结束时间', width: '180px', type: JVXETypes.input},
-            {key: 'type', title: '船舶分类', width: '120px', type: JVXETypes.input},
-            {key: 'port_area', title: '所属港区', width: '120px', type: JVXETypes.input},
-          ],
+            { key: 'dd_num', title: '调度序号', width: '120px' },
+            { key: 'tug', title: '拖轮', width: '180px', type: JVXETypes.input },
+            { key: 'work_start_time', title: '作业开始时间', width: '180px', type: JVXETypes.input },
+            { key: 'work_stop_time', title: '作业结束时间', width: '180px', type: JVXETypes.input },
+            { key: 'type', title: '船舶分类', width: '120px', type: JVXETypes.input },
+            { key: 'port_area', title: '所属港区', width: '120px', type: JVXETypes.input }
+          ]
         },
         currentSubRow: null,
         // 查询url地址
         url: {
-          getData: '/mock/vxe/getData',
-        },
+          getData: '/mock/vxe/getData'
+        }
       }
     },
     computed: {
       tableHeight() {
-        let {show, expand} = this.subTabs
+        let { show, expand } = this.subTabs
         return show ? (expand ? 350 : 482) : 482
-      },
+      }
     },
     created() {
       this.loadTable1Data()
@@ -198,7 +198,7 @@
             // 重置选择
             this.table1.selectedRows = []
           } else {
-            this.$error({title: '主表查询失败', content: res.message})
+            this.$error({ title: '主表查询失败', content: res.message })
           }
         }).finally(() => {
           // 这里是无论成功或失败都会执行的方法，在这里关闭loading
@@ -236,14 +236,13 @@
             table2.dataSource = res.result.records
             table2.pagination.total = res.result.total
           } else {
-            this.$error({title: '子表查询失败', content: res.message})
+            this.$error({ title: '子表查询失败', content: res.message })
           }
         }).finally(() => {
           // 这里是无论成功或失败都会执行的方法，在这里关闭loading
           table2.loading = false
         })
       },
-
 
       // table1【主表】当选择的行变化时触发的事件
       handleTable1SelectRowChange(event) {
@@ -278,9 +277,9 @@
       // 展开或收起子表tabs
       handleToggleTabs() {
         this.subTabs.expand = !this.subTabs.expand
-      },
+      }
 
-    },
+    }
 
   }
 </script>

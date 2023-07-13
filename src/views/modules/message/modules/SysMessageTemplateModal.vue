@@ -30,7 +30,7 @@
               :labelCol="labelCol"
               :wrapperCol="wrapperCol"
               label="模板类型">
-              <j-dict-select-tag  @change="handleChangeTemplateType" :triggerChange="true" dictCode="msgType" v-decorator="['templateType', validatorRules.templateType ]" placeholder="请选择模板类型">
+              <j-dict-select-tag @change="handleChangeTemplateType" :triggerChange="true" dictCode="msgType" v-decorator="['templateType', validatorRules.templateType ]" placeholder="请选择模板类型">
               </j-dict-select-tag>
             </a-form-item>
           </a-col>
@@ -81,7 +81,7 @@
               :wrapperCol="wrapperCol"
               label="模板内容"
               style="margin-left: 4px;width: 126%">
-              <j-editor  v-model="templateEditorContent"></j-editor>
+              <j-editor v-model="templateEditorContent"></j-editor>
             </a-form-item>
           </a-col>
         </a-row>
@@ -92,140 +92,137 @@
 </template>
 
 <script>
-  import {httpAction} from '@/api/manage'
+  import { httpAction } from '@/api/manage'
   import pick from 'lodash.pick'
   import { duplicateCheck } from '@/api/api'
   import JEditor from '@/components/jeecg/JEditor'
   import JSwitch from '@/components/jeecg/JSwitch'
 
   export default {
-    name: "SysMessageTemplateModal",
-    components:{
+    name: 'SysMessageTemplateModal',
+    components: {
       JEditor,
       JSwitch
     },
     data() {
       return {
-        title: "操作",
+        title: '操作',
         visible: false,
         disable: true,
         model: {},
         labelCol: {
-          xs: {span: 24},
-          sm: {span: 5},
+          xs: { span: 24 },
+          sm: { span: 5 }
         },
         wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16},
+          xs: { span: 24 },
+          sm: { span: 16 }
         },
         confirmLoading: false,
         form: this.$form.createForm(this),
         validatorRules: {
-        templateCode: {rules: [{required: true, message: '请输入模板CODE!' },{validator: this.validateTemplateCode}]},
-        templateName: {rules: [{required: true, message: '请输入模板标题!'}]},
-        templateContent: {rules: []},
-        useStatus:{rules: []},
-        templateType: {rules: [{required: true, message: '请输入模板类型!'}]},
+        templateCode: { rules: [{ required: true, message: '请输入模板CODE!' }, { validator: this.validateTemplateCode }] },
+        templateName: { rules: [{ required: true, message: '请输入模板标题!' }] },
+        templateContent: { rules: [] },
+        useStatus: { rules: [] },
+        templateType: { rules: [{ required: true, message: '请输入模板类型!' }] }
         },
         url: {
-          add: "/sys/message/sysMessageTemplate/add",
-          edit: "/sys/message/sysMessageTemplate/edit",
+          add: '/sys/message/sysMessageTemplate/add',
+          edit: '/sys/message/sysMessageTemplate/edit'
         },
-        useEditor:false,
-        templateEditorContent:""
+        useEditor: false,
+        templateEditorContent: ''
       }
     },
     created() {
     },
     methods: {
       add() {
-        this.disable = false;
-        this.edit({});
+        this.disable = false
+        this.edit({})
       },
       edit(record) {
-        this.form.resetFields();
-        this.model = Object.assign({}, record);
-        this.useEditor = (record.templateType==2 || record.templateType==4)
-        if(this.useEditor){
-          this.templateEditorContent=record.templateContent
-        }else{
-          this.templateEditorContent=''
+        this.form.resetFields()
+        this.model = Object.assign({}, record)
+        this.useEditor = (record.templateType == 2 || record.templateType == 4)
+        if (this.useEditor) {
+          this.templateEditorContent = record.templateContent
+        } else {
+          this.templateEditorContent = ''
         }
-        this.visible = true;
+        this.visible = true
         this.$nextTick(() => {
-          if(this.useEditor){
+          if (this.useEditor) {
             this.form.setFieldsValue(pick(this.model, 'useStatus', 'templateCode', 'templateName', 'templateTestJson', 'templateType'))
-          }else{
+          } else {
             this.form.setFieldsValue(pick(this.model, 'useStatus', 'templateCode', 'templateContent', 'templateName', 'templateTestJson', 'templateType'))
           }
-        });
+        })
       },
       close() {
-        this.$emit('close');
-        this.visible = false;
-        this.disable = true;
+        this.$emit('close')
+        this.visible = false
+        this.disable = true
       },
       handleOk() {
-        this.model.templateType = this.templateType;
-        const that = this;
+        this.model.templateType = this.templateType
+        const that = this
         // 触发表单验证
         this.form.validateFields((err, values) => {
           if (!err) {
-            that.confirmLoading = true;
-            let httpurl = '';
-            let method = '';
+            that.confirmLoading = true
+            let httpurl = ''
+            let method = ''
             if (!this.model.id) {
-              httpurl += this.url.add;
-              method = 'post';
+              httpurl += this.url.add
+              method = 'post'
             } else {
-              httpurl += this.url.edit;
-              method = 'put';
+              httpurl += this.url.edit
+              method = 'put'
             }
-            let formData = Object.assign(this.model, values);
-            //时间格式化
+            let formData = Object.assign(this.model, values)
+            // 时间格式化
 
-            if(this.useEditor){
-              formData.templateContent=this.templateEditorContent
+            if (this.useEditor) {
+              formData.templateContent = this.templateEditorContent
             }
             console.log(formData)
             httpAction(httpurl, formData, method).then((res) => {
               if (res.success) {
-                that.$message.success(res.message);
-                that.$emit('ok');
+                that.$message.success(res.message)
+                that.$emit('ok')
               } else {
-                that.$message.warning(res.message);
+                that.$message.warning(res.message)
               }
             }).finally(() => {
-              that.confirmLoading = false;
-              that.close();
+              that.confirmLoading = false
+              that.close()
             })
-
-
           }
         })
       },
-      validateTemplateCode(rule, value, callback){
+      validateTemplateCode(rule, value, callback) {
         var params = {
-          tableName: "sys_sms_template",
-          fieldName: "template_code",
+          tableName: 'sys_sms_template',
+          fieldName: 'template_code',
           fieldVal: value,
           dataId: this.model.id
         }
-        duplicateCheck(params).then((res)=>{
-          if(res.success){
-            callback();
-          }else{
-            callback(res.message);
+        duplicateCheck(params).then((res) => {
+          if (res.success) {
+            callback()
+          } else {
+            callback(res.message)
           }
         })
-
       },
       handleCancel() {
         this.close()
       },
-      handleChangeTemplateType(value){
-        //如果是邮件类型那么则改变模板内容是富文本编辑器
-        this.useEditor = (value==2 || value==4)
+      handleChangeTemplateType(value) {
+        // 如果是邮件类型那么则改变模板内容是富文本编辑器
+        this.useEditor = (value == 2 || value == 4)
       }
 
     }

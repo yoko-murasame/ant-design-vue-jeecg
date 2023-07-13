@@ -84,10 +84,10 @@
 </template>
 
 <script>
-  import {mixinDevice} from '@/utils/mixin.js'
-  import {getSmsCaptcha} from '@/api/login'
-  import {getAction, postAction} from '@/api/manage'
-  import {checkOnlyUser} from '@/api/api'
+  import { mixinDevice } from '@/utils/mixin.js'
+  import { getSmsCaptcha } from '@/api/login'
+  import { getAction, postAction } from '@/api/manage'
+  import { checkOnlyUser } from '@/api/api'
 
   const levelNames = {
     0: '低',
@@ -105,10 +105,10 @@
     0: '#ff0000',
     1: '#ff0000',
     2: '#ff7e05',
-    3: '#52c41a',
+    3: '#52c41a'
   }
   export default {
-    name: "Register",
+    name: 'Register',
     components: {},
     mixins: [mixinDevice],
     data() {
@@ -120,7 +120,7 @@
             { validator: this.checkUsername }
           ],
           password: [
-            { required: false},
+            { required: false },
             { validator: this.handlePasswordLevel }
           ],
           password2: [
@@ -160,35 +160,35 @@
     },
     methods: {
       checkUsername(rule, value, callback) {
-        if(!value){
-          callback(new Error("请输入用户名"))
-        }else{
+        if (!value) {
+          callback(new Error('请输入用户名'))
+        } else {
         var params = {
-          username: value,
-        };
+          username: value
+        }
         checkOnlyUser(params).then((res) => {
           if (res.success) {
             callback()
           } else {
-            callback("用户名已存在!")
+            callback('用户名已存在!')
           }
         })
       }
     },
       handleEmailCheck(rule, value, callback) {
         let params = {
-          email: value,
-        };
+          email: value
+        }
         checkOnlyUser(params).then((res) => {
           if (res.success) {
             callback()
           } else {
-            callback("邮箱已存在!")
+            callback('邮箱已存在!')
           }
         })
       },
       handlePasswordLevel(rule, value, callback) {
-        let reg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,./]).{8,}$/;
+        let reg = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,./]).{8,}$/
         if (['development', 'yoko', 'test'].includes(process.env.NODE_ENV)) {
           console.log('开发环境下，将密码强校验去除')
           reg = /^.*$/
@@ -230,7 +230,7 @@
 
       handlePasswordCheck(rule, value, callback) {
         let password = this.model['password']
-        //console.log('value', value)
+        // console.log('value', value)
         if (value === undefined) {
           callback(new Error('请输入密码'))
         }
@@ -239,26 +239,26 @@
         }
         callback()
       },
-      handleCaptchaCheck(rule, value, callback){
-        if(!value){
-          callback(new Error("请输入验证码"))
-        }else{
-          callback();
+      handleCaptchaCheck(rule, value, callback) {
+        if (!value) {
+          callback(new Error('请输入验证码'))
+        } else {
+          callback()
         }
       },
       handlePhoneCheck(rule, value, callback) {
-        var reg=/^1[3456789]\d{9}$/
-        if(!reg.test(value)){
-          callback(new Error("请输入正确手机号"))
-        }else{
+        var reg = /^1[3456789]\d{9}$/
+        if (!reg.test(value)) {
+          callback(new Error('请输入正确手机号'))
+        } else {
         var params = {
-          phone: value,
-        };
+          phone: value
+        }
         checkOnlyUser(params).then((res) => {
           if (res.success) {
             callback()
           } else {
-            callback("手机号已存在!")
+            callback('手机号已存在!')
           }
         })
       }
@@ -267,26 +267,26 @@
       handlePasswordInputClick() {
         if (!this.isMobile()) {
           this.state.passwordLevelChecked = true
-          return;
+          return
         }
         this.state.passwordLevelChecked = false
       },
 
       handleSubmit() {
         this.$refs['form'].validate((success) => {
-          if (success==true) {
+          if (success == true) {
             let values = this.model
             let register = {
               username: values.username,
               password: values.password,
               phone: values.mobile,
               smscode: values.captcha
-            };
-            postAction("/sys/user/register", register).then((res) => {
+            }
+            postAction('/sys/user/register', register).then((res) => {
               if (!res.success) {
                 this.registerFailed(res.message)
               } else {
-                this.$router.push({name: 'registerResult', params: {...values}})
+                this.$router.push({ name: 'registerResult', params: { ...values } })
               }
             })
           }
@@ -298,57 +298,55 @@
         let that = this
         this.$refs['form'].validateField(['mobile'], (err) => {
             if (!err) {
-              this.state.smsSendBtn = true;
+              this.state.smsSendBtn = true
               let interval = window.setInterval(() => {
                 if (that.state.time-- <= 0) {
-                  that.state.time = 60;
-                  that.state.smsSendBtn = false;
-                  window.clearInterval(interval);
+                  that.state.time = 60
+                  that.state.smsSendBtn = false
+                  window.clearInterval(interval)
                 }
-              }, 1000);
-              const hide = this.$message.loading('验证码发送中..', 3);
+              }, 1000)
+              const hide = this.$message.loading('验证码发送中..', 3)
               const params = {
                 mobile: this.model.mobile,
-                smsmode: "1"
-              };
-              postAction("/sys/sms", params).then((res) => {
+                smsmode: '1'
+              }
+              postAction('/sys/sms', params).then((res) => {
                 if (!res.success) {
-                  this.registerFailed(res.message);
-                  setTimeout(hide, 0);
+                  this.registerFailed(res.message)
+                  setTimeout(hide, 0)
                 }
-                setTimeout(hide, 500);
+                setTimeout(hide, 500)
               }).catch(err => {
-                setTimeout(hide, 1);
-                clearInterval(interval);
-                that.state.time = 60;
-                that.state.smsSendBtn = false;
-                this.requestFailed(err);
-              });
+                setTimeout(hide, 1)
+                clearInterval(interval)
+                that.state.time = 60
+                that.state.smsSendBtn = false
+                this.requestFailed(err)
+              })
             }
           }
-        );
+        )
       },
       registerFailed(message) {
         this.$notification['error']({
-          message: "注册失败",
+          message: '注册失败',
           description: message,
-          duration: 2,
-        });
-
+          duration: 2
+        })
       },
       requestFailed(err) {
         this.$notification['error']({
           message: '错误',
-          description: ((err.response || {}).data || {}).message || "请求出现错误，请稍后再试",
-          duration: 4,
-        });
-        this.registerBtn = false;
-      },
+          description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
+          duration: 4
+        })
+        this.registerBtn = false
+      }
     },
     watch: {
       'state.passwordLevel'(val) {
         console.log(val)
-
       }
     }
   }

@@ -36,7 +36,13 @@
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('定时任务信息')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+      <a-upload
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
       <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -75,7 +81,6 @@
           <j-ellipsis :value="text" :length="20" />
         </span>
 
-
         <span slot="action" slot-scope="text, record">
           <a @click="resumeJob(record)" v-if="record.status==-1">启动</a>
           <a @click="pauseJob(record)" v-if="record.status==0">停止</a>
@@ -113,11 +118,11 @@
   import QuartzJobModal from './modules/QuartzJobModal'
   import { getAction } from '@/api/manage'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import JEllipsis from "@/components/jeecg/JEllipsis";
+  import JEllipsis from '@/components/jeecg/JEllipsis'
 
   export default {
-    name: "QuartzJobList",
-    mixins:[JeecgListMixin],
+    name: 'QuartzJobList',
+    mixins: [JeecgListMixin],
     components: {
       QuartzJobModal,
       JEllipsis
@@ -132,155 +137,154 @@
           {
             title: '#',
             dataIndex: '',
-            key:'rowIndex',
-            width:60,
-            align:"center",
-            customRender:function (t,r,index) {
-              return parseInt(index)+1;
+            key: 'rowIndex',
+            width: 60,
+            align: 'center',
+            customRender: function (t, r, index) {
+              return parseInt(index) + 1
             }
           },
           {
             title: '任务类名',
-            align:"center",
+            align: 'center',
             dataIndex: 'jobClassName',
-            sorter: true,
+            sorter: true
 /*            customRender:function (text) {
               return "*"+text.substring(9,text.length);
-            }*/
+            } */
           },
           {
             title: 'cron表达式',
-            align:"center",
+            align: 'center',
             dataIndex: 'cronExpression'
           },
           {
             title: '参数',
-            align:"center",
+            align: 'center',
             width: 150,
             dataIndex: 'parameter',
-            scopedSlots: {customRender: 'parameterRender'},
+            scopedSlots: { customRender: 'parameterRender' }
           },
           {
             title: '描述',
-            align:"center",
+            align: 'center',
             width: 250,
             dataIndex: 'description',
-            scopedSlots: {customRender: 'description'},
+            scopedSlots: { customRender: 'description' }
           },
           {
             title: '状态',
-            align:"center",
+            align: 'center',
             dataIndex: 'status',
             scopedSlots: { customRender: 'customRenderStatus' },
             filterMultiple: false,
             filters: [
               { text: '已启动', value: '0' },
-              { text: '已暂停', value: '-1' },
+              { text: '已暂停', value: '-1' }
             ]
           },
           {
             title: '操作',
             dataIndex: 'action',
-            align:"center",
-            width:180,
-            scopedSlots: { customRender: 'action' },
+            align: 'center',
+            width: 180,
+            scopedSlots: { customRender: 'action' }
           }
         ],
 		url: {
-          list: "/sys/quartzJob/list",
-          delete: "/sys/quartzJob/delete",
-          deleteBatch: "/sys/quartzJob/deleteBatch",
-          pause: "/sys/quartzJob/pause",
-          resume: "/sys/quartzJob/resume",
-          exportXlsUrl: "sys/quartzJob/exportXls",
-          importExcelUrl: "sys/quartzJob/importExcel",
-          execute: "sys/quartzJob/execute"
-        },
+          list: '/sys/quartzJob/list',
+          delete: '/sys/quartzJob/delete',
+          deleteBatch: '/sys/quartzJob/deleteBatch',
+          pause: '/sys/quartzJob/pause',
+          resume: '/sys/quartzJob/resume',
+          exportXlsUrl: 'sys/quartzJob/exportXls',
+          importExcelUrl: 'sys/quartzJob/importExcel',
+          execute: 'sys/quartzJob/execute'
+        }
       }
     },
     computed: {
       importExcelUrl: function () {
-        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
       }
     },
 
     methods: {
 
-      //筛选需要重写handleTableChange
+      // 筛选需要重写handleTableChange
       handleTableChange(pagination, filters, sorter) {
-        //分页、排序、筛选变化时触发
-        //TODO 筛选
+        // 分页、排序、筛选变化时触发
+        // TODO 筛选
         if (Object.keys(sorter).length > 0) {
-          this.isorter.column = sorter.field;
-          this.isorter.order = "ascend" == sorter.order ? "asc" : "desc"
+          this.isorter.column = sorter.field
+          this.isorter.order = sorter.order == 'ascend' ? 'asc' : 'desc'
         }
-        //这种筛选方式只支持单选
-        
+        // 这种筛选方式只支持单选
+
         // update-begin-author:liusq date:20210624 for:前台定时任务无法翻页  #2666
-        if(filters && Object.keys(filters).length>0 && filters.status){
-          this.filters.status = filters.status[0];
+        if (filters && Object.keys(filters).length > 0 && filters.status) {
+          this.filters.status = filters.status[0]
         }
         // update-end-author:liusq date:20210624 for:前台定时任务无法翻页  #2666
-        this.ipagination = pagination;
-        this.loadData();
+        this.ipagination = pagination
+        this.loadData()
       },
-      pauseJob: function(record){
-        var that = this;
-        //暂停定时任务
+      pauseJob: function(record) {
+        var that = this
+        // 暂停定时任务
         this.$confirm({
-          title:"确认暂停",
-          content:"是否暂停选中任务?",
-          onOk: function(){
-            getAction(that.url.pause,{id:record.id}).then((res)=>{
-              if(res.success){
-                that.$message.success(res.message);
-                that.loadData();
-                that.onClearSelected();
-              }else{
-                that.$message.warning(res.message);
+          title: '确认暂停',
+          content: '是否暂停选中任务?',
+          onOk: function() {
+            getAction(that.url.pause, { id: record.id }).then((res) => {
+              if (res.success) {
+                that.$message.success(res.message)
+                that.loadData()
+                that.onClearSelected()
+              } else {
+                that.$message.warning(res.message)
               }
-            });
+            })
           }
-        });
-
+        })
       },
-      resumeJob: function(record){
-        var that = this;
-        //恢复定时任务
+      resumeJob: function(record) {
+        var that = this
+        // 恢复定时任务
         this.$confirm({
-          title:"确认启动",
-          content:"是否启动选中任务?",
-          onOk: function(){
-            getAction(that.url.resume,{id:record.id}).then((res)=>{
-              if(res.success){
-                that.$message.success(res.message);
-                that.loadData();
-                that.onClearSelected();
-              }else{
-                that.$message.warning(res.message);
+          title: '确认启动',
+          content: '是否启动选中任务?',
+          onOk: function() {
+            getAction(that.url.resume, { id: record.id }).then((res) => {
+              if (res.success) {
+                that.$message.success(res.message)
+                that.loadData()
+                that.onClearSelected()
+              } else {
+                that.$message.warning(res.message)
               }
-            });
+            })
           }
-        });
+        })
       },
-      executeImmediately(record){
-        var that = this;
-        //立即执行定时任务
+      executeImmediately(record) {
+        var that = this
+        // 立即执行定时任务
         this.$confirm({
-          title:"确认提示",
-          content:"是否立即执行任务?",
-          onOk: function(){
-            getAction(that.url.execute,{id:record.id}).then((res)=>{
-              if(res.success){
-                that.$message.success(res.message);
-                that.loadData();
-                that.onClearSelected();
-              }else{
-                that.$message.warning(res.message);
+          title: '确认提示',
+          content: '是否立即执行任务?',
+          onOk: function() {
+            getAction(that.url.execute, { id: record.id }).then((res) => {
+              if (res.success) {
+                that.$message.success(res.message)
+                that.loadData()
+                that.onClearSelected()
+              } else {
+                that.$message.warning(res.message)
               }
-            });
+            })
           }
-        });
+        })
       }
     }
   }

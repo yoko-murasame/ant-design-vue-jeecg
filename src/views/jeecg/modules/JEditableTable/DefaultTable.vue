@@ -11,7 +11,6 @@
       <a-button @click="handleTableSet" type="primary">设置值</a-button>
     </a-tooltip>
 
-
     <j-editable-table
       ref="editableTable"
       :loading="loading"
@@ -78,7 +77,7 @@
 
                   if (type === 'blur') {
                     if (value === 'abc') {
-                      callback(false, '${title}不能是abc')  // false = 未通过校验
+                      callback(false, '${title}不能是abc') // false = 未通过校验
                     } else {
                       callback(true) // true = 通过验证
                     }
@@ -101,9 +100,9 @@
             responseName: 'message',
             action: window._CONFIG['domianURL'] + '/sys/common/upload',
             data: {
-              biz: 'temp',
+              biz: 'temp'
               // 更多扩展参数
-            },
+            }
           },
           {
             title: '字段类型',
@@ -206,7 +205,7 @@
             // width: '8%',
             width: '100px',
             type: FormTypes.slot,
-            slotName: 'action',
+            slotName: 'action'
           }
 
         ],
@@ -237,7 +236,6 @@
         console.log('deleteIds:', this.$refs.editableTable.getDeleteIds())
 
         this.$message.info('获取值成功，请看控制台输出')
-
       },
       /** 模拟加载1000条数据 */
       handleTableSet() {
@@ -283,7 +281,6 @@
             this.loading = false
           }, size - diff)
         }
-
       },
 
       handleDelete(props) {

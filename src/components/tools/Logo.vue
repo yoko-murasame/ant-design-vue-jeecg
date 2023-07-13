@@ -38,8 +38,8 @@
       // 点击Logo跳转地址
       routerLinkTo: {
         type: Object,
-        default: () => ({name: 'dashboard'}),
-      },
+        default: () => ({ name: 'dashboard' })
+      }
     }
   }
 </script>

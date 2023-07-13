@@ -11,7 +11,7 @@
     <a-spin :spinning="confirmLoading">
       <a-form-model ref="form" :model="model" :rules="validatorRules">
 
-        <a-form-model-item :labelCol="labelCol"  :wrapperCol="wrapperCol" label="规则名称" prop="ruleName" >
+        <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="规则名称" prop="ruleName" >
           <a-input placeholder="请输入规则名称" v-model="model.ruleName"/>
         </a-form-model-item>
         <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="规则Code" prop="ruleCode">
@@ -26,7 +26,14 @@
       <a-tabs v-model="tabs.activeKey">
         <a-tab-pane tab="局部规则" :key="tabs.design.key" forceRender>
           <a-alert type="info" showIcon message="局部规则按照你输入的位数有序的校验。"/>
-          <j-editable-table ref="designTable" dragSort rowNumber  :maxHeight="240" :columns="tabs.design.columns" :dataSource="tabs.design.dataSource" style="margin-top: 8px;">
+          <j-editable-table
+            ref="designTable"
+            dragSort
+            rowNumber
+            :maxHeight="240"
+            :columns="tabs.design.columns"
+            :dataSource="tabs.design.dataSource"
+            style="margin-top: 8px;">
 
             <template #action="props">
               <my-action-button :rowEvent="props"/>
@@ -36,7 +43,14 @@
         </a-tab-pane>
 
         <a-tab-pane tab="全局规则" :key="tabs.global.key" forceRender>
-          <j-editable-table ref="globalTable" dragSort rowNumber actionButton :maxHeight="240" :columns="tabs.global.columns"  :dataSource="tabs.global.dataSource">
+          <j-editable-table
+            ref="globalTable"
+            dragSort
+            rowNumber
+            actionButton
+            :maxHeight="240"
+            :columns="tabs.global.columns"
+            :dataSource="tabs.global.dataSource">
 
             <template #actionButtonAfter>
               <a-alert type="info" showIcon message="全局规则可校验用户输入的所有字符；全局规则的优先级比局部规则的要高。" style="margin-bottom: 8px;"/>
@@ -95,7 +109,7 @@
               }
             }
             return ''
-          },
+          }
         },
         render() {
           return (
@@ -115,19 +129,19 @@
         model: {},
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
         confirmLoading: false,
         validatorRules: {
-          ruleName: [{required: true, message: '请输入规则名称!'}],
+          ruleName: [{ required: true, message: '请输入规则名称!' }],
           ruleCode: [
-            {required: true, message: '请输入规则Code!'},
-            {validator: (rule, value, callback) => validateDuplicateValue('sys_check_rule', 'rule_code', value, this.model.id, callback)}
-          ],
+            { required: true, message: '请输入规则Code!' },
+            { validator: (rule, value, callback) => validateDuplicateValue('sys_check_rule', 'rule_code', value, this.model.id, callback) }
+          ]
         },
         tabs: {
           activeKey: 'design',
@@ -142,7 +156,7 @@
                 defaultValue: '1',
                 options: [
                   { title: '优先运行', value: '1' },
-                  { title: '最后运行', value: '0' },
+                  { title: '最后运行', value: '0' }
                 ],
                 validateRules: []
               },
@@ -153,7 +167,7 @@
                 type: FormTypes.input,
                 validateRules: [
                   { required: true, message: '规则不能为空' },
-                  { handler: this.validatePatternHandler },
+                  { handler: this.validatePatternHandler }
                 ]
               },
               {
@@ -162,7 +176,7 @@
                 width: '20%',
                 type: FormTypes.input,
                 validateRules: [
-                  { required: true, message: '${title}不能为空' },
+                  { required: true, message: '${title}不能为空' }
                 ]
               },
               {
@@ -173,7 +187,7 @@
                 type: FormTypes.slot
               }
             ],
-            dataSource: [],
+            dataSource: []
           },
           design: {
             key: 'design',
@@ -185,7 +199,7 @@
                 type: FormTypes.inputNumber,
                 validateRules: [
                   { required: true, message: '${title}不能为空' },
-                  { pattern: /^[1-9]\d*$/, message: '请输入零以上的正整数' },
+                  { pattern: /^[1-9]\d*$/, message: '请输入零以上的正整数' }
                 ]
               },
               {
@@ -204,7 +218,7 @@
                 width: '20%',
                 type: FormTypes.input,
                 validateRules: [
-                  { required: true, message: '${title}不能为空' },
+                  { required: true, message: '${title}不能为空' }
                 ]
               },
               {
@@ -213,15 +227,15 @@
                 width: '15%',
                 slotName: 'action',
                 type: FormTypes.slot
-              },
+              }
             ],
-            dataSource: [],
+            dataSource: []
           }
         },
         url: {
           add: '/sys/checkRule/add',
-          edit: '/sys/checkRule/edit',
-        },
+          edit: '/sys/checkRule/edit'
+        }
       }
     },
     created() {
@@ -258,7 +272,7 @@
           if (ruleJson) {
             let ruleList = JSON.parse(ruleJson)
             // 筛选出全局规则和局部规则
-            let global = [], design = [], priority = '1'
+            let global = []; let design = []; let priority = '1'
             ruleList.forEach(rule => {
               if (rule.digits === '*') {
                 global.push(Object.assign(rule, { priority }))
@@ -285,7 +299,7 @@
           // 局部规则子表校验
           alwaysResolve(this.$refs.designTable.getValuesPromise),
           // 全局规则子表校验
-          alwaysResolve(this.$refs.globalTable.getValuesPromise),
+          alwaysResolve(this.$refs.globalTable.getValuesPromise)
         ]).then(results => {
           let [mainResult, designResult, globalResult] = results
 
@@ -299,10 +313,10 @@
             return Promise.reject('全局规则子表校验未通过')
           } else {
             // 所有校验已通过，这一步是整合数据
-            let mainValues = mainResult.data, globalValues = globalResult.data, designValues = designResult.data
+            let mainValues = mainResult.data; let globalValues = globalResult.data; let designValues = designResult.data
 
             // 整合两个子表的数据
-            let firstGlobal = [], afterGlobal = []
+            let firstGlobal = []; let afterGlobal = []
             globalValues.forEach(v => {
               v.digits = '*'
               if (v.priority === '1') {
@@ -319,7 +333,7 @@
             let formData = Object.assign(this.model, mainValues, { ruleJson })
 
             // 判断请求方式和请求地址，并发送请求
-            let method = 'post', httpUrl = this.url.add
+            let method = 'post'; let httpUrl = this.url.add
             if (this.model.id) {
               method = 'put'
               httpUrl = this.url.edit
@@ -343,7 +357,7 @@
       },
       handleCancel() {
         this.close()
-      },
+      }
 
     }
   }

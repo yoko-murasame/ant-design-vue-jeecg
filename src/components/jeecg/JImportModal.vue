@@ -9,7 +9,7 @@
     <div style="margin: 0px 0px 5px 1px" v-if="online">
       <span style="display: inline-block;height: 32px;line-height: 32px;vertical-align: middle;">是否开启校验:</span>
       <span style="display: inline-block;height: 32px;margin-left: 6px">
-         <a-switch :checked="validateStatus==1" @change="handleChangeValidateStatus" checked-children="是" un-checked-children="否" size="small"/>
+        <a-switch :checked="validateStatus==1" @change="handleChangeValidateStatus" checked-children="是" un-checked-children="否" size="small"/>
       </span>
     </div>
 
@@ -44,104 +44,104 @@
   import { postAction } from '@/api/manage'
   export default {
     name: 'JImportModal',
-    props:{
-      url:{
+    props: {
+      url: {
         type: String,
         default: '',
         required: false
       },
-      biz:{
+      biz: {
         type: String,
         default: '',
         required: false
       },
-      //是否online导入
-      online:{
+      // 是否online导入
+      online: {
         type: Boolean,
         default: false,
         required: false
       }
     },
-    data(){
+    data() {
       return {
-        visible:false,
-        uploading:false,
-        fileList:[],
-        uploadAction:'',
-        foreignKeys:'',
+        visible: false,
+        uploading: false,
+        fileList: [],
+        uploadAction: '',
+        foreignKeys: '',
         validateStatus: 0
       }
     },
     watch: {
       url (val) {
-        if(val){
-         this.uploadAction = window._CONFIG['domianURL']+val
+        if (val) {
+         this.uploadAction = window._CONFIG['domianURL'] + val
         }
       }
     },
     created () {
-      this.uploadAction = window._CONFIG['domianURL']+this.url
+      this.uploadAction = window._CONFIG['domianURL'] + this.url
     },
 
-    methods:{
-      handleClose(){
-        this.visible=false
+    methods: {
+      handleClose() {
+        this.visible = false
       },
-      show(arg){
+      show(arg) {
         this.fileList = []
         this.uploading = false
         this.visible = true
-        this.foreignKeys = arg;
+        this.foreignKeys = arg
         this.validateStatus = 0
       },
       handleRemove(file) {
-        const index = this.fileList.indexOf(file);
-        const newFileList = this.fileList.slice();
-        newFileList.splice(index, 1);
+        const index = this.fileList.indexOf(file)
+        const newFileList = this.fileList.slice()
+        newFileList.splice(index, 1)
         this.fileList = newFileList
       },
       beforeUpload(file) {
         this.fileList = [...this.fileList, file]
-        return false;
+        return false
       },
       handleImport() {
-        const { fileList } = this;
-        const formData = new FormData();
-        if(this.biz){
-          formData.append('isSingleTableImport',this.biz);
+        const { fileList } = this
+        const formData = new FormData()
+        if (this.biz) {
+          formData.append('isSingleTableImport', this.biz)
         }
-        if(this.foreignKeys && this.foreignKeys.length>0){
-          formData.append('foreignKeys',this.foreignKeys);
+        if (this.foreignKeys && this.foreignKeys.length > 0) {
+          formData.append('foreignKeys', this.foreignKeys)
         }
-        if(this.online==true){
-          formData.append('validateStatus',this.validateStatus);
+        if (this.online == true) {
+          formData.append('validateStatus', this.validateStatus)
         }
         fileList.forEach((file) => {
-          formData.append('files[]', file);
-        });
+          formData.append('files[]', file)
+        })
         this.uploading = true
         postAction(this.uploadAction, formData).then((res) => {
           this.uploading = false
-          if(res.success){
-            if(res.code == 201){
+          if (res.success) {
+            if (res.code == 201) {
               this.errorTip(res.message, res.result)
-            }else{
+            } else {
               this.$message.success(res.message)
             }
-            this.visible=false
+            this.visible = false
             this.$emit('ok')
-          }else{
+          } else {
             this.$message.warning(res.message)
           }
         })
       },
       // 是否开启校验 开关改变事件
-      handleChangeValidateStatus(checked){
-        this.validateStatus = checked==true?1:0
+      handleChangeValidateStatus(checked) {
+        this.validateStatus = checked == true ? 1 : 0
       },
       // 错误信息提示
       errorTip(tipMessage, fileUrl) {
-        const h = this.$createElement;
+        const h = this.$createElement
         let href = window._CONFIG['domianURL'] + fileUrl
         this.$warning({
           title: '导入成功,但是有错误数据!',
@@ -152,12 +152,12 @@
               attrs: {
                 href: href,
                 target: '_blank'
-              },
-            },'点击下载'),
+              }
+            }, '点击下载')
           ]),
-          onOk() {},
-        });
-      },
+          onOk() {}
+        })
+      }
 
     }
   }

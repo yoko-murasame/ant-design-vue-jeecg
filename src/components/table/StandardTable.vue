@@ -30,7 +30,7 @@
 
 <script>
   export default {
-    name: "StandardTable",
+    name: 'StandardTable',
     // props: ['bordered', 'loading', 'columns', 'data', 'rowKey', 'pagination', 'selectedRows'],
     props: {
 
@@ -61,7 +61,7 @@
         default () {
           return {}
         }
-      },*/
+      }, */
       pageSize: {
         type: Number,
         default: 10
@@ -117,27 +117,27 @@
 
         current: [],
         pagination: {},
-        paramsName: {},
+        paramsName: {}
       }
     },
     created () {
-      //数据请求参数配置
+      // 数据请求参数配置
       this.paramsName = Object.assign(
         {},
         {
-          pageNumber: "pageNo",
-          pageSize: "pageSize",
-          total: "totalCount",
-          results: "data",
-          sortColumns: "sortColumns"
+          pageNumber: 'pageNo',
+          pageSize: 'pageSize',
+          total: 'totalCount',
+          results: 'data',
+          sortColumns: 'sortColumns'
         },
         this.responseParamsName
-      );
+      )
 
       this.needTotalList = this.initTotalList(this.columns)
 
       // load data
-      this.loadData( { pageNum: this.pageNumber } )
+      this.loadData({ pageNum: this.pageNumber })
     },
     methods: {
       updateSelect (selectedRowKeys, selectedRows) {
@@ -180,7 +180,7 @@
 
         let dataPromise = that.data(remoteParams)
 
-        dataPromise.then( response => {
+        dataPromise.then(response => {
           if (!response) {
             that.loading = false
             return
@@ -190,8 +190,8 @@
 
           that.current = results
 
-          that.$emit("update:currentData", that.current.slice())
-          that.$emit("dataloaded", that.current.slice())
+          that.$emit('update:currentData', that.current.slice())
+          that.$emit('dataloaded', that.current.slice())
 
           that.total = response[that.paramsName.total] * 1
           that.pagination = that.pager()
@@ -235,7 +235,7 @@
         this.needTotalList = this.needTotalList.map(item => {
           return {
             ...item,
-            total: selectedRows.reduce( (sum, val) => {
+            total: selectedRows.reduce((sum, val) => {
               return sum + val[item.dataIndex]
             }, 0)
           }

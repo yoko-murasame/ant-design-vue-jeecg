@@ -50,74 +50,74 @@
 </template>
 
 <script>
-  import {httpAction} from '@/api/manage'
+  import { httpAction } from '@/api/manage'
   import JSelectUserByDep from '@/components/jeecgbiz/JSelectUserByDep'
-  
+
   export default {
-    name: "SysMessageTestModal",
-    components:{
+    name: 'SysMessageTestModal',
+    components: {
       JSelectUserByDep
     },
     data() {
       return {
-        title: "操作",
+        title: '操作',
         visible: false,
         model: {},
         labelCol: {
-          xs: {span: 24},
-          sm: {span: 5},
+          xs: { span: 24 },
+          sm: { span: 5 }
         },
         wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16},
+          xs: { span: 24 },
+          sm: { span: 16 }
         },
 
         confirmLoading: false,
         url: {
-          send: "/sys/message/sysMessageTemplate/sendMsg",
+          send: '/sys/message/sysMessageTemplate/sendMsg'
         },
-        templateName: "",
-        templateContent: "",
-        receiver: "",
-        msgType: "system",
-        testData: "",
+        templateName: '',
+        templateContent: '',
+        receiver: '',
+        msgType: 'system',
+        testData: '',
         sendParams: {}
       }
     },
     methods: {
       open(record) {
-        this.sendParams.templateCode = record.templateCode;
-        this.templateName = record.templateName;
-        this.templateContent = record.templateContent;
-        this.testData = record.templateTestJson;
-        this.visible = true;
+        this.sendParams.templateCode = record.templateCode
+        this.templateName = record.templateName
+        this.templateContent = record.templateContent
+        this.testData = record.templateTestJson
+        this.visible = true
       },
       close() {
-        this.receiver = "";
-        this.msgType = "system";
-        this.sendParams = {};
-        this.visible = false;
+        this.receiver = ''
+        this.msgType = 'system'
+        this.sendParams = {}
+        this.visible = false
       },
       handleOk() {
-        let httpurl = this.url.send;
-        let method = 'post';
-        this.sendParams.testData = this.testData;
-        this.sendParams.receiver = this.receiver;
-        this.sendParams.msgType = this.msgType;
+        let httpurl = this.url.send
+        let method = 'post'
+        this.sendParams.testData = this.testData
+        this.sendParams.receiver = this.receiver
+        this.sendParams.msgType = this.msgType
         httpAction(httpurl, this.sendParams, method).then((res) => {
           if (res.success) {
-            this.$message.success(res.message);
+            this.$message.success(res.message)
           } else {
-            this.$message.warning(res.message);
+            this.$message.warning(res.message)
           }
         }).finally(() => {
-          this.confirmLoading = false;
-          this.close();
+          this.confirmLoading = false
+          this.close()
         })
       },
       handleCancel() {
         this.close()
-      },
+      }
     }
   }
 </script>

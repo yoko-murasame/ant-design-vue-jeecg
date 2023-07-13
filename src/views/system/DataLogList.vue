@@ -16,11 +16,11 @@
           </a-col>
 
           <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-               <a-col :md="6" :sm="24">
-                  <a-button type="primary" @click="searchQuery">查询</a-button>
-                  <a-button style="margin-left: 8px" @click="searchReset">重置</a-button>
-               </a-col>
-            </span>
+            <a-col :md="6" :sm="24">
+              <a-button type="primary" @click="searchQuery">查询</a-button>
+              <a-button style="margin-left: 8px" @click="searchReset">重置</a-button>
+            </a-col>
+          </span>
         </a-row>
       </a-form>
     </div>
@@ -61,8 +61,8 @@
 
 <script>
   import DataLogModal from './modules/DataLogModal'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
-  import JEllipsis from "@/components/jeecg/JEllipsis";
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import JEllipsis from '@/components/jeecg/JEllipsis'
 
   export default {
     name: 'DataLogList',
@@ -74,60 +74,60 @@
     data() {
       return {
         description: '数据日志管理页面',
-        //表头
+        // 表头
         columns: [
           {
             title: '表名',
             align: 'center',
             dataIndex: 'dataTable',
-            width: "120"
+            width: '120'
           }, {
             title: '数据ID',
             align: 'center',
             dataIndex: 'dataId',
-            width: "120"
+            width: '120'
           }, {
             title: '版本号',
             align: 'center',
             dataIndex: 'dataVersion',
-            width: "50"
+            width: '50'
           }, {
             title: '数据内容',
             align: 'center',
             dataIndex: 'dataContent',
-            width: "150",
-            scopedSlots: {customRender: 'dataContent'},
+            width: '150',
+            scopedSlots: { customRender: 'dataContent' }
           }, {
             title: '创建人',
             align: 'center',
             dataIndex: 'createBy',
-            width: "100"
-          },
+            width: '100'
+          }
         ],
         url: {
-          list: "/sys/dataLog/list",
-        },
+          list: '/sys/dataLog/list'
+        }
       }
     },
     methods: {
       handleCompare: function () {
         if (!this.selectionRows || this.selectionRows.length != 2) {
-          this.openNotifIcon('请选择两条数据');
-          return false;
+          this.openNotifIcon('请选择两条数据')
+          return false
         } else if (this.selectionRows[0].dataId != this.selectionRows[1].dataId) {
-          this.openNotifIcon('请选择相同的数据库表和数据ID进行比较');
-          return false;
+          this.openNotifIcon('请选择相同的数据库表和数据ID进行比较')
+          return false
         } else {
-          this.$refs.modalForm.addModal(this.selectionRows);
-          this.$refs.modalForm.title = "数据比较";
+          this.$refs.modalForm.addModal(this.selectionRows)
+          this.$refs.modalForm.title = '数据比较'
         }
       },
       openNotifIcon(msg) {
         this.$notification['warning']({
           message: '提示信息',
-          description: msg,
-        });
-      },
+          description: msg
+        })
+      }
     }
 
   }

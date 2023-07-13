@@ -38,7 +38,7 @@
             type: JVXETypes.selectDictSearch,
             width: '200px',
             // 【字典表配置信息】：数据库表名,显示字段名,存储字段名
-            dict: 'sys_user,realname,username',
+            dict: 'sys_user,realname,username'
           },
           {
             title: 'JPopup',
@@ -56,13 +56,13 @@
             type: JVXETypes.select,
             dictCode: 'sex',
             disabled: true,
-            width: '100px',
+            width: '100px'
           },
           {
             title: 'JP-年龄',
             key: 'popup_age',
             type: JVXETypes.normal,
-            width: '80px',
+            width: '80px'
           },
           {
             title: '进度条',
@@ -76,8 +76,8 @@
             type: JVXETypes.radio,
             width: '130px',
             options: [
-              {text: '男', value: '1'},
-              {text: '女', value: '2'},
+              { text: '男', value: '1' },
+              { text: '女', value: '2' }
             ],
             // 允许清除选择（再点一次取消选择）
             allowClear: true
@@ -97,25 +97,24 @@
             key: 'image',
             type: JVXETypes.image,
             width: '180px',
-            token: true,
+            token: true
           },
           {
             title: '文件上传',
             key: 'file',
             type: JVXETypes.file,
             width: '180px',
-            token: true,
-          },
+            token: true
+          }
         ],
         dataSource: [],
         pagination: {
           current: 1,
           pageSize: 10,
           pageSizeOptions: ['10', '20', '30', '100', '200'],
-          total: 1000,
-        },
+          total: 1000
+        }
       }
-
     },
 
     created() {
@@ -135,7 +134,7 @@
       /** 获取值，忽略表单验证 */
       handleTableGet() {
         const values = this.$refs.vTable.getTableData()
-        console.log('获取值:', {values})
+        console.log('获取值:', { values })
         this.$message.success('获取值成功，请看控制台输出')
       },
 
@@ -173,7 +172,6 @@
             this.loading = false
           }, pageSize - diff)
         }
-
       }
     }
   }

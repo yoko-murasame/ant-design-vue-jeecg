@@ -13,39 +13,39 @@
 
 <script>
   import Vue from 'vue'
-  import { ACCESS_TOKEN } from "@/store/mutation-types"
+  import { ACCESS_TOKEN } from '@/store/mutation-types'
 
   export default {
-    name: "PdfPreviewModal",
+    name: 'PdfPreviewModal',
     data () {
       return {
-        url:  window._CONFIG['pdfDomainURL'],
-        id:"pdfPreviewIframe",
-        headers:{}
+        url: window._CONFIG['pdfDomainURL'],
+        id: 'pdfPreviewIframe',
+        headers: {}
       }
     },
     created () {
-      const token = Vue.ls.get(ACCESS_TOKEN);
-      this.headers = {"X-Access-Token":token}
+      const token = Vue.ls.get(ACCESS_TOKEN)
+      this.headers = { 'X-Access-Token': token }
     },
-    computed:{
+    computed: {
 
     },
-    mounted(){
-      window.addEventListener('message', this.handleScanFileMessage);
+    mounted() {
+      window.addEventListener('message', this.handleScanFileMessage)
     },
     methods: {
       handleScanFileMessage (event) {
         // 根据上面制定的结构来解析iframe内部发回来的数据
-        const data = event.data;
-         console.log(data);
+        const data = event.data
+         console.log(data)
       },
 
-      previewFiles (title,token) {
-        var iframe = document.getElementById("pdfPreviewIframe");
-        var json = {"title":title,"token":token};
-        iframe.contentWindow.postMessage(json, "*");
-      },
+      previewFiles (title, token) {
+        var iframe = document.getElementById('pdfPreviewIframe')
+        var json = { 'title': title, 'token': token }
+        iframe.contentWindow.postMessage(json, '*')
+      }
 
     }
   }

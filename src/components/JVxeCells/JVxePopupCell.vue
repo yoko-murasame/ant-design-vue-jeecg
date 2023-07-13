@@ -13,7 +13,7 @@
     mixins: [JVxeCellMixins],
     computed: {
       popupProps() {
-        const {innerValue, originColumn: col, caseId, cellProps} = this
+        const { innerValue, originColumn: col, caseId, cellProps } = this
         return {
           ...cellProps,
           value: innerValue,
@@ -23,14 +23,14 @@
           destFields: col.destFields,
           groupId: caseId,
           param: col.param,
-          sorter: col.sorter,
+          sorter: col.sorter
         }
-      },
+      }
     },
     methods: {
       /** popup回调 */
       handlePopupInput(value, others) {
-        const {row, originColumn: col} = this
+        const { row, originColumn: col } = this
         // 存储输入的值
         let popupValue = value
         if (others && Object.keys(others).length > 0) {
@@ -45,7 +45,7 @@
           })
         }
         this.handleChangeCommon(popupValue)
-      },
+      }
     },
     // 【组件增强】注释详见：JVxeCellMixins.js
     enhanced: {
@@ -53,12 +53,12 @@
         editActived(event) {
           // 【issues/3854】附表控件类型为popup必填时未选择值提交表单会报错
           if (event.$event && event.$event.type === 'valid-error') {
-            return;
+            return
           }
           dispatchEvent.call(this, event, 'ant-input')
-        },
-      },
-    },
+        }
+      }
+    }
   }
 </script>
 

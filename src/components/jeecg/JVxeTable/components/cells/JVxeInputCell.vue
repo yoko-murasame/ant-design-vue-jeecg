@@ -20,9 +20,9 @@
 
       /** 处理change事件 */
       handleChange(event) {
-        let {$type} = this
-        let {target} = event
-        let {value, selectionStart} = target
+        let { $type } = this
+        let { target } = event
+        let { value, selectionStart } = target
         let change = true
         if ($type === JVXETypes.inputNumber) {
           // 判断输入的值是否匹配数字正则表达式，不匹配就还原
@@ -48,8 +48,8 @@
 
       /** 处理blur失去焦点事件 */
       handleBlur(event) {
-        let {$type} = this
-        let {target} = event
+        let { $type } = this
+        let { target } = event
         // 判断输入的值是否匹配数字正则表达式，不匹配就置空
         if ($type === JVXETypes.inputNumber) {
           if (!NumberRegExp.test(target.value)) {
@@ -61,14 +61,14 @@
         }
 
         this.handleBlurCommon(target.value)
-      },
+      }
 
     },
     // 【组件增强】注释详见：JVxeCellMixins.js
     enhanced: {
       installOptions: {
         // 自动聚焦的 class 类名
-        autofocus: '.ant-input',
+        autofocus: '.ant-input'
       },
       getValue(value) {
         if (this.$type === JVXETypes.inputNumber && typeof value === 'string') {
@@ -77,7 +77,7 @@
           }
         }
         return value
-      },
+      }
     }
   }
 </script>

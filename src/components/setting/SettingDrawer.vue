@@ -154,8 +154,8 @@
         </div>
       </div>
       <div class="setting-drawer-index-handle" @click="toggle" v-if="visible">
-<!--        <a-icon type="setting" v-if="!visible"/>-->
-<!--        <a-icon type="close" v-else/>-->
+        <!--        <a-icon type="setting" v-if="!visible"/>-->
+        <!--        <a-icon type="close" v-else/>-->
         <a-icon type="close" />
       </div>
     </a-drawer>
@@ -244,7 +244,7 @@
         this.dataFixSiderbar = fixed
         this.$store.dispatch('ToggleFixSiderbar', fixed)
       }
-    },
+    }
   }
 </script>
 

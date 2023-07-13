@@ -16,13 +16,13 @@
 
   export default {
     name: 'JSelectMultiUser',
-    components: {JDate, JSelectBizComponent},
+    components: { JDate, JSelectBizComponent },
     props: {
       value: null, // any type
       queryConfig: {
         type: Array,
         default: () => []
-      },
+      }
     },
     data() {
       return {
@@ -39,7 +39,7 @@
           width: 1200,
           displayKey: 'realname',
           returnKeys: ['id', 'username'],
-          queryParamText: '账号',
+          queryParamText: '账号'
         },
         // 多条件查询配置
         queryConfigDefault: [
@@ -47,18 +47,18 @@
             key: 'sex',
             label: '性别',
             // 如果包含 dictCode，那么就会显示成下拉框
-            dictCode: 'sex',
+            dictCode: 'sex'
           },
           {
             key: 'birthday',
             label: '生日',
             placeholder: '请选择出生日期',
             // 如果想要使用局部注册的组件，就必须要使用箭头函数
-            customRender: ({key, queryParam, options}) => {
+            customRender: ({ key, queryParam, options }) => {
               return <j-date {...options} vModel={queryParam[key]} style="width:180px;"/>
-            },
-          },
-        ],
+            }
+          }
+        ]
       }
     },
     computed: {

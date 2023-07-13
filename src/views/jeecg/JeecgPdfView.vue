@@ -42,78 +42,78 @@
 <script>
 
   import { getAction } from '@/api/manage'
-  import { ACCESS_TOKEN } from "@/store/mutation-types"
+  import { ACCESS_TOKEN } from '@/store/mutation-types'
   import Vue from 'vue'
   import PdfPreviewModal from './modules/PdfPreviewModal'
-  const mockdata=[{
-    "id": "1",
-    "key": "1",
-    "title": "实例.pdf",
-    "fileCode": "shili",
-    "fileName": "实例",
-    "filePdfPath": "实例"
+  const mockdata = [{
+    'id': '1',
+    'key': '1',
+    'title': '实例.pdf',
+    'fileCode': 'shili',
+    'fileName': '实例',
+    'filePdfPath': '实例'
   }]
 
   export default {
-    name: "JeecgPdfView",
-    components:{
+    name: 'JeecgPdfView',
+    components: {
       PdfPreviewModal
     },
     data () {
       return {
         description: 'PDF预览页面',
         // 文件类型集
-        treeData:[{
+        treeData: [{
           title: '所有PDF电子档',
           key: '0-0',
           children: mockdata }],
         // 文件数据集
         dataSource: mockdata,
-        allData:mockdata,
+        allData: mockdata,
         // 上传文件集
         defaultExpandAll: true,
         // 加载中
-        spinning:false,
+        spinning: false,
         url: {
-          pdfList: "/mock/api/pdfList",
-        },
+          pdfList: '/mock/api/pdfList'
+        }
       }
     },
     created() {
-      //this.loadData();
+      // this.loadData();
     },
     methods: {
-      loadData (){
-        this.spinning = false;
-        getAction(this.url.pdfList).then((res)=>{
-          if(res.length>0){
-            this.allData = res;
-            this.dataSource = res;
-            this.treeData[0].children = res;
+      loadData () {
+        this.spinning = false
+        getAction(this.url.pdfList).then((res) => {
+          if (res.length > 0) {
+            this.allData = res
+            this.dataSource = res
+            this.treeData[0].children = res
           }
-          this.spinning = false;
+          this.spinning = false
         })
       },
-      pdfPreview:function(title){
-        const token = Vue.ls.get(ACCESS_TOKEN);
-        this.headers = {"X-Access-Token":token}
-        this.$refs.pdfmodal.previewFiles(title,token);
+      pdfPreview: function(title) {
+        const token = Vue.ls.get(ACCESS_TOKEN)
+        this.headers = { 'X-Access-Token': token }
+        this.$refs.pdfmodal.previewFiles(title, token)
       },
       // 选择文件类型
       onSelect (selectedKeys, info) {
-        this.dataSource = [];
-        if(selectedKeys[0] === undefined || selectedKeys[0] === '0-0'){
-          this.dataSource = this.allData;
-        }else{
-          this.dataSource.push(info.node._props.dataRef);
+        this.dataSource = []
+        if (selectedKeys[0] === undefined || selectedKeys[0] === '0-0') {
+          this.dataSource = this.allData
+        } else {
+          this.dataSource.push(info.node._props.dataRef)
         }
-        console.log("SELECT-->dataSource",this.dataSource );
+        console.log('SELECT-->dataSource', this.dataSource)
       },
       // model回调
       modalFormOk () {
-        this.loadData();
-      },
-    },
+        this.loadData()
+      }
+    }
   }
 </script>
 

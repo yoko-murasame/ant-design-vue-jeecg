@@ -107,7 +107,7 @@ export default {
         range.push(i)
       }
       return range
-    },
+    }
   },
   methods: {
     parseProp (value) {

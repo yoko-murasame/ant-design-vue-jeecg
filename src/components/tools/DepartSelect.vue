@@ -34,123 +34,121 @@
       </a-form-item>
     </a-form>
 
-
   </a-modal>
-    
+
 </template>
 
 <script>
-  import { getAction,putAction } from '@/api/manage'
+  import { getAction, putAction } from '@/api/manage'
   import Vue from 'vue'
   import store from '@/store/'
-  import { USER_INFO } from "@/store/mutation-types"
+  import { USER_INFO } from '@/store/mutation-types'
 
   export default {
     name: 'DepartSelect',
-    props:{
-      title:{
-        type:String,
-        default:"部门选择",
-        required:false
+    props: {
+      title: {
+        type: String,
+        default: '部门选择',
+        required: false
       },
-      closable:{
-        type:Boolean,
-        default:false,
-        required:false
+      closable: {
+        type: Boolean,
+        default: false,
+        required: false
       },
-      username:{
-        type:String,
-        default:"",
-        required:false
+      username: {
+        type: String,
+        default: '',
+        required: false
       }
     },
-    watch:{
-      username(val){
-        if(val){
+    watch: {
+      username(val) {
+        if (val) {
           this.loadDepartList()
         }
       }
     },
-    data(){
+    data() {
       return {
-        currTitle:this.title,
-        visible:false,
-        departList:[],
-        departSelected:"",
-        validate_status:"",
-        currDepartName:"",
+        currTitle: this.title,
+        visible: false,
+        departList: [],
+        departSelected: '',
+        validate_status: '',
+        currDepartName: ''
       }
     },
-    created(){
-      //this.loadDepartList()
+    created() {
+      // this.loadDepartList()
     },
-    methods:{
-      loadDepartList(){
+    methods: {
+      loadDepartList() {
         return new Promise(resolve => {
-          let url = "/sys/user/getCurrentUserDeparts"
-          this.currDepartName=''
-          getAction(url).then(res=>{
-            if(res.success){
+          let url = '/sys/user/getCurrentUserDeparts'
+          this.currDepartName = ''
+          getAction(url).then(res => {
+            if (res.success) {
               let departs = res.result.list
               let orgCode = res.result.orgCode
-              if(departs && departs.length>0){
-                for(let i of departs){
-                  if(i.orgCode == orgCode){
+              if (departs && departs.length > 0) {
+                for (let i of departs) {
+                  if (i.orgCode == orgCode) {
                     this.currDepartName = i.departName
                     break
                   }
                 }
               }
               this.departSelected = orgCode
-              this.departList  = departs
-              if(this.currDepartName){
-                this.currTitle ="部门切换（当前部门 : "+this.currDepartName+"）"
+              this.departList = departs
+              if (this.currDepartName) {
+                this.currTitle = '部门切换（当前部门 : ' + this.currDepartName + '）'
               }
-
             }
             resolve()
           })
         })
       },
-      close(){
+      close() {
         this.departClear()
       },
-      departOk(){
-        if(!this.departSelected){
-          this.validate_status='error'
+      departOk() {
+        if (!this.departSelected) {
+          this.validate_status = 'error'
           return false
         }
         let obj = {
-          orgCode:this.departSelected,
-          username:this.username
+          orgCode: this.departSelected,
+          username: this.username
         }
-        putAction("/sys/selectDepart",obj).then(res=>{
-          if(res.success){
-            const userInfo = res.result.userInfo;
-            Vue.ls.set(USER_INFO, userInfo, 7 * 24 * 60 * 60 * 1000);
-            store.commit('SET_INFO', userInfo);
-            //console.log("---切换组织机构---userInfo-------",store.getters.userInfo.orgCode);
+        putAction('/sys/selectDepart', obj).then(res => {
+          if (res.success) {
+            const userInfo = res.result.userInfo
+            Vue.ls.set(USER_INFO, userInfo, 7 * 24 * 60 * 60 * 1000)
+            store.commit('SET_INFO', userInfo)
+            // console.log("---切换组织机构---userInfo-------",store.getters.userInfo.orgCode);
             this.departClear()
           }
         })
       },
-      show(){
-        //如果组件传值username此处就不用loadDepartList了
-        this.loadDepartList().then(()=>{
-          this.visible=true
-          if(!this.departList || this.departList.length<=0){
-            this.$message.warning("您尚未设置部门信息!")
+      show() {
+        // 如果组件传值username此处就不用loadDepartList了
+        this.loadDepartList().then(() => {
+          this.visible = true
+          if (!this.departList || this.departList.length <= 0) {
+            this.$message.warning('您尚未设置部门信息!')
             this.departClear()
           }
         })
       },
-      departClear(){
-        this.departList=[]
-        this.departSelected=""
-        this.visible=false
-        this.validate_status=''
-        this.currDepartName=""
-      },
+      departClear() {
+        this.departList = []
+        this.departSelected = ''
+        this.visible = false
+        this.validate_status = ''
+        this.currDepartName = ''
+      }
     }
 
   }

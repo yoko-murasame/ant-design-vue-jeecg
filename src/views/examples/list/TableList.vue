@@ -189,14 +189,14 @@
 
 <script>
   import STable from '@/components/table/'
-  import ATextarea from "ant-design-vue/es/input/TextArea"
-  import AInput from "ant-design-vue/es/input/Input"
-  import moment from "moment"
-  import axios from 'axios';
+  import ATextarea from 'ant-design-vue/es/input/TextArea'
+  import AInput from 'ant-design-vue/es/input/Input'
+  import moment from 'moment'
+  import axios from 'axios'
   import { getRoleList, getServiceList } from '@/api/manage'
 
   export default {
-    name: "TableList",
+    name: 'TableList',
     components: {
       AInput,
       ATextarea,
@@ -204,15 +204,15 @@
     },
     data () {
       return {
-        visibleCreateModal:false,
+        visibleCreateModal: false,
         visible: false,
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 12 },
+          sm: { span: 12 }
         },
         form: null,
         mdl: {},
@@ -252,7 +252,7 @@
             table: '操作',
             dataIndex: 'action',
             width: '150px',
-            scopedSlots: { customRender: 'action' },
+            scopedSlots: { customRender: 'action' }
           }
         ],
         // 加载数据方法 必须为 Promise 对象
@@ -268,7 +268,7 @@
       }
     },
     created () {
-      getRoleList({ t: new Date()})
+      getRoleList({ t: new Date() })
     },
     methods: {
       handleEdit (record) {
@@ -280,27 +280,27 @@
 
       },
 
-      //添加逻辑
+      // 添加逻辑
       handleModalVisible(isVisible) {
-        this.visibleCreateModal = isVisible;
+        this.visibleCreateModal = isVisible
       },
       handleCreateModalOk() {
         this.createForm.validateFields((err, fieldsValue) => {
           if (err) {
-            return;
+            return
           }
-          const description = this.createForm.getFieldValue('description');
+          const description = this.createForm.getFieldValue('description')
           axios.post('/saveRule', {
-            desc: description,
+            desc: description
           }).then((res) => {
-            this.createForm.resetFields();
-            this.visibleCreateModal = false;
-            this.loadRuleData();
-          });
-        });
+            this.createForm.resetFields()
+            this.visibleCreateModal = false
+            this.loadRuleData()
+          })
+        })
       },
       handleCreateModalCancel() {
-        this.visibleCreateModal = false;
+        this.visibleCreateModal = false
       },
 
       onChange (row) {

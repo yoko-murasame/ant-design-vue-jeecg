@@ -16,18 +16,18 @@
   export default {
     name: 'JVxeTextareaCell',
     mixins: [JVxeCellMixins],
-    components: {JInputPop},
+    components: { JInputPop },
     // 【组件增强】注释详见：JVxeCellMixins.js
     enhanced: {
       installOptions: {
-        autofocus: '.ant-input',
+        autofocus: '.ant-input'
       },
       aopEvents: {
         editActived(event) {
           dispatchEvent.call(this, event, 'anticon-fullscreen')
-        },
-      },
-    },
+        }
+      }
+    }
   }
 </script>
 

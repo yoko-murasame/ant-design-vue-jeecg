@@ -59,7 +59,6 @@ export default {
   methods: {
     // select menu item
     onOpenChange (openKeys) {
-
       // 在水平模式下时执行，并且不再执行后续
       if (this.mode === 'horizontal') {
         this.openKeys = openKeys
@@ -102,11 +101,11 @@ export default {
       }
       // update-end-author:sunjianlei date:20210409 for: 修复动态功能测试菜单、带参数菜单标题错误、展开错误的问题
 
-      //update-begin-author:taoyan date:20190510 for:online表单菜单点击展开的一级目录不对
-      if(!this.selectedKeys || this.selectedKeys[0].indexOf(":")<0){
+      // update-begin-author:taoyan date:20190510 for:online表单菜单点击展开的一级目录不对
+      if (!this.selectedKeys || this.selectedKeys[0].indexOf(':') < 0) {
         this.collapsed ? (this.cachedOpenKeys = openKeys) : (this.openKeys = openKeys)
       }
-      //update-end-author:taoyan date:20190510 for:online表单菜单点击展开的一级目录不对
+      // update-end-author:taoyan date:20190510 for:online表单菜单点击展开的一级目录不对
     },
     // update-begin-author:sunjianlei date:20210409 for: 修复动态功能测试菜单、带参数菜单标题错误、展开错误的问题
     // 递归查找当前选中的菜单和父级菜单，填充openKeys
@@ -137,7 +136,7 @@ export default {
       const target = menu.meta.target || null
       const tag = target && 'a' || 'router-link'
       let props = { to: { name: menu.name } }
-      if(menu.route && menu.route === '0'){
+      if (menu.route && menu.route === '0') {
         props = { to: { path: menu.path } }
       }
 

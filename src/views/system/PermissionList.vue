@@ -18,7 +18,7 @@
 
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{
-        selectedRowKeys.length }}</a>项&nbsp;&nbsp;
+          selectedRowKeys.length }}</a>项&nbsp;&nbsp;
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
@@ -106,11 +106,11 @@
           return text
         }
       }
-    },/*{
+    }, /* {
       title: '权限编码',
       dataIndex: 'perms',
       key: 'permissionCode',
-    },*/{
+    }, */{
       title: 'icon',
       dataIndex: 'icon',
       key: 'icon'
@@ -180,13 +180,13 @@
         this.$refs.PermissionDataRuleList.edit(record)
       },
       handleAddSub(record) {
-        this.$refs.modalForm.title = "添加子菜单";
-        this.$refs.modalForm.disableSubmit = false;
-        this.$refs.modalForm.edit({status:'1',permsType:'1',route:true,'parentId':record.id,menuType:1});
+        this.$refs.modalForm.title = '添加子菜单'
+        this.$refs.modalForm.disableSubmit = false
+        this.$refs.modalForm.edit({ status: '1', permsType: '1', route: true, 'parentId': record.id, menuType: 1 })
       },
       handleExpandedRowsChange(expandedRows) {
         this.expandedRowKeys = expandedRows
-      },
+      }
     }
   }
 </script>

@@ -26,7 +26,7 @@
 
   export default {
     name: 'JSelectUserByDep',
-    components: {JSelectUserByDepModal},
+    components: { JSelectUserByDepModal },
     props: {
       modalWidth: {
         type: Number,
@@ -67,19 +67,19 @@
     },
     data() {
       return {
-        storeVals: '', //[key values]
-        textVals: '' //[label values]
+        storeVals: '', // [key values]
+        textVals: '' // [label values]
       }
     },
-    computed:{
-      storeField(){
+    computed: {
+      storeField() {
         let field = this.customReturnField
-        if(!field){
-          field = this.store;
+        if (!field) {
+          field = this.store
         }
         return underLinetoHump(field)
       },
-      textField(){
+      textField() {
         return underLinetoHump(this.text)
       }
     },
@@ -99,14 +99,14 @@
       initComp(textVals) {
         this.textVals = textVals
       },
-      //返回选中的用户信息
-      backDeparInfo(){
-        if(this.backUser===true){
-          if(this.storeVals && this.storeVals.length>0){
+      // 返回选中的用户信息
+      backDeparInfo() {
+        if (this.backUser === true) {
+          if (this.storeVals && this.storeVals.length > 0) {
             let arr1 = this.storeVals.split(',')
             let arr2 = this.textVals.split(',')
             let info = []
-            for(let i=0;i<arr1.length;i++){
+            for (let i = 0; i < arr1.length; i++) {
               info.push({
                 value: arr1[i],
                 text: arr2[i]
@@ -120,7 +120,7 @@
         this.$refs.selectModal.showModal()
       },
       selectOK(rows) {
-        console.log("当前选中用户", rows)
+        console.log('当前选中用户', rows)
         if (!rows) {
           this.storeVals = ''
           this.textVals = ''
@@ -134,7 +134,7 @@
           this.storeVals = temp1.join(',')
           this.textVals = temp2.join(',')
         }
-        this.$emit("change", this.storeVals)
+        this.$emit('change', this.storeVals)
       }
     }
   }

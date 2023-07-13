@@ -1,4 +1,4 @@
-import {getRefPromise} from '@/utils/util'
+import { getRefPromise } from '@/utils/util'
 
 /** JModal 的拖拽混入 */
 export default {
@@ -12,8 +12,8 @@ export default {
         left: null,
         wrapEl: null,
         dragEl: null,
-        headerEl: null,
-      },
+        headerEl: null
+      }
     }
   },
   watch: {
@@ -28,7 +28,7 @@ export default {
         return
       }
       this.handleDrag()
-    },
+    }
   },
   methods: {
     async handleDrag() {
@@ -50,7 +50,7 @@ export default {
     },
     /** 启用拖拽 */
     enableDrag() {
-      let {wrapEl, dragEl, headerEl} = this.dragSettings
+      let { wrapEl, dragEl, headerEl } = this.dragSettings
       if (!wrapEl) return
       wrapEl.setAttribute('data-drag', this.draggable)
       if (!headerEl || !dragEl || !this.draggable) return
@@ -142,9 +142,9 @@ export default {
      */
     resetModalPosition() {
       this.setModalPosition(this.dragSettings.top, this.dragSettings.left, false)
-    },
+    }
 
-  },
+  }
 }
 
 function getStyle(dom, attr) {

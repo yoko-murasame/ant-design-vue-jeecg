@@ -85,16 +85,15 @@
       </a-col>
     </a-row>
 
-
   </div>
 </template>
 
 <script>
   import PageLayout from '@/components/page/PageLayout'
-  import RouteView from "@/components/layouts/RouteView"
+  import RouteView from '@/components/layouts/RouteView'
   import { AppPage, ArticlePage, ProjectPage } from './page'
   import { mapGetters } from 'vuex'
-  import { getFileAccessHttpUrl } from '@/api/manage';
+  import { getFileAccessHttpUrl } from '@/api/manage'
 
   export default {
     components: {
@@ -116,25 +115,25 @@
 
         tabListNoTitle: [{
             key: 'article',
-            tab: '文章(8)',
+            tab: '文章(8)'
           }, {
             key: 'app',
-            tab: '应用(8)',
+            tab: '应用(8)'
           }, {
             key: 'project',
-            tab: '项目(8)',
+            tab: '项目(8)'
           }
         ],
-        noTitleKey: 'app',
+        noTitleKey: 'app'
       }
     },
     mounted () {
       this.getTeams()
     },
     methods: {
-      ...mapGetters(["nickname", "avatar"]),
-      getAvatar(){
-          return getFileAccessHttpUrl(this.avatar());
+      ...mapGetters(['nickname', 'avatar']),
+      getAvatar() {
+          return getFileAccessHttpUrl(this.avatar())
       },
       getTeams() {
         this.$http.get('/mock/api/workplace/teams')
@@ -177,7 +176,7 @@
           tagInputValue: ''
         })
       }
-    },
+    }
   }
 </script>
 

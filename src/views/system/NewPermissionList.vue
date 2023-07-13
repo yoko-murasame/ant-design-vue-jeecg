@@ -18,7 +18,7 @@
 
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{
-        selectedRowKeys.length }}</a>项&nbsp;&nbsp;
+          selectedRowKeys.length }}</a>项&nbsp;&nbsp;
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
@@ -106,11 +106,11 @@
           return text
         }
       }
-    },/*{
+    }, /* {
       title: '权限编码',
       dataIndex: 'perms',
       key: 'permissionCode',
-    },*/{
+    }, */{
       title: 'icon',
       dataIndex: 'icon',
       key: 'icon'
@@ -172,13 +172,13 @@
             this.dataSource = res.result
             return this.loadDataByExpandedRows(this.dataSource)
           }
-        }).finally(()=>{
+        }).finally(() => {
           this.loading = false
         })
       },
-      expandSubmenu(expanded, record){
+      expandSubmenu(expanded, record) {
         if (expanded && (!record.children || record.children.length === 0)) {
-          getSystemSubmenu({parentId:record.id}).then((res) => {
+          getSystemSubmenu({ parentId: record.id }).then((res) => {
             if (res.success) {
               record.children = res.result
             }
@@ -192,14 +192,14 @@
             if (res.success) {
               let childrenMap = res.result
               let fn = (list) => {
-                if(list&&list.length>0){
+                if (list && list.length > 0) {
                   list.forEach(data => {
                     if (this.expandedRowKeys.includes(data.id)) {
                       data.children = childrenMap[data.id]
                       fn(data.children)
                     }
                   })
-                } 
+                }
               }
               fn(dataList)
             }
@@ -213,13 +213,13 @@
         this.$refs.PermissionDataRuleList.edit(record)
       },
       handleAddSub(record) {
-        this.$refs.modalForm.title = "添加子菜单";
-        this.$refs.modalForm.disableSubmit = false;
-        this.$refs.modalForm.edit({status:'1',permsType:'1',route:true,'parentId':record.id,menuType:1});
+        this.$refs.modalForm.title = '添加子菜单'
+        this.$refs.modalForm.disableSubmit = false
+        this.$refs.modalForm.edit({ status: '1', permsType: '1', route: true, 'parentId': record.id, menuType: 1 })
       },
       handleExpandedRowsChange(expandedRows) {
         this.expandedRowKeys = expandedRows
-      },
+      }
     }
   }
 </script>

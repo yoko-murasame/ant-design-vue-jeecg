@@ -1,6 +1,13 @@
 <template>
 
-    <iframe  :id="id" :src="url" frameborder="0" width="100%" height="800px" scrolling="auto" style="background-color: #fff;"></iframe>
+  <iframe
+    :id="id"
+    :src="url"
+    frameborder="0"
+    width="100%"
+    height="800px"
+    scrolling="auto"
+    style="background-color: #fff;"></iframe>
 
 </template>
 
@@ -9,11 +16,11 @@
   import RouteView from './RouteView'
 
   export default {
-    name: "IframePageContent",
+    name: 'IframePageContent',
     data () {
       return {
-        url: "",
-        id:""
+        url: '',
+        id: ''
       }
     },
     created () {
@@ -24,7 +31,7 @@
     },
     watch: {
       $route(to, from) {
-        this.goUrl();
+        this.goUrl()
       }
     },
     methods: {
@@ -32,11 +39,11 @@
         let url = this.$route.meta.url
         let id = this.$route.path
         this.id = id
-        //url = "http://www.baidu.com"
-        console.log("------url------"+url)
+        // url = "http://www.baidu.com"
+        console.log('------url------' + url)
         if (url !== null && url !== undefined) {
-          this.url = url;
-          //window.open(this.url);
+          this.url = url
+          // window.open(this.url);
         }
       }
     }

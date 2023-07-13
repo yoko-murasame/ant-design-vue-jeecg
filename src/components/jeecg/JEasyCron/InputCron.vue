@@ -23,8 +23,8 @@
 import EasyCron from './EasyCron.vue'
 
 export default {
-  name: 'input-cron',
-  components: {EasyCron},
+  name: 'InputCron',
+  components: { EasyCron },
   model: {
     prop: 'cronValue',
     event: 'change'
@@ -66,7 +66,7 @@ export default {
   data() {
     return {
       editCronValue: this.cronValue,
-      show: false,
+      show: false
     }
   },
   watch: {

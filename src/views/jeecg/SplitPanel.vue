@@ -11,17 +11,17 @@
 
   export default {
     name: 'SplitPanel',
-    components:{
-      SplitPanelModal,
+    components: {
+      SplitPanelModal
     },
     data() {
       return {
-        description: '分屏',
+        description: '分屏'
       }
     },
-    methods:{
-      splitPane(){
-        this.$refs.splitPanelModal.show();
+    methods: {
+      splitPane() {
+        this.$refs.splitPanelModal.show()
       }
     }
   }

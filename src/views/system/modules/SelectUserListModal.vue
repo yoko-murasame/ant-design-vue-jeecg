@@ -27,7 +27,6 @@
             </a-form-item>
           </a-col>
 
-
           <template v-if="toggleSearchStatus">
             <a-col :span="6">
               <a-form-item label="邮箱">
@@ -66,7 +65,7 @@
         </a-row>
       </a-form>
     </div>
- <!--    update-begin author:kangxiaolin   date:20190921   for:系统发送通知 用户多选失败 #513  -->
+    <!--    update-begin author:kangxiaolin   date:20190921   for:系统发送通知 用户多选失败 #513  -->
     <a-table
       ref="table"
       rowKey="id"
@@ -76,186 +75,186 @@
       :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
       @change="handleTableChange"
     >
-<!--     update-end   author:kangxiaolin  date:20190921     for:系统发送通知 用户多选失败 #513 -->
+      <!--     update-end   author:kangxiaolin  date:20190921     for:系统发送通知 用户多选失败 #513 -->
     </a-table>
   </a-modal>
 </template>
 
 <script>
-  import { filterObj } from '@/utils/util';
+  import { filterObj } from '@/utils/util'
 
   import { getUserList } from '@/api/api'
 
   export default {
-    name: "SelectUserListModal",
+    name: 'SelectUserListModal',
     components: {
     },
     data () {
       return {
-        title:"选择用户",
+        title: '选择用户',
         queryParam: {},
         columns: [{
           title: '用户账号',
-          align:"center",
+          align: 'center',
           dataIndex: 'username',
-          fixed:'left',
-          width:200
-        },{
+          fixed: 'left',
+          width: 200
+        }, {
           title: '用户名称',
-          align:"center",
-          dataIndex: 'realname',
-        },{
+          align: 'center',
+          dataIndex: 'realname'
+        }, {
           title: '性别',
-          align:"center",
+          align: 'center',
           dataIndex: 'sex',
-          customRender:function (text) {
-            if(text==1){
-              return "男";
-            }else if(text==2){
-              return "女";
-            }else{
-              return text;
+          customRender: function (text) {
+            if (text == 1) {
+              return '男'
+            } else if (text == 2) {
+              return '女'
+            } else {
+              return text
             }
           }
-        },{
+        }, {
           title: '手机号码',
-          align:"center",
+          align: 'center',
           dataIndex: 'phone'
-        },{
+        }, {
           title: '邮箱',
-          align:"center",
+          align: 'center',
           dataIndex: 'email'
-        },{
+        }, {
           title: '状态',
-          align:"center",
+          align: 'center',
           dataIndex: 'status',
-          customRender:function (text) {
-            if(text==1){
-              return "正常";
-            }else if(text==2){
-              return "冻结";
-            }else{
-              return text;
+          customRender: function (text) {
+            if (text == 1) {
+              return '正常'
+            } else if (text == 2) {
+              return '冻结'
+            } else {
+              return text
             }
           }
         }],
-        dataSource:[],
-        ipagination:{
+        dataSource: [],
+        ipagination: {
           current: 1,
           pageSize: 5,
           pageSizeOptions: ['5', '10', '20'],
           showTotal: (total, range) => {
-            return range[0] + "-" + range[1] + " 共" + total + "条"
+            return range[0] + '-' + range[1] + ' 共' + total + '条'
           },
           showQuickJumper: true,
           showSizeChanger: true,
           total: 0
         },
-        isorter:{
+        isorter: {
           column: 'createTime',
-          order: 'desc',
+          order: 'desc'
         },
         selectedRowKeys: [],
         selectionRows: [],
-        visible:false,
-        toggleSearchStatus:false,
+        visible: false,
+        toggleSearchStatus: false
       }
     },
     created() {
-      this.loadData();
+      this.loadData()
     },
     methods: {
-      add (selectUser,userIds) {
-        this.visible = true;
-        this.edit(selectUser,userIds);
+      add (selectUser, userIds) {
+        this.visible = true
+        this.edit(selectUser, userIds)
       },
-      edit(selectUser,userIds){
-        //控制台报错
-        if(userIds&&userIds.length>0){
-          this.selectedRowKeys = userIds.split(',');
-        }else{
+      edit(selectUser, userIds) {
+        // 控制台报错
+        if (userIds && userIds.length > 0) {
+          this.selectedRowKeys = userIds.split(',')
+        } else {
           this.selectedRowKeys = []
         }
-        if(!selectUser){
-          this.selectionRows=[]
-        }else{
-          var that=this;
-          that.selectionRows=[];
-          selectUser.forEach(function(record,index){
+        if (!selectUser) {
+          this.selectionRows = []
+        } else {
+          var that = this
+          that.selectionRows = []
+          selectUser.forEach(function(record, index) {
             console.log(record)
-            that.selectionRows.push({id: that.selectedRowKeys[index],realname:record.label})
+            that.selectionRows.push({ id: that.selectedRowKeys[index], realname: record.label })
           })
           // this.selectionRows = selectUser;
         }
       },
-      loadData (arg){
-        if(arg===1){
-          this.ipagination.current = 1;
+      loadData (arg) {
+        if (arg === 1) {
+          this.ipagination.current = 1
         }
-        let params = this.getQueryParams();//查询条件
-        getUserList(params).then((res)=>{
-          if(res.success){
-            this.dataSource = res.result.records;
-            this.ipagination.total = res.result.total;
+        let params = this.getQueryParams()// 查询条件
+        getUserList(params).then((res) => {
+          if (res.success) {
+            this.dataSource = res.result.records
+            this.ipagination.total = res.result.total
           }
         })
       },
-      getQueryParams(){
-        let param = Object.assign({}, this.queryParam,this.isorter);
-        param.field = this.getQueryField();
-        //--update-begin----author:scott---date:20190818------for:新建公告时指定特定用户翻页错误SelectUserListModal #379----
+      getQueryParams() {
+        let param = Object.assign({}, this.queryParam, this.isorter)
+        param.field = this.getQueryField()
+        // --update-begin----author:scott---date:20190818------for:新建公告时指定特定用户翻页错误SelectUserListModal #379----
         // param.current = this.ipagination.current;
         // param.pageSize = this.ipagination.pageSize;
-        param.pageNo = this.ipagination.current;
-        param.pageSize = this.ipagination.pageSize;
-        //--update-end----author:scott---date:20190818------for:新建公告时指定特定用户翻页错误SelectUserListModal #379---
-        return filterObj(param);
+        param.pageNo = this.ipagination.current
+        param.pageSize = this.ipagination.pageSize
+        // --update-end----author:scott---date:20190818------for:新建公告时指定特定用户翻页错误SelectUserListModal #379---
+        return filterObj(param)
       },
-      getQueryField(){
-        let str = "id,";
-        for(let a = 0;a<this.columns.length;a++){
-          str+=","+this.columns[a].dataIndex;
+      getQueryField() {
+        let str = 'id,'
+        for (let a = 0; a < this.columns.length; a++) {
+          str += ',' + this.columns[a].dataIndex
         }
-        return str;
+        return str
       },
-      //--update-begin----author:kangxiaolin---date:20190921------for:系统发送通知 用户多选失败 #513----
-      onSelectChange (selectedRowKeys,selectionRows) {
-        this.selectedRowKeys = selectedRowKeys;
-        //update-begin---author:wangshuai ---date:20211227  for：全选不好用------------
-        this.selectionRows = selectionRows;
-        //update-end---author:wangshuai ---date:20211227  for：全选不好用------------
+      // --update-begin----author:kangxiaolin---date:20190921------for:系统发送通知 用户多选失败 #513----
+      onSelectChange (selectedRowKeys, selectionRows) {
+        this.selectedRowKeys = selectedRowKeys
+        // update-begin---author:wangshuai ---date:20211227  for：全选不好用------------
+        this.selectionRows = selectionRows
+        // update-end---author:wangshuai ---date:20211227  for：全选不好用------------
       },
-      searchReset(){
-        let that = this;
-        Object.keys(that.queryParam).forEach(function(key){
-          that.queryParam[key] = '';
-        });
-        that.loadData(1);
+      searchReset() {
+        let that = this
+        Object.keys(that.queryParam).forEach(function(key) {
+          that.queryParam[key] = ''
+        })
+        that.loadData(1)
       },
-      handleTableChange(pagination, filters, sorter){
-        //TODO 筛选
-        if (Object.keys(sorter).length>0){
-          this.isorter.column = sorter.field;
-          this.isorter.order = "ascend"==sorter.order?"asc":"desc"
+      handleTableChange(pagination, filters, sorter) {
+        // TODO 筛选
+        if (Object.keys(sorter).length > 0) {
+          this.isorter.column = sorter.field
+          this.isorter.order = sorter.order == 'ascend' ? 'asc' : 'desc'
         }
-        this.ipagination = pagination;
-        this.loadData();
+        this.ipagination = pagination
+        this.loadData()
       },
       handleCancel () {
-        this.selectionRows = [];
-        this.selectedRowKeys = [];
-        this.visible = false;
+        this.selectionRows = []
+        this.selectedRowKeys = []
+        this.visible = false
       },
       handleOk () {
-        this.$emit("choseUser",this.selectionRows);
-        this.handleCancel();
+        this.$emit('choseUser', this.selectionRows)
+        this.handleCancel()
       },
-      searchByquery(){
-        this.loadData(1);
+      searchByquery() {
+        this.loadData(1)
       },
-      handleToggleSearch(){
-        this.toggleSearchStatus = !this.toggleSearchStatus;
-      },
+      handleToggleSearch() {
+        this.toggleSearchStatus = !this.toggleSearchStatus
+      }
     }
   }
 </script>

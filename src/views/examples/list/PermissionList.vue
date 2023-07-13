@@ -137,7 +137,7 @@
   import STable from '@/components/table/'
 
   export default {
-    name: "TableList",
+    name: 'TableList',
     components: {
       STable
     },
@@ -148,11 +148,11 @@
         visible: false,
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
         form: null,
         mdl: {},
@@ -169,23 +169,23 @@
           },
           {
             title: '权限名称',
-            dataIndex: 'name',
+            dataIndex: 'name'
           },
           {
             title: '可操作权限',
             dataIndex: 'actions',
-            scopedSlots: { customRender: 'actions' },
+            scopedSlots: { customRender: 'actions' }
           },
           {
             title: '状态',
             dataIndex: 'status',
-            scopedSlots: { customRender: 'status' },
+            scopedSlots: { customRender: 'status' }
           },
           {
             title: '操作',
             width: '150px',
             dataIndex: 'action',
-            scopedSlots: { customRender: 'action' },
+            scopedSlots: { customRender: 'action' }
           }
         ],
         // 向后端拉取可以用的操作列表
@@ -223,7 +223,7 @@
     methods: {
       loadPermissionList () {
         // permissionList
-        new Promise((resolve => {
+        new Promise(resolve => {
           const data = [
             { label: '新增', value: 'add', defaultChecked: false },
             { label: '查询', value: 'get', defaultChecked: false },
@@ -234,7 +234,7 @@
             { label: '导出', value: 'export', defaultChecked: false }
           ]
           setTimeout(resolve(data), 1500)
-        })).then(res => {
+        }).then(res => {
           this.permissionList = res
         })
       },
@@ -252,7 +252,7 @@
       },
       toggleAdvanced () {
         this.advanced = !this.advanced
-      },
+      }
     },
     watch: {
       /*

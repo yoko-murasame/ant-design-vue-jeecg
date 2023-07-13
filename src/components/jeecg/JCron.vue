@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-  import JCronModal from "./modal/JCronModal";
+  import JCronModal from './modal/JCronModal'
   export default {
     name: 'JCron',
     components: {
@@ -17,29 +17,29 @@
     props: {
       value: {
         required: false,
-        type: String,
+        type: String
       }
     },
-    data(){
+    data() {
       return {
-        cron: this.value,
+        cron: this.value
       }
     },
-    watch:{
-      value(val){
+    watch: {
+      value(val) {
         this.cron = val
       }
     },
-    methods:{
-      openModal(){
-        this.$refs.innerVueCron.show();
+    methods: {
+      openModal() {
+        this.$refs.innerVueCron.show()
       },
-      handleOK(val){
-        this.cron = val;
-        this.$emit("change", this.cron);
-        //this.$emit("change", Object.assign({},  this.cron));
+      handleOK(val) {
+        this.cron = val
+        this.$emit('change', this.cron)
+        // this.$emit("change", Object.assign({},  this.cron));
       },
-      handleEmpty(){
+      handleEmpty() {
         this.handleOK('')
       }
     },

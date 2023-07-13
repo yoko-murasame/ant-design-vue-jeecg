@@ -14,5 +14,5 @@ export default {
       vm.$on('after-close', () => vm.$destroy())
       return vm
     }
-  },
+  }
 }

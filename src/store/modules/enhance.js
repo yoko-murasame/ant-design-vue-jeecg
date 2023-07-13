@@ -1,31 +1,31 @@
 import Vue from 'vue'
 const enhance = {
   state: {
-    enhanceJs:{
+    enhanceJs: {
 
     }
   },
   mutations: {
     ADD_TABLE_ENHANCE: (state, record) => {
-      if(!state.enhanceJs){
+      if (!state.enhanceJs) {
         let obj = {}
         let arr = []
-        arr.push({...record})
+        arr.push({ ...record })
         obj[record.code] = arr
         state.enhanceJs = obj
-      }else{
-        if(!state.enhanceJs[record.code]){
+      } else {
+        if (!state.enhanceJs[record.code]) {
           let arr = []
-          arr.push({...record})
+          arr.push({ ...record })
           state.enhanceJs[record.code] = arr
         }
-        state.enhanceJs[record.code].push({...record})
+        state.enhanceJs[record.code].push({ ...record })
       }
       let arr = state.enhanceJs[record.code]
-      while(arr.length>16){
+      while (arr.length > 16) {
         arr.shift()
       }
-      Vue.ls.set('enhance_'+record['code'], arr)
+      Vue.ls.set('enhance_' + record['code'], arr)
     }
   },
   actions: {

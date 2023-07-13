@@ -65,11 +65,11 @@
         model: {},
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
         confirmLoading: false,
         validatorRules: {
@@ -99,14 +99,14 @@
                 }
               }
             ],
-          name: [{ required: true, message: '请输入职务名称' }] ,
-          postRank:  [{ required: true, message: '请选择职级' }] ,
+          name: [{ required: true, message: '请输入职务名称' }],
+          postRank: [{ required: true, message: '请选择职级' }]
         },
         url: {
           add: '/sys/position/add',
-          edit: '/sys/position/edit',
+          edit: '/sys/position/edit'
         },
-        readOnly:false
+        readOnly: false
       }
     },
     created() {
@@ -118,16 +118,16 @@
       edit(record) {
         this.model = Object.assign({}, record)
         this.visible = true
-        if(record.id){
-          this.readOnly=true
-        }else{
-          this.readOnly=false
+        if (record.id) {
+          this.readOnly = true
+        } else {
+          this.readOnly = false
         }
       },
       close() {
         this.$emit('close')
         this.visible = false
-        this.$refs.form.resetFields();
+        this.$refs.form.resetFields()
       },
       handleOk() {
         const that = this
@@ -156,15 +156,14 @@
               that.confirmLoading = false
               that.close()
             })
-          }else{
-            return false;
+          } else {
+            return false
           }
         })
       },
       handleCancel() {
         this.close()
-      },
-
+      }
 
     }
   }

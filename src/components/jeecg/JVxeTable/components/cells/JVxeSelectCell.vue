@@ -12,13 +12,13 @@
   >
 
     <div v-if="loading" slot="notFoundContent">
-      <a-icon type="loading"  />
+      <a-icon type="loading" />
       <span>&nbsp;加载中…</span>
     </div>
 
     <template v-for="option of selectOptions">
       <a-select-option :key="option.value" :value="option.value" :disabled="option.disabled">
-        <span>{{option.text || option.label || option.title|| option.value}}</span>
+        <span>{{ option.text || option.label || option.title|| option.value }}</span>
       </a-select-option>
     </template>
 
@@ -33,18 +33,18 @@
   export default {
     name: 'JVxeSelectCell',
     mixins: [JVxeCellMixins],
-    data(){
+    data() {
       return {
         loading: false,
         // 异步加载的options（用于多级联动）
-        asyncOptions: null,
+        asyncOptions: null
       }
     },
     computed: {
       selectProps() {
-        let props = {...this.cellProps}
+        let props = { ...this.cellProps }
         // 判断select是否允许输入
-        let {allowSearch, allowInput} = this.originColumn
+        let { allowSearch, allowInput } = this.originColumn
         if (allowInput === true || allowSearch === true) {
           props['showSearch'] = true
         }
@@ -55,9 +55,9 @@
         if (this.asyncOptions) {
           return this.asyncOptions
         }
-        let {linkage} = this.renderOptions
+        let { linkage } = this.renderOptions
         if (linkage) {
-          let {getLinkageOptionsSibling, config} = linkage
+          let { getLinkageOptionsSibling, config } = linkage
           let res = getLinkageOptionsSibling(this.row, this.originColumn, config, true)
           // 当返回Promise时，说明是多级联动
           if (res instanceof Promise) {
@@ -75,7 +75,7 @@
           }
         }
         return this.originColumn.options
-      },
+      }
     },
     created() {
       let multiple = [JVXETypes.selectMultiple, JVXETypes.list_multi]
@@ -104,7 +104,7 @@
 
       /** 处理blur失去焦点事件 */
       handleBlur(value) {
-        let {allowInput, options} = this.originColumn
+        let { allowInput, options } = this.originColumn
 
         if (allowInput === true) {
           // 删除无用的因搜索（用户输入）而创建的项
@@ -129,18 +129,18 @@
 
       /** 用于搜索下拉框中的内容 */
       handleSelectFilterOption(input, option) {
-        let {allowSearch, allowInput} = this.originColumn
+        let { allowSearch, allowInput } = this.originColumn
         if (allowSearch === true || allowInput === true) {
-          //update-begin-author:taoyan date:20200820 for:【专项任务】大连项目反馈行编辑问题处理 下拉框搜索
+          // update-begin-author:taoyan date:20200820 for:【专项任务】大连项目反馈行编辑问题处理 下拉框搜索
           return option.componentOptions.children[0].children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          //update-end-author:taoyan date:20200820 for:【专项任务】大连项目反馈行编辑问题处理 下拉框搜索
+          // update-end-author:taoyan date:20200820 for:【专项任务】大连项目反馈行编辑问题处理 下拉框搜索
         }
         return true
       },
 
       /** select 搜索时的事件，用于动态添加options */
       handleSearchSelect(value) {
-        let {allowSearch, allowInput, options} = this.originColumn
+        let { allowSearch, allowInput, options } = this.originColumn
 
         if (allowSearch !== true && allowInput === true) {
           // 是否找到了对应的项，找不到则添加这一项
@@ -154,11 +154,10 @@
           // !!value ：不添加空值
           if (!flag && !!value) {
             // searchAdd 是否是通过搜索添加的
-            options.push({title: value, value: value, searchAdd: true})
+            options.push({ title: value, value: value, searchAdd: true })
           }
-
         }
-      },
+      }
 
     },
     // 【组件增强】注释详见：JVxeCellMixins.js
@@ -166,16 +165,16 @@
       aopEvents: {
         editActived(event) {
           dispatchEvent.call(this, event, 'ant-select')
-        },
+        }
       },
       translate: {
         enabled: true,
-        async handler(value,) {
+        async handler(value) {
           let options
-          let {linkage} = this.renderOptions
+          let { linkage } = this.renderOptions
           // 判断是否是多级联动，如果是就通过接口异步翻译
           if (linkage) {
-            let {getLinkageOptionsSibling, config} = linkage
+            let { getLinkageOptionsSibling, config } = linkage
             options = getLinkageOptionsSibling(this.row, this.originColumn, config, true)
             if (options instanceof Promise) {
               return new Promise(resolve => {
@@ -188,7 +187,7 @@
             options = this.column.own.options
           }
           return filterDictText(options, value)
-        },
+        }
       },
       getValue(value) {
         if (Array.isArray(value)) {
@@ -198,7 +197,7 @@
         }
       },
       setValue(value) {
-        let {column: {own: col}, params: {$table}} = this
+        let { column: { own: col }, params: { $table } } = this
         // 判断是否是多选
         if ((col.props || {})['mode'] === 'multiple') {
           $table.$set(col.props, 'maxTagCount', 1)

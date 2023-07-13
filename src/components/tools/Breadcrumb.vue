@@ -14,7 +14,7 @@ export default {
     data() {
       return {
         name: '',
-        breadList: [],
+        breadList: []
       }
     },
   created () {
@@ -22,7 +22,6 @@ export default {
   },
   methods: {
     getBreadcrumb() {
-
       console.log('this.$route.matched', this.$route.matched)
 
       this.breadList = []

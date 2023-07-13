@@ -51,7 +51,7 @@ export default {
       stepLoading: false,
 
       form: null
-    };
+    }
   },
   methods: {
     handleStepOk() {
@@ -60,11 +60,11 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           console.log('values', values)
-          setTimeout( () => {
+          setTimeout(() => {
             vm.stepLoading = false
             vm.$emit('success', { values })
           }, 2000)
-          return;
+          return
         }
         this.stepLoading = false
         this.$emit('error', { err })
@@ -75,10 +75,10 @@ export default {
       this.$emit('cancel')
     },
     onForgeStepCode() {
-      
+
     }
   }
-};
+}
 </script>
 <style lang="less" scoped>
   .step-form-wrapper {

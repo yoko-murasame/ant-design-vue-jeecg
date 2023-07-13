@@ -52,7 +52,7 @@ export default {
       this.top = e.clientY
       this.target = e.target
     },
-    handleClick ({key}) {
+    handleClick ({ key }) {
       this.$emit('select', key, this.target)
       this.$emit('update:visible', false)
     }

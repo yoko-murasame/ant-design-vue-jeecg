@@ -40,19 +40,19 @@
   }]
 
   export default {
-    name: "Bar",
+    name: 'Bar',
     props: {
       title: {
         type: String,
         default: ''
       }
     },
-    mounted(){
+    mounted() {
       this.datasource = data
     },
     data () {
       return {
-        datasource:[],
+        datasource: [],
         scale,
         tooltip
       }

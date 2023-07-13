@@ -68,19 +68,19 @@
         model: {},
         ruleConditionList: [],
         labelCol: {
-          xs: {span: 24},
-          sm: {span: 5}
+          xs: { span: 24 },
+          sm: { span: 5 }
         },
         wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16}
+          xs: { span: 24 },
+          sm: { span: 16 }
         },
         confirmLoading: false,
         permissionId: '',
         validatorRules: {
-          ruleConditions:  [{required: true, message: '请选择条件!'}],
-          ruleName:[{required: true, message: '请输入规则名称!'}],
-          ruleValue:  [{required: true, message: '请输入规则值!'}],
+          ruleConditions: [{ required: true, message: '请选择条件!' }],
+          ruleName: [{ required: true, message: '请输入规则名称!' }],
+          ruleValue: [{ required: true, message: '请输入规则值!' }],
           ruleColumn: []
         },
         url: {
@@ -88,7 +88,7 @@
           add: '/sys/permission/addPermissionRule',
           edit: '/sys/permission/editPermissionRule'
         },
-        showRuleColumn:true
+        showRuleColumn: true
       }
     },
     created() {
@@ -96,8 +96,8 @@
     methods: {
       add(permId) {
         this.permissionId = permId
-        //初始化默认值
-        this.edit({status:'1'})
+        // 初始化默认值
+        this.edit({ status: '1' })
       },
       edit(record) {
         this.model = Object.assign({}, record)
@@ -140,26 +140,26 @@
               that.confirmLoading = false
               that.close()
             })
-          }else{
-            return false;
+          } else {
+            return false
           }
         })
       },
       handleCancel() {
         this.close()
       },
-      initRuleCondition(){
-        if(this.model.ruleConditions && this.model.ruleConditions=='USE_SQL_RULES'){
+      initRuleCondition() {
+        if (this.model.ruleConditions && this.model.ruleConditions == 'USE_SQL_RULES') {
           this.showRuleColumn = false
-        }else{
+        } else {
           this.showRuleColumn = true
         }
       },
-      handleChangeRuleCondition(val){
-        if(val=='USE_SQL_RULES'){
-          this.model.ruleColumn=''
+      handleChangeRuleCondition(val) {
+        if (val == 'USE_SQL_RULES') {
+          this.model.ruleColumn = ''
           this.showRuleColumn = false
-        }else{
+        } else {
           this.showRuleColumn = true
         }
       }

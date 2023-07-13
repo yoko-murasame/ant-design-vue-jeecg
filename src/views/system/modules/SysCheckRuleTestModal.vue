@@ -17,7 +17,7 @@
           <a-col>
             <a-input :value="str" style="text-align: center;width: 40px;"/>
           </a-col>
-          <a-col style="text-align: center;">{{index+1}}</a-col>
+          <a-col style="text-align: center;">{{ index+1 }}</a-col>
         </a-row>
       </a-col>
     </a-row>
@@ -41,7 +41,7 @@
           test: {
             rules: [{ validator: (rule, value, callback) => validateCheckRule(this.ruleCode, value, callback) }]
           }
-        },
+        }
       }
     },
     methods: {
@@ -50,7 +50,7 @@
         this.form.resetFields()
         this.testValue = ''
         this.visible = true
-      },
+      }
     }
   }
 </script>

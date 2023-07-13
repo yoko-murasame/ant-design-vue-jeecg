@@ -47,11 +47,16 @@
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('消息模板')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl"
-                @change="handleImportExcel">
+      <a-upload
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
-<!--      <a-dropdown v-if="selectedRowKeys.length > 0">
+      <!--      <a-dropdown v-if="selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1" @click="batchDel">
             <a-icon type="delete"/>
@@ -68,7 +73,7 @@
     <div>
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{
-        selectedRowKeys.length }}</a>项
+          selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
@@ -89,7 +94,6 @@
           <j-ellipsis :value="text" :length="25" />
         </span>
 
-
         <span slot="action" slot-scope="text, record">
           <a @click="handleMyEdit(record)">编辑</a>
 
@@ -98,19 +102,19 @@
             <a class="ant-dropdown-link">更多 <a-icon type="down"/></a>
             <a-menu slot="overlay">
               <a-menu-item>
-                  <a @click="handleUse(record)">应用</a>
+                <a @click="handleUse(record)">应用</a>
               </a-menu-item>
-               <a-menu-item>
-                  <a @click="handleNotUse(record)">停用</a>
+              <a-menu-item>
+                <a @click="handleNotUse(record)">停用</a>
               </a-menu-item>
-           
+
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
               <a-menu-item>
-                  <a @click="handleTest(record)">发送测试</a>
+                <a @click="handleTest(record)">发送测试</a>
               </a-menu-item>
             </a-menu>
           </a-dropdown>
@@ -130,15 +134,14 @@
 <script>
   import SysMessageTemplateModal from './modules/SysMessageTemplateModal'
   import SysMessageTestModal from './modules/SysMessageTestModal'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
-  import JEllipsis from "@/components/jeecg/JEllipsis";
-  import {httpAction} from '@/api/manage'
-  import { deleteAction } from '@/api/manage'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import JEllipsis from '@/components/jeecg/JEllipsis'
+  import { httpAction, deleteAction } from '@/api/manage'
+
   import JDictSelectTag from '@/components/dict/JDictSelectTag.vue'
-  
-  
+
   export default {
-    name: "SysMessageTemplateList",
+    name: 'SysMessageTemplateList',
     mixins: [JeecgListMixin],
     components: {
       JEllipsis,
@@ -156,48 +159,48 @@
             dataIndex: '',
             key: 'rowIndex',
             width: 60,
-            align: "center",
+            align: 'center',
             customRender: function (t, r, index) {
-              return parseInt(index) + 1;
+              return parseInt(index) + 1
             }
           },
           {
             title: '模板CODE',
-            align: "center",
+            align: 'center',
             dataIndex: 'templateCode'
           },
           {
             title: '模板标题',
-            align: "center",
+            align: 'center',
             dataIndex: 'templateName'
           },
           {
             title: '模板内容',
-            align: "center",
+            align: 'center',
             dataIndex: 'templateContent',
-            scopedSlots: {customRender: 'templateContent'},
+            scopedSlots: { customRender: 'templateContent' }
           },
           {
             title: '模板类型',
-            align: "center",
+            align: 'center',
             dataIndex: 'templateType',
             customRender: function (text) {
-              if(text=='1') {
-                return "文本";
+              if (text == '1') {
+                return '文本'
               }
-              if(text=='2') {
-                return "富文本";
+              if (text == '2') {
+                return '富文本'
               }
             }
           },
           {
             title: '是否应用',
-            align: "center",
+            align: 'center',
             dataIndex: 'useStatus',
             customRender: function (text) {
-              if(text=='1') {
-                return "是";
-              }else{
+              if (text == '1') {
+                return '是'
+              } else {
                 return '否'
               }
             }
@@ -205,82 +208,82 @@
           {
             title: '操作',
             dataIndex: 'action',
-            align: "center",
-            scopedSlots: {customRender: 'action'},
+            align: 'center',
+            scopedSlots: { customRender: 'action' }
           }
         ],
         url: {
-          list: "/sys/message/sysMessageTemplate/list",
-          delete: "/sys/message/sysMessageTemplate/delete",
-          deleteBatch: "/sys/message/sysMessageTemplate/deleteBatch",
-          exportXlsUrl: "sys/message/sysMessageTemplate/exportXls",
-          importExcelUrl: "sys/message/sysMessageTemplate/importExcel",
-        },
+          list: '/sys/message/sysMessageTemplate/list',
+          delete: '/sys/message/sysMessageTemplate/delete',
+          deleteBatch: '/sys/message/sysMessageTemplate/deleteBatch',
+          exportXlsUrl: 'sys/message/sysMessageTemplate/exportXls',
+          importExcelUrl: 'sys/message/sysMessageTemplate/importExcel'
+        }
       }
     },
     computed: {
       importExcelUrl: function () {
-        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
       }
     },
     methods: {
-      handleTest(record){
-        this.$refs.testModal.open(record);
-        this.$refs.testModal.title = "发送测试";
+      handleTest(record) {
+        this.$refs.testModal.open(record)
+        this.$refs.testModal.title = '发送测试'
       },
-      //update-begin-author:taoyan date:2022-7-8 for: 修改应用状态
-      updateUseStatus(record, useStatus){
+      // update-begin-author:taoyan date:2022-7-8 for: 修改应用状态
+      updateUseStatus(record, useStatus) {
         let formData = {
           id: record.id, useStatus: useStatus
         }
-        httpAction("/sys/message/sysMessageTemplate/edit", formData, 'put').then((res) => {
+        httpAction('/sys/message/sysMessageTemplate/edit', formData, 'put').then((res) => {
           if (res.success) {
-            this.$message.success(res.message);
+            this.$message.success(res.message)
           } else {
-            this.$message.warning(res.message);
+            this.$message.warning(res.message)
           }
         }).finally(() => {
           this.loadData()
         })
       },
-      handleUse(record){
+      handleUse(record) {
         this.updateUseStatus(record, '1')
       },
-      handleNotUse(record){
+      handleNotUse(record) {
         this.updateUseStatus(record, '0')
       },
-      handleMyEdit(record){
-        if(record.useStatus == '1'){
-          this.$message.warning('此模板已被应用，禁止编辑!');
-        }else{
-          this.handleEdit(record);
+      handleMyEdit(record) {
+        if (record.useStatus == '1') {
+          this.$message.warning('此模板已被应用，禁止编辑!')
+        } else {
+          this.handleEdit(record)
         }
       },
-      //update-end-author:taoyan date:2022-7-8 for: 修改应用状态
+      // update-end-author:taoyan date:2022-7-8 for: 修改应用状态
 
       handleDelete: function (record) {
-        if(!this.url.delete){
-          this.$message.error("请设置url.delete属性!")
+        if (!this.url.delete) {
+          this.$message.error('请设置url.delete属性!')
           return
         }
-        if(record.useStatus=='1'){
-          this.$message.error("该模板已被应用禁止删除!")
+        if (record.useStatus == '1') {
+          this.$message.error('该模板已被应用禁止删除!')
           return
         }
-        let id = record.id;
-        var that = this;
-        deleteAction(that.url.delete, {id: id}).then((res) => {
+        let id = record.id
+        var that = this
+        deleteAction(that.url.delete, { id: id }).then((res) => {
           if (res.success) {
-            //重新计算分页问题
+            // 重新计算分页问题
             that.reCalculatePage(1)
-            that.$message.success(res.message);
-            that.loadData();
+            that.$message.success(res.message)
+            that.loadData()
           } else {
-            that.$message.warning(res.message);
+            that.$message.warning(res.message)
           }
-        });
-      },
-      
+        })
+      }
+
     }
   }
 </script>

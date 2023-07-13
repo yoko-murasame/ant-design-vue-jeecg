@@ -25,7 +25,7 @@
   import 'tinymce/plugins/textcolor'
   import 'tinymce/plugins/fullscreen'
   import 'tinymce/icons/default'
-  import { uploadAction,getFileAccessHttpUrl } from '@/api/manage'
+  import { uploadAction, getFileAccessHttpUrl } from '@/api/manage'
   import { getVmParentByName } from '@/utils/util'
   export default {
     components: {
@@ -34,12 +34,12 @@
     props: {
       value: {
         type: String,
-        required:false
+        required: false
       },
-      triggerChange:{
+      triggerChange: {
         type: Boolean,
         default: false,
-        required:false
+        required: false
       },
       disabled: {
         type: Boolean,
@@ -52,7 +52,7 @@
       toolbar: {
         type: [String, Array],
         default: 'undo redo |  formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | lists link unlink image media table | removeformat | fullscreen',
-        branding:false
+        branding: false
       },
       defaultHeight: {
         type: Number,
@@ -61,7 +61,7 @@
     },
     data() {
       return {
-        //初始化配置
+        // 初始化配置
         init: {
           language_url: '/tinymce/langs/zh_CN.js',
           language: 'zh_CN',
@@ -72,20 +72,20 @@
           branding: false,
           menubar: false,
           toolbar_drawer: false,
-          //update-begin-author:taoyan date:2022-5-6 for: issues/I4BCC3 富文本编辑器在服务器图片上传是相对路径
+          // update-begin-author:taoyan date:2022-5-6 for: issues/I4BCC3 富文本编辑器在服务器图片上传是相对路径
           convert_urls: false,
-          //update-end-author:taoyan date:2022-5-6 for: issues/I4BCC3 富文本编辑器在服务器图片上传是相对路径
+          // update-end-author:taoyan date:2022-5-6 for: issues/I4BCC3 富文本编辑器在服务器图片上传是相对路径
           images_upload_handler: (blobInfo, success) => {
             let formData = new FormData()
-            formData.append('file', blobInfo.blob(), blobInfo.filename());
-            formData.append('biz', "jeditor");
-            formData.append("jeditor","1");
-            uploadAction(window._CONFIG['domianURL']+"/sys/common/upload", formData).then((res) => {
+            formData.append('file', blobInfo.blob(), blobInfo.filename())
+            formData.append('biz', 'jeditor')
+            formData.append('jeditor', '1')
+            uploadAction(window._CONFIG['domianURL'] + '/sys/common/upload', formData).then((res) => {
               if (res.success) {
-                if(res.message == 'local'){
+                if (res.message == 'local') {
                   const img = 'data:image/jpeg;base64,' + blobInfo.base64()
                   success(img)
-                }else{
+                } else {
                   let img = getFileAccessHttpUrl(res.message)
                   success(img)
                 }
@@ -94,7 +94,7 @@
           }
         },
         myValue: this.value,
-        reloading: false,
+        reloading: false
       }
     },
     mounted() {
@@ -110,7 +110,7 @@
       onClick(e) {
         this.$emit('onClick', e, tinymce)
       },
-      //可以添加一些自己的自定义事件，如清空内容
+      // 可以添加一些自己的自定义事件，如清空内容
       clear() {
         this.myValue = ''
       },
@@ -135,13 +135,13 @@
               this.reload()
             }
           })
-          //update--begin--autor:liusq-----date:20210316------for：富文本编辑器tab父组件可能导致的赋值问题------
+          // update--begin--autor:liusq-----date:20210316------for：富文本编辑器tab父组件可能导致的赋值问题------
           this.reload()
-          //update--end--autor:liusq-----date:20210316------for：富文本编辑器tab父组件可能导致的赋值问题------
-        }else{
-          //update--begin--autor:wangshuai-----date:20200724------for：富文本编辑器切换tab无法修改------
+          // update--end--autor:liusq-----date:20210316------for：富文本编辑器tab父组件可能导致的赋值问题------
+        } else {
+          // update--begin--autor:wangshuai-----date:20200724------for：富文本编辑器切换tab无法修改------
           let tabLayout = getVmParentByName(this, 'TabLayout')
-          //update--begin--autor:liusq-----date:20210713------for：处理特殊情况excuteCallback不能使用------
+          // update--begin--autor:liusq-----date:20210713------for：处理特殊情况excuteCallback不能使用------
           try {
             tabLayout.excuteCallback(() => {
               this.reload()
@@ -151,10 +151,10 @@
               this.reload()
             }
           }
-          //update--end--autor:liusq-----date:20210713------for：处理特殊情况excuteCallback不能使用------
-          //update--begin--autor:wangshuai-----date:20200724------for：文本编辑器切换tab无法修改------
+          // update--end--autor:liusq-----date:20210713------for：处理特殊情况excuteCallback不能使用------
+          // update--begin--autor:wangshuai-----date:20200724------for：文本编辑器切换tab无法修改------
         }
-      },
+      }
 
     },
     watch: {
@@ -162,19 +162,19 @@
         this.myValue = (newValue == null ? '' : newValue)
       },
       myValue(newValue) {
-        if(this.triggerChange){
+        if (this.triggerChange) {
           this.$emit('change', newValue)
-        }else{
+        } else {
           this.$emit('input', newValue)
         }
       },
-      //update--begin--autor:liusq-----date:20230420------for：[issues/19]缓存路由后，页面中富文本组件会出现无法编辑的问题------
+      // update--begin--autor:liusq-----date:20230420------for：[issues/19]缓存路由后，页面中富文本组件会出现无法编辑的问题------
       '$route': function(newRoute) {
-        if(this.$route.meta.keepAlive && this.$route.meta.componentName){
+        if (this.$route.meta.keepAlive && this.$route.meta.componentName) {
           this.reload()
         }
       }
-      //update--end--autor:liusq-----date:20230420------for：[issues/19]缓存路由后，页面中富文本组件会出现无法编辑的问题------
+      // update--end--autor:liusq-----date:20230420------for：[issues/19]缓存路由后，页面中富文本组件会出现无法编辑的问题------
     }
   }
 

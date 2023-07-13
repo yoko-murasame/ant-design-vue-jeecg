@@ -8,8 +8,8 @@
 
       <a-tab-pane tab="高级示例" key="2" forceRender>
         <j-vxe-demo2/>
-      </a-tab-pane> 
-      
+      </a-tab-pane>
+
       <a-tab-pane tab="联动示例" key="3" forceRender>
         <j-vxe-demo3/>
       </a-tab-pane>
@@ -25,11 +25,11 @@
 
   export default {
     name: 'JVXETableDemo',
-    components: {JVxeDemo2, JVxeDemo1,JVxeDemo3},
+    components: { JVxeDemo2, JVxeDemo1, JVxeDemo3 },
     data() {
       return {}
     },
-    methods: {},
+    methods: {}
   }
 </script>
 

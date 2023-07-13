@@ -59,7 +59,7 @@
     components: {
       DeptRoleInfo,
       DeptBaseInfo,
-      DeptUserInfo,
+      DeptUserInfo
     },
     data() {
       return {
@@ -85,40 +85,40 @@
         currSelected: {},
         form: this.$form.createForm(this),
         labelCol: {
-          xs: {span: 24},
-          sm: {span: 5}
+          xs: { span: 24 },
+          sm: { span: 5 }
         },
         wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16}
+          xs: { span: 24 },
+          sm: { span: 16 }
         },
         graphDatasource: {
           nodes: [],
           edges: []
         },
-        userIdentity:"",
+        userIdentity: ''
       }
     },
     methods: {
       callback(key) {
-        //console.log(key)
+        // console.log(key)
       },
       loadData() {
-        this.refresh();
+        this.refresh()
       },
       clearSelectedDepartKeys() {
-        this.checkedKeys = [];
-        this.selectedKeys = [];
-        this.currentDeptId = '';
-        this.$refs.DeptUserInfo.currentDeptId='';
-        this.$refs.DeptRoleInfo.currentDeptId='';
+        this.checkedKeys = []
+        this.selectedKeys = []
+        this.currentDeptId = ''
+        this.$refs.DeptUserInfo.currentDeptId = ''
+        this.$refs.DeptRoleInfo.currentDeptId = ''
       },
       loadTree() {
         var that = this
         that.treeData = []
         that.departTree = []
         queryMyDepartTreeList().then((res) => {
-          if (res.success && res.result ) {
+          if (res.success && res.result) {
             for (let i = 0; i < res.result.length; i++) {
               let temp = res.result[i]
               that.treeData.push(temp)
@@ -132,10 +132,10 @@
         })
       },
       setThisExpandedKeys(node) {
-        //只展开一级目录
+        // 只展开一级目录
         if (node.children && node.children.length > 0) {
           this.iExpandedKeys.push(node.key)
-          //下方代码放开注释则默认展开所有节点
+          // 下方代码放开注释则默认展开所有节点
           /**
           for (let a = 0; a < node.children.length; a++) {
             this.setThisExpandedKeys(node.children[a])
@@ -159,7 +159,7 @@
       onSearch(value) {
         let that = this
         if (value) {
-          searchByKeywords({keyWord: value,myDeptSearch:'1'}).then((res) => {
+          searchByKeywords({ keyWord: value, myDeptSearch: '1' }).then((res) => {
             if (res.success) {
               that.departTree = []
               for (let i = 0; i < res.result.length; i++) {
@@ -173,19 +173,18 @@
         } else {
           that.loadTree()
         }
-
       },
       onCheck(checkedKeys, e) {
-        let record = e.node.dataRef;
+        let record = e.node.dataRef
         // console.log('onCheck', checkedKeys, e);
-        this.checkedKeys = [];
+        this.checkedKeys = []
         // if (e.checked === true) {
-        this.currentDeptId = record.id;
-        this.checkedKeys.push(record.id);
+        this.currentDeptId = record.id
+        this.checkedKeys.push(record.id)
 
-        this.$refs.DeptBaseInfo.open(record);
-        this.$refs.DeptUserInfo.open(record);
-        this.$refs.DeptRoleInfo.open(record);
+        this.$refs.DeptBaseInfo.open(record)
+        this.$refs.DeptUserInfo.open(record)
+        this.$refs.DeptRoleInfo.open(record)
         // }
         // else {
         //   this.checkedKeys = [];
@@ -193,27 +192,27 @@
         //   this.$refs.DeptUserInfo.clearList();
         // }
 
-        this.hiding = false;
+        this.hiding = false
         // this.checkedKeys = checkedKeys.checked
       },
       onSelect(selectedKeys, e) {
         if (this.selectedKeys[0] !== selectedKeys[0]) {
-          this.selectedKeys = [selectedKeys[0]];
+          this.selectedKeys = [selectedKeys[0]]
         }
-        let record = e.node.dataRef;
-        this.checkedKeys.push(record.id);
-        this.$refs.DeptBaseInfo.open(record);
-        this.$refs.DeptUserInfo.onClearSelected();
-        this.$refs.DeptUserInfo.open(record);
-        this.$refs.DeptRoleInfo.onClearSelected();
-        this.$refs.DeptRoleInfo.open(record);
-      },
+        let record = e.node.dataRef
+        this.checkedKeys.push(record.id)
+        this.$refs.DeptBaseInfo.open(record)
+        this.$refs.DeptUserInfo.onClearSelected()
+        this.$refs.DeptUserInfo.open(record)
+        this.$refs.DeptRoleInfo.onClearSelected()
+        this.$refs.DeptRoleInfo.open(record)
+      }
     },
     created() {
       this.currFlowId = this.$route.params.id
       this.currFlowName = this.$route.params.name
       // this.loadTree()
-    },
+    }
   }
 </script>
 <style scoped>

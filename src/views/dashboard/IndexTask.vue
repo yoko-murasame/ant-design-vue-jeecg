@@ -142,109 +142,109 @@
   import noDataPng from '@/assets/nodata.png'
   import JEllipsis from '@/components/jeecg/JEllipsis'
 
-  const tempSs1=[{
-    id:"001",
-    orderNo:"电[1]1267102",
-    orderTitle:"药品出问题了",
-    restDay:1
-  },{
-    id:"002",
-    orderNo:"电[4]5967102",
-    orderTitle:"吃了xxx医院的药，病情越来越严重",
-    restDay:0
-  },{
-    id:"003",
-    orderNo:"电[3]5988987",
-    orderTitle:"今天去超市买鸡蛋，鸡蛋都是坏的",
-    restDay:7
-  },{
-    id:"004",
-    orderNo:"电[2]5213491",
-    orderTitle:"xx宝实体店高价售卖xx",
-    restDay:5
-  },{
-    id:"005",
-    orderNo:"电[1]1603491",
-    orderTitle:"以红利相诱，答应退保后扣一年费用",
-    restDay:0
+  const tempSs1 = [{
+    id: '001',
+    orderNo: '电[1]1267102',
+    orderTitle: '药品出问题了',
+    restDay: 1
+  }, {
+    id: '002',
+    orderNo: '电[4]5967102',
+    orderTitle: '吃了xxx医院的药，病情越来越严重',
+    restDay: 0
+  }, {
+    id: '003',
+    orderNo: '电[3]5988987',
+    orderTitle: '今天去超市买鸡蛋，鸡蛋都是坏的',
+    restDay: 7
+  }, {
+    id: '004',
+    orderNo: '电[2]5213491',
+    orderTitle: 'xx宝实体店高价售卖xx',
+    restDay: 5
+  }, {
+    id: '005',
+    orderNo: '电[1]1603491',
+    orderTitle: '以红利相诱，答应退保后扣一年费用',
+    restDay: 0
   }]
 
-  const tempSs2=[{
-    id:"001",
-    orderTitle:"我要投诉这个大超市",
-    orderNo:"电[1]10299456",
-    restDay:6
-  },{
-    id:"002",
-    orderTitle:"xxx医院乱开药方,售卖假药",
-    orderNo:"电[2]20235691",
-    restDay:0
-  },{
-    id:"003",
-    orderTitle:"我想问问这家店是干啥的",
-    orderNo:"电[3]495867322",
-    restDay:7
-  },{
-    id:"004",
-    orderTitle:"我要举报朝阳区奥森公园酒店",
-    orderNo:"电[2]1193849",
-    restDay:3
-  },{
-    id:"005",
-    orderTitle:"我今天吃饭吃到一个石头子",
-    orderNo:"电[4]56782344",
-    restDay:9
+  const tempSs2 = [{
+    id: '001',
+    orderTitle: '我要投诉这个大超市',
+    orderNo: '电[1]10299456',
+    restDay: 6
+  }, {
+    id: '002',
+    orderTitle: 'xxx医院乱开药方,售卖假药',
+    orderNo: '电[2]20235691',
+    restDay: 0
+  }, {
+    id: '003',
+    orderTitle: '我想问问这家店是干啥的',
+    orderNo: '电[3]495867322',
+    restDay: 7
+  }, {
+    id: '004',
+    orderTitle: '我要举报朝阳区奥森公园酒店',
+    orderNo: '电[2]1193849',
+    restDay: 3
+  }, {
+    id: '005',
+    orderTitle: '我今天吃饭吃到一个石头子',
+    orderNo: '电[4]56782344',
+    restDay: 9
   }]
 
-  //4-7天
-  const tip_green = "rgba(0, 255, 0, 1)"
-  //1-3天
-  const tip_yellow = "rgba(255, 255, 0, 1)"
-  //超期
-  const tip_red = "rgba(255, 0, 0, 1)"
+  // 4-7天
+  const tip_green = 'rgba(0, 255, 0, 1)'
+  // 1-3天
+  const tip_yellow = 'rgba(255, 255, 0, 1)'
+  // 超期
+  const tip_red = 'rgba(255, 0, 0, 1)'
 
   export default {
-    name: "IndexTask",
-    components:{ JEllipsis },
+    name: 'IndexTask',
+    components: { JEllipsis },
     data() {
       return {
-        loading:false,
-        textMaxLength:8,
-        dataSource1:[],
-        dataSource2:[],
-        dataSource3:[],
-        dataSource4:[],
+        loading: false,
+        textMaxLength: 8,
+        dataSource1: [],
+        dataSource2: [],
+        dataSource3: [],
+        dataSource4: [],
         columns: [
           {
             title: '',
             dataIndex: '',
-            key:'rowIndex',
-            width:50,
-            fixed:'left',
-            align:"center",
-            scopedSlots: {customRender: "dayWarnning"}
+            key: 'rowIndex',
+            width: 50,
+            fixed: 'left',
+            align: 'center',
+            scopedSlots: { customRender: 'dayWarnning' }
           },
           {
-            title:'剩余天数',
-            align:"center",
+            title: '剩余天数',
+            align: 'center',
             dataIndex: 'restDay',
-            width:80
+            width: 80
           },
           {
-            title:'工单标题',
-            align:"center",
+            title: '工单标题',
+            align: 'center',
             dataIndex: 'orderTitle',
-            scopedSlots: {customRender: "ellipsisText"}
+            scopedSlots: { customRender: 'ellipsisText' }
           },
           {
-            title:'工单编号',
-            align:"center",
-            dataIndex: 'orderNo',
+            title: '工单编号',
+            align: 'center',
+            dataIndex: 'orderNo'
           },
           {
             title: '操作',
             dataIndex: 'action',
-            align:"center",
+            align: 'center',
             scopedSlots: { customRender: 'action' }
           }
         ]
@@ -252,52 +252,49 @@
       }
     },
     created() {
-      this.mock();
+      this.mock()
     },
-    mounted(){
+    mounted() {
 
     },
     methods: {
-      getTipColor(rd){
+      getTipColor(rd) {
         let num = rd.restDay
-        if(num<=0){
+        if (num <= 0) {
           return tip_red
-        }else if(num>=1 && num<4){
+        } else if (num >= 1 && num < 4) {
           return tip_yellow
-        }else if(num>=4){
+        } else if (num >= 4) {
           return tip_green
         }
       },
-      goPage(){
-        this.$message.success("请根据具体业务跳转页面")
-        //this.$router.push({ path: '/comp/mytask' })
+      goPage() {
+        this.$message.success('请根据具体业务跳转页面')
+        // this.$router.push({ path: '/comp/mytask' })
       },
-      mock(){
-        this.dataSource1=tempSs1
-        this.dataSource2=tempSs2
-        this.dataSource3=tempSs1
-        this.dataSource4=[]
-        this.ifNullDataSource(this.dataSource4,'.tytable4')
+      mock() {
+        this.dataSource1 = tempSs1
+        this.dataSource2 = tempSs2
+        this.dataSource3 = tempSs1
+        this.dataSource4 = []
+        this.ifNullDataSource(this.dataSource4, '.tytable4')
       },
 
-      ifNullDataSource(ds,tb){
-        this.$nextTick(()=>{
-          if(!ds || ds.length==0){
-            var tmp = document.createElement('img');
-            tmp.src=noDataPng
-            tmp.width=300
-            let tbclass=`${tb} .ant-table-placeholder`
-            document.querySelector(tbclass).innerHTML=""
+      ifNullDataSource(ds, tb) {
+        this.$nextTick(() => {
+          if (!ds || ds.length == 0) {
+            var tmp = document.createElement('img')
+            tmp.src = noDataPng
+            tmp.width = 300
+            let tbclass = `${tb} .ant-table-placeholder`
+            document.querySelector(tbclass).innerHTML = ''
             document.querySelector(tbclass).appendChild(tmp)
           }
         })
       },
-      handleData(){
-        this.$message.success("办理完成")
+      handleData() {
+        this.$message.success('办理完成')
       }
-
-
-
 
     }
   }
@@ -323,7 +320,6 @@
    .index-container-ty .ant-card-actions li {margin:2px 0;}
    .index-container-ty .ant-card-actions > li > span{width: 100%}*/
 
-
   .index-container-ty .ant-table-footer{text-align: right;padding:6px 12px 6px 6px;background: #fff;border-top: 2px solid #f7f1f1;}
 
   .index-md-title{
@@ -346,7 +342,6 @@
     /*border-right:1px solid #90aeff;
     border-bottom:1px solid #90aeff;*/
   }
-
 
   .index-container-ty .ant-table-thead > tr > th,
   .index-container-ty .ant-table-tbody > tr > td{

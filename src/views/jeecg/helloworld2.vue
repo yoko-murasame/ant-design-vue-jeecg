@@ -11,7 +11,7 @@
         value: 1,
 
         // form
-        form: this.$form.createForm(this),
+        form: this.$form.createForm(this)
 
       }
     },

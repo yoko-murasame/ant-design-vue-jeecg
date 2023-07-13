@@ -15,37 +15,37 @@
   export default {
     name: 'JDate',
     props: {
-      placeholder:{
+      placeholder: {
         type: String,
         default: '',
         required: false
       },
-      value:{
+      value: {
         type: String,
         required: false
       },
-      dateFormat:{
+      dateFormat: {
         type: String,
         default: 'YYYY-MM-DD',
         required: false
       },
-      //此属性可以被废弃了
-      triggerChange:{
+      // 此属性可以被废弃了
+      triggerChange: {
         type: Boolean,
         required: false,
         default: false
       },
-      readOnly:{
+      readOnly: {
         type: Boolean,
         required: false,
         default: false
       },
-      disabled:{
+      disabled: {
         type: Boolean,
         required: false,
         default: false
       },
-      showTime:{
+      showTime: {
         type: Boolean,
         required: false,
         default: false
@@ -56,28 +56,28 @@
       }
     },
     data () {
-      let dateStr = this.value;
+      let dateStr = this.value
       return {
-        decorator:"",
-        momVal:!dateStr?null:moment(dateStr,this.dateFormat)
+        decorator: '',
+        momVal: !dateStr ? null : moment(dateStr, this.dateFormat)
       }
     },
     watch: {
       value (val) {
-        if(!val){
+        if (!val) {
           this.momVal = null
-        }else{
-          this.momVal = moment(val,this.dateFormat)
+        } else {
+          this.momVal = moment(val, this.dateFormat)
         }
       }
     },
     methods: {
       moment,
-      handleDateChange(mom,dateStr){
-        this.$emit('change', dateStr);
+      handleDateChange(mom, dateStr) {
+        this.$emit('change', dateStr)
       }
     },
-    //2.2新增 在组件内定义 指定父组件调用时候的传值属性和事件类型 这个牛逼
+    // 2.2新增 在组件内定义 指定父组件调用时候的传值属性和事件类型 这个牛逼
     model: {
       prop: 'value',
       event: 'change'

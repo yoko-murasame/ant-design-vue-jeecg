@@ -8,8 +8,8 @@
 <script>
   import ImgTurnPage from '../ImgTurnPage'
   export default {
-    name: "SplitPanelAModal",
-    components:{
+    name: 'SplitPanelAModal',
+    components: {
       ImgTurnPage
     },
     data () {

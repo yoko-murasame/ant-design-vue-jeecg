@@ -32,7 +32,6 @@
       </a-col>
     </a-row>
 
-
   </a-card>
 </template>
 
@@ -56,7 +55,7 @@
           // 可切换的条数
           pageSizeOptions: ['50'],
           // 数据总数（目前并不知道真实的总数，所以先填写0，在后台查出来后再赋值）
-          total: 0,
+          total: 0
         },
         // 选择的行
         selectedRows: [],
@@ -64,7 +63,7 @@
         dataSource: [],
         // 列配置，控制表格显示的列
         columns: [
-          {key: 'num', title: '序号', width: '80px'},
+          { key: 'num', title: '序号', width: '80px' },
           {
             // 字段key，跟后台数据的字段名匹配
             key: 'ship_name',
@@ -75,11 +74,11 @@
             // 如果加上了该属性，就代表当前单元格是可编辑的，type就是表单的类型，input就是简单的输入框
             type: JVXETypes.input
           },
-          {key: 'call', title: '呼叫', width: '80px', type: JVXETypes.input},
-          {key: 'len', title: '长', width: '80px', type: JVXETypes.input},
-          {key: 'ton', title: '吨', width: '120px', type: JVXETypes.input},
-          {key: 'payer', title: '付款方', width: '120px', type: JVXETypes.input},
-          {key: 'count', title: '数', width: '40px'},
+          { key: 'call', title: '呼叫', width: '80px', type: JVXETypes.input },
+          { key: 'len', title: '长', width: '80px', type: JVXETypes.input },
+          { key: 'ton', title: '吨', width: '120px', type: JVXETypes.input },
+          { key: 'payer', title: '付款方', width: '120px', type: JVXETypes.input },
+          { key: 'count', title: '数', width: '40px' },
           {
             key: 'company',
             title: '公司',
@@ -88,7 +87,7 @@
             minWidth: '180px',
             type: JVXETypes.input
           },
-          {key: 'trend', title: '动向', width: '120px', type: JVXETypes.input},
+          { key: 'trend', title: '动向', width: '120px', type: JVXETypes.input }
         ],
         // 树的数据，这里模拟分页固定数据，实际情况应该是后台查出来的数据
         treeData: [
@@ -98,54 +97,54 @@
             key: '1-10',
             // 第2级数据
             children: [
-              {title: '第 1 页', key: 1, slots: {icon: 'myIcon'}},
-              {title: '第 2 页', key: 2, slots: {icon: 'myIcon'}},
+              { title: '第 1 页', key: 1, slots: { icon: 'myIcon' } },
+              { title: '第 2 页', key: 2, slots: { icon: 'myIcon' } },
               {
                 title: '第 3 页',
                 key: 3,
-                slots: {icon: 'myIcon'},
+                slots: { icon: 'myIcon' },
                 // 第3级数据
                 children: [
-                  {title: '第 333 页', key: 333, slots: {icon: 'myIcon'}},
-                  {title: '第 444 页', key: 444, slots: {icon: 'myIcon'}},
-                  {title: '第 555 页', key: 555, slots: {icon: 'myIcon'}},
+                  { title: '第 333 页', key: 333, slots: { icon: 'myIcon' } },
+                  { title: '第 444 页', key: 444, slots: { icon: 'myIcon' } },
+                  { title: '第 555 页', key: 555, slots: { icon: 'myIcon' } }
                   // 第4第5级以此类推，加上 children 属性即可
-                ],
+                ]
               },
-              {title: '第 4 页', key: 4, slots: {icon: 'myIcon'}},
-              {title: '第 5 页', key: 5, slots: {icon: 'myIcon'}},
-              {title: '第 6 页', key: 6, slots: {icon: 'myIcon'}},
-              {title: '第 7 页', key: 7, slots: {icon: 'myIcon'}},
-              {title: '第 8 页', key: 8, slots: {icon: 'myIcon'}},
-              {title: '第 9 页', key: 9, slots: {icon: 'myIcon'}},
-              {title: '第 10 页', key: 10, slots: {icon: 'myIcon'}},
+              { title: '第 4 页', key: 4, slots: { icon: 'myIcon' } },
+              { title: '第 5 页', key: 5, slots: { icon: 'myIcon' } },
+              { title: '第 6 页', key: 6, slots: { icon: 'myIcon' } },
+              { title: '第 7 页', key: 7, slots: { icon: 'myIcon' } },
+              { title: '第 8 页', key: 8, slots: { icon: 'myIcon' } },
+              { title: '第 9 页', key: 9, slots: { icon: 'myIcon' } },
+              { title: '第 10 页', key: 10, slots: { icon: 'myIcon' } }
             ],
-            slots: {icon: 'myIcon'},
+            slots: { icon: 'myIcon' }
           },
           {
             title: '11-20页',
             key: '11-20',
             children: [
-              {title: '第 11 页', key: 11, slots: {icon: 'myIcon'}},
-              {title: '第 12 页', key: 12, slots: {icon: 'myIcon'}},
-              {title: '第 13 页', key: 13, slots: {icon: 'myIcon'}},
-              {title: '第 14 页', key: 14, slots: {icon: 'myIcon'}},
-              {title: '第 15 页', key: 15, slots: {icon: 'myIcon'}},
-              {title: '第 16 页', key: 16, slots: {icon: 'myIcon'}},
-              {title: '第 17 页', key: 17, slots: {icon: 'myIcon'}},
-              {title: '第 18 页', key: 18, slots: {icon: 'myIcon'}},
-              {title: '第 19 页', key: 19, slots: {icon: 'myIcon'}},
-              {title: '第 20 页', key: 20, slots: {icon: 'myIcon'}},
+              { title: '第 11 页', key: 11, slots: { icon: 'myIcon' } },
+              { title: '第 12 页', key: 12, slots: { icon: 'myIcon' } },
+              { title: '第 13 页', key: 13, slots: { icon: 'myIcon' } },
+              { title: '第 14 页', key: 14, slots: { icon: 'myIcon' } },
+              { title: '第 15 页', key: 15, slots: { icon: 'myIcon' } },
+              { title: '第 16 页', key: 16, slots: { icon: 'myIcon' } },
+              { title: '第 17 页', key: 17, slots: { icon: 'myIcon' } },
+              { title: '第 18 页', key: 18, slots: { icon: 'myIcon' } },
+              { title: '第 19 页', key: 19, slots: { icon: 'myIcon' } },
+              { title: '第 20 页', key: 20, slots: { icon: 'myIcon' } }
             ],
-            slots: {icon: 'myIcon'},
-          },
+            slots: { icon: 'myIcon' }
+          }
         ],
         // 树展开的列，默认 1-10
         treeExpandedKeys: ['1-10'],
         // 查询url地址
         url: {
-          getData: '/mock/vxe/getData',
-        },
+          getData: '/mock/vxe/getData'
+        }
       }
     },
     created() {
@@ -171,7 +170,7 @@
             // 重置选择
             this.selectedRows = []
           } else {
-            this.$error({title: '主表查询失败', content: res.message})
+            this.$error({ title: '主表查询失败', content: res.message })
           }
         }).finally(() => {
           // 这里是无论成功或失败都会执行的方法，在这里关闭loading
@@ -208,9 +207,9 @@
       // 树被选择触发的事件
       handleTreeExpand(expandedKeys) {
         this.treeExpandedKeys = expandedKeys
-      },
+      }
 
-    },
+    }
   }
 </script>
 

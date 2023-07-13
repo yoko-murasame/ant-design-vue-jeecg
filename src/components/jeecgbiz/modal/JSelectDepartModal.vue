@@ -51,27 +51,27 @@
   import { queryDepartTreeList } from '@/api/api'
   export default {
     name: 'JSelectDepartModal',
-    props:['modalWidth','multi','rootOpened','departId', 'store', 'text','treeOpera'],
-    data(){
+    props: ['modalWidth', 'multi', 'rootOpened', 'departId', 'store', 'text', 'treeOpera'],
+    data() {
       return {
-        visible:false,
-        confirmLoading:false,
-        treeData:[],
-        autoExpandParent:true,
-        expandedKeys:[],
-        dataList:[],
-        checkedKeys:[],
-        checkedRows:[],
-        searchValue:"",
+        visible: false,
+        confirmLoading: false,
+        treeData: [],
+        autoExpandParent: true,
+        expandedKeys: [],
+        dataList: [],
+        checkedKeys: [],
+        checkedRows: [],
+        searchValue: '',
         checkStrictly: true,
-        fullscreen:false
+        fullscreen: false
       }
     },
-    created(){
-      this.loadDepart();
+    created() {
+      this.loadDepart()
     },
-    watch:{
-      departId(){
+    watch: {
+      departId() {
         this.initDepartComponent()
       },
       visible: {
@@ -80,120 +80,120 @@
         }
       }
     },
-    computed:{
+    computed: {
       treeScreenClass() {
         return {
           'my-dept-select-tree': true,
-          'fullscreen': this.fullscreen,
+          'fullscreen': this.fullscreen
         }
       },
-      filterTreeData(){
-        if(!this.searchValue){
+      filterTreeData() {
+        if (!this.searchValue) {
           return this.treeData
         }
         let filter = []
         this.dataList.forEach((item) => {
           if (item.title.includes(this.searchValue)) {
-            filter.push(Object.assign({}, item, {children: null, isLeaf: true}))
+            filter.push(Object.assign({}, item, { children: null, isLeaf: true }))
           }
         })
         return filter
-      },
+      }
     },
-    methods:{
-      show(){
-        this.visible=true
-        this.checkedRows=[]
-        this.checkedKeys=[]
+    methods: {
+      show() {
+        this.visible = true
+        this.checkedRows = []
+        this.checkedKeys = []
       },
-      loadDepart(){
+      loadDepart() {
         // 这个方法是找到所有的部门信息
-        queryDepartTreeList().then(res=>{
-          if(res.success){
+        queryDepartTreeList().then(res => {
+          if (res.success) {
             let arr = [...res.result]
             this.reWriterWithSlot(arr)
             this.treeData = arr
             this.initDepartComponent()
-            if(this.rootOpened){
+            if (this.rootOpened) {
               this.initExpandedKeys(res.result)
             }
           }
         })
       },
-      initDepartComponent(flag){
+      initDepartComponent(flag) {
         let arr = []
-        //该方法两个地方用 1.visible改变事件重新设置选中项 2.组件编辑页面回显
-        let fieldName = flag==true?'key':this.text
-        if(this.departId){
+        // 该方法两个地方用 1.visible改变事件重新设置选中项 2.组件编辑页面回显
+        let fieldName = flag == true ? 'key' : this.text
+        if (this.departId) {
           let arr2 = this.departId.split(',')
-          for(let item of this.dataList){
-            if(arr2.indexOf(item[this.store])>=0){
+          for (let item of this.dataList) {
+            if (arr2.indexOf(item[this.store]) >= 0) {
               arr.push(item[fieldName])
             }
           }
         }
-        if(flag==true){
+        if (flag == true) {
           this.checkedKeys = [...arr]
-        }else{
-          this.$emit("initComp", arr.join(','))
+        } else {
+          this.$emit('initComp', arr.join(','))
         }
       },
-      reWriterWithSlot(arr){
-        for(let item of arr){
-          if(item.children && item.children.length>0){
+      reWriterWithSlot(arr) {
+        for (let item of arr) {
+          if (item.children && item.children.length > 0) {
             this.reWriterWithSlot(item.children)
-            let temp = Object.assign({},item)
+            let temp = Object.assign({}, item)
             temp.children = {}
             this.dataList.push(temp)
-          }else{
+          } else {
             this.dataList.push(item)
-            item.scopedSlots={ title: 'title' }
+            item.scopedSlots = { title: 'title' }
           }
         }
       },
-      initExpandedKeys(arr){
-        if(arr && arr.length>0){
+      initExpandedKeys(arr) {
+        if (arr && arr.length > 0) {
           let keys = []
-          for(let item of arr){
-            if(item.children && item.children.length>0){
+          for (let item of arr) {
+            if (item.children && item.children.length > 0) {
               keys.push(item.id)
             }
           }
-          this.expandedKeys=[...keys]
-          //全部keys
-          //this.allTreeKeys = [...keys]
-        }else{
-          this.expandedKeys=[]
-          //this.allTreeKeys = []
+          this.expandedKeys = [...keys]
+          // 全部keys
+          // this.allTreeKeys = [...keys]
+        } else {
+          this.expandedKeys = []
+          // this.allTreeKeys = []
         }
       },
-      onCheck (checkedKeys,info) {
-        if(!this.multi){
+      onCheck (checkedKeys, info) {
+        if (!this.multi) {
           let arr = checkedKeys.checked.filter(item => this.checkedKeys.indexOf(item) < 0)
           this.checkedKeys = [...arr]
           this.checkedRows = (this.checkedKeys.length === 0) ? [] : [info.node.dataRef]
-        }else{
-          if(this.checkStrictly){
+        } else {
+          if (this.checkStrictly) {
             this.checkedKeys = checkedKeys.checked
-          }else{
+          } else {
             this.checkedKeys = checkedKeys
           }
           this.checkedRows = this.getCheckedRows(this.checkedKeys)
         }
       },
-      onSelect(selectedKeys,info) {
-        //取消关联的情况下才走onSelect的逻辑
-        if(this.checkStrictly){
+      onSelect(selectedKeys, info) {
+        // 取消关联的情况下才走onSelect的逻辑
+        if (this.checkStrictly) {
           let keys = []
           keys.push(selectedKeys[0])
-          if(!this.checkedKeys || this.checkedKeys.length===0 || !this.multi){
+          if (!this.checkedKeys || this.checkedKeys.length === 0 || !this.multi) {
             this.checkedKeys = [...keys]
-            this.checkedRows=[info.node.dataRef]
-          }else{
+            this.checkedRows = [info.node.dataRef]
+          } else {
             let currKey = info.node.dataRef.key
-            if(this.checkedKeys.indexOf(currKey)>=0){
-              this.checkedKeys = this.checkedKeys.filter(item=> item !==currKey)
-            }else{
+            if (this.checkedKeys.indexOf(currKey) >= 0) {
+              this.checkedKeys = this.checkedKeys.filter(item => item !== currKey)
+            } else {
               this.checkedKeys.push(...keys)
             }
           }
@@ -204,24 +204,24 @@
         this.expandedKeys = expandedKeys
         this.autoExpandParent = false
       },
-      handleSubmit(){
-        if(!this.checkedKeys || this.checkedKeys.length==0){
-          this.$emit("ok",'')
-        }else{
+      handleSubmit() {
+        if (!this.checkedKeys || this.checkedKeys.length == 0) {
+          this.$emit('ok', '')
+        } else {
           let checkRow = this.getCheckedRows(this.checkedKeys)
-          let keyStr = this.checkedKeys.join(",")
-          this.$emit("ok", checkRow, keyStr)
+          let keyStr = this.checkedKeys.join(',')
+          this.$emit('ok', checkRow, keyStr)
         }
         this.handleClear()
       },
-      handleCancel(){
+      handleCancel() {
         this.handleClear()
       },
-      handleClear(){
-        this.visible=false
-        this.checkedKeys=[]
+      handleClear() {
+        this.visible = false
+        this.checkedKeys = []
       },
-      getParentKey(currKey,treeData){
+      getParentKey(currKey, treeData) {
         let parentKey
         for (let i = 0; i < treeData.length; i++) {
           const node = treeData[i]
@@ -262,14 +262,14 @@
         return rows
       },
       switchCheckStrictly (v) {
-        if(v==1){
+        if (v == 1) {
           this.checkStrictly = false
-        }else if(v==2){
+        } else if (v == 2) {
           this.checkStrictly = true
         }
       },
-      isFullscreen(val){
-        this.fullscreen=val
+      isFullscreen(val) {
+        this.fullscreen = val
       }
     }
   }
@@ -280,7 +280,7 @@
   // 限制部门选择树高度，避免部门太多时点击确定不便
   .my-dept-select-tree{
     height:350px;
-    
+
     &.fullscreen{
       height: calc(100vh - 250px);
     }

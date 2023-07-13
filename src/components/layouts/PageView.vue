@@ -13,7 +13,7 @@
   import RouteView from './RouteView'
 
   export default {
-    name: "PageContent",
+    name: 'PageContent',
     components: {
       RouteView,
       PageLayout
@@ -52,7 +52,7 @@
           this.description = content.description
           this.linkList = content.linkList
           this.extraImage = content.extraImage
-          this.search = content.search == true ? true : false
+          this.search = content.search == true
           this.tabs = content.tabs
         }
       }

@@ -22,11 +22,11 @@
               </a-col>
               -->
               <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-            <a-col :md="12" :sm="24">
-               <a-button type="primary" @click="searchQuery" icon="search" style="margin-left: 21px">查询</a-button>
-              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-            </a-col>
-          </span>
+                <a-col :md="12" :sm="24">
+                  <a-button type="primary" @click="searchQuery" icon="search" style="margin-left: 21px">查询</a-button>
+                  <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+                </a-col>
+              </span>
             </a-row>
           </a-form>
         </div>
@@ -34,7 +34,13 @@
         <div class="table-operator" style="margin: 5px 0 10px 2px">
           <a-button @click="handleAdd" type="primary" icon="plus">新建角色</a-button>
           <!--<a-button @click="handleEdit(model1)" type="primary" icon="plus">角色编辑</a-button>-->
-          <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+          <a-upload
+            name="file"
+            :showUploadList="false"
+            :multiple="false"
+            :headers="tokenHeader"
+            :action="importExcelUrl"
+            @change="handleImportExcel">
             <a-button type="primary" icon="import">导入</a-button>
           </a-upload>
           <a-button type="primary" icon="download" @click="handleExportXls('角色管理')">导出</a-button>
@@ -59,29 +65,29 @@
             :loading="loading"
             :rowSelection="{selectedRowKeys: selectedRowKeys1, onChange: onSelectChange1, type:'radio'}"
             @change="handleTableChange">
-          <span slot="action" slot-scope="text, record">
-            <a @click="handleOpen(record)">用户</a>
-            <a-divider type="vertical"/>
+            <span slot="action" slot-scope="text, record">
+              <a @click="handleOpen(record)">用户</a>
+              <a-divider type="vertical"/>
 
-            <a-dropdown>
-              <a class="ant-dropdown-link">
-                更多 <a-icon type="down"/>
-              </a>
-              <a-menu slot="overlay">
-                <a-menu-item>
-                  <a @click="handlePerssion(record.id)">授权</a>
-                </a-menu-item>
-                <a-menu-item>
-                  <a @click="handleEdit(record)">编辑</a>
-                </a-menu-item>
-                <a-menu-item>
-                  <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete1(record.id)">
-                    <a>删除</a>
-                  </a-popconfirm>
-                </a-menu-item>
-              </a-menu>
-            </a-dropdown>
-        </span>
+              <a-dropdown>
+                <a class="ant-dropdown-link">
+                  更多 <a-icon type="down"/>
+                </a>
+                <a-menu slot="overlay">
+                  <a-menu-item>
+                    <a @click="handlePerssion(record.id)">授权</a>
+                  </a-menu-item>
+                  <a-menu-item>
+                    <a @click="handleEdit(record)">编辑</a>
+                  </a-menu-item>
+                  <a-menu-item>
+                    <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete1(record.id)">
+                      <a>删除</a>
+                    </a-popconfirm>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </span>
           </a-table>
         </div>
         <!-- 右侧的角色权限配置 -->
@@ -105,12 +111,12 @@
                 </a-form-item>
               </a-col>
               <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-            <a-col :md="9" :sm="24">
-             <a-button type="primary" @click="searchQuery2" icon="search" style="margin-left: 21px">查询</a-button>
-              <a-button type="primary" @click="searchReset2" icon="reload" style="margin-left: 8px">重置</a-button>
+                <a-col :md="9" :sm="24">
+                  <a-button type="primary" @click="searchQuery2" icon="search" style="margin-left: 21px">查询</a-button>
+                  <a-button type="primary" @click="searchReset2" icon="reload" style="margin-left: 8px">重置</a-button>
 
-            </a-col>
-          </span>
+                </a-col>
+              </span>
             </a-row>
           </a-form>
         </div>
@@ -136,7 +142,7 @@
         <div>
           <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
             <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{
-            selectedRowKeys2.length }}</a>项
+              selectedRowKeys2.length }}</a>项
             <a style="margin-left: 24px" @click="onClearSelected2">清空</a>
           </div>
           <a-table
@@ -151,22 +157,22 @@
             :loading="loading2"
             :rowSelection="{selectedRowKeys: selectedRowKeys2, onChange: onSelectChange2}"
             @change="handleTableChange2">
-           <span slot="action" slot-scope="text, record">
-           <a @click="handleEdit2(record)">编辑</a>
-          <a-divider type="vertical"/>
-          <a-dropdown>
-            <a class="ant-dropdown-link">
-              更多 <a-icon type="down"/>
-            </a>
-            <a-menu slot="overlay">
-              <a-menu-item>
-                <a-popconfirm title="确定取消关联吗?" @confirm="() => handleDelete2(record.id)">
-                  <a>取消关联</a>
-                </a-popconfirm>
-              </a-menu-item>
-            </a-menu>
-          </a-dropdown>
-        </span>
+            <span slot="action" slot-scope="text, record">
+              <a @click="handleEdit2(record)">编辑</a>
+              <a-divider type="vertical"/>
+              <a-dropdown>
+                <a class="ant-dropdown-link">
+                  更多 <a-icon type="down"/>
+                </a>
+                <a-menu slot="overlay">
+                  <a-menu-item>
+                    <a-popconfirm title="确定取消关联吗?" @confirm="() => handleDelete2(record.id)">
+                      <a>取消关联</a>
+                    </a-popconfirm>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </span>
           </a-table>
         </div>
         <!-- 表单区域 -->
@@ -244,8 +250,8 @@
         selectedRowKeys2: [],
         selectionRows1: [],
         selectionRows2: [],
-        test:{},
-        rightcolval:0,
+        test: {},
+        rightcolval: 0,
         columns:
           [
             {
@@ -261,7 +267,7 @@
             {
               title: '创建时间',
               dataIndex: 'createTime',
-              align:"center",
+              align: 'center',
               sorter: true,
               customRender: (text) => {
                 return moment(text).format('YYYY-MM-DD')
@@ -354,7 +360,7 @@
       },
 
       getQueryParams2() {
-        //获取查询条件
+        // 获取查询条件
         let sqp = {}
         if (this.superQueryParams2) {
           sqp['superQueryParams'] = encodeURI(this.superQueryParams2)
@@ -367,7 +373,7 @@
         return filterObj(param)
       },
       getQueryField2() {
-        //TODO 字段权限控制
+        // TODO 字段权限控制
         var str = 'id,'
         this.columns2.forEach(function(value) {
           str += ',' + value.dataIndex
@@ -385,7 +391,7 @@
         } else {
           this.$refs.modalForm2.roleDisabled = true
           this.$refs.modalForm2.title = '新增'
-          this.$refs.modalForm2.edit({activitiSync:'1',userIdentity:1,selectedroles:this.currentRoleId})
+          this.$refs.modalForm2.edit({ activitiSync: '1', userIdentity: 1, selectedroles: this.currentRoleId })
         }
       },
       modalFormOk2() {
@@ -397,23 +403,21 @@
           this.$message.error('请设置url.list2属性!')
           return
         }
-        //加载数据 若传入参数1则加载第一页的内容
+        // 加载数据 若传入参数1则加载第一页的内容
         if (arg === 1) {
           this.ipagination2.current = 1
         }
         if (this.currentRoleId === '') return
-        let params = this.getQueryParams2()//查询条件
+        let params = this.getQueryParams2()// 查询条件
         params.roleId = this.currentRoleId
         this.loading2 = true
         getAction(this.url.list2, params).then((res) => {
           if (res.success) {
             this.dataSource2 = res.result.records
             this.ipagination2.total = res.result.total
-
           }
           this.loading2 = false
         })
-
       },
       handleDelete1: function(id) {
         this.handleDelete(id)
@@ -436,14 +440,12 @@
         })
       },
       batchDel2: function() {
-
         if (!this.url.deleteBatch2) {
           this.$message.error('请设置url.deleteBatch2属性!')
           return
         }
         if (this.selectedRowKeys2.length <= 0) {
           this.$message.warning('请选择一条记录！')
-          return
         } else {
           var ids = ''
           for (var a = 0; a < this.selectedRowKeys2.length; a++) {
@@ -501,14 +503,14 @@
         this.onClearSelected2()
         this.loadData2()
       },
-      /*handleEdit: function(record) {
+      /* handleEdit: function(record) {
         if (this.currentRoleId == '') {
           this.$message.error('请选择一个角色!')
         } else {
           this.$refs.modalForm.edit(record)
           this.$refs.modalForm.title = '编辑'
         }
-      },*/
+      }, */
       searchQuery2() {
         this.loadData2(1)
       },
@@ -517,22 +519,22 @@
         this.loadData2(1)
       },
       handleTableChange2(pagination, filters, sorter) {
-        //分页、排序、筛选变化时触发
-        //TODO 筛选
+        // 分页、排序、筛选变化时触发
+        // TODO 筛选
         if (Object.keys(sorter).length > 0) {
           this.isorter2.column = sorter.field
-          this.isorter2.order = 'ascend' == sorter.order ? 'asc' : 'desc'
+          this.isorter2.order = sorter.order == 'ascend' ? 'asc' : 'desc'
         }
         this.ipagination2 = pagination
         this.loadData2()
       },
-      hideUserList(){
-        //this.rightcolval = 0
+      hideUserList() {
+        // this.rightcolval = 0
         this.selectedRowKeys1 = []
       },
-      handlePerssion(roleId){
-        this.$refs.modalUserRole.show(roleId);
-      },
+      handlePerssion(roleId) {
+        this.$refs.modalUserRole.show(roleId)
+      }
     }
   }
 </script>

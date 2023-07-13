@@ -11,103 +11,103 @@
 </template>
 
 <script>
-  //option {label:,value:}
+  // option {label:,value:}
   import { getAction } from '@api/manage'
 
   export default {
     name: 'JSelectMultiple',
     props: {
-      placeholder:{
+      placeholder: {
         type: String,
-        default:'',
+        default: '',
         required: false
       },
-      value:{
+      value: {
         type: String,
         required: false
       },
-      readOnly:{
+      readOnly: {
         type: Boolean,
         required: false,
         default: false
       },
-      options:{
+      options: {
         type: Array,
-        default:()=>[],
+        default: () => [],
         required: false
       },
-      triggerChange:{
+      triggerChange: {
         type: Boolean,
         required: false,
         default: false
       },
-      spliter:{
+      spliter: {
         type: String,
         required: false,
         default: ','
       },
-      popContainer:{
-        type:String,
-        default:'',
-        required:false
+      popContainer: {
+        type: String,
+        default: '',
+        required: false
       },
-      dictCode:{
-        type:String,
-        required:false
-      },
-    },
-    data(){
-      return {
-        arrayValue:!this.value?[]:this.value.split(this.spliter),
-        dictOptions: [],
+      dictCode: {
+        type: String,
+        required: false
       }
     },
-    computed:{
-      selectOptions(){
-        return this.dictOptions.length > 0 ? this.dictOptions : this.options
-      },
+    data() {
+      return {
+        arrayValue: !this.value ? [] : this.value.split(this.spliter),
+        dictOptions: []
+      }
     },
-    watch:{
+    computed: {
+      selectOptions() {
+        return this.dictOptions.length > 0 ? this.dictOptions : this.options
+      }
+    },
+    watch: {
       value (val) {
-        if(!val){
+        if (!val) {
           this.arrayValue = []
-        }else{
+        } else {
           this.arrayValue = this.value.split(this.spliter)
         }
       }
     },
-    mounted(){
+    mounted() {
       if (this.dictCode) {
         this.loadDictOptions()
       }
     },
-    methods:{
+    methods: {
       onChange (selectedValue) {
-        if(this.triggerChange){
-          this.$emit('change', selectedValue.join(this.spliter));
-        }else{
-          this.$emit('input', selectedValue.join(this.spliter));
+        if (this.triggerChange) {
+          this.$emit('change', selectedValue.join(this.spliter))
+        } else {
+          this.$emit('input', selectedValue.join(this.spliter))
         }
       },
-      getParentContainer(node){
-        if(!this.popContainer){
+      getParentContainer(node) {
+        if (!this.popContainer) {
           return node.parentNode
-        }else{
+        } else {
           return document.querySelector(this.popContainer)
         }
       },
       // 根据字典code查询字典项
-      loadDictOptions(){
-        getAction(`/sys/dict/getDictItems/${this.dictCode}`,{}).then(res=>{
+      loadDictOptions() {
+        getAction(`/sys/dict/getDictItems/${this.dictCode}`, {}).then(res => {
           if (res.success) {
-            this.dictOptions = res.result.map(item => ({value: item.value, label: item.text}))
+            this.dictOptions = res.result.map(item => ({ value: item.value, label: item.text }))
           } else {
             console.error('getDictItems error: : ', res)
             this.dictOptions = []
           }
         })
-      },
-    },
+      }
+    }
 
   }
 </script>

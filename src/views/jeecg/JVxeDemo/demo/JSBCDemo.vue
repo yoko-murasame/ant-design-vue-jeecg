@@ -55,7 +55,7 @@
           // 可切换的条数
           pageSizeOptions: ['10', '20', '30', '100', '200'],
           // 数据总数（目前并不知道真实的总数，所以先填写0，在后台查出来后再赋值）
-          total: 0,
+          total: 0
         },
         // 选择的行
         selectedRows: [],
@@ -63,7 +63,7 @@
         dataSource: [],
         // 列配置，控制表格显示的列
         columns: [
-          {key: 'num', title: '序号', width: '80px'},
+          { key: 'num', title: '序号', width: '80px' },
           {
             // 字段key，跟后台数据的字段名匹配
             key: 'ship_name',
@@ -74,11 +74,11 @@
             // 如果加上了该属性，就代表当前单元格是可编辑的，type就是表单的类型，input就是简单的输入框
             type: JVXETypes.input
           },
-          {key: 'call', title: '呼叫', width: '80px', type: JVXETypes.input},
-          {key: 'len', title: '长', width: '80px', type: JVXETypes.input},
-          {key: 'ton', title: '吨', width: '120px', defaultValue: 233, type: JVXETypes.input},
-          {key: 'payer', title: '付款方', width: '120px', defaultValue: '张三', type: JVXETypes.input},
-          {key: 'count', title: '数', width: '40px'},
+          { key: 'call', title: '呼叫', width: '80px', type: JVXETypes.input },
+          { key: 'len', title: '长', width: '80px', type: JVXETypes.input },
+          { key: 'ton', title: '吨', width: '120px', defaultValue: 233, type: JVXETypes.input },
+          { key: 'payer', title: '付款方', width: '120px', defaultValue: '张三', type: JVXETypes.input },
+          { key: 'count', title: '数', width: '40px' },
           {
             key: 'company',
             title: '公司',
@@ -87,7 +87,7 @@
             minWidth: '180px',
             type: JVXETypes.input
           },
-          {key: 'trend', title: '动向', width: '120px', type: JVXETypes.input},
+          { key: 'trend', title: '动向', width: '120px', type: JVXETypes.input }
         ],
         // 查询url地址
         url: {
@@ -95,8 +95,8 @@
           // 模拟保存单行数据（即时保存）
           saveRow: '/mock/vxe/immediateSaveRow',
           // 模拟保存整个表格的数据
-          saveAll: '/mock/vxe/immediateSaveAll',
-        },
+          saveAll: '/mock/vxe/immediateSaveAll'
+        }
       }
     },
     created() {
@@ -122,7 +122,7 @@
             // 重置选择
             this.selectedRows = []
           } else {
-            this.$error({title: '主表查询失败', content: res.message})
+            this.$error({ title: '主表查询失败', content: res.message })
           }
         }).finally(() => {
           // 这里是无论成功或失败都会执行的方法，在这里关闭loading
@@ -131,7 +131,7 @@
       },
 
       // 【整体保存】点击保存按钮时触发的事件
-      handleTableSave({$table, target}) {
+      handleTableSave({ $table, target }) {
         // 校验整个表格
         $table.validate().then((errMap) => {
           // 校验通过
@@ -163,7 +163,6 @@
 
       // 触发单元格删除事件
       handleTableRemove(event) {
-
         // 把 event.deleteRows 传给后台进行删除（注意：这里不会传递前端逻辑新增的数据，因为不需要请求后台删除）
         console.log('待删除的数据: ', event.deleteRows)
         // 也可以只传ID，因为可以根据ID删除
@@ -182,7 +181,7 @@
 
       // 单元格编辑完成之后触发的事件
       handleEditClosed(event) {
-        let {$table, row, column} = event
+        let { $table, row, column } = event
 
         let field = column.property
         let cellValue = row[field]
@@ -223,9 +222,9 @@
       // 当选择的行变化时触发的事件
       handleSelectRowChange(event) {
         this.selectedRows = event.selectedRows
-      },
+      }
 
-    },
+    }
   }
 </script>
 

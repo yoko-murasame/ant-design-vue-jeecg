@@ -126,7 +126,7 @@
   import STable from '@/components/table/'
 
   export default {
-    name: "TableList",
+    name: 'TableList',
     components: {
       STable
     },
@@ -146,7 +146,7 @@
           {
             title: '描述',
             dataIndex: 'description',
-            scopedSlots: { customRender: 'description' },
+            scopedSlots: { customRender: 'description' }
           },
           {
             title: '服务调用次数',
@@ -154,7 +154,7 @@
             width: '150px',
             sorter: true,
             needTotal: true,
-            scopedSlots: { customRender: 'callNo' },
+            scopedSlots: { customRender: 'callNo' }
             // customRender: (text) => text + ' 次'
           },
           {
@@ -162,20 +162,20 @@
             dataIndex: 'status',
             width: '100px',
             needTotal: true,
-            scopedSlots: { customRender: 'status' },
+            scopedSlots: { customRender: 'status' }
           },
           {
             title: '更新时间',
             dataIndex: 'updatedAt',
             width: '150px',
             sorter: true,
-            scopedSlots: { customRender: 'updatedAt' },
+            scopedSlots: { customRender: 'updatedAt' }
           },
           {
             table: '操作',
             dataIndex: 'action',
             width: '120px',
-            scopedSlots: { customRender: 'action' },
+            scopedSlots: { customRender: 'action' }
           }
         ],
         // 加载数据方法 必须为 Promise 对象
@@ -189,7 +189,7 @@
 
         selectedRowKeys: [],
         selectedRows: [],
-        visibleCreateModal:false
+        visibleCreateModal: false
       }
     },
     methods: {
@@ -211,16 +211,16 @@
           okType: 'danger',
           cancelText: '取消',
           onOk() {
-            console.log('OK');
+            console.log('OK')
             // 在这里调用删除接口
             return new Promise((resolve, reject) => {
-              setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-            }).catch(() => console.log('Oops errors!'));
+              setTimeout(Math.random() > 0.5 ? resolve : reject, 1000)
+            }).catch(() => console.log('Oops errors!'))
           },
           onCancel() {
-            console.log('Cancel');
-          },
-        });
+            console.log('Cancel')
+          }
+        })
       },
       save (row) {
         delete row.editable
@@ -238,16 +238,16 @@
       toggleAdvanced () {
         this.advanced = !this.advanced
       },
-      //添加逻辑
+      // 添加逻辑
       handleModalVisible(isVisible) {
-        this.visibleCreateModal = isVisible;
+        this.visibleCreateModal = isVisible
       },
       handleCreateModalCancel() {
-        this.visibleCreateModal = false;
+        this.visibleCreateModal = false
       },
       handleCreateModalOk() {
-        this.visibleCreateModal = false;
-      },
+        this.visibleCreateModal = false
+      }
     },
     watch: {
       /*

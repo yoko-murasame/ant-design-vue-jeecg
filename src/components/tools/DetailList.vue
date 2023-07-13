@@ -17,7 +17,7 @@
         type: String,
         default: '',
         required: false
-      },
+      }
     },
     inject: {
       col: {
@@ -26,7 +26,7 @@
     },
     render () {
       return (
-        <Col {...{props: responsive[this.col]}}>
+        <Col {...{ props: responsive[this.col] }}>
           <div class="term">{this.$props.term}</div>
           <div class="content">{this.$slots.default}</div>
         </Col>
@@ -42,7 +42,7 @@
   }
 
   export default {
-    name: "DetailList",
+    name: 'DetailList',
     Item: Item,
     components: {
       Col

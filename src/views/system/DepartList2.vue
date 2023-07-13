@@ -70,19 +70,19 @@
 <script>
   import SysDepartModal from './modules/DepartModal'
   /*  import { filterObj } from '@/utils/util'
-    , queryByFactories*/
-  import {queryDepartTreeList} from '@/api/api'
-  import {deleteAction} from '@/api/manage'
+    , queryByFactories */
+  import { queryDepartTreeList } from '@/api/api'
+  import { deleteAction } from '@/api/manage'
 
   // 表头
   const columns = [
     {
       title: '机构名称',
-      dataIndex: 'departName',
+      dataIndex: 'departName'
     },
     {
       title: '机构类型',
-      align: "center",
+      align: 'center',
       dataIndex: 'orgType'
     },
     {
@@ -108,14 +108,14 @@
     },
     {
       title: '操作',
-      align: "center",
+      align: 'center',
       dataIndex: 'action',
-      scopedSlots: {customRender: 'action'},
+      scopedSlots: { customRender: 'action' }
     }
-  ];
+  ]
 
   export default {
-    name: "DepartList2",
+    name: 'DepartList2',
     components: {
       SysDepartModal
     },
@@ -124,7 +124,7 @@
         description: 'jeecg 生成SysDepart代码管理页面',
         // 查询条件
         queryParam: {},
-        //数据集
+        // 数据集
         factories: '',
         dataSource: [],
         columns: columns,
@@ -139,118 +139,116 @@
                   showQuickJumper: true,
                   showSizeChanger: true,
                   total: 0
-                },*/
+                }, */
         isorter: {
           column: 'createTime',
-          order: 'desc',
+          order: 'desc'
         },
         loading: false,
         selectedRowKeys: [],
         selectedRows: [],
         url: {
-          list: "/sys/sysDepart/list",
-          delete: "/sys/sysDepart/delete",
-          deleteBatch: "/sys/sysDepart/deleteBatch",
-        },
+          list: '/sys/sysDepart/list',
+          delete: '/sys/sysDepart/delete',
+          deleteBatch: '/sys/sysDepart/deleteBatch'
+        }
 
       }
     },
     created() {
-      this.loadData();
+      this.loadData()
     },
     methods: {
       loadData() {
-        this.dataSource = [];
+        this.dataSource = []
         queryDepartTreeList().then((res) => {
           if (res.success) {
-            this.dataSource = res.result;
+            this.dataSource = res.result
           }
         })
-
       },
 
       getQueryField() {
-        //TODO 字段权限控制
-        var str = "id,";
+        // TODO 字段权限控制
+        var str = 'id,'
         for (var a = 0; a < this.columns.length; a++) {
-          str += "," + this.columns[a].dataIndex;
+          str += ',' + this.columns[a].dataIndex
         }
-        return str;
+        return str
       },
       onSelectChange(selectedRowKeys, selectionRows) {
-        this.selectedRowKeys = selectedRowKeys;
-        this.selectionRows = selectionRows;
+        this.selectedRowKeys = selectedRowKeys
+        this.selectionRows = selectionRows
       },
       onClearSelected() {
-        this.selectedRowKeys = [];
-        this.selectionRows = [];
+        this.selectedRowKeys = []
+        this.selectionRows = []
       },
-//TODO getQueryParams
+// TODO getQueryParams
       handleDelete: function (id) {
-        var that = this;
-        deleteAction(that.url.delete, {id: id}).then((res) => {
+        var that = this
+        deleteAction(that.url.delete, { id: id }).then((res) => {
           if (res.success) {
-            that.$message.success(res.message);
-            that.loadData();
+            that.$message.success(res.message)
+            that.loadData()
           } else {
-            that.$message.warning(res.message);
+            that.$message.warning(res.message)
           }
-        });
+        })
       },
       handleDetail(record) {
-        this.$refs.sysDepartModal.edit(record);
-        this.$refs.sysDepartModal.title = "详情";
-        this.$refs.sysDepartModal.disableSubmit = true;
+        this.$refs.sysDepartModal.edit(record)
+        this.$refs.sysDepartModal.title = '详情'
+        this.$refs.sysDepartModal.disableSubmit = true
       },
       batchDel: function () {
         if (this.selectedRowKeys.length <= 0) {
-          this.$message.warning('请选择一条记录！');
-          return;
+          this.$message.warning('请选择一条记录！')
         } else {
-          var ids = "";
+          var ids = ''
           for (var a = 0; a < this.selectedRowKeys.length; a++) {
-            ids += this.selectedRowKeys[a] + ",";
+            ids += this.selectedRowKeys[a] + ','
           }
-          var that = this;
+          var that = this
           this.$confirm({
-            title: "确认删除",
-            content: "是否删除选中数据?",
+            title: '确认删除',
+            content: '是否删除选中数据?',
             onOk: function () {
-              deleteAction(that.url.deleteBatch, {ids: ids}).then((res) => {
+              deleteAction(that.url.deleteBatch, { ids: ids }).then((res) => {
                 if (res.success) {
-                  that.$message.success(res.message);
-                  that.loadData();
-                  that.onClearSelected();
+                  that.$message.success(res.message)
+                  that.loadData()
+                  that.onClearSelected()
                 } else {
-                  that.$message.warning(res.message);
+                  that.$message.warning(res.message)
                 }
-              });
+              })
             }
-          });
+          })
         }
       },
       handleEdit: function (record) {
-        this.$refs.sysDepartModal.edit(record);
-        this.$refs.sysDepartModal.title = "编辑";
+        this.$refs.sysDepartModal.edit(record)
+        this.$refs.sysDepartModal.title = '编辑'
       },
       handleAdd() {
-        this.$refs.sysDepartModal.add();
-        this.$refs.sysDepartModal.title = "新增";
+        this.$refs.sysDepartModal.add()
+        this.$refs.sysDepartModal.title = '新增'
       },
       handleTableChange(pagination, filters, sorter) {
-        //分页、排序、筛选变化时触发
-        console.log(sorter);
-        //TODO 筛选
+        // 分页、排序、筛选变化时触发
+        console.log(sorter)
+        // TODO 筛选
         if (Object.keys(sorter).length > 0) {
-          this.isorter.column = sorter.field;
-          this.isorter.order = "ascend" == sorter.order ? "asc" : "desc"
+          this.isorter.column = sorter.field
+          this.isorter.order = sorter.order == 'ascend' ? 'asc' : 'desc'
         }
-        /*this.ipagination = pagination;*/
-        this.loadData();
+        /* this.ipagination = pagination; */
+        this.loadData()
       },
       modalFormOk() {
         // 新增/修改 成功时，重载列表
-        this.loadData();
+        this.loadData()
       }
     }
   }

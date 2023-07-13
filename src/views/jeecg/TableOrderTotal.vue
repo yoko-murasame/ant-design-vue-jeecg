@@ -6,9 +6,9 @@
       </a-col>
       <a-col>
         <a-table
-            v-bind="tableProps"
-            @change="handleTableChange"
-            style="margin-top: 20px"
+          v-bind="tableProps"
+          @change="handleTableChange"
+          style="margin-top: 20px"
         >
         </a-table>
       </a-col>
@@ -34,31 +34,31 @@
           {
             title: '姓名',
             dataIndex: 'name',
-            width: 180,
+            width: 180
           },
           {
             title: '贡献点',
             dataIndex: 'point',
-            width: 180,
+            width: 180
           },
           {
             title: '等级',
             dataIndex: 'level',
-            width: 180,
+            width: 180
           },
           {
             title: '更新时间',
             dataIndex: 'updateTime',
-            width: 180,
-          },
+            width: 180
+          }
         ],
         /* 分页参数 */
-        ipagination:{
+        ipagination: {
           current: 1,
-          pageSize: 10,
+          pageSize: 10
         },
         dataSource: [
-          { id:"1",name: '张三', point: 23, level: 3, updateTime: '2019-8-14' },
+          { id: '1', name: '张三', point: 23, level: 3, updateTime: '2019-8-14' },
           { name: '小王', point: 6, level: 1, updateTime: '2019-8-13' },
           { name: '李四', point: 53, level: 8, updateTime: '2019-8-12' },
           { name: '小红', point: 44, level: 5, updateTime: '2019-8-11' },
@@ -70,32 +70,32 @@
           { name: '小赵', point: 33, level: 2, updateTime: '2019-8-10' },
           { name: '李华', point: 33, level: 2, updateTime: '2019-8-10' },
           { name: '小康', point: 33, level: 2, updateTime: '2019-8-10' },
-          { name: '小鹿', point: 33, level: 2, updateTime: '2019-8-10' },
+          { name: '小鹿', point: 33, level: 2, updateTime: '2019-8-10' }
         ],
-        newArr:[],
-        newDataSource:[],
+        newArr: [],
+        newDataSource: [],
         footerDataSource: [],
-        pageSwitch:true
+        pageSwitch: true
       }
     },
-    computed:{
+    computed: {
       // 数据表格的固定属性
-      tableProps(){
+      tableProps() {
         let tableProps = {
           size: 'middle',
-          rowKey:'rowIndex',
+          rowKey: 'rowIndex',
           columns: this.columns,
-          scroll: {x: true},
+          scroll: { x: true }
         }
         let renderFooter = this.footerDataSource.length === 0 ? null : () => this.renderTableFooter(tableProps)
         return {
           ...tableProps,
           ref: 'table',
           class: 'chart-data-list',
-          pagination:this.pageSwitch?this.ipagination:false,
+          pagination: this.pageSwitch ? this.ipagination : false,
           columns: this.columns,
           dataSource: this.dataSource,
-          footer: renderFooter,
+          footer: renderFooter
         }
       },
       pageSwitchProps() {
@@ -108,27 +108,27 @@
             top: '-10px'
           }
         }
-      },
+      }
     },
     mounted() {
       // this.tableAddTotalRow(this.columns, this.dataSource)
-      /*新增分页合计方法*/
-      this.newDataSource=this.dataSource
-      this.dataHandling(1,this.ipagination.pageSize)
+      /* 新增分页合计方法 */
+      this.newDataSource = this.dataSource
+      this.dataHandling(1, this.ipagination.pageSize)
     },
-    watch:{
-      //update-begin---author:wangshuai ---date:20220209  for：[JTC-494]常用示例->表格合计写法改成新的写法------------
-      'pageSwitch':function(val){
-         if(!val){
-           this.dataHandling('-1',0)
-         }else{
-           this.dataHandling(1,this.ipagination.pageSize)
+    watch: {
+      // update-begin---author:wangshuai ---date:20220209  for：[JTC-494]常用示例->表格合计写法改成新的写法------------
+      'pageSwitch': function(val) {
+         if (!val) {
+           this.dataHandling('-1', 0)
+         } else {
+           this.dataHandling(1, this.ipagination.pageSize)
          }
       },
-      'ipagination.current':function(val) {
-        this.dataHandling(val,this.ipagination.pageSize)
+      'ipagination.current': function(val) {
+        this.dataHandling(val, this.ipagination.pageSize)
       },
-      //当合计行变化时，绑定滚动条
+      // 当合计行变化时，绑定滚动条
       'footerDataSource': {
         async handler(dataSource) {
           // 当底部合计行有值，并且显示出来时，再同步滚动条
@@ -142,11 +142,11 @@
                 () => {
                   footerDom.scrollLeft = dom.scrollLeft
                 },
-                true,
+                true
             )
           }
-        },
-        //update-end---author:wangshuai ---date:20220209  for：[JTC-494]常用示例->表格合计写法改成新的写法------------
+        }
+        // update-end---author:wangshuai ---date:20220209  for：[JTC-494]常用示例->表格合计写法改成新的写法------------
       }
     },
     methods: {
@@ -157,7 +157,6 @@
         columns.forEach(column => {
           let { key, dataIndex } = column
           if (![key, dataIndex].includes(numKey)) {
-
             let total = 0
             dataSource.forEach(data => {
               total += /^\d+\.?\d?$/.test(data[dataIndex]) ? Number.parseInt(data[dataIndex]) : Number.NaN
@@ -174,34 +173,34 @@
         dataSource.push(totalRow)
       },
       handleTableChange(pagination, filters, sorter) {
-        this.ipagination = pagination;
+        this.ipagination = pagination
       },
-      //update-begin---author:wangshuai ---date:20220209  for：[JTC-494]常用示例->表格合计写法改成新的写法------------
-      /*如果分页走这个方法*/
-      dataHandling(pageNo,pageSize) {
-        //根据当前页数和每页显示条数分割数组
-        let arrs = [];
-        //如果pageNo不是-1（不分页）,那么需要对数据进行分页计算
-        if(pageNo!=-1){
-          arrs = this.newDataSource.slice((pageNo-1)*pageSize,pageNo*pageSize)
-        }else{
+      // update-begin---author:wangshuai ---date:20220209  for：[JTC-494]常用示例->表格合计写法改成新的写法------------
+      /* 如果分页走这个方法 */
+      dataHandling(pageNo, pageSize) {
+        // 根据当前页数和每页显示条数分割数组
+        let arrs = []
+        // 如果pageNo不是-1（不分页）,那么需要对数据进行分页计算
+        if (pageNo != -1) {
+          arrs = this.newDataSource.slice((pageNo - 1) * pageSize, pageNo * pageSize)
+        } else {
           arrs = this.newDataSource
         }
-        let newDataSource=[];
-        let newArr= { };
-        newArr.rowIndex="总计"
-        let level=0;
-        let point=0;
-        //每一项的数值相加
-        for (let j=0;j<arrs.length;j++){
-          level+=arrs[j].level;
-          point+=arrs[j].point;
+        let newDataSource = []
+        let newArr = { }
+        newArr.rowIndex = '总计'
+        let level = 0
+        let point = 0
+        // 每一项的数值相加
+        for (let j = 0; j < arrs.length; j++) {
+          level += arrs[j].level
+          point += arrs[j].point
         }
-        newArr.level=level;
-        newArr.point=point;
-        newDataSource.push(newArr);
-        //给foot底部数组赋值
-        this.footerDataSource = newDataSource;
+        newArr.level = level
+        newArr.point = point
+        newDataSource.push(newArr)
+        // 给foot底部数组赋值
+        this.footerDataSource = newDataSource
       },
       // 渲染表格底部合计行
       renderTableFooter(tableProps) {
@@ -212,10 +211,10 @@
             ...tableProps,
             pagination: false,
             dataSource: this.footerDataSource,
-            showHeader: false,
-          },
+            showHeader: false
+          }
         })
-        //update-end---author:wangshuai ---date:20220209  for：[JTC-494]常用示例->表格合计写法改成新的写法------------
+        // update-end---author:wangshuai ---date:20220209  for：[JTC-494]常用示例->表格合计写法改成新的写法------------
       }
     }
   }

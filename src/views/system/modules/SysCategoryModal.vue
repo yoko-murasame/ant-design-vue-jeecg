@@ -19,7 +19,7 @@
             dict="sys_category,name,id"
             pidField="pid"
             pidValue="0"
-           :disabled="disabled">
+            :disabled="disabled">
           </j-tree-select>
         </a-form-model-item>
 
@@ -34,126 +34,125 @@
 
 <script>
 
-  import { httpAction,getAction } from '@/api/manage'
+  import { httpAction, getAction } from '@/api/manage'
   import JTreeSelect from '@/components/jeecg/JTreeSelect'
 
   export default {
-    name: "SysCategoryModal",
+    name: 'SysCategoryModal',
     components: {
       JTreeSelect
     },
     data () {
       return {
-        title:"操作",
-        width:800,
+        title: '操作',
+        width: 800,
         visible: false,
         model: {},
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
 
         confirmLoading: false,
-        validatorRules:{
-          pid:{},
+        validatorRules: {
+          pid: {},
           name: [{ required: true, message: '请输入类型名称!' }]
         },
         url: {
-          add: "/sys/category/add",
-          edit: "/sys/category/edit",
-          checkCode:"/sys/category/checkCode",
+          add: '/sys/category/add',
+          edit: '/sys/category/edit',
+          checkCode: '/sys/category/checkCode'
         },
-        expandedRowKeys:[],
-        pidField:"pid",
-        subExpandedKeys:[]
+        expandedRowKeys: [],
+        pidField: 'pid',
+        subExpandedKeys: []
 
       }
     },
     created () {
     },
-    computed : {
+    computed: {
       disabled() {
-          return this.model.id?true : false;
+          return !!this.model.id
       }
     },
     methods: {
       add () {
-        this.edit({});
+        this.edit({})
       },
       edit (record) {
-        this.model = Object.assign({}, record);
-        this.visible = true;
+        this.model = Object.assign({}, record)
+        this.visible = true
       },
       close () {
-        this.$emit('close');
-        this.visible = false;
-        this.$refs.form.resetFields();
+        this.$emit('close')
+        this.visible = false
+        this.$refs.form.resetFields()
       },
       handleOk () {
-        const that = this;
+        const that = this
         // 触发表单验证
         this.$refs.form.validate(valid => {
           if (valid) {
-            that.confirmLoading = true;
-            let httpurl = '';
-            let method = '';
-            if(!this.model.id){
-              httpurl+=this.url.add;
-              method = 'post';
-            }else{
-              httpurl+=this.url.edit;
-               method = 'put';
+            that.confirmLoading = true
+            let httpurl = ''
+            let method = ''
+            if (!this.model.id) {
+              httpurl += this.url.add
+              method = 'post'
+            } else {
+              httpurl += this.url.edit
+               method = 'put'
             }
-            httpAction(httpurl,this.model,method).then((res)=>{
-              if(res.success){
-                that.$message.success(res.message);
+            httpAction(httpurl, this.model, method).then((res) => {
+              if (res.success) {
+                that.$message.success(res.message)
                 // close的时候清空了表单的值 导致model为空 修改值在列表页没有变 此处需要复制一下model
-                that.submitSuccess({...this.model})
-              }else{
-                that.$message.warning(res.message);
+                that.submitSuccess({ ...this.model })
+              } else {
+                that.$message.warning(res.message)
               }
             }).finally(() => {
-              that.confirmLoading = false;
-              that.close();
+              that.confirmLoading = false
+              that.close()
             })
-          }else{
-            return false;
+          } else {
+            return false
           }
-
         })
       },
       handleCancel () {
         this.close()
       },
-      submitSuccess(formData){
-        if(!formData.id){
+      submitSuccess(formData) {
+        if (!formData.id) {
           let treeData = this.$refs.treeSelect.getCurrTreeData()
-          this.expandedRowKeys=[]
-          this.getExpandKeysByPid(formData[this.pidField],treeData,treeData)
-          if(formData.pid && this.expandedRowKeys.length==0){
-            this.expandedRowKeys = this.subExpandedKeys;
+          this.expandedRowKeys = []
+          this.getExpandKeysByPid(formData[this.pidField], treeData, treeData)
+          if (formData.pid && this.expandedRowKeys.length == 0) {
+            this.expandedRowKeys = this.subExpandedKeys
           }
-          this.$emit('ok',formData,this.expandedRowKeys.reverse());
-        }else{
-          this.$emit('ok',formData);
+          this.$emit('ok', formData, this.expandedRowKeys.reverse())
+        } else {
+          this.$emit('ok', formData)
       }
       },
-      getExpandKeysByPid(pid,arr,all){
-        if(pid && arr && arr.length>0){
-          for(let i=0;i<arr.length;i++){
-            if(arr[i].key==pid){
+      getExpandKeysByPid(pid, arr, all) {
+        if (pid && arr && arr.length > 0) {
+          for (let i = 0; i < arr.length; i++) {
+            if (arr[i].key == pid) {
               this.expandedRowKeys.push(arr[i].key)
-              this.getExpandKeysByPid(arr[i]['parentId'],all,all)
-            }else{
-              this.getExpandKeysByPid(pid,arr[i].children,all)
+              this.getExpandKeysByPid(arr[i]['parentId'], all, all)
+            } else {
+              this.getExpandKeysByPid(pid, arr[i].children, all)
             }
           }
         }
-      },
+      }
 
     }
   }

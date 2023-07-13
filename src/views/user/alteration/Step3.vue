@@ -25,7 +25,7 @@
 <script>
   import { getAction } from '@/api/manage'
   export default {
-    name: "Step3",
+    name: 'Step3',
 //    components: {
 //      Result
 //    },
@@ -38,10 +38,10 @@
       }
       const passwordMsg = '密码至少8位，且必须包含字母、数字、特殊字符'
       return {
-        model:{},
+        model: {},
         layout: {
           labelCol: { span: 5 },
-          wrapperCol: { span: 19 },
+          wrapperCol: { span: 19 }
         },
         loading: false,
         accountName: this.userList.username,
@@ -54,8 +54,8 @@
             message: passwordMsg
           }],
           confirmPassword: [
-            { required: true, message: '密码不能为空!'},
-            { validator: this.handlePasswordCheck}
+            { required: true, message: '密码不能为空!' },
+            { validator: this.handlePasswordCheck }
           ]
         }
       }
@@ -70,19 +70,19 @@
               username: that.userList.username,
               password: that.model.password,
               smscode: that.userList.smscode,
-              phone: that.userList.phone,
+              phone: that.userList.phone
             }
-            getAction("/sys/user/passwordChange", params).then((res) => {
+            getAction('/sys/user/passwordChange', params).then((res) => {
               if (res.success) {
                 let userList = {
                   username: that.userList.username
                 }
-                console.log(userList);
+                console.log(userList)
                 setTimeout(function() {
                   that.$emit('nextStep', userList)
                 }, 1500)
               } else {
-                that.passwordFailed(res.message);
+                that.passwordFailed(res.message)
                 that.loading = false
               }
             })
@@ -102,13 +102,13 @@
         }
         callback()
       },
-      passwordFailed(err){
+      passwordFailed(err) {
         this.$notification[ 'error' ]({
-          message: "更改密码失败",
-          description:err,
-          duration: 4,
-        });
-      },
+          message: '更改密码失败',
+          description: err,
+          duration: 4
+        })
+      }
     }
   }
 </script>

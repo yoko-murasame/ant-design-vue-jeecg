@@ -13,7 +13,7 @@
   import GlobalLayout from '@/components/page/GlobalLayout'
 
   export default {
-    name: "BasicLayout",
+    name: 'BasicLayout',
     components: {
       GlobalLayout
     },
@@ -29,7 +29,7 @@
     },
     methods: {
 
-    },
+    }
   }
 </script>
 

@@ -140,7 +140,7 @@
   const DetailListItem = DetailList.Item
 
   export default {
-    name: "Advanced",
+    name: 'Advanced',
     components: {
       PageLayout,
       DetailList,
@@ -180,7 +180,7 @@
             title: '执行结果',
             dataIndex: 'status',
             key: 'status',
-            scopedSlots: { customRender: 'status' },
+            scopedSlots: { customRender: 'status' }
           },
           {
             title: '操作时间',
@@ -278,7 +278,7 @@
             updatedAt: '2017-10-03  19:23:12',
             remark: '-'
           }
-        ],
+        ]
       }
     },
     filters: {

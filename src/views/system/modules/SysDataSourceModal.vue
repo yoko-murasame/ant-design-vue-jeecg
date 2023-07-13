@@ -41,7 +41,7 @@
           label="数据源地址">
           <a-input placeholder="请输入数据源地址" v-decorator="['dbUrl', validatorRules.dbUrl]"/>
         </a-form-item>
-       <!-- <a-form-item
+        <!-- <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="数据库名称">
@@ -79,7 +79,7 @@
 
 <script>
   import pick from 'lodash.pick'
-  import { httpAction, postAction,getAction } from '@/api/manage'
+  import { httpAction, postAction, getAction } from '@/api/manage'
   import { validateDuplicateValue } from '@/utils/util'
 
   export default {
@@ -92,11 +92,11 @@
         model: {},
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
 
         confirmLoading: false,
@@ -129,12 +129,12 @@
         url: {
           add: '/sys/dataSource/add',
           edit: '/sys/dataSource/edit',
-          queryById: '/sys/dataSource/queryById',
+          queryById: '/sys/dataSource/queryById'
         },
         dbDriverMap: {
           // MySQL 数据库
           '1': { dbDriver: 'com.mysql.jdbc.Driver' },
-          //MySQL5.7+ 数据库
+          // MySQL5.7+ 数据库
           '4': { dbDriver: 'com.mysql.cj.jdbc.Driver' },
           // Oracle
           '2': { dbDriver: 'oracle.jdbc.OracleDriver' },
@@ -166,7 +166,7 @@
         dbUrlMap: {
           // MySQL 数据库
           '1': { dbUrl: 'jdbc:mysql://127.0.0.1:3306/jeecg-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false' },
-          //MySQL5.7+ 数据库
+          // MySQL5.7+ 数据库
           '4': { dbUrl: 'jdbc:mysql://127.0.0.1:3306/jeecg-boot?characterEncoding=UTF-8&useUnicode=true&useSSL=false&tinyInt1isBit=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai' },
           // Oracle
           '2': { dbUrl: 'jdbc:oracle:thin:@127.0.0.1:1521:ORCL' },
@@ -206,14 +206,14 @@
       async edit(record) {
         this.form.resetFields()
         this.model = Object.assign({}, record)
-        //update-begin-author:liusq---date:20220705--for: 编辑时，查询获取解密后的密码 ---
-        if(record.id){
-          let res = await getAction(this.url.queryById, {id:record.id});
+        // update-begin-author:liusq---date:20220705--for: 编辑时，查询获取解密后的密码 ---
+        if (record.id) {
+          let res = await getAction(this.url.queryById, { id: record.id })
           if (res.success) {
-            this.model = Object.assign({}, {...res.result})
+            this.model = Object.assign({}, { ...res.result })
           }
         }
-       //update-end-author:liusq---date:20220705--for: 编辑时，查询获取解密后的密码 ---
+       // update-end-author:liusq---date:20220705--for: 编辑时，查询获取解密后的密码 ---
         this.visible = true
         this.$nextTick(() => {
           this.form.setFieldsValue(pick(this.model, 'code', 'name', 'remark', 'dbType', 'dbDriver', 'dbUrl', 'dbName', 'dbUsername', 'dbPassword'))
@@ -229,7 +229,7 @@
           if (!err) {
             this.confirmLoading = true
             let formData = Object.assign(this.model, values)
-            let httpUrl = this.url.add, method = 'post'
+            let httpUrl = this.url.add; let method = 'post'
             if (this.model.id) {
               httpUrl = this.url.edit
               method = 'put'
@@ -288,7 +288,7 @@
         if (dbUrl) {
           this.form.setFieldsValue(dbUrl)
         }
-      },
+      }
     }
   }
 </script>

@@ -26,65 +26,65 @@
   export default {
     name: 'JTreeSelect',
     props: {
-      value:{
+      value: {
         type: String,
         required: false
       },
-      placeholder:{
+      placeholder: {
         type: String,
         default: '请选择',
         required: false
       },
-      dict:{
+      dict: {
         type: String,
         default: '',
         required: false
       },
-      pidField:{
+      pidField: {
         type: String,
         default: 'pid',
         required: false
       },
-      pidValue:{
+      pidValue: {
         type: String,
         default: '',
         required: false
       },
-      disabled:{
-        type:Boolean,
-        default:false,
-        required:false
+      disabled: {
+        type: Boolean,
+        default: false,
+        required: false
       },
-      hasChildField:{
+      hasChildField: {
         type: String,
         default: '',
         required: false
       },
-      condition:{
-        type:String,
-        default:'',
-        required:false
+      condition: {
+        type: String,
+        default: '',
+        required: false
       },
       // 是否支持多选
       multiple: {
         type: Boolean,
-        default: false,
+        default: false
       },
-      loadTriggleChange:{
+      loadTriggleChange: {
         type: Boolean,
         default: false,
-        required:false
+        required: false
       }
     },
     data () {
       return {
         treeValue: null,
-        treeData:[],
-        url:"/sys/dict/loadTreeData",
-        view:'/sys/dict/loadDictItem/',
-        tableName:"",
-        text:"",
-        code:"",
+        treeData: [],
+        url: '/sys/dict/loadTreeData',
+        view: '/sys/dict/loadDictItem/',
+        tableName: '',
+        text: '',
+        code: ''
 
       }
     },
@@ -92,44 +92,44 @@
       value () {
         this.loadItemByCode()
       },
-      dict(){
+      dict() {
         this.initDictInfo()
-        this.loadRoot();
+        this.loadRoot()
       }
     },
-    created(){
-      this.validateProp().then(()=>{
+    created() {
+      this.validateProp().then(() => {
         this.initDictInfo()
         this.loadRoot()
         this.loadItemByCode()
       })
     },
     methods: {
-      loadItemByCode(){
-        if(!this.value || this.value=="0"){
+      loadItemByCode() {
+        if (!this.value || this.value == '0') {
           this.treeValue = null
-        }else{
-          getAction(`${this.view}${this.dict}`,{key:this.value}).then(res=>{
-            if(res.success){
+        } else {
+          getAction(`${this.view}${this.dict}`, { key: this.value }).then(res => {
+            if (res.success) {
               let values = this.value.split(',')
               this.treeValue = res.result.map((item, index) => ({
                 key: values[index],
                 value: values[index],
                 label: item
               }))
-              this.onLoadTriggleChange(res.result[0]);
+              this.onLoadTriggleChange(res.result[0])
             }
           })
         }
       },
-      onLoadTriggleChange(text){
-        //只有单选才会触发
-        if(!this.multiple && this.loadTriggleChange){
-          this.$emit('change', this.value,text)
+      onLoadTriggleChange(text) {
+        // 只有单选才会触发
+        if (!this.multiple && this.loadTriggleChange) {
+          this.$emit('change', this.value, text)
         }
       },
-      initDictInfo(){
-        let arr = this.dict.split(",")
+      initDictInfo() {
+        let arr = this.dict.split(',')
         this.tableName = arr[0]
         this.text = arr[1]
         this.code = arr[2]
@@ -142,115 +142,114 @@
           }
           let pid = treeNode.$vnode.key
           let param = {
-            pid:pid,
-            tableName:this.tableName,
-            text:this.text,
-            code:this.code,
-            pidField:this.pidField,
-            hasChildField:this.hasChildField,
-            condition:this.condition
+            pid: pid,
+            tableName: this.tableName,
+            text: this.text,
+            code: this.code,
+            pidField: this.pidField,
+            hasChildField: this.hasChildField,
+            condition: this.condition
           }
-          getAction(this.url,param).then(res=>{
-            if(res.success){
-              for(let i of res.result){
+          getAction(this.url, param).then(res => {
+            if (res.success) {
+              for (let i of res.result) {
                 i.value = i.key
-                if(i.leaf==false){
-                  i.isLeaf=false
-                }else if(i.leaf==true){
-                  i.isLeaf=true
+                if (i.leaf == false) {
+                  i.isLeaf = false
+                } else if (i.leaf == true) {
+                  i.isLeaf = true
                 }
               }
-              this.addChildren(pid,res.result,this.treeData)
+              this.addChildren(pid, res.result, this.treeData)
               this.treeData = [...this.treeData]
             }
             resolve()
           })
         })
       },
-      addChildren(pid,children,treeArray){
-        if(treeArray && treeArray.length>0){
-          for(let item of treeArray){
-            if(item.key == pid){
-              if(!children || children.length==0){
-                item.isLeaf=true
-              }else{
+      addChildren(pid, children, treeArray) {
+        if (treeArray && treeArray.length > 0) {
+          for (let item of treeArray) {
+            if (item.key == pid) {
+              if (!children || children.length == 0) {
+                item.isLeaf = true
+              } else {
                 item.children = children
               }
               break
-            }else{
-              this.addChildren(pid,children,item.children)
+            } else {
+              this.addChildren(pid, children, item.children)
             }
           }
         }
       },
-      loadRoot(){
+      loadRoot() {
         let param = {
-          pid:this.pidValue,
-          tableName:this.tableName,
-          text:this.text,
-          code:this.code,
-          pidField:this.pidField,
-          hasChildField:this.hasChildField,
-          condition:this.condition
+          pid: this.pidValue,
+          tableName: this.tableName,
+          text: this.text,
+          code: this.code,
+          pidField: this.pidField,
+          hasChildField: this.hasChildField,
+          condition: this.condition
         }
-        getAction(this.url,param).then(res=>{
-          if(res.success && res.result){
-            for(let i of res.result){
+        getAction(this.url, param).then(res => {
+          if (res.success && res.result) {
+            for (let i of res.result) {
               i.value = i.key
-              if(i.leaf==false){
-                i.isLeaf=false
-              }else if(i.leaf==true){
-                i.isLeaf=true
+              if (i.leaf == false) {
+                i.isLeaf = false
+              } else if (i.leaf == true) {
+                i.isLeaf = true
               }
             }
             this.treeData = [...res.result]
-          }else{
-            console.log("数根节点查询结果-else",res)
+          } else {
+            console.log('数根节点查询结果-else', res)
           }
         })
       },
-      onChange(value){
-        if(!value){
-          this.$emit('change', '');
+      onChange(value) {
+        if (!value) {
+          this.$emit('change', '')
           this.treeValue = null
         } else if (value instanceof Array) {
           this.$emit('change', value.map(item => item.value).join(','))
           this.treeValue = value
         } else {
-          this.$emit('change', value.value,value.label)
+          this.$emit('change', value.value, value.label)
           this.treeValue = value
         }
-
       },
-      onSearch(value){
+      onSearch(value) {
         console.log(value)
       },
-      getCurrTreeData(){
+      getCurrTreeData() {
         return this.treeData
       },
-      validateProp(){
+      validateProp() {
         let mycondition = this.condition
-        return new Promise((resolve,reject)=>{
-          if(!mycondition){
-            resolve();
-          }else{
+        return new Promise((resolve, reject) => {
+          if (!mycondition) {
+            resolve()
+          } else {
             try {
-              let test=JSON.parse(mycondition);
-              if(typeof test == 'object' && test){
+              let test = JSON.parse(mycondition)
+              if (typeof test === 'object' && test) {
                 resolve()
-              }else{
-                this.$message.error("组件JTreeSelect-condition传值有误，需要一个json字符串!")
+              } else {
+                this.$message.error('组件JTreeSelect-condition传值有误，需要一个json字符串!')
                 reject()
               }
-            } catch(e) {
-              this.$message.error("组件JTreeSelect-condition传值有误，需要一个json字符串!")
+            } catch (e) {
+              this.$message.error('组件JTreeSelect-condition传值有误，需要一个json字符串!')
               reject()
             }
           }
         })
       }
     },
-    //2.2新增 在组件内定义 指定父组件调用时候的传值属性和事件类型 这个牛逼
+    // 2.2新增 在组件内定义 指定父组件调用时候的传值属性和事件类型 这个牛逼
     model: {
       prop: 'value',
       event: 'change'

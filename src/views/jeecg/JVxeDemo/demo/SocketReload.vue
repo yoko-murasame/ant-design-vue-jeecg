@@ -46,22 +46,22 @@
         loading: false,
         dataSource: [],
         columns: [
-          {key: 'num', title: '序号', width: '80px'},
-          {key: 'ship_name', title: '船名', width: '180px', type: JVXETypes.input},
-          {key: 'call', title: '呼叫', width: '80px', type: JVXETypes.input},
-          {key: 'len', title: '长', width: '80px', type: JVXETypes.input},
-          {key: 'ton', title: '吨', width: '120px', type: JVXETypes.input},
-          {key: 'payer', title: '付款方', width: '120px', type: JVXETypes.input},
-          {key: 'count', title: '数', width: '40px'},
-          {key: 'company', title: '公司', minWidth: '180px', type: JVXETypes.input},
-          {key: 'trend', title: '动向', width: '120px', type: JVXETypes.input},
+          { key: 'num', title: '序号', width: '80px' },
+          { key: 'ship_name', title: '船名', width: '180px', type: JVXETypes.input },
+          { key: 'call', title: '呼叫', width: '80px', type: JVXETypes.input },
+          { key: 'len', title: '长', width: '80px', type: JVXETypes.input },
+          { key: 'ton', title: '吨', width: '120px', type: JVXETypes.input },
+          { key: 'payer', title: '付款方', width: '120px', type: JVXETypes.input },
+          { key: 'count', title: '数', width: '40px' },
+          { key: 'company', title: '公司', minWidth: '180px', type: JVXETypes.input },
+          { key: 'trend', title: '动向', width: '120px', type: JVXETypes.input }
         ],
         // 查询url地址
         url: {
-          getData: '/mock/vxe/getData',
+          getData: '/mock/vxe/getData'
         },
         // 是否启用日历刷新效果
-        reloadEffect: false,
+        reloadEffect: false
       }
     },
     created() {
@@ -70,13 +70,13 @@
     methods: {
       // 加载数据
       loadData() {
-        let formData = {pageNo: 1, pageSize: 200}
+        let formData = { pageNo: 1, pageSize: 200 }
         this.loading = true
         getAction(this.url.getData, formData).then(res => {
           if (res.success) {
             this.dataSource = res.result.records
           } else {
-            this.$error({title: '主表查询失败', content: res.message})
+            this.$error({ title: '主表查询失败', content: res.message })
           }
         }).finally(() => {
           this.loading = false
@@ -85,7 +85,7 @@
 
       // 单元格编辑完成之后触发的事件
       handleEditClosed(event) {
-        let {$table, row, column} = event
+        let { $table, row, column } = event
 
         let field = column.property
         let cellValue = row[field]
@@ -108,9 +108,9 @@
             }
           })
         }
-      },
+      }
 
-    },
+    }
   }
 </script>
 

@@ -37,7 +37,13 @@
         <div class="test-button">
           <button @click="changeImg" class="btn">changeImg</button>
           <label class="btn" for="uploads">upload</label>
-          <input type="file" id="uploads" style="position:absolute; clip:rect(0 0 0 0);" accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event, 1)" ref="uploadImg">
+          <input
+            type="file"
+            id="uploads"
+            style="position:absolute; clip:rect(0 0 0 0);"
+            accept="image/png, image/jpeg, image/gif, image/jpg"
+            @change="uploadImg($event, 1)"
+            ref="uploadImg">
           <button @click="startCrop" v-if="!crap" class="btn">start</button>
           <button @click="stopCrop" v-else class="btn">stop</button>
           <button @click="clearCrop" class="btn">clear</button>
@@ -57,8 +63,10 @@
         <div class="pre">
           <section class="pre-item">
             <p>截图框大小</p>
-            <div class="show-preview" :style="{'width': previews.w + 'px', 'height': previews.h + 'px',  'overflow': 'hidden',
-							'margin': '5px'}">
+            <div
+              class="show-preview"
+              :style="{'width': previews.w + 'px', 'height': previews.h + 'px', 'overflow': 'hidden',
+                       'margin': '5px'}">
               <div :style="previews.div">
                 <img :src="previews.url" :style="previews.img">
               </div>
@@ -124,42 +132,42 @@
           <label class="c-item">
             <span>上传图片是否显示原始宽高 (针对大图 可以铺满)</span>
             <input type="checkbox" v-model="option.original">
-            <span>original: {{ option.original}}</span>
+            <span>original: {{ option.original }}</span>
           </label>
           <label class="c-item">
             <span>是否根据dpr生成适合屏幕的高清图片</span>
             <input type="checkbox" v-model="option.high">
-            <span>high: {{ option.high}}</span>
+            <span>high: {{ option.high }}</span>
           </label>
           <label class="c-item">
             <span>是否输出原图比例的截图</span>
             <input type="checkbox" v-model="option.full">
-            <span>full: {{ option.full}}</span>
+            <span>full: {{ option.full }}</span>
           </label>
           <label class="c-item">
             <span>截图信息展示是否是真实的输出宽高</span>
             <input type="checkbox" v-model="option.infoTrue">
-            <span>infoTrue: {{ option.infoTrue}}</span>
+            <span>infoTrue: {{ option.infoTrue }}</span>
           </label>
           <label class="c-item">
             <span>能否拖动图片</span>
             <input type="checkbox" v-model="option.canMove">
-            <span>canMove: {{ option.canMove}}</span>
+            <span>canMove: {{ option.canMove }}</span>
           </label>
           <label class="c-item">
             <span>能否拖动截图框</span>
             <input type="checkbox" v-model="option.canMoveBox">
-            <span>canMoveBox: {{ option.canMoveBox}}</span>
+            <span>canMoveBox: {{ option.canMoveBox }}</span>
           </label>
           <label class="c-item">
             <span>截图框固定大小</span>
             <input type="checkbox" v-model="option.fixedBox">
-            <span>fixedBox: {{ option.fixedBox}}</span>
+            <span>fixedBox: {{ option.fixedBox }}</span>
           </label>
           <label class="c-item">
             <span>是否自动生成截图框</span>
             <input type="checkbox" v-model="option.autoCrop">
-            <span>autoCrop: {{ option.autoCrop}}</span>
+            <span>autoCrop: {{ option.autoCrop }}</span>
           </label>
           <label class="c-item">
             <span>自动生成截图框的宽高</span>
@@ -169,7 +177,7 @@
           <label class="c-item">
             <span>截图框是否限制在图片里(只有在自动生成截图框时才能生效)</span>
             <input type="checkbox" v-model="option.centerBox">
-            <span>centerBox: {{ option.centerBox}}</span>
+            <span>centerBox: {{ option.centerBox }}</span>
           </label>
           <label class="c-item">
             <span>是否按照截图框比例输出 默认为1 </span>
@@ -198,23 +206,23 @@
     data () {
       return {
         model: false,
-        modelSrc: "",
+        modelSrc: '',
         crap: false,
         previews: {},
         lists: [
-          {img: "https://avatars2.githubusercontent.com/u/15681693?s=460&v=4"},
-          {img: "http://cdn.xyxiao.cn/Landscape_1.jpg"},
-          {img: "http://cdn.xyxiao.cn/Landscape_2.jpg"},
-          {img: "http://cdn.xyxiao.cn/Landscape_3.jpg"},
-          {img: "http://cdn.xyxiao.cn/Landscape_4.jpg"},
-          {img: "http://cdn.xyxiao.cn/Portrait_1.jpg"},
-          {img: "http://cdn.xyxiao.cn/Portrait_2.jpg"}
+          { img: 'https://avatars2.githubusercontent.com/u/15681693?s=460&v=4' },
+          { img: 'http://cdn.xyxiao.cn/Landscape_1.jpg' },
+          { img: 'http://cdn.xyxiao.cn/Landscape_2.jpg' },
+          { img: 'http://cdn.xyxiao.cn/Landscape_3.jpg' },
+          { img: 'http://cdn.xyxiao.cn/Landscape_4.jpg' },
+          { img: 'http://cdn.xyxiao.cn/Portrait_1.jpg' },
+          { img: 'http://cdn.xyxiao.cn/Portrait_2.jpg' }
         ],
         option: {
-          img: "",
+          img: '',
           size: 1,
           full: false,
-          outputType: "png",
+          outputType: 'png',
           canMove: true,
           fixedBox: false,
           original: false,
@@ -232,10 +240,10 @@
           limitMinSize: [100, 120]
         },
         example2: {
-          img: "http://cdn.xyxiao.cn/Landscape_2.jpg",
+          img: 'http://cdn.xyxiao.cn/Landscape_2.jpg',
           info: true,
           size: 1,
-          outputType: "jpeg",
+          outputType: 'jpeg',
           canScale: true,
           autoCrop: true,
           // 只有自动截图开启 宽度高度才生效
@@ -247,13 +255,13 @@
           fixedNumber: [4, 3]
         },
         example3: {
-          img: "http://cdn.xyxiao.cn/Landscape_1.jpg",
+          img: 'http://cdn.xyxiao.cn/Landscape_1.jpg',
           autoCrop: true,
           autoCropWidth: 200,
           autoCropHeight: 200,
           fixedBox: true
         },
-        downImg: "#",
+        downImg: '#',
         previewStyle1: {},
         previewStyle2: {},
         previewStyle3: {},
@@ -262,183 +270,183 @@
         code1: '',
         code2: '',
         code3: '',
-        preview3: '',
-      };
+        preview3: ''
+      }
     },
     methods: {
       changeImg() {
-        this.option.img = this.lists[~~(Math.random() * this.lists.length)].img;
+        this.option.img = this.lists[~~(Math.random() * this.lists.length)].img
       },
       startCrop() {
         // start
-        this.crap = true;
-        this.$refs.cropper.startCrop();
+        this.crap = true
+        this.$refs.cropper.startCrop()
       },
       stopCrop() {
         //  stop
-        this.crap = false;
-        this.$refs.cropper.stopCrop();
+        this.crap = false
+        this.$refs.cropper.stopCrop()
       },
       clearCrop() {
         // clear
-        this.$refs.cropper.clearCrop();
+        this.$refs.cropper.clearCrop()
       },
       refreshCrop() {
         // clear
-        this.$refs.cropper.refresh();
+        this.$refs.cropper.refresh()
       },
       changeScale(num) {
-        num = num || 1;
-        this.$refs.cropper.changeScale(num);
+        num = num || 1
+        this.$refs.cropper.changeScale(num)
       },
       rotateLeft() {
-        this.$refs.cropper.rotateLeft();
+        this.$refs.cropper.rotateLeft()
       },
       rotateRight() {
-        this.$refs.cropper.rotateRight();
+        this.$refs.cropper.rotateRight()
       },
       finish(type) {
-        if (type === "blob") {
+        if (type === 'blob') {
           this.$refs.cropper.getCropBlob(data => {
-            var img = window.URL.createObjectURL(data);
-            this.model = true;
-            this.modelSrc = img;
-          });
+            var img = window.URL.createObjectURL(data)
+            this.model = true
+            this.modelSrc = img
+          })
         } else {
           this.$refs.cropper.getCropData(data => {
-            this.model = true;
-            this.modelSrc = data;
-          });
+            this.model = true
+            this.modelSrc = data
+          })
         }
       },
       // 实时预览函数
       realTime(data) {
-        var previews = data;
-        var h = 0.5;
-        var w = 0.2;
+        var previews = data
+        var h = 0.5
+        var w = 0.2
 
         this.previewStyle1 = {
-          width: previews.w + "px",
-          height: previews.h + "px",
-          overflow: "hidden",
-          margin: "0",
+          width: previews.w + 'px',
+          height: previews.h + 'px',
+          overflow: 'hidden',
+          margin: '0',
           zoom: h
-        };
+        }
 
         this.previewStyle2 = {
-          width: previews.w + "px",
-          height: previews.h + "px",
-          overflow: "hidden",
-          margin: "0",
+          width: previews.w + 'px',
+          height: previews.h + 'px',
+          overflow: 'hidden',
+          margin: '0',
           zoom: w
-        };
+        }
 
         this.previewStyle3 = {
-          width: previews.w + "px",
-          height: previews.h + "px",
-          overflow: "hidden",
-          margin: "0",
+          width: previews.w + 'px',
+          height: previews.h + 'px',
+          overflow: 'hidden',
+          margin: '0',
           zoom: (100 / previews.w)
-        };
+        }
 
         this.previewStyle4 = {
-          width: previews.w + "px",
-          height: previews.h + "px",
-          overflow: "hidden",
-          margin: "0",
+          width: previews.w + 'px',
+          height: previews.h + 'px',
+          overflow: 'hidden',
+          margin: '0',
           zoom: (100 / previews.h)
-        };
+        }
 
-        this.previews = data;
+        this.previews = data
       },
 
       finish2(type) {
         this.$refs.cropper2.getCropData(data => {
-          this.model = true;
-          this.modelSrc = data;
-        });
+          this.model = true
+          this.modelSrc = data
+        })
       },
       finish3(type) {
         this.$refs.cropper3.getCropData(data => {
-          this.model = true;
-          this.modelSrc = data;
-        });
+          this.model = true
+          this.modelSrc = data
+        })
       },
       down(type) {
         // 输出
-        if (type === "blob") {
+        if (type === 'blob') {
           this.$refs.cropper.getCropBlob(data => {
-            this.downImg = window.URL.createObjectURL(data);
+            this.downImg = window.URL.createObjectURL(data)
             if (window.navigator.msSaveBlob) {
-              var blobObject = new Blob([data]);
-              window.navigator.msSaveBlob(blobObject, "demo.png");
+              var blobObject = new Blob([data])
+              window.navigator.msSaveBlob(blobObject, 'demo.png')
             } else {
               this.$nextTick(() => {
-                this.$refs.downloadDom.click();
-              });
+                this.$refs.downloadDom.click()
+              })
             }
-          });
+          })
         } else {
           this.$refs.cropper.getCropData(data => {
-            this.downImg = data;
+            this.downImg = data
             if (window.navigator.msSaveBlob) {
-              var blobObject = new Blob([data]);
-              window.navigator.msSaveBlob(blobObject, "demo.png");
+              var blobObject = new Blob([data])
+              window.navigator.msSaveBlob(blobObject, 'demo.png')
             } else {
               this.$nextTick(() => {
-                this.$refs.downloadDom.click();
-              });
+                this.$refs.downloadDom.click()
+              })
             }
-          });
+          })
         }
       },
 
       uploadImg(e, num) {
-        //上传图片
+        // 上传图片
         // this.option.img
-        var file = e.target.files[0];
+        var file = e.target.files[0]
         if (!/\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(e.target.value)) {
-          alert("图片类型必须是.gif,jpeg,jpg,png,bmp中的一种");
-          return false;
+          alert('图片类型必须是.gif,jpeg,jpg,png,bmp中的一种')
+          return false
         }
-        var reader = new FileReader();
+        var reader = new FileReader()
         reader.onload = e => {
-          let data;
-          if (typeof e.target.result === "object") {
+          let data
+          if (typeof e.target.result === 'object') {
             // 把Array Buffer转化为blob 如果是base64不需要
-            data = window.URL.createObjectURL(new Blob([e.target.result]));
+            data = window.URL.createObjectURL(new Blob([e.target.result]))
           } else {
-            data = e.target.result;
+            data = e.target.result
           }
           if (num === 1) {
-            this.option.img = data;
+            this.option.img = data
           } else if (num === 2) {
-            this.example2.img = data;
+            this.example2.img = data
           }
           this.$refs.uploadImg.value = ''
-        };
+        }
         // 转化为blob
-        reader.readAsArrayBuffer(file);
+        reader.readAsArrayBuffer(file)
       },
       imgLoad(msg) {
-        console.log(msg);
+        console.log(msg)
       },
 
       cropMoving(data) {
-        this.option.cropData = data;
+        this.option.cropData = data
       }
     },
     components: {
       VueCropper
     },
     mounted() {
-      this.changeImg();
-      var list = [].slice.call(document.querySelectorAll("pre code"));
+      this.changeImg()
+      var list = [].slice.call(document.querySelectorAll('pre code'))
       list.forEach((val, index) => {
-        hljs.highlightBlock(val);
-      });
+        hljs.highlightBlock(val)
+      })
     }
-  };
+  }
 </script>
 
 <style scoped>

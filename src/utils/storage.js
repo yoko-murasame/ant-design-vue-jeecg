@@ -7,7 +7,7 @@
  */
 export const setStore = (name, content, maxAge = null) => {
   if (!global.window || !name) {
-    return;
+    return
   }
 
   if (typeof content !== 'string') {
@@ -21,7 +21,7 @@ export const setStore = (name, content, maxAge = null) => {
     let timeout = parseInt(new Date().getTime() / 1000)
     storage.setItem(`${name}_expire`, timeout + maxAge)
   }
-};
+}
 
 /**
  * Get storage
@@ -31,7 +31,7 @@ export const setStore = (name, content, maxAge = null) => {
  */
 export const getStore = name => {
   if (!global.window || !name) {
-    return;
+    return
   }
 
   let content = window.localStorage.getItem(name)
@@ -40,7 +40,7 @@ export const getStore = name => {
   if (_expire) {
     let now = parseInt(new Date().getTime() / 1000)
     if (now > _expire) {
-      return;
+      return
     }
   }
 
@@ -49,7 +49,7 @@ export const getStore = name => {
   } catch (e) {
     return content
   }
-};
+}
 
 /**
  * Clear storage
@@ -58,21 +58,20 @@ export const getStore = name => {
  */
 export const clearStore = name => {
   if (!global.window || !name) {
-    return;
+    return
   }
 
   window.localStorage.removeItem(name)
   window.localStorage.removeItem(`${name}_expire`)
-};
+}
 
 /**
  * Clear all storage
  */
 export const clearAll = () => {
   if (!global.window || !name) {
-    return;
+    return
   }
 
   window.localStorage.clear()
 }
-

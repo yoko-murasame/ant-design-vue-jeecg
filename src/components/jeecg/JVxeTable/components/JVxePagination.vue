@@ -17,7 +17,7 @@
     props: {
       size: String,
       disabled: PropTypes.bool,
-      pagination: PropTypes.object.def({}),
+      pagination: PropTypes.object.def({})
     },
     data() {
       return {
@@ -47,18 +47,18 @@
           'j-vxe-pagination': true,
           'show-quick-jumper': !!this.bindProps.showQuickJumper
         }
-      },
+      }
     },
     methods: {
       handleChange(current, pageSize) {
         this.$set(this.pagination, 'current', current)
-        this.$emit('change', {current, pageSize})
+        this.$emit('change', { current, pageSize })
       },
       handleShowSizeChange(current, pageSize) {
         this.$set(this.pagination, 'pageSize', pageSize)
-        this.$emit('change', {current, pageSize})
-      },
-    },
+        this.$emit('change', { current, pageSize })
+      }
+    }
   }
 </script>
 

@@ -4,10 +4,10 @@ import xss from "xss"
     :title="title"
     :width="modelStyle.width"
     :visible="visible"
-    :bodyStyle ="bodyStyle"
+    :bodyStyle="bodyStyle"
     :switchFullscreen="switchFullscreen"
     @cancel="handleCancel"
-   >
+  >
     <template slot="footer">
       <a-button key="back" @click="handleCancel">关闭</a-button>
       <a-button v-if="record.openType==='url'" type="primary" @click="toHandle">去处理</a-button>
@@ -24,34 +24,34 @@ import xss from "xss"
 </template>
 
 <script>
-  import {getUserList} from '@/api/api'
+  import { getUserList } from '@/api/api'
   import xss from 'xss'
   export default {
-    name: "SysAnnouncementModal",
+    name: 'SysAnnouncementModal',
     components: {
     },
     data () {
       return {
-        title:"通知消息",
+        title: '通知消息',
         record: {},
         labelCol: {
           xs: { span: 24 },
-          sm: { span: 5 },
+          sm: { span: 5 }
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 16 },
+          sm: { span: 16 }
         },
         visible: false,
         switchFullscreen: true,
         loading: false,
-        bodyStyle:{
-          padding: "0",
-          height:(window.innerHeight*0.8)+"px",
-          "overflow-y":"auto",
+        bodyStyle: {
+          padding: '0',
+          height: (window.innerHeight * 0.8) + 'px',
+          'overflow-y': 'auto'
 
         },
-        modelStyle:{
+        modelStyle: {
           width: '60%',
           style: { top: '20px' },
           fullScreen: false
@@ -62,25 +62,25 @@ import xss from "xss"
     },
     methods: {
       detail (record) {
-        //update-begin---author:wangshuai ---date:20220107  for：将其它页面传递过来的用户名改成用户真实姓名
-        if(record.sender){
-          getUserList({"username":record.sender}).then((res) =>{
-            if(res.success && res.result.records.length>0){
+        // update-begin---author:wangshuai ---date:20220107  for：将其它页面传递过来的用户名改成用户真实姓名
+        if (record.sender) {
+          getUserList({ 'username': record.sender }).then((res) => {
+            if (res.success && res.result.records.length > 0) {
                 record.sender = res.result.records[0].realname
             }
           })
         }
-        //update-end---author:wangshuai ---date:20220107  for：将其它页面传递过来的用户名改成用户真实姓名
-        this.visible = true;
-        //update-begin-author:taoyan date:2022-7-14 for: VUEN-1702 【禁止问题】sql注入漏洞
-        if(record.msgContent){
+        // update-end---author:wangshuai ---date:20220107  for：将其它页面传递过来的用户名改成用户真实姓名
+        this.visible = true
+        // update-begin-author:taoyan date:2022-7-14 for: VUEN-1702 【禁止问题】sql注入漏洞
+        if (record.msgContent) {
           record.msgContent = xss(record.msgContent)
         }
-        //update-end-author:taoyan date:2022-7-14 for: VUEN-1702 【禁止问题】sql注入漏洞
-        this.record = record;
+        // update-end-author:taoyan date:2022-7-14 for: VUEN-1702 【禁止问题】sql注入漏洞
+        this.record = record
       },
       handleCancel () {
-        this.visible = false;
+        this.visible = false
       },
       /** 切换全屏显示 */
       handleClickToggleFullScreen() {
@@ -94,13 +94,13 @@ import xss from "xss"
         }
         this.modelStyle.fullScreen = mode
       },
-      toHandle(){
-        if(this.record.openType==='url'){
-          this.visible = false;
-          //链接跳转
-          this.$router.push({path: this.record.openPage})
+      toHandle() {
+        if (this.record.openType === 'url') {
+          this.visible = false
+          // 链接跳转
+          this.$router.push({ path: this.record.openPage })
         }
-      },
+      }
     }
   }
 </script>

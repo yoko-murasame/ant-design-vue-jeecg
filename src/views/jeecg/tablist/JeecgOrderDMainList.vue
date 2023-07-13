@@ -31,7 +31,6 @@
       </a-form>
     </div>
 
-
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
@@ -102,31 +101,31 @@
   import JeecgOrderDMainModal from './form/JeecgOrderDMainModal'
   import JeecgOrderCustomerList from './JeecgOrderCustomerList'
   import JeecgOrderTicketList from './JeecgOrderTicketList'
-  import {deleteAction} from '@/api/manage'
+  import { deleteAction } from '@/api/manage'
   import JeecgOrderCustomerModal from './form/JeecgOrderCustomerModal'
   import JeecgOrderTicketModal from './form/JeecgOrderTicketModal'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
   export default {
-    name: "JeecgOrderDMainList",
+    name: 'JeecgOrderDMainList',
     mixins: [JeecgListMixin],
     components: {
       JeecgOrderTicketModal,
       JeecgOrderCustomerModal,
       JeecgOrderDMainModal,
       JeecgOrderCustomerList,
-      JeecgOrderTicketList,
+      JeecgOrderTicketList
     },
     data() {
       return {
         description: '订单管理页面',
         /* 分页参数 */
-        ipagination:{
+        ipagination: {
           current: 1,
           pageSize: 5,
           pageSizeOptions: ['5', '10', '20'],
           showTotal: (total, range) => {
-            return range[0] + "-" + range[1] + " 共" + total + "条"
+            return range[0] + '-' + range[1] + ' 共' + total + '条'
           },
           showQuickJumper: true,
           showSizeChanger: true,
@@ -138,58 +137,58 @@
           dataIndex: '',
           key: 'rowIndex',
           width: 60,
-          align: "center",
+          align: 'center',
           customRender: function (t, r, index) {
-            return parseInt(index) + 1;
+            return parseInt(index) + 1
           }
         },
           {
             title: '订单号',
-            align: "center",
+            align: 'center',
             dataIndex: 'orderCode'
           },
           {
             title: '订单类型',
-            align: "center",
+            align: 'center',
             dataIndex: 'ctype',
             customRender: (text) => {
-              let re = "";
+              let re = ''
               if (text === '1') {
-                re = "国内订单";
+                re = '国内订单'
               } else if (text === '2') {
-                re = "国际订单";
+                re = '国际订单'
               }
-              return re;
+              return re
             }
           },
           {
             title: '订单日期',
-            align: "center",
+            align: 'center',
             dataIndex: 'orderDate'
           },
           {
             title: '订单金额',
-            align: "center",
+            align: 'center',
             dataIndex: 'orderMoney'
           },
           {
             title: '订单备注',
-            align: "center",
+            align: 'center',
             dataIndex: 'content'
           },
           {
             title: '操作',
             dataIndex: 'action',
-            align: "center",
-            scopedSlots: {customRender: 'action'},
+            align: 'center',
+            scopedSlots: { customRender: 'action' }
           }],
         // 分页参数
-        type: "radio",
+        type: 'radio',
         url: {
-          list: "/test/order/orderList",
-          delete: "/test/order/delete",
-          deleteBatch: "/test/order/deleteBatch",
-        },
+          list: '/test/order/orderList',
+          delete: '/test/order/delete',
+          deleteBatch: '/test/order/deleteBatch'
+        }
       }
     },
     methods: {
@@ -197,55 +196,55 @@
         return {
           on: {
             click: () => {
-              this.onSelectChange(record.id.split(","), [record]);
+              this.onSelectChange(record.id.split(','), [record])
             }
           }
-        };
+        }
       },
       onSelectChange(selectedRowKeys, selectionRows) {
-        this.selectedRowKeys = selectedRowKeys;
-        this.selectionRows = selectionRows;
-        this.$refs.JeecgOrderCustomerList.getOrderMain(this.selectedRowKeys[0]);
-        this.$refs.JeecgOrderTicketList.getOrderMain(this.selectedRowKeys[0]);
+        this.selectedRowKeys = selectedRowKeys
+        this.selectionRows = selectionRows
+        this.$refs.JeecgOrderCustomerList.getOrderMain(this.selectedRowKeys[0])
+        this.$refs.JeecgOrderTicketList.getOrderMain(this.selectedRowKeys[0])
       },
       onClearSelected() {
-        this.selectedRowKeys = [];
-        this.selectionRows = [];
-        this.$refs.JeecgOrderCustomerList.queryParam.mainId = null;
-        this.$refs.JeecgOrderTicketList.queryParam.mainId = null;
-        this.$refs.JeecgOrderCustomerList.loadData();
-        this.$refs.JeecgOrderTicketList.loadData();
-        this.$refs.JeecgOrderCustomerList.selectedRowKeys = [];
-        this.$refs.JeecgOrderCustomerList.selectionRows = [];
-        this.$refs.JeecgOrderTicketList.selectedRowKeys = [];
-        this.$refs.JeecgOrderTicketList.selectionRows = [];
+        this.selectedRowKeys = []
+        this.selectionRows = []
+        this.$refs.JeecgOrderCustomerList.queryParam.mainId = null
+        this.$refs.JeecgOrderTicketList.queryParam.mainId = null
+        this.$refs.JeecgOrderCustomerList.loadData()
+        this.$refs.JeecgOrderTicketList.loadData()
+        this.$refs.JeecgOrderCustomerList.selectedRowKeys = []
+        this.$refs.JeecgOrderCustomerList.selectionRows = []
+        this.$refs.JeecgOrderTicketList.selectedRowKeys = []
+        this.$refs.JeecgOrderTicketList.selectionRows = []
       },
 
       handleDelete: function (id) {
-        var that = this;
-        deleteAction(that.url.delete, {id: id}).then((res) => {
+        var that = this
+        deleteAction(that.url.delete, { id: id }).then((res) => {
           if (res.success) {
-            that.$message.success(res.message);
-            that.loadData();
-            this.$refs.JeecgOrderCustomerList.loadData();
-            this.$refs.JeecgOrderTicketList.loadData();
+            that.$message.success(res.message)
+            that.loadData()
+            this.$refs.JeecgOrderCustomerList.loadData()
+            this.$refs.JeecgOrderTicketList.loadData()
           } else {
-            that.$message.warning(res.message);
+            that.$message.warning(res.message)
           }
-        });
+        })
       },
-      searchQuery:function(){
-        this.selectedRowKeys = [];
-        this.selectionRows = [];
-        this.$refs.JeecgOrderCustomerList.queryParam.mainId = null;
-        this.$refs.JeecgOrderTicketList.queryParam.mainId = null;
-        this.$refs.JeecgOrderCustomerList.loadData();
-        this.$refs.JeecgOrderTicketList.loadData();
-        this.$refs.JeecgOrderCustomerList.selectedRowKeys = [];
-        this.$refs.JeecgOrderCustomerList.selectionRows = [];
-        this.$refs.JeecgOrderTicketList.selectedRowKeys = [];
-        this.$refs.JeecgOrderTicketList.selectionRows = [];
-        this.loadData();
+      searchQuery: function() {
+        this.selectedRowKeys = []
+        this.selectionRows = []
+        this.$refs.JeecgOrderCustomerList.queryParam.mainId = null
+        this.$refs.JeecgOrderTicketList.queryParam.mainId = null
+        this.$refs.JeecgOrderCustomerList.loadData()
+        this.$refs.JeecgOrderTicketList.loadData()
+        this.$refs.JeecgOrderCustomerList.selectedRowKeys = []
+        this.$refs.JeecgOrderCustomerList.selectionRows = []
+        this.$refs.JeecgOrderTicketList.selectedRowKeys = []
+        this.$refs.JeecgOrderTicketList.selectionRows = []
+        this.loadData()
       }
     }
   }

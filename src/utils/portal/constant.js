@@ -10,11 +10,11 @@ export const FunctionEnum = {
   EoaCmsUserNotice: { path: 'modules/eoa/cmsoa/modules/EoaCmsUserNotice', formData: 'userNotice' },
   EoaCmsPlan: { path: 'modules/eoa/cmsoa/modules/EoaCmsPlan', formData: '' },
   EoaCmsLink: { path: 'modules/eoa/cmsoa/modules/EoaCmsLink', formData: '' },
-  EoaCmsCommUse:{ path: 'modules/eoa/cmsbpm/modules/EoaCmsCommUse', formData: '' },
-  EoaCmsMyProcess:{ path: 'modules/eoa/cmsbpm/modules/EoaCmsMyProcess', formData: '' },
-  EoaCmsApplyProcess:{ path: 'modules/eoa/cmsbpm/modules/EoaCmsApplyProcess', formData: '' },
-  EoaCmsProcessNotice:{ path: 'modules/eoa/cmsbpm/modules/EoaCmsProcessNotice', formData: '' },
-  EoaCmsProcessChatData:{ path: 'modules/eoa/cmsbpm/modules/EoaCmsProcessChatData', formData: '' },
-  EoaCmsProcessTypeChat:{ path: 'modules/eoa/cmsbpm/modules/EoaCmsProcessTypeChat', formData: '' },
-  EoaCmsEmail:{ path: 'modules/eoa/cmsbpm/modules/EoaCmsEmail', formData: '' },
+  EoaCmsCommUse: { path: 'modules/eoa/cmsbpm/modules/EoaCmsCommUse', formData: '' },
+  EoaCmsMyProcess: { path: 'modules/eoa/cmsbpm/modules/EoaCmsMyProcess', formData: '' },
+  EoaCmsApplyProcess: { path: 'modules/eoa/cmsbpm/modules/EoaCmsApplyProcess', formData: '' },
+  EoaCmsProcessNotice: { path: 'modules/eoa/cmsbpm/modules/EoaCmsProcessNotice', formData: '' },
+  EoaCmsProcessChatData: { path: 'modules/eoa/cmsbpm/modules/EoaCmsProcessChatData', formData: '' },
+  EoaCmsProcessTypeChat: { path: 'modules/eoa/cmsbpm/modules/EoaCmsProcessTypeChat', formData: '' },
+  EoaCmsEmail: { path: 'modules/eoa/cmsbpm/modules/EoaCmsEmail', formData: '' }
 }

@@ -1,25 +1,25 @@
 <template>
   <div>
-      <a-input
-        v-show="!departIds"
-        @click="openSelect"
-        placeholder="请点击选择部门"
-        v-model="departNames"
-        readOnly
-        :disabled="componentDisabled"
-        class="jvxe-select-input">
-        <a-icon slot="prefix" type="cluster" title="部门选择控件"/>
-      </a-input>
-      <j-select-depart-modal
-        ref="innerDepartSelectModal"
-        :modal-width="modalWidth"
-        :multi="multi"
-        :rootOpened="rootOpened"
-        :depart-id="departIds"
-        :store="storeField()"
-        :text="textField()"
-        @ok="handleOK"
-        @initComp="initComp"/>
+    <a-input
+      v-show="!departIds"
+      @click="openSelect"
+      placeholder="请点击选择部门"
+      v-model="departNames"
+      readOnly
+      :disabled="componentDisabled"
+      class="jvxe-select-input">
+      <a-icon slot="prefix" type="cluster" title="部门选择控件"/>
+    </a-input>
+    <j-select-depart-modal
+      ref="innerDepartSelectModal"
+      :modal-width="modalWidth"
+      :multi="multi"
+      :rootOpened="rootOpened"
+      :depart-id="departIds"
+      :store="storeField()"
+      :text="textField()"
+      @ok="handleOK"
+      @initComp="initComp"/>
     <span style="display: inline-block;height:100%;padding-left:14px" v-if="departIds" >
       <span @click="openSelect" style="display: inline-block;vertical-align: middle">{{ departNames }}</span>
       <a-icon v-if="!componentDisabled" style="margin-left:5px;vertical-align: middle" type="close-circle" @click="handleEmpty" title="清空"/>
@@ -34,7 +34,7 @@
   export default {
     name: 'JVxeDepartSelectCell',
     mixins: [JVxeCellMixins],
-    components:{
+    components: {
       JSelectDepartModal
     },
     data() {
@@ -47,7 +47,7 @@
     },
     computed: {
       custProps() {
-        const {departIds, originColumn: col, caseId, cellProps} = this
+        const { departIds, originColumn: col, caseId, cellProps } = this
         return {
           ...cellProps,
           value: departIds,
@@ -56,30 +56,30 @@
           class: 'jvxe-select'
         }
       },
-      componentDisabled(){
-        if(this.cellProps.disabled==true){
+      componentDisabled() {
+        if (this.cellProps.disabled == true) {
           return true
         }
         return false
       },
-      modalWidth(){
-        if(this.cellProps.modalWidth){
+      modalWidth() {
+        if (this.cellProps.modalWidth) {
           return this.cellProps.modalWidth
-        }else{
+        } else {
           return 500
         }
       },
-      multi(){
-        if(this.cellProps.multi==false || this.originColumn.multi===false){
+      multi() {
+        if (this.cellProps.multi == false || this.originColumn.multi === false) {
           return false
-        }else{
+        } else {
           return true
         }
       },
-      rootOpened(){
-        if(this.cellProps.open==false){
+      rootOpened() {
+        if (this.cellProps.open == false) {
           return false
-        }else{
+        } else {
           return true
         }
       }
@@ -97,14 +97,14 @@
       }
     },
     methods: {
-      openSelect(){
+      openSelect() {
         // disabled 不弹窗
         if (this.componentDisabled) {
           return
         }
         this.$refs.innerDepartSelectModal.show()
       },
-      handleEmpty(){
+      handleEmpty() {
         this.handleOK('')
       },
       handleOK(rows) {
@@ -113,43 +113,43 @@
           this.departNames = ''
           this.departIds = ''
         } else {
-          let storeField = this.storeField();
-          let textField = this.textField();
+          let storeField = this.storeField()
+          let textField = this.textField()
           value = rows.map(row => row[storeField]).join(',')
           this.departNames = rows.map(row => row[textField]).join(',')
           this.departIds = value
         }
         this.handleChangeCommon(this.departIds)
       },
-      initComp(departNames){
+      initComp(departNames) {
         this.departNames = departNames
       },
       handleChange(value) {
         this.handleChangeCommon(value)
       },
-      storeField(){
-        if(this.originColumn){
+      storeField() {
+        if (this.originColumn) {
           const str = this.originColumn.fieldExtendJson
-          if(str){
+          if (str) {
             let json = JSON.parse(str)
-            if(json && json.store){
+            if (json && json.store) {
               return json.store
             }
-          }else if(this.originColumn.store){
+          } else if (this.originColumn.store) {
             return this.originColumn.store
           }
         }
         return 'id'
       },
-      textField(){
-        if(this.originColumn){
+      textField() {
+        if (this.originColumn) {
           const str = this.originColumn.fieldExtendJson
-          if(str){
+          if (str) {
             let json = JSON.parse(str)
-            if(json && json.text){
+            if (json && json.text) {
               return json.text
             }
-          }else if(this.originColumn.text){
+          } else if (this.originColumn.text) {
             return this.originColumn.text
           }
         }

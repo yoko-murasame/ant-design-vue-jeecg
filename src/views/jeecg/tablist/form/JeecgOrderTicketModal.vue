@@ -59,7 +59,7 @@
 </template>
 
 <script>
-  import {httpAction} from '@/api/manage'
+  import { httpAction } from '@/api/manage'
   import moment from 'moment'
   import JDate from '@/components/jeecg/JDate'
 
@@ -74,12 +74,12 @@
         visible: false,
         model: {},
         labelCol: {
-          xs: {span: 24},
-          sm: {span: 5}
+          xs: { span: 24 },
+          sm: { span: 5 }
         },
         wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16}
+          xs: { span: 24 },
+          sm: { span: 16 }
         },
         moment,
         format: 'YYYY-MM-DD HH:mm:ss',
@@ -88,8 +88,8 @@
         hiding: false,
         confirmLoading: false,
         validatorRules: {
-          ticketCode:[{required : true, message: '请输入航班号!'}],
-          tickectDate:[{required : true, message: '请输入航班时间!'}]
+          ticketCode: [{ required: true, message: '请输入航班号!' }],
+          tickectDate: [{ required: true, message: '请输入航班时间!' }]
         },
         url: {
           add: '/test/order/addTicket',
@@ -102,7 +102,7 @@
     methods: {
       add(orderId) {
         if (orderId) {
-          this.edit({orderId}, '')
+          this.edit({ orderId }, '')
         } else {
           this.$message.warning('请选择一条航班数据')
         }
@@ -112,52 +112,52 @@
       },
       edit(record, v) {
         if (v == 'e') {
-          this.hiding = false;
-          this.disableSubmit = false;
+          this.hiding = false
+          this.disableSubmit = false
         } else if (v == 'd') {
-          this.hiding = false;
-          this.disableSubmit = true;
+          this.hiding = false
+          this.disableSubmit = true
         } else {
-          this.hiding = true;
-          this.disableSubmit = false;
+          this.hiding = true
+          this.disableSubmit = false
         }
-        this.model = Object.assign({}, record);
-        this.visible = true;
+        this.model = Object.assign({}, record)
+        this.visible = true
       },
       close() {
-        this.$emit('close');
-        this.visible = false;
-        this.$refs.form.resetFields();
+        this.$emit('close')
+        this.visible = false
+        this.$refs.form.resetFields()
       },
       handleOk() {
-        const that = this;
+        const that = this
         // 触发表单验证
         this.$refs.form.validate(valid => {
           if (valid) {
-            that.confirmLoading = true;
-            let httpurl = '';
-            let method = '';
+            that.confirmLoading = true
+            let httpurl = ''
+            let method = ''
             if (!this.model.id) {
-              httpurl += this.url.add;
-              method = 'post';
+              httpurl += this.url.add
+              method = 'post'
             } else {
-              httpurl += this.url.edit;
-              method = 'put';
+              httpurl += this.url.edit
+              method = 'put'
             }
-            this.model.mainId = this.model.orderId;
+            this.model.mainId = this.model.orderId
             httpAction(httpurl, this.model, method).then((res) => {
               if (res.success) {
-                that.$message.success(res.message);
+                that.$message.success(res.message)
                 that.$emit('ok')
               } else {
-                that.$message.warning(res.message);
+                that.$message.warning(res.message)
               }
             }).finally(() => {
-              that.confirmLoading = false;
-              that.close();
+              that.confirmLoading = false
+              that.close()
             })
-          }else{
-            return false;
+          } else {
+            return false
           }
         })
       },

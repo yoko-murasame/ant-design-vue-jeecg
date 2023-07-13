@@ -107,24 +107,24 @@
               <head-info title="今日IP" :content="loginfo.todayIp"></head-info>
             </a-col>
             <a-col :span="2">
-              <a-spin class='circle-cust'>
-                <a-icon slot="indicator" type="environment" style="font-size: 24px"  />
+              <a-spin class="circle-cust">
+                <a-icon slot="indicator" type="environment" style="font-size: 24px" />
               </a-spin>
             </a-col>
             <a-col :span="6">
               <head-info title="今日访问" :content="loginfo.todayVisitCount"></head-info>
             </a-col>
             <a-col :span="2">
-              <a-spin class='circle-cust'>
-                <a-icon slot="indicator" type="team" style="font-size: 24px"  />
+              <a-spin class="circle-cust">
+                <a-icon slot="indicator" type="team" style="font-size: 24px" />
               </a-spin>
             </a-col>
             <a-col :span="6">
               <head-info title="总访问量" :content="loginfo.totalVisitCount"></head-info>
             </a-col>
             <a-col :span="2">
-              <a-spin class='circle-cust'>
-                <a-icon slot="indicator" type="rise" style="font-size: 24px"  />
+              <a-spin class="circle-cust">
+                <a-icon slot="indicator" type="rise" style="font-size: 24px" />
               </a-spin>
             </a-col>
           </a-row>
@@ -137,8 +137,8 @@
 
 <script>
   import ChartCard from '@/components/ChartCard'
-  import ACol from "ant-design-vue/es/grid/Col"
-  import ATooltip from "ant-design-vue/es/tooltip/Tooltip"
+  import ACol from 'ant-design-vue/es/grid/Col'
+  import ATooltip from 'ant-design-vue/es/tooltip/Tooltip'
   import MiniArea from '@/components/chart/MiniArea'
   import MiniBar from '@/components/chart/MiniBar'
   import MiniProgress from '@/components/chart/MiniProgress'
@@ -148,12 +148,12 @@
   import HeadInfo from '@/components/tools/HeadInfo.vue'
 
   import Trend from '@/components/Trend'
-  import { getLoginfo,getVisitInfo } from '@/api/api'
+  import { getLoginfo, getVisitInfo } from '@/api/api'
 
   const rankList = []
   for (let i = 0; i < 7; i++) {
     rankList.push({
-      name: '白鹭岛 ' + (i+1) + ' 号店',
+      name: '白鹭岛 ' + (i + 1) + ' 号店',
       total: 1234.56 - i * 100
     })
   }
@@ -165,7 +165,7 @@
     })
   }
   export default {
-    name: "IndexChart",
+    name: 'IndexChart',
     components: {
       ATooltip,
       ACol,
@@ -185,9 +185,9 @@
         center: null,
         rankList,
         barData,
-        loginfo:{},
-        visitFields:['ip','visit'],
-        visitInfo:[],
+        loginfo: {},
+        visitFields: ['ip', 'visit'],
+        visitInfo: [],
         indicator: <a-icon type="loading" style="font-size: 24px" spin />
       }
     },
@@ -195,24 +195,24 @@
       setTimeout(() => {
         this.loading = !this.loading
       }, 1000)
-      this.initLogInfo();
+      this.initLogInfo()
     },
     methods: {
       initLogInfo () {
-        getLoginfo(null).then((res)=>{
-          if(res.success){
-            Object.keys(res.result).forEach(key=>{
-              res.result[key] =res.result[key]+""
+        getLoginfo(null).then((res) => {
+          if (res.success) {
+            Object.keys(res.result).forEach(key => {
+              res.result[key] = res.result[key] + ''
             })
-            this.loginfo = res.result;
+            this.loginfo = res.result
           }
         })
-        getVisitInfo().then(res=>{
-          if(res.success){
-             this.visitInfo = res.result;
+        getVisitInfo().then(res => {
+          if (res.success) {
+             this.visitInfo = res.result
            }
          })
-      },
+      }
     }
   }
 </script>

@@ -6,7 +6,7 @@ export const TagsSpanCell = {
   mixins: [JVxeCellMixins],
   data() {
     return {
-      innerTags: [],
+      innerTags: []
     }
   },
   watch: {
@@ -18,8 +18,8 @@ export const TagsSpanCell = {
           this.innerTags = rv.split(';')
           this.handleChangeCommon(rv)
         }
-      },
-    },
+      }
+    }
   },
   methods: {
     renderTags(h) {
@@ -45,7 +45,7 @@ export const TagsSpanCell = {
               tagValue: tag,
               value: this.innerValue,
               row: this.row,
-              column: this.column,
+              column: this.column
             })
             if (Array.isArray(color)) {
               tagProps.color = color[0]
@@ -56,18 +56,18 @@ export const TagsSpanCell = {
           }
           tags.push(h('a-tag', {
             props: tagProps,
-            style: tagStyle,
+            style: tagStyle
           }, [tag]))
         }
       }
       return tags
-    },
+    }
   },
   render(h) {
     return h('div', {}, [
       this.renderTags(h)
     ])
-  },
+  }
 }
 
 // tags 组件的输入框
@@ -76,7 +76,7 @@ export const TagsInputCell = {
   mixins: [JVxeCellMixins],
   data() {
     return {
-      innerTagValue: '',
+      innerTagValue: ''
     }
   },
   watch: {
@@ -86,8 +86,8 @@ export const TagsInputCell = {
         if (value !== this.innerTagValue) {
           this.handleInputChange(value)
         }
-      },
-    },
+      }
+    }
   },
   methods: {
 
@@ -95,7 +95,7 @@ export const TagsInputCell = {
       this.innerTagValue = replaceValue(value, event)
       this.handleChangeCommon(this.innerTagValue)
       return this.innerTagValue
-    },
+    }
 
   },
   render(h) {
@@ -106,15 +106,15 @@ export const TagsInputCell = {
       },
       on: {
         change: (event) => {
-          let {target, target: {value}} = event
+          let { target, target: { value } } = event
           let newValue = this.handleInputChange(value, event)
           if (newValue !== value) {
             target.value = newValue
           }
         }
-      },
+      }
     })
-  },
+  }
 }
 
 // 将值每隔两位加上一个分号
@@ -135,7 +135,7 @@ function replaceValue(value, event) {
       }
     })
     if (event && count > 0) {
-      let {target, target: {selectionStart}} = event
+      let { target, target: { selectionStart } } = event
       target.selectionStart = selectionStart + count
       target.selectionEnd = selectionStart + count
     }

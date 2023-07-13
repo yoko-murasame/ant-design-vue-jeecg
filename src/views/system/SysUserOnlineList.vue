@@ -65,14 +65,14 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { forceLogout } from '@/api/login'
-  import {filterDictTextByCache} from '@/components/dict/JDictSelectUtil'
+  import { filterDictTextByCache } from '@/components/dict/JDictSelectUtil'
 
-  import {getFileAccessHttpUrl} from '@/api/manage';
-  import {ACCESS_TOKEN} from '@/store/mutation-types'
+  import { getFileAccessHttpUrl } from '@/api/manage'
+  import { ACCESS_TOKEN } from '@/store/mutation-types'
 
   export default {
-    name: "SysUserOnlineList",
-    mixins:[JeecgListMixin, mixinDevice],
+    name: 'SysUserOnlineList',
+    mixins: [JeecgListMixin, mixinDevice],
     components: {},
     data () {
       let currentToken = this.$ls.get(ACCESS_TOKEN)
@@ -84,77 +84,77 @@
         // 表头
         columns: [
           {
-            title:'用户账号',
-            align:"center",
+            title: '用户账号',
+            align: 'center',
             dataIndex: 'username',
-            customRender: (text,record) => {
-              if(record.token === currentToken) {
+            customRender: (text, record) => {
+              if (record.token === currentToken) {
                 return text + '（我）'
               }
               return text
-            },
-          },{
-            title:'用户姓名',
-            align:"center",
+            }
+          }, {
+            title: '用户姓名',
+            align: 'center',
             dataIndex: 'realname'
-          },{
+          }, {
             title: '头像',
-            align: "center",
+            align: 'center',
             width: 120,
             dataIndex: 'avatar',
-            scopedSlots: {customRender: "avatarslot"}
-          },{
-            title:'生日',
-            align:"center",
+            scopedSlots: { customRender: 'avatarslot' }
+          }, {
+            title: '生日',
+            align: 'center',
             dataIndex: 'birthday'
-          },{
+          }, {
             title: '性别',
-            align: "center",
+            align: 'center',
             dataIndex: 'sex',
             customRender: (text) => {
-              //字典值翻译通用方法
-              return filterDictTextByCache('sex', text);
+              // 字典值翻译通用方法
+              return filterDictTextByCache('sex', text)
             }
-          },{
-            title:'手机号',
-            align:"center",
+          }, {
+            title: '手机号',
+            align: 'center',
             dataIndex: 'phone'
-          },{
+          }, {
             title: '操作',
             dataIndex: 'action',
-            scopedSlots: {customRender: 'action'},
-            align: "center",
+            scopedSlots: { customRender: 'action' },
+            align: 'center',
             width: 170
           }
         ],
         url: {
-          list: "/sys/online/list"
+          list: '/sys/online/list'
         },
-        dictOptions:{},
+        dictOptions: {}
       }
     },
     created() {
     },
     computed: {
-      importExcelUrl: function(){
-        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-      },
+      importExcelUrl: function() {
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
+      }
     },
     methods: {
       getAvatarView: function (avatar) {
         return getFileAccessHttpUrl(avatar)
       },
       handleForce(record) {
-        let that = this;
+        let that = this
         let forceParam = {
           token: record.token
         }
         return forceLogout(forceParam).then((res) => {
           if (res.success) {
-            that.loadData();
-            this.$message.success('强制退出用户”'+record.realname+'“成功！');
+            that.loadData()
+            this.$message.success('强制退出用户”' + record.realname + '“成功！')
           } else {
-            that.$message.warning(res.message);
+            that.$message.warning(res.message)
           }
         })
       }

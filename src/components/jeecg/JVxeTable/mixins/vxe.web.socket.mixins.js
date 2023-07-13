@@ -20,7 +20,7 @@ const vs = {
     // 消息类型：通用数据传递
     TYPE_CSD: 'common_send_date',
     // 消息类型：更新vxe table数据
-    TYPE_UVT: 'update_vxe_table',
+    TYPE_UVT: 'update_vxe_table'
   },
   // 心跳检测
   heartCheck: {
@@ -45,7 +45,7 @@ const vs = {
     back() {
       this.clear()
       window.setTimeout(() => this.start(), this.interval)
-    },
+    }
   },
 
   /** 初始化 WebSocket */
@@ -55,10 +55,10 @@ const vs = {
       const domain = window._CONFIG['domianURL'].replace('https://', 'wss://').replace('http://', 'ws://')
       const url = `${domain}/vxeSocket/${userId}/${this.pageId}`
 
-      //update-begin-author:taoyan date:2022-4-22 for:  v2.4.6 的 websocket 服务端，存在性能和安全问题。 #3278
+      // update-begin-author:taoyan date:2022-4-22 for:  v2.4.6 的 websocket 服务端，存在性能和安全问题。 #3278
       let token = Vue.ls.get(ACCESS_TOKEN)
       this.ws = new WebSocket(url, [token])
-      //update-end-author:taoyan date:2022-4-22 for:  v2.4.6 的 websocket 服务端，存在性能和安全问题。 #3278
+      // update-end-author:taoyan date:2022-4-22 for:  v2.4.6 的 websocket 服务端，存在性能和安全问题。 #3278
       this.ws.onopen = this.on.open.bind(this)
       this.ws.onerror = this.on.error.bind(this)
       this.ws.onmessage = this.on.message.bind(this)
@@ -178,7 +178,7 @@ const vs = {
     close(e) {
       console.log('【VXEWebSocket】连接被关闭:', e)
       this.reconnect()
-    },
+    }
   },
 
   onVM: {
@@ -205,8 +205,8 @@ const vs = {
           this.$refs.vxe.reloadRow(tableRow)
         }
       }
-    },
-  },
+    }
+  }
 
 }
 
@@ -220,7 +220,7 @@ export default {
     socketKey: {
       type: String,
       default: 'vxe-default'
-    },
+    }
   },
   data() {
     return {}
@@ -237,14 +237,14 @@ export default {
     socketSendUpdateRow(row) {
       vs.sendMessage(vs.constants.TYPE_UVT, {
         socketKey: this.socketKey,
-        args: [row, this.caseId],
+        args: [row, this.caseId]
       })
-    },
+    }
 
   },
   beforeDestroy() {
     vs.removeBind(vs.tableMap, this.socketKey, this)
-  },
+  }
 }
 
 /**

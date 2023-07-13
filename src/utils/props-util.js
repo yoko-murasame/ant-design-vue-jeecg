@@ -34,7 +34,6 @@ function camelize(str) {
   return str.replace(camelizeRE, (_, c) => (c ? c.toUpperCase() : ''))
 }
 
-
 function objectCamelize(obj) {
   let res = {}
   Object.keys(obj).forEach(k => (res[camelize(k)] = obj[k]))
@@ -88,7 +87,6 @@ export function getClass(ele) {
 }
 
 export function getStyle(ele, camel) {
-
   getClass(ele)
 
   let data = {}
@@ -112,4 +110,3 @@ export function getStyle(ele, camel) {
   }
   return { ...staticStyle, ...style }
 }
-

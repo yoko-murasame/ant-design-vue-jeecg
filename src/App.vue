@@ -12,7 +12,7 @@
   export default {
     data () {
       return {
-        locale: zhCN,
+        locale: zhCN
       }
     },
     created () {
@@ -27,12 +27,10 @@
         else if (deviceType === 1) {
           that.$store.commit('TOGGLE_DEVICE', 'mobile')
           that.$store.dispatch('setSidebar', false)
-        }
-        else {
+        } else {
           that.$store.commit('TOGGLE_DEVICE', 'desktop')
           that.$store.dispatch('setSidebar', true)
         }
-
       })
     }
   }

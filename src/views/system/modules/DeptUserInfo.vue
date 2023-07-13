@@ -12,7 +12,7 @@
           </a-col>
           <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
             <a-col :md="6" :sm="24">
-             <a-button type="primary" @click="searchQuery" icon="search" style="margin-left: 18px">查询</a-button>
+              <a-button type="primary" @click="searchQuery" icon="search" style="margin-left: 18px">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
             </a-col>
           </span>
@@ -42,7 +42,7 @@
     <div>
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
         <i class="anticon anticon-info-circle ant-alert-icon"></i> 已选择 <a style="font-weight: 600">{{
-        selectedRowKeys.length }}</a>项
+          selectedRowKeys.length }}</a>项
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
@@ -58,8 +58,6 @@
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
         @change="handleTableChange">
 
-
-
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
 
@@ -70,7 +68,7 @@
               更多 <a-icon type="down"/>
             </a>
             <a-menu slot="overlay">
-                <a-menu-item>
+              <a-menu-item>
                 <a href="javascript:;" @click="handleDeptRole(record)">部门角色</a>
               </a-menu-item>
 
@@ -87,7 +85,6 @@
           </a-dropdown>
         </span>
 
-
       </a-table>
     </div>
     <!-- table区域-end -->
@@ -100,14 +97,14 @@
 </template>
 
 <script>
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
-  import {getAction, postAction, deleteAction} from '@/api/manage'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import { getAction, postAction, deleteAction } from '@/api/manage'
   import SelectUserModal from './SelectUserModal'
   import UserModal from './UserModal'
   import DeptRoleUserModal from './DeptRoleUserModal'
 
   export default {
-    name: "DeptUserInfo",
+    name: 'DeptUserInfo',
     mixins: [JeecgListMixin],
     components: {
       DeptRoleUserModal,
@@ -122,41 +119,41 @@
         // 表头
         columns: [{
             title: '用户账号',
-            align: "center",
+            align: 'center',
             dataIndex: 'username'
           },
           {
             title: '用户名称',
-            align: "center",
+            align: 'center',
             dataIndex: 'realname'
           },
           {
             title: '部门',
-            align: "center",
+            align: 'center',
             dataIndex: 'orgCode'
           },
           {
             title: '性别',
-            align: "center",
+            align: 'center',
             dataIndex: 'sex_dictText'
           },
           {
             title: '电话',
-            align: "center",
+            align: 'center',
             dataIndex: 'phone'
           },
           {
             title: '操作',
             dataIndex: 'action',
-            scopedSlots: {customRender: 'action'},
-            align: "center",
+            scopedSlots: { customRender: 'action' },
+            align: 'center',
             width: 150
           }],
         url: {
-          list: "/sys/user/departUserList",
-          edit: "/sys/user/editSysDepartWithUser",
-          delete: "/sys/user/deleteUserInDepart",
-          deleteBatch: "/sys/user/deleteUserInDepartBatch",
+          list: '/sys/user/departUserList',
+          edit: '/sys/user/editSysDepartWithUser',
+          delete: '/sys/user/deleteUserInDepart',
+          deleteBatch: '/sys/user/deleteUserInDepartBatch'
         }
       }
     },
@@ -166,165 +163,163 @@
     methods: {
       searchReset() {
         this.queryParam = {}
-        this.loadData(1);
+        this.loadData(1)
       },
       loadData(arg) {
         if (!this.url.list) {
-          this.$message.error("请设置url.list属性!")
+          this.$message.error('请设置url.list属性!')
           return
         }
-        //加载数据 若传入参数1则加载第一页的内容
+        // 加载数据 若传入参数1则加载第一页的内容
         if (arg === 1) {
-          this.ipagination.current = 1;
+          this.ipagination.current = 1
         }
-        //if (this.currentDeptId === '') return;
-        let params = this.getQueryParams();//查询条件
-        params.depId = this.currentDeptId;
+        // if (this.currentDeptId === '') return;
+        let params = this.getQueryParams()// 查询条件
+        params.depId = this.currentDeptId
         getAction(this.url.list, params).then((res) => {
           if (res.success && res.result) {
-            this.dataSource = res.result.records;
-            this.ipagination.total = res.result.total;
+            this.dataSource = res.result.records
+            this.ipagination.total = res.result.total
           }
         })
       },
       batchDel: function () {
-
         if (!this.url.deleteBatch) {
-          this.$message.error("请设置url.deleteBatch属性!")
+          this.$message.error('请设置url.deleteBatch属性!')
           return
         }
         if (!this.currentDeptId) {
-          this.$message.error("未选中任何部门，无法取消部门与用户的关联!")
+          this.$message.error('未选中任何部门，无法取消部门与用户的关联!')
           return
         }
 
         if (this.selectedRowKeys.length <= 0) {
-          this.$message.warning('请选择一条记录！');
-          return;
+          this.$message.warning('请选择一条记录！')
         } else {
-          var ids = "";
+          var ids = ''
           for (var a = 0; a < this.selectedRowKeys.length; a++) {
-            ids += this.selectedRowKeys[a] + ",";
+            ids += this.selectedRowKeys[a] + ','
           }
-          var that = this;
-          console.log(this.currentDeptId);
+          var that = this
+          console.log(this.currentDeptId)
           this.$confirm({
-            title: "确认取消",
-            content: "是否取消用户与选中部门的关联?",
+            title: '确认取消',
+            content: '是否取消用户与选中部门的关联?',
             onOk: function () {
-              deleteAction(that.url.deleteBatch, {depId: that.currentDeptId, userIds: ids}).then((res) => {
+              deleteAction(that.url.deleteBatch, { depId: that.currentDeptId, userIds: ids }).then((res) => {
                 if (res.success) {
-                  that.$message.success("删除用户与选中部门关系成功！");
-                  that.loadData();
-                  that.onClearSelected();
+                  that.$message.success('删除用户与选中部门关系成功！')
+                  that.loadData()
+                  that.onClearSelected()
                 } else {
-                  that.$message.warning(res.message);
+                  that.$message.warning(res.message)
                 }
-              });
+              })
             }
-          });
+          })
         }
       },
       handleDelete: function (id) {
         if (!this.url.delete) {
-          this.$message.error("请设置url.delete属性!")
+          this.$message.error('请设置url.delete属性!')
           return
         }
         if (!this.currentDeptId) {
-          this.$message.error("未选中任何部门，无法取消部门与用户的关联!")
+          this.$message.error('未选中任何部门，无法取消部门与用户的关联!')
           return
         }
 
-        var that = this;
-        deleteAction(that.url.delete, {depId: this.currentDeptId, userId: id}).then((res) => {
+        var that = this
+        deleteAction(that.url.delete, { depId: this.currentDeptId, userId: id }).then((res) => {
           if (res.success) {
-            that.$message.success("删除用户与选中部门关系成功！");
-            if (this.selectedRowKeys.length>0){
-               for(let i =0; i<this.selectedRowKeys.length;i++){
-                   if (this.selectedRowKeys[i] == id){
-                     this.selectedRowKeys.splice(i,1);
-                     break;
+            that.$message.success('删除用户与选中部门关系成功！')
+            if (this.selectedRowKeys.length > 0) {
+               for (let i = 0; i < this.selectedRowKeys.length; i++) {
+                   if (this.selectedRowKeys[i] == id) {
+                     this.selectedRowKeys.splice(i, 1)
+                     break
                    }
                }
             }
-            that.loadData();
+            that.loadData()
           } else {
-            that.$message.warning(res.message);
-          }
-        });
-      },
-      open(record) {
-        //console.log(record);
-        this.currentDeptId = record.id;
-        this.currentDept = record;
-        this.loadData(1);
-      },
-      clearList() {
-        this.currentDeptId = '';
-        this.dataSource = [];
-      },
-      hasSelectDept() {
-        if (this.currentDeptId == '') {
-          this.$message.error("请选择一个部门!")
-          return false;
-        }
-        return true;
-      },
-      handleAddUserDepart() {
-        if (this.currentDeptId == '' ) {
-          this.$message.error("请选择一个部门!")
-        } else {
-          this.$refs.selectUserModal.visible = true;
-        }
-      },
-      handleEdit: function (record) {
-        this.$refs.modalForm.title = "编辑";
-        this.$refs.modalForm.departDisabled = true;
-        this.$refs.modalForm.disableSubmit = false;
-        //update-begin---author:wangshuai ---date:20220315  for：[issues/3472]给新建用户赋予角色的逻辑漏洞------------
-        //部门中角色信息隐藏掉
-        this.$refs.modalForm.roleDisabled = true
-        //update-end---author:wangshuai ---date:20220315  for：[issues/3472]给新建用户赋予角色的逻辑漏洞------------
-        this.$refs.modalForm.edit(record);
-      },
-      handleAdd: function () {
-        if (this.currentDeptId == '') {
-          this.$message.error("请选择一个部门!")
-        } else {
-          this.$refs.modalForm.departDisabled = true;
-          //update-begin---author:wangshuai ---date:20220315  for：[issues/3472]给新建用户赋予角色的逻辑漏洞------------
-          //部门中角色信息隐藏掉
-          this.$refs.modalForm.roleDisabled = true
-          //update-end---author:wangshuai ---date:20220315  for：[issues/3472]给新建用户赋予角色的逻辑漏洞------------
-          //初始化负责部门
-          this.$refs.modalForm.nextDepartOptions=[{value:this.currentDept.key,label:this.currentDept.title}]
-          this.$refs.modalForm.title = "新增";
-          this.$refs.modalForm.edit({activitiSync:'1',userIdentity:1,selecteddeparts:this.currentDeptId})
-        }
-      },
-      selectOK(data) {
-        let params = {};
-        params.depId = this.currentDeptId;
-        params.userIdList = [];
-        for (var a = 0; a < data.length; a++) {
-          params.userIdList.push(data[a]);
-        }
-        console.log(params);
-        postAction(this.url.edit, params).then((res) => {
-          if (res.success) {
-            this.$message.success(res.message);
-            this.loadData();
-          } else {
-            this.$message.warning(res.message);
+            that.$message.warning(res.message)
           }
         })
       },
-      handleDeptRole(record){
-        if(this.currentDeptId != ''){
-          this.$refs.deptRoleUser.add(record,this.currentDeptId);
-          this.$refs.deptRoleUser.title = "部门角色分配";
-        }else{
-          this.$message.warning("请先选择一个部门!");
+      open(record) {
+        // console.log(record);
+        this.currentDeptId = record.id
+        this.currentDept = record
+        this.loadData(1)
+      },
+      clearList() {
+        this.currentDeptId = ''
+        this.dataSource = []
+      },
+      hasSelectDept() {
+        if (this.currentDeptId == '') {
+          this.$message.error('请选择一个部门!')
+          return false
+        }
+        return true
+      },
+      handleAddUserDepart() {
+        if (this.currentDeptId == '') {
+          this.$message.error('请选择一个部门!')
+        } else {
+          this.$refs.selectUserModal.visible = true
+        }
+      },
+      handleEdit: function (record) {
+        this.$refs.modalForm.title = '编辑'
+        this.$refs.modalForm.departDisabled = true
+        this.$refs.modalForm.disableSubmit = false
+        // update-begin---author:wangshuai ---date:20220315  for：[issues/3472]给新建用户赋予角色的逻辑漏洞------------
+        // 部门中角色信息隐藏掉
+        this.$refs.modalForm.roleDisabled = true
+        // update-end---author:wangshuai ---date:20220315  for：[issues/3472]给新建用户赋予角色的逻辑漏洞------------
+        this.$refs.modalForm.edit(record)
+      },
+      handleAdd: function () {
+        if (this.currentDeptId == '') {
+          this.$message.error('请选择一个部门!')
+        } else {
+          this.$refs.modalForm.departDisabled = true
+          // update-begin---author:wangshuai ---date:20220315  for：[issues/3472]给新建用户赋予角色的逻辑漏洞------------
+          // 部门中角色信息隐藏掉
+          this.$refs.modalForm.roleDisabled = true
+          // update-end---author:wangshuai ---date:20220315  for：[issues/3472]给新建用户赋予角色的逻辑漏洞------------
+          // 初始化负责部门
+          this.$refs.modalForm.nextDepartOptions = [{ value: this.currentDept.key, label: this.currentDept.title }]
+          this.$refs.modalForm.title = '新增'
+          this.$refs.modalForm.edit({ activitiSync: '1', userIdentity: 1, selecteddeparts: this.currentDeptId })
+        }
+      },
+      selectOK(data) {
+        let params = {}
+        params.depId = this.currentDeptId
+        params.userIdList = []
+        for (var a = 0; a < data.length; a++) {
+          params.userIdList.push(data[a])
+        }
+        console.log(params)
+        postAction(this.url.edit, params).then((res) => {
+          if (res.success) {
+            this.$message.success(res.message)
+            this.loadData()
+          } else {
+            this.$message.warning(res.message)
+          }
+        })
+      },
+      handleDeptRole(record) {
+        if (this.currentDeptId != '') {
+          this.$refs.deptRoleUser.add(record, this.currentDeptId)
+          this.$refs.deptRoleUser.title = '部门角色分配'
+        } else {
+          this.$message.warning('请先选择一个部门!')
         }
       }
     }

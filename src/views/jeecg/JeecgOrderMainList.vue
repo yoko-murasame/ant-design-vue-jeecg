@@ -13,7 +13,7 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="订单类型">
-              <a-select placeholder="请输入订单类型"  v-model="queryParam.ctype">
+              <a-select placeholder="请输入订单类型" v-model="queryParam.ctype">
                 <a-select-option value="1">国内订单</a-select-option>
                 <a-select-option value="2">国际订单</a-select-option>
               </a-select>
@@ -35,7 +35,13 @@
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('一对多示例')">导出</a-button>
-      <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
+      <a-upload
+        name="file"
+        :showUploadList="false"
+        :multiple="false"
+        :headers="tokenHeader"
+        :action="importExcelUrl"
+        @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
 
@@ -96,7 +102,7 @@
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
   export default {
-    name: "JeecgOrderMainList",
+    name: 'JeecgOrderMainList',
     mixins: [JeecgListMixin],
     components: {
       JeecgOrderMainModal
@@ -104,66 +110,66 @@
     data () {
       return {
         description: '订单管理页面',
-        importExcelUrl:`${window._CONFIG['domianURL']}/test/jeecgOrderMain/importExcel`,
+        importExcelUrl: `${window._CONFIG['domianURL']}/test/jeecgOrderMain/importExcel`,
         // 表头
         columns: [
           {
             title: '#',
             dataIndex: '',
-            key:'rowIndex',
-            width:60,
-            align:"center",
-            customRender:function (t,r,index) {
-              return parseInt(index)+1;
+            key: 'rowIndex',
+            width: 60,
+            align: 'center',
+            customRender: function (t, r, index) {
+              return parseInt(index) + 1
             }
           },
           {
             title: '订单号',
-            align:"center",
+            align: 'center',
             dataIndex: 'orderCode'
           },
           {
             title: '订单类型',
-            align:"center",
+            align: 'center',
             dataIndex: 'ctype',
             customRender: (text, record, index) => {
-              let re = "";
+              let re = ''
               if (text === '1') {
-                re = "国内订单";
+                re = '国内订单'
               } else if (text === '2') {
-                re = "国际订单";
+                re = '国际订单'
               }
-              return re;
+              return re
             }
           },
           {
             title: '订单日期',
-            align:"center",
+            align: 'center',
             dataIndex: 'orderDate'
           },
           {
             title: '订单金额',
-            align:"center",
+            align: 'center',
             dataIndex: 'orderMoney'
           },
           {
             title: '订单备注',
-            align:"center",
+            align: 'center',
             dataIndex: 'content'
           },
           {
             title: '操作',
             dataIndex: 'action',
-            align:"center",
-            scopedSlots: { customRender: 'action' },
+            align: 'center',
+            scopedSlots: { customRender: 'action' }
           }
         ],
 
 		url: {
-          list: "/test/jeecgOrderMain/list",
-          delete: "/test/jeecgOrderMain/delete",
-          deleteBatch: "/test/jeecgOrderMain/deleteBatch",
-          exportXlsUrl: "/test/jeecgOrderMain/exportXls",
+          list: '/test/jeecgOrderMain/list',
+          delete: '/test/jeecgOrderMain/delete',
+          deleteBatch: '/test/jeecgOrderMain/deleteBatch',
+          exportXlsUrl: '/test/jeecgOrderMain/exportXls'
         }
       }
     },

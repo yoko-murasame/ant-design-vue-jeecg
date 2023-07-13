@@ -81,7 +81,7 @@ import { simpleDebounce } from '@/utils/util'
 import ACol from 'ant-design-vue/es/grid/Col'
 
 export default {
-  name: 'easy-cron',
+  name: 'EasyCron',
   components: {
     ACol,
     SecondUi,
@@ -124,8 +124,8 @@ export default {
       month: '*',
       week: '?',
       year: '*',
-      inputValues: {second: '', minute: '', hour: '', day: '', month: '', week: '', year: '', cron: ''},
-      preTimeList: '执行预览，会忽略年份参数',
+      inputValues: { second: '', minute: '', hour: '', day: '', month: '', week: '', year: '', cron: '' },
+      preTimeList: '执行预览，会忽略年份参数'
     }
   },
   computed: {
@@ -149,7 +149,7 @@ export default {
         vs[5] = this.convertQuartzWeekToCParser(vs[5])
       }
       return vs.slice(0, vs.length - 1).join(' ')
-    },
+    }
   },
   watch: {
     cronValue(newVal, oldVal) {
@@ -195,7 +195,7 @@ export default {
       if (this.month === '*') {
         this.month = '1'
       }
-    },
+    }
   },
   created() {
     this.formatValue()
@@ -213,7 +213,7 @@ export default {
         month: this.month,
         week: this.week,
         year: this.year,
-        cron: this.cronValue_c,
+        cron: this.cronValue_c
       })
     },
     formatValue() {
@@ -284,7 +284,7 @@ export default {
       }
       this.preTimeList = result.length > 0 ? result.join('\n') : '无执行时间'
     },
-    onInputBlur(){
+    onInputBlur() {
       this.second = this.inputValues.second
       this.minute = this.inputValues.minute
       this.hour = this.inputValues.hour
@@ -293,14 +293,14 @@ export default {
       this.week = this.inputValues.week
       this.year = this.inputValues.year
     },
-    onInputCronBlur(event){
+    onInputCronBlur(event) {
       this.$emit('change', event.target.value)
-    },
+    }
   },
   model: {
     prop: 'cronValue',
     event: 'change'
-  },
+  }
 }
 </script>
 

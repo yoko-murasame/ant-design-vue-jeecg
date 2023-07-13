@@ -18,29 +18,29 @@
 
   export default {
     name: 'DiskMonitoring',
-    components:{
+    components: {
       ARow,
-      DashChartDemo,
+      DashChartDemo
     },
     data() {
       return {
         loading: true,
         description: '磁盘监控',
-        //数据集
-        diskInfo:[],
-        url:{
-          queryDiskInfo:'sys/actuator/redis/queryDiskInfo',
+        // 数据集
+        diskInfo: [],
+        url: {
+          queryDiskInfo: 'sys/actuator/redis/queryDiskInfo'
         }
       }
     },
     created() {
       this.loading = true
-      getAction(this.url.queryDiskInfo).then((res)=>{
-        if(res.success){
-          for(var i=0;i<res.result.length;i++){
-            res.result[i].restPPT = res.result[i].restPPT/10;
+      getAction(this.url.queryDiskInfo).then((res) => {
+        if (res.success) {
+          for (var i = 0; i < res.result.length; i++) {
+            res.result[i].restPPT = res.result[i].restPPT / 10
           }
-          this.diskInfo = res.result;
+          this.diskInfo = res.result
         }
       }).finally(() => this.loading = false)
     }

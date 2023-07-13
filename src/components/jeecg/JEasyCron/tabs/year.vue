@@ -29,7 +29,7 @@
 import mixin from './mixin'
 
 export default {
-  name: 'year',
+  name: 'Year',
   mixins: [mixin],
   data() {
     return {}

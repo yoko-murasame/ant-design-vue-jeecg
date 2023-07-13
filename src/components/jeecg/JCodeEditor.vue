@@ -28,8 +28,8 @@
   import 'codemirror/lib/codemirror.css'
   // 引入主题后还需要在 options 中指定主题才会生效 darcula  gruvbox-dark hopscotch  monokai
   import 'codemirror/theme/panda-syntax.css'
-  //提示css
-  import "codemirror/addon/hint/show-hint.css";
+  // 提示css
+  import 'codemirror/addon/hint/show-hint.css'
 
   // 需要引入具体的语法高亮库才会有对应的语法高亮效果
   // codemirror 官方其实支持通过 /addon/mode/loadmode.js 和 /mode/meta.js 来实现动态加载对应语法高亮库
@@ -64,10 +64,10 @@
         type: String,
         default: null
       },
-     languageChange:{
+     languageChange: {
        type: Boolean,
-       default:false,
-       required:false
+       default: false,
+       required: false
      },
       placeholder: {
         type: String,
@@ -101,14 +101,14 @@
       height: {
         type: [String, Number],
         default: '240px'
-      },
+      }
     },
     data () {
       return {
         // 内部真实的内容
         code: '',
         iconType: 'fullscreen',
-        hasCode:false,
+        hasCode: false,
         // 默认的语法类型
         mode: 'javascript',
         // 编辑器实例
@@ -126,7 +126,7 @@
               users: ['name', 'score', 'birthDate'],
               countries: ['name', 'population', 'size']
             }
-          },
+          }
         },
         // 支持切换的语法高亮类型，对应 JS 已经提前引入
         // 使用的是 MIME-TYPE ，不过作为前缀的 text/ 在后面指定时写死了
@@ -172,12 +172,12 @@
       }
     },
     watch: {
-      fullCoder:{
+      fullCoder: {
         handler(value) {
-          if(value){
-            this.iconType="fullscreen-exit"
-          }else{
-            this.iconType="fullscreen"
+          if (value) {
+            this.iconType = 'fullscreen-exit'
+          } else {
+            this.iconType = 'fullscreen'
           }
         }
       },
@@ -216,7 +216,7 @@
           return this.placeholder
         }
       },
-      nullTipStyle(){
+      nullTipStyle() {
         if (this.lineNumbers) {
           return { left: '36px' }
         } else {
@@ -234,7 +234,7 @@
         }
       },
       isAutoHeight() {
-        let {autoHeight} = this
+        let { autoHeight } = this
         if (typeof autoHeight === 'string' && autoHeight.toLowerCase().trim() === '!ie') {
           autoHeight = !(isIE() || isIE11())
         } else {
@@ -251,7 +251,7 @@
           },
           style: {}
         }
-        if(isIE() || isIE11()){
+        if (isIE() || isIE11()) {
           props.style['height'] = '240px'
         }
         if (this.fullCoder) {
@@ -273,53 +273,52 @@
         // 初始化编辑器实例，传入需要被实例化的文本域对象和默认配置
         this.coder = CodeMirror.fromTextArea(this.$refs.textarea, this.coderOptions)
         // 编辑器赋值
-        if(this.value||this.code){
-          this.hasCode=true
-          //this.coder.setValue(this.value || this.code)
+        if (this.value || this.code) {
+          this.hasCode = true
+          // this.coder.setValue(this.value || this.code)
           this.setCodeContent(this.value || this.code)
-        }else{
+        } else {
           this.coder.setValue('')
-          this.hasCode=false
+          this.hasCode = false
         }
         // 支持双向绑定
         this.coder.on('change', (coder) => {
           this.code = coder.getValue()
-          if(this.code){
-            this.hasCode=true
-          }else{
-            this.hasCode=false
+          if (this.code) {
+            this.hasCode = true
+          } else {
+            this.hasCode = false
           }
           if (this.$emit) {
             this.$emit('input', this.code)
           }
         })
         this.coder.on('focus', () => {
-          this.hasCode=true
+          this.hasCode = true
         })
         this.coder.on('blur', () => {
-          if(this.code){
-            this.hasCode=true
-          }else{
-            this.hasCode=false
+          if (this.code) {
+            this.hasCode = true
+          } else {
+            this.hasCode = false
           }
         })
 
        /* this.coder.on('cursorActivity',()=>{
           this.coder.showHint()
-        })*/
-
+        }) */
       },
-      getCodeContent(){
+      getCodeContent() {
         return this.code
       },
-      setCodeContent(val){
-        setTimeout(()=>{
-          if(!val){
+      setCodeContent(val) {
+        setTimeout(() => {
+          if (!val) {
             this.coder.setValue('')
-          }else{
+          } else {
             this.coder.setValue(val)
           }
-        },300)
+        }, 300)
       },
       // 获取当前语法类型
       _getLanguage (language) {
@@ -357,7 +356,7 @@
         // 允许父容器通过以下函数监听当前的语法值
         this.$emit('language-change', label)
       },
-      nullTipClick(){
+      nullTipClick() {
         this.coder.focus()
       }
     }

@@ -68,161 +68,161 @@
 </template>
 
 <script>
-  import {httpAction} from '@/api/manage'
+  import { httpAction } from '@/api/manage'
   import Vue from 'vue'
-  import {ACCESS_TOKEN} from "@/store/mutation-types"
+  import { ACCESS_TOKEN } from '@/store/mutation-types'
   import JImageUpload from '../../../../components/jeecg/JImageUpload'
 
   export default {
-    name: "JeecgOrderCustomerModal",
+    name: 'JeecgOrderCustomerModal',
     components: { JImageUpload },
     data() {
       return {
-        title: "操作",
+        title: '操作',
         visible: false,
         model: {},
         labelCol: {
-          xs: {span: 24},
-          sm: {span: 5},
+          xs: { span: 24 },
+          sm: { span: 5 }
         },
         wrapperCol: {
-          xs: {span: 24},
-          sm: {span: 16},
+          xs: { span: 24 },
+          sm: { span: 16 }
         },
         fileList: [],
         disableSubmit: false,
         selectedRowKeys: [],
-        orderId: "",
+        orderId: '',
         hiding: false,
         headers: {},
-        picUrl: "",
-        picArray:[],
+        picUrl: '',
+        picArray: [],
         previewVisible: false,
         previewImage: '',
         addStatus: false,
         editStatus: false,
         confirmLoading: false,
         url: {
-          add: "/test/order/addCustomer",
-          edit: "/test/order/editCustomer",
-          fileUpload: window._CONFIG['domianURL'] + "/sys/common/upload",
-          getOrderCustomerList: "/test/order/listOrderCustomerByMainId",
+          add: '/test/order/addCustomer',
+          edit: '/test/order/editCustomer',
+          fileUpload: window._CONFIG['domianURL'] + '/sys/common/upload',
+          getOrderCustomerList: '/test/order/listOrderCustomerByMainId'
         },
         validatorRules: {
-          name :[{required: true, message: '请输入客户姓名!'}],
-          telphone: [{validator: this.validateMobile}],
-          idcard: [{validator: this.validateIdCard}]
-        },
+          name: [{ required: true, message: '请输入客户姓名!' }],
+          telphone: [{ validator: this.validateMobile }],
+          idcard: [{ validator: this.validateIdCard }]
+        }
       }
     },
     computed: {
       uploadAction: function () {
-        return this.url.fileUpload;
+        return this.url.fileUpload
       }
     },
     created() {
-      const token = Vue.ls.get(ACCESS_TOKEN);
-      this.headers = {"X-Access-Token": token}
+      const token = Vue.ls.get(ACCESS_TOKEN)
+      this.headers = { 'X-Access-Token': token }
     },
     methods: {
       add(orderId) {
-        this.hiding = true;
+        this.hiding = true
         if (orderId) {
-          this.edit({orderId}, '');
+          this.edit({ orderId }, '')
         } else {
-          this.$message.warning("请选择一个客户信息");
+          this.$message.warning('请选择一个客户信息')
         }
       },
       detail(record) {
-        this.edit(record, 'd');
+        this.edit(record, 'd')
       },
       edit(record, v) {
         if (v == 'e') {
-          this.hiding = false;
-          this.disableSubmit = false;
+          this.hiding = false
+          this.disableSubmit = false
         } else if (v == 'd') {
-          this.hiding = false;
-          this.disableSubmit = true;
+          this.hiding = false
+          this.disableSubmit = true
         } else {
-          this.hiding = true;
-          this.disableSubmit = false;
+          this.hiding = true
+          this.disableSubmit = false
         }
-        
-        this.model = Object.assign({}, record);
+
+        this.model = Object.assign({}, record)
         if (record.id) {
-          this.hiding = false;
-          this.addStatus = false;
-          this.editStatus = true;
+          this.hiding = false
+          this.addStatus = false
+          this.editStatus = true
           setTimeout(() => {
             this.fileList = record.idcardPic
           }, 5)
         } else {
-          this.addStatus = false;
-          this.editStatus = true;
+          this.addStatus = false
+          this.editStatus = true
         }
-        this.visible = true;
+        this.visible = true
       },
       close() {
-        this.$emit('close');
-        this.visible = false;
-        this.picUrl = "";
-        this.fileList=[];
-        this.$refs.form.resetFields();
+        this.$emit('close')
+        this.visible = false
+        this.picUrl = ''
+        this.fileList = []
+        this.$refs.form.resetFields()
       },
       handleOk() {
-        const that = this;
+        const that = this
         // 触发表单验证
         this.$refs.form.validate(valid => {
           if (valid) {
-            that.confirmLoading = true;
-            let httpurl = '';
-            let method = '';
+            that.confirmLoading = true
+            let httpurl = ''
+            let method = ''
             if (!this.model.id) {
-              httpurl += this.url.add;
-              method = 'post';
+              httpurl += this.url.add
+              method = 'post'
             } else {
-              httpurl += this.url.edit;
-              method = 'put';
+              httpurl += this.url.edit
+              method = 'put'
             }
-            let formData = Object.assign({}, this.model);
-            if(this.fileList != '') {
-              formData.idcardPic = this.fileList;
-            }else{
-              formData.idcardPic = '';
+            let formData = Object.assign({}, this.model)
+            if (this.fileList != '') {
+              formData.idcardPic = this.fileList
+            } else {
+              formData.idcardPic = ''
             }
             httpAction(httpurl, formData, method).then((res) => {
               if (res.success) {
-                that.$message.success(res.message);
-                that.$emit('ok');
+                that.$message.success(res.message)
+                that.$emit('ok')
               } else {
-                that.$message.warning(res.message);
+                that.$message.warning(res.message)
               }
             }).finally(() => {
-              that.confirmLoading = false;
-              that.close();
+              that.confirmLoading = false
+              that.close()
             })
-          }else{
-            return false;
+          } else {
+            return false
           }
         })
       },
       handleCancel() {
-        this.close();
+        this.close()
       },
       validateMobile(rule, value, callback) {
         if (!value || new RegExp(/^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/).test(value)) {
-          callback();
+          callback()
         } else {
-          callback("您的手机号码格式不正确!");
+          callback('您的手机号码格式不正确!')
         }
       },
       validateIdCard(rule, value, callback) {
         if (!value || new RegExp(/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/).test(value)) {
-          callback();
+          callback()
         } else {
-          callback("您的身份证号码格式不正确!");
+          callback('您的身份证号码格式不正确!')
         }
-      },
+      }
     }
   }
 </script>

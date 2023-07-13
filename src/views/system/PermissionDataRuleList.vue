@@ -67,8 +67,8 @@
   </a-drawer>
 </template>
 <script>
-  import {getPermissionRuleList, queryPermissionRule} from '@/api/api'
-  import {JeecgListMixin} from '@/mixins/JeecgListMixin'
+  import { getPermissionRuleList, queryPermissionRule } from '@/api/api'
+  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import PermissionDataRuleModal from './modules/PermissionDataRuleModal'
 
   const columns = [
@@ -76,25 +76,25 @@
       title: '规则名称',
       dataIndex: 'ruleName',
       key: 'ruleName',
-      width:150,
+      width: 150
     },
     {
       title: '规则字段',
       dataIndex: 'ruleColumn',
       key: 'ruleColumn',
-      width:150,
+      width: 150
     },
     {
       title: '规则值',
       dataIndex: 'ruleValue',
       key: 'ruleValue',
-      width:150,
-      scopedSlots: {customRender: "ruleValueText"}
+      width: 150,
+      scopedSlots: { customRender: 'ruleValueText' }
     },
     {
       title: '操作',
       dataIndex: 'action',
-      scopedSlots: {customRender: 'action'},
+      scopedSlots: { customRender: 'action' },
       align: 'center'
     }
   ]
@@ -114,9 +114,9 @@
         form: this.$form.createForm(this),
         loading: false,
         url: {
-          list: "/sys/permission/getPermRuleListByPermId",
-          delete: "/sys/permission/deletePermissionRule",
-        },
+          list: '/sys/permission/getPermRuleListByPermId',
+          delete: '/sys/permission/deletePermissionRule'
+        }
       }
     },
     created() {
@@ -124,13 +124,13 @@
     },
     methods: {
       loadData() {
-        //20190908 scott for: 首次进入菜单列表的时候，不加载权限列表
-        if(!this.permId){
+        // 20190908 scott for: 首次进入菜单列表的时候，不加载权限列表
+        if (!this.permId) {
           return
         }
         let that = this
         this.dataSource = []
-        var params = this.getQueryParams()//查询条件
+        var params = this.getQueryParams()// 查询条件
         getPermissionRuleList(params).then((res) => {
           if (res.success) {
             that.dataSource = res.result
@@ -153,8 +153,8 @@
         this.$refs.modalForm.title = '新增'
       },
       searchQuery() {
-        var params = this.getQueryParams();
-        params.permissionId = this.permId;
+        var params = this.getQueryParams()
+        params.permissionId = this.permId
         queryPermissionRule(params).then((res) => {
           if (res.success) {
             this.dataSource = res.result
@@ -164,7 +164,7 @@
       searchReset() {
         this.queryParam = {}
         this.queryParam.permissionId = this.permId
-        this.loadData(1);
+        this.loadData(1)
       },
       onClose() {
         this.visible = false
@@ -178,9 +178,9 @@
           this.drawerWidth = 650
         }
       },
-      getRowClassname(record){
-        if(record.status!=1){
-          return "data-rule-invalid"
+      getRowClassname(record) {
+        if (record.status != 1) {
+          return 'data-rule-invalid'
         }
       }
     }

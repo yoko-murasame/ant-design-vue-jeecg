@@ -17,9 +17,9 @@
         :loading="loading"
         class="j-table-force-nowrap"
         @change="handleTableChange">
-         <span slot="status" slot-scope="text, record, index">
-            <a-tag color="pink" v-if="text==0">禁用</a-tag>
-            <a-tag color="#87d068" v-if="text==1" >正常</a-tag>
+        <span slot="status" slot-scope="text, record, index">
+          <a-tag color="pink" v-if="text==0">禁用</a-tag>
+          <a-tag color="#87d068" v-if="text==1" >正常</a-tag>
         </span>
         <span slot="action" slot-scope="text, record">
           <a @click="showModal(record)">编辑</a>

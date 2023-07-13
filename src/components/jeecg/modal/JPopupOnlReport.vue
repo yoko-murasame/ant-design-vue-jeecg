@@ -65,31 +65,30 @@
       :customRow="clickThenCheck">
     </a-table>
 
-
   </j-modal>
 </template>
 
 <script>
   import { getAction } from '@/api/manage'
-  import {filterObj} from '@/utils/util'
+  import { filterObj } from '@/utils/util'
   import { filterMultiDictText } from '@/components/dict/JDictSelectUtil'
   import { httpGroupRequest } from '@/api/GroupRequest.js'
   import md5 from 'md5'
 
-  const MODAL_WIDTH = 1200;
+  const MODAL_WIDTH = 1200
   export default {
     name: 'JPopupOnlReport',
     props: ['multi', 'code', 'sorter', 'groupId', 'param'],
-    components:{
+    components: {
     },
-    data(){
+    data() {
       return {
-        visible:false,
-        title:"",
-        confirmLoading:false,
-        queryInfo:[],
-        toggleSearchStatus:false,
-        queryParam:{
+        visible: false,
+        title: '',
+        confirmLoading: false,
+        queryInfo: [],
+        toggleSearchStatus: false,
+        queryParam: {
 
         },
         dictOptions: {},
@@ -102,7 +101,7 @@
           loading: true,
           // 表头
           columns: [],
-          //数据集
+          // 数据集
           dataSource: [],
           // 选择器
           selectedRowKeys: [],
@@ -120,31 +119,31 @@
             total: 0
           }
         },
-        cgRpConfigId:"",
-        modalWidth:MODAL_WIDTH,
-        tableScroll:{x:true},
-        dynamicParam:{},
+        cgRpConfigId: '',
+        modalWidth: MODAL_WIDTH,
+        tableScroll: { x: true },
+        dynamicParam: {},
         // 排序字段，默认无排序
-        iSorter: null,
+        iSorter: null
       }
     },
     mounted() {
-      //this.loadColumnsInfo()
+      // this.loadColumnsInfo()
     },
     watch: {
       code() {
         this.loadColumnsInfo()
       },
-      param:{
-        deep:true,
-        handler(){
+      param: {
+        deep: true,
+        handler() {
           // update--begin--autor:liusq-----date:20210706------for：JPopup组件在modal中使用报错#2729------
-          if(this.visible){
+          if (this.visible) {
             this.dynamicParamHandler()
-            this.loadData();
+            this.loadData()
           }
           // update--begin--autor:liusq-----date:20210706------for：JPopup组件在modal中使用报错#2729------
-        },
+        }
       },
       sorter: {
         immediate: true,
@@ -152,7 +151,7 @@
           if (this.sorter) {
             let arr = this.sorter.split('=')
             if (arr.length === 2 && ['asc', 'desc'].includes(arr[1].toLowerCase())) {
-              this.iSorter = {column: arr[0], order: arr[1].toLowerCase()}
+              this.iSorter = { column: arr[0], order: arr[1].toLowerCase() }
               // 排序字段受控
               this.table.columns.forEach(col => {
                 if (col.dataIndex === this.iSorter.column) {
@@ -165,37 +164,37 @@
               console.warn('【JPopup】sorter参数不合法')
             }
           }
-        },
-      },
+        }
+      }
     },
-    computed:{
-      showSearchFlag(){
-        return this.queryInfo && this.queryInfo.length>0
+    computed: {
+      showSearchFlag() {
+        return this.queryInfo && this.queryInfo.length > 0
       },
       // 行选择框类型，根据是否多选来控制显示为单选框还是多选框
       rowSelectionType() {
         return this.multi ? 'checkbox' : 'radio'
-      },
+      }
     },
-    methods:{
-      loadColumnsInfo(){
+    methods: {
+      loadColumnsInfo() {
         let url = `${this.url.getColumns}${this.code}`
-        //缓存key
+        // 缓存key
         let groupIdKey
         if (this.groupId) {
           groupIdKey = this.groupId + url
         }
         httpGroupRequest(() => getAction(url), groupIdKey).then(res => {
-          if(res.success){
-            this.initDictOptionData(res.result.dictOptions);
+          if (res.success) {
+            this.initDictOptionData(res.result.dictOptions)
             this.cgRpConfigId = res.result.cgRpConfigId
             this.title = res.result.cgRpConfigName
             let currColumns = res.result.columns
-            for(let a=0;a<currColumns.length;a++){
-              if(currColumns[a].customRender){
-                let dictCode = currColumns[a].customRender;
-                currColumns[a].customRender=(text)=>{
-                  return filterMultiDictText(this.dictOptions[dictCode], text+"");
+            for (let a = 0; a < currColumns.length; a++) {
+              if (currColumns[a].customRender) {
+                let dictCode = currColumns[a].customRender
+                currColumns[a].customRender = (text) => {
+                  return filterMultiDictText(this.dictOptions[dictCode], text + '')
                 }
               }
               // 排序字段受控
@@ -209,14 +208,14 @@
             this.$error({
               title: '出错了',
               content: (<p>Popup初始化失败，请检查你的配置或稍后重试！<br/>错误信息如下：{res.message}</p>),
-              onOk: () => this.close(),
+              onOk: () => this.close()
             })
           }
         })
       },
       initQueryInfo() {
         let url = `${this.url.getQueryInfo}${this.cgRpConfigId}`
-        //缓存key
+        // 缓存key
         let groupIdKey
         if (this.groupId) {
           groupIdKey = this.groupId + url
@@ -226,49 +225,49 @@
           if (res.success) {
             this.dynamicParamHandler(res.result)
             this.queryInfo = res.result
-            //查询条件加载后再请求数据
+            // 查询条件加载后再请求数据
             this.loadData(1)
           } else {
             this.$message.warning(res.message)
           }
         })
       },
-      //处理动态参数
-      dynamicParamHandler(arr){
-        if(arr && arr.length>0){
-          //第一次加载查询条件前 初始化queryParam为空对象
+      // 处理动态参数
+      dynamicParamHandler(arr) {
+        if (arr && arr.length > 0) {
+          // 第一次加载查询条件前 初始化queryParam为空对象
           let queryTemp = {}
-          for(let item of arr){
-            if(item.mode==='single'){
+          for (let item of arr) {
+            if (item.mode === 'single') {
               queryTemp[item.field] = ''
             }
           }
-          this.queryParam = {...queryTemp}
+          this.queryParam = { ...queryTemp }
         }
         let dynamicTemp = {}
-        if(this.param){
-          Object.keys(this.param).map(key=>{
+        if (this.param) {
+          Object.keys(this.param).map(key => {
             let str = this.param[key]
-            if(key in this.queryParam){
-              if(str && str.startsWith("'") && str.endsWith("'")){
-                str = str.substring(1,str.length-1)
+            if (key in this.queryParam) {
+              if (str && str.startsWith("'") && str.endsWith("'")) {
+                str = str.substring(1, str.length - 1)
               }
-              //如果查询条件包含参数 设置值
-              this.queryParam[key]=str
+              // 如果查询条件包含参数 设置值
+              this.queryParam[key] = str
             }
             dynamicTemp[key] = this.param[key]
           })
         }
-        this.dynamicParam = {...dynamicTemp}
+        this.dynamicParam = { ...dynamicTemp }
       },
       loadData(arg) {
         if (arg == 1) {
           this.table.pagination.current = 1
         }
-        let params = this.getQueryParams();//查询条件
+        let params = this.getQueryParams()// 查询条件
         this.table.loading = true
         let url = `${this.url.getData}${this.cgRpConfigId}`
-        //缓存key
+        // 缓存key
         let groupIdKey
         if (this.groupId) {
           groupIdKey = this.groupId + url + JSON.stringify(params)
@@ -288,55 +287,55 @@
       },
       getQueryParams() {
         let paramTarget = {}
-        if(this.dynamicParam){
-          //处理自定义参数
-         Object.keys(this.dynamicParam).map(key=>{
-           paramTarget['self_'+key] = this.dynamicParam[key]
+        if (this.dynamicParam) {
+          // 处理自定义参数
+         Object.keys(this.dynamicParam).map(key => {
+           paramTarget['self_' + key] = this.dynamicParam[key]
          })
         }
-        let param = Object.assign(paramTarget, this.queryParam, this.iSorter);
-        param.pageNo = this.table.pagination.current;
-        param.pageSize = this.table.pagination.pageSize;
-        return filterObj(param);
+        let param = Object.assign(paramTarget, this.queryParam, this.iSorter)
+        param.pageNo = this.table.pagination.current
+        param.pageSize = this.table.pagination.pageSize
+        return filterObj(param)
       },
       handleChangeInTableSelect(selectedRowKeys, selectionRows) {
-        //update-begin-author:taoyan date:2020902 for:【issue】开源online的几个问题 LOWCOD-844
-        if(!selectedRowKeys || selectedRowKeys.length==0){
+        // update-begin-author:taoyan date:2020902 for:【issue】开源online的几个问题 LOWCOD-844
+        if (!selectedRowKeys || selectedRowKeys.length == 0) {
           this.table.selectionRows = []
-        }else if(selectedRowKeys.length == selectionRows.length){
+        } else if (selectedRowKeys.length == selectionRows.length) {
           this.table.selectionRows = selectionRows
-        }else{
-          //当两者长度不一的时候 需要判断
+        } else {
+          // 当两者长度不一的时候 需要判断
           let keys = this.table.selectedRowKeys
-          let rows = this.table.selectionRows;
-          //这个循环 添加新的记录
-          for(let i=0;i<selectionRows.length;i++){
+          let rows = this.table.selectionRows
+          // 这个循环 添加新的记录
+          for (let i = 0; i < selectionRows.length; i++) {
             let combineKey = this.combineRowKey(selectionRows[i])
-            if(keys.indexOf(combineKey)<0){
-              //如果 原来的key 不包含当前记录 push
+            if (keys.indexOf(combineKey) < 0) {
+              // 如果 原来的key 不包含当前记录 push
               rows.push(selectionRows[i])
             }
           }
-          //这个循环 移除取消选中的数据
-          this.table.selectionRows = rows.filter(item=>{
+          // 这个循环 移除取消选中的数据
+          this.table.selectionRows = rows.filter(item => {
             let combineKey = this.combineRowKey(item)
-            return selectedRowKeys.indexOf(combineKey)>=0
+            return selectedRowKeys.indexOf(combineKey) >= 0
           })
         }
-        //update-end-author:taoyan date:2020902 for:【issue】开源online的几个问题 LOWCOD-844
+        // update-end-author:taoyan date:2020902 for:【issue】开源online的几个问题 LOWCOD-844
         this.table.selectedRowKeys = selectedRowKeys
       },
       handleChangeInTable(pagination, filters, sorter) {
-        //分页、排序、筛选变化时触发
+        // 分页、排序、筛选变化时触发
         if (Object.keys(sorter).length > 0) {
           this.iSorter = {
             column: sorter.field,
-            order: 'ascend' === sorter.order ? 'asc' : 'desc'
+            order: sorter.order === 'ascend' ? 'asc' : 'desc'
           }
           // 排序字段受控
           this.table.columns.forEach(col => {
             if (col.dataIndex === sorter.field) {
-              this.$set(col, 'sortOrder',sorter.order)
+              this.$set(col, 'sortOrder', sorter.order)
             } else {
               this.$set(col, 'sortOrder', false)
             }
@@ -349,86 +348,86 @@
         this.close()
       },
       handleSubmit() {
-        if(!this.multi){
-          if(this.table.selectionRows && this.table.selectionRows.length>1){
-            this.$message.warning("请选择一条记录")
+        if (!this.multi) {
+          if (this.table.selectionRows && this.table.selectionRows.length > 1) {
+            this.$message.warning('请选择一条记录')
             return false
           }
         }
-        if(!this.table.selectionRows || this.table.selectionRows.length==0){
-          this.$message.warning("请选择一条记录")
+        if (!this.table.selectionRows || this.table.selectionRows.length == 0) {
+          this.$message.warning('请选择一条记录')
           return false
         }
-        this.$emit('ok', this.table.selectionRows);
+        this.$emit('ok', this.table.selectionRows)
         this.close()
       },
       close() {
-        this.$emit('close');
-        this.visible = false;
+        this.$emit('close')
+        this.visible = false
         this.onClearSelected()
       },
-      show(){
+      show() {
         this.visible = true
         this.loadColumnsInfo()
       },
-      handleToggleSearch(){
-        this.toggleSearchStatus = !this.toggleSearchStatus;
+      handleToggleSearch() {
+        this.toggleSearchStatus = !this.toggleSearchStatus
       },
-      searchByquery(){
-        this.loadData(1);
+      searchByquery() {
+        this.loadData(1)
       },
-      onlyReload(){
-        this.loadData();
+      onlyReload() {
+        this.loadData()
       },
-      searchReset(){
-        Object.keys(this.queryParam).forEach(key=>{
-          this.queryParam[key]=""
+      searchReset() {
+        Object.keys(this.queryParam).forEach(key => {
+          this.queryParam[key] = ''
         })
-        this.loadData(1);
+        this.loadData(1)
       },
-      onClearSelected(){
+      onClearSelected() {
         this.table.selectedRowKeys = []
         this.table.selectionRows = []
       },
-      combineRowKey(record){
+      combineRowKey(record) {
         let res = ''
-         Object.keys(record).forEach(key=>{
-           //update-begin---author:liusq   Date:20210203  for：pop选择器列主键问题 issues/I29P9Q------------
-           if(key=='id'){
-             res=record[key]+res
-           }else{
-             res+=record[key]
+         Object.keys(record).forEach(key => {
+           // update-begin---author:liusq   Date:20210203  for：pop选择器列主键问题 issues/I29P9Q------------
+           if (key == 'id') {
+             res = record[key] + res
+           } else {
+             res += record[key]
            }
-           //update-end---author:liusq     Date:20210203  for：pop选择器列主键问题 issues/I29P9Q------------
+           // update-end---author:liusq     Date:20210203  for：pop选择器列主键问题 issues/I29P9Q------------
          })
         // update-begin---author:taoyan   Date:20211025 for：jpopup 表格key重复BUG /issues/3121
         res = md5(res)
-        /*if(res.length>50){
+        /* if(res.length>50){
           res = res.substring(0,50)
-        }*/
+        } */
         // update-end---author:taoyan   Date:20211025 for：jpopup 表格key重复BUG /issues/3121
         return res
       },
 
-      clickThenCheck(record){
+      clickThenCheck(record) {
         return {
           on: {
             click: () => {
               let rowKey = this.combineRowKey(record)
-              if(!this.table.selectedRowKeys || this.table.selectedRowKeys.length==0){
-                let arr1=[],arr2=[]
+              if (!this.table.selectedRowKeys || this.table.selectedRowKeys.length == 0) {
+                let arr1 = []; let arr2 = []
                 arr1.push(record)
                 arr2.push(rowKey)
-                this.table.selectedRowKeys=arr2
-                this.table.selectionRows=arr1
-              }else{
-                if(this.table.selectedRowKeys.indexOf(rowKey)<0){
+                this.table.selectedRowKeys = arr2
+                this.table.selectionRows = arr1
+              } else {
+                if (this.table.selectedRowKeys.indexOf(rowKey) < 0) {
                   this.table.selectedRowKeys.push(rowKey)
                   this.table.selectionRows.push(record)
-                }else{
+                } else {
                   let rowKey_index = this.table.selectedRowKeys.indexOf(rowKey)
-                  this.table.selectedRowKeys.splice(rowKey_index,1);
-                  this.table.selectionRows.splice(rowKey_index,1);
+                  this.table.selectedRowKeys.splice(rowKey_index, 1)
+                  this.table.selectionRows.splice(rowKey_index, 1)
                 }
               }
               // 判断是否允许多选，如果不允许多选，就只存储最后一个选中的行
@@ -440,15 +439,15 @@
           }
         }
       },
-      //防止字典中有垃圾数据
-      initDictOptionData(dictOptions){
+      // 防止字典中有垃圾数据
+      initDictOptionData(dictOptions) {
         let obj = { }
-        Object.keys(dictOptions).map(k=>{
-          obj[k] = dictOptions[k].filter(item=>{
-            return item!=null
-          });
-        });
-        this.dictOptions  = obj
+        Object.keys(dictOptions).map(k => {
+          obj[k] = dictOptions[k].filter(item => {
+            return item != null
+          })
+        })
+        this.dictOptions = obj
       }
 
     }

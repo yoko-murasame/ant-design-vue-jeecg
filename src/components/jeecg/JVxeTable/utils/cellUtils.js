@@ -4,7 +4,7 @@ import JVxeCellMixins from '../mixins/JVxeCellMixins'
 export const JVXERenderType = {
   editer: 'editer',
   spaner: 'spaner',
-  default: 'default',
+  default: 'default'
 }
 
 /** 安装所有vxe组件 */
@@ -40,7 +40,7 @@ export function installEditRender(VXETable, type, comp, spanComp) {
     // 显示模板
     renderCell: createRender(spanComp, enhanced, JVXERenderType.spaner),
     // 增强注册
-    ...enhanced.installOptions,
+    ...enhanced.installOptions
   })
 }
 
@@ -52,7 +52,7 @@ export function installCellRender(VXETable, type, comp = AllCells[JVXETypes.norm
     // 默认显示模板
     renderDefault: createRender(comp, enhanced, JVXERenderType.default),
     // 增强注册
-    ...enhanced.installOptions,
+    ...enhanced.installOptions
   })
 }
 
@@ -65,7 +65,7 @@ function createRender(comp, enhanced, renderType) {
         column: params.column,
         params: params,
         renderOptions: renderOptions,
-        renderType: renderType,
+        renderType: renderType
       }
     })]
   }
@@ -114,7 +114,6 @@ export function getEnhancedMixins(type, name) {
   AllCellsMixins.set(type, defEnhanced)
   return getByName(defEnhanced)
 }
-
 
 /** 辅助方法：替换${...}变量 */
 export function replaceProps(col, value) {
