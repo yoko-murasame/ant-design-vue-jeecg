@@ -26,3 +26,8 @@ export const CONTENT_WIDTH_TYPE = {
   Fluid: 'Fluid',
   Fixed: 'Fixed'
 }
+export const PROJECT = 'project'
+export const PROJECT_ID = 'projectId'
+export const PROJECT_NAME = 'projectName'
+export const BUSINESS_ID = 'businessId'
+export const BUSINESS_NAME = 'businessName'

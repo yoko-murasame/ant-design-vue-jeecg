@@ -45,7 +45,9 @@ import '@/components/jeecg/JVxeTable/install'
 import '@/components/JVxeCells/install'
 // 表单验证
 import { rules } from '@/utils/rules'
-
+// 注册动态表单组件（要不流程中不会显示）
+import DynamicForm from '@/components/online/autoform/index'
+Vue.use(DynamicForm)
 require('@jeecg/antd-online-mini')
 require('@jeecg/antd-online-mini/dist/OnlineForm.css')
 console.log('ant-design-vue version:', version)
