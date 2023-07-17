@@ -147,16 +147,22 @@ export default {
       const that = this
       return new Promise((resolve, reject) => {
         if (that.visible && that.activeKey === '2') {
-          let { showFlowSubmitButton, handleOk, submitForm, handleSubmit } = that.$refs.formModal.$children[0]
-          let methodProxy = handleOk || submitForm
-          // 找在线表单的
-          let isOnline = false
-          if (!methodProxy) {
-            // let { handleSubmit } = that.$refs.formModal.$children[0].$children[0].$children[0]
-            methodProxy = that.getFirstMethodByName(that.$refs.formModal, 'handleSubmit')
-            isOnline = !!methodProxy
+          try {
+            let { showFlowSubmitButton, handleOk, submitForm, handleSubmit } = that.$refs.formModal.$children[0]
+            let methodProxy = handleOk || submitForm
+            // 找在线表单的
+            let isOnline = false
+            if (!methodProxy) {
+              // let { handleSubmit } = that.$refs.formModal.$children[0].$children[0].$children[0]
+              methodProxy = that.getFirstMethodByName(that.$refs.formModal, 'handleSubmit')
+              isOnline = !!methodProxy
+            }
+            console.log('实现的保存方法', methodProxy)
+          } catch (e) {
+            console.error('其他情况异常', e)
+            resolve()
+            return
           }
-          console.log('实现的保存方法', methodProxy)
 
           // 用函数获取自动保存方法
           // let showFlowSubmitButton = that.getFirstMethodByName(that.$refs.formModal, 'showFlowSubmitButton')
