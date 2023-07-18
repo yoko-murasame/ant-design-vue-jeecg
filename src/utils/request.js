@@ -109,6 +109,13 @@ service.interceptors.request.use(config => {
     config.headers[ 'X-Access-Token' ] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
   }
 
+  // 处理PUT和DELETE映射到POST
+  const method = (config.method || '').toUpperCase()
+  if (!['development', 'dev', 'yoko'].includes(process.env.NODE_ENV) && (method === 'PUT' || method === 'DELETE')) {
+    config.method = 'post'
+    config.headers['X-HTTP-Method-Override'] = method
+  }
+
   // update-begin--author:sunjianlei---date:20200723---for 如果当前在low-app环境，并且携带了appId，就向Header里传递appId
   const $route = router.currentRoute
   if ($route && $route.name && $route.name.startsWith('low-app') && $route.params.appId) {
