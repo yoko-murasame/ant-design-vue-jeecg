@@ -147,11 +147,15 @@ export default {
       const that = this
       return new Promise((resolve, reject) => {
         if (that.visible && that.activeKey === '2') {
+          let methodProxy = null
+          let showFlowSubmitButton = null
+          let isOnline = false
           try {
-            let { showFlowSubmitButton, handleOk, submitForm, handleSubmit } = that.$refs.formModal.$children[0]
-            let methodProxy = handleOk || submitForm
+            let target = that.$refs.formModal.$children[0]
+            const { handleOk, submitForm, handleSubmit } = target
+            showFlowSubmitButton = target.showFlowSubmitButton || null
+            methodProxy = handleOk || submitForm || handleSubmit || null
             // 找在线表单的
-            let isOnline = false
             if (!methodProxy) {
               // let { handleSubmit } = that.$refs.formModal.$children[0].$children[0].$children[0]
               methodProxy = that.getFirstMethodByName(that.$refs.formModal, 'handleSubmit')
