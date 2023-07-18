@@ -895,11 +895,6 @@
     cssnano-preset-default "^4.0.0"
     postcss "^7.0.0"
 
-"@jeecg/antd-online-mini@3.4.3-beta2":
-  version "3.4.3-beta2"
-  resolved "https://registry.npmmirror.com/@jeecg/antd-online-mini/-/antd-online-mini-3.4.3-beta2.tgz#5903547f48a7d51f2df9773b85d25d28807e57ae"
-  integrity sha512-uZLjtQG/vAcBsCEysE1HceUyzwiHwU+JlNzvHxNnenNDHeaawZa9CfILUImNFJ5JQVqE5J11QpQNb6i5Boo3Gw==
-
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.npmjs.org/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
