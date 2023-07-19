@@ -2,12 +2,7 @@
   <a-card :bordered="false" style="height: 100%">
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchByquery">
-        <a-row :gutter="24" v-if="queryInfo && queryInfo.length>0 || hasBpmStatus">
-          <template v-if="buttonSwitch.bind_bpm_show_my_task">
-            <a-col :xl="2" :lg="2" :md="2" :sm="24">
-              <bind-bpm-show-my-task v-model="queryParam.checked" :parent="vm"></bind-bpm-show-my-task>
-            </a-col>
-          </template>
+        <a-row :gutter="24" v-if="queryInfo && queryInfo.length>0">
           <template v-for="(item,index) in queryInfo">
             <template v-if=" item.hidden==='1' ">
               <a-col v-if="item.view=='datetime' && 'single'!=item.mode" :md="12" :sm="16" :key=" 'query'+index " v-show="toggleSearchStatus">
@@ -227,9 +222,6 @@
       <!-- 弹框表单设计器区域 -->
       <auto-desform-data-full-screen ref="desformModal" @ok="handleFormSuccess"/>
 
-      <!-- 自定义流程接入 -->
-      <bind-bpm :parent="vm" ref="bindBpm"></bind-bpm>
-
     </div>
   </a-card>
 </template>
@@ -249,23 +241,15 @@
   import lodash_object from 'lodash'
   import Vue from 'vue'
   import AutoDesformDataFullScreen from '@/views/modules/online/desform/auto/modules/AutoDesformDataFullScreen'
-  // 流程处理接入
-  import BindBpm from '@views/modules/bpm/mytask/BindBpm'
-  import BindBpmButton from '@views/modules/bpm/mytask/BindBpmButton'
-  import BindBpmOnlineMixin from '@views/modules/bpm/mytask/BindBpmOnlineMixin'
-  import BindBpmShowMyTask from '@views/modules/bpm/mytask/BindBpmShowMyTask'
 
   export default {
     name: 'OnlCgFormAutoList',
-    mixins: [HrefJump, mixinDevice, onlUtil, BindBpmOnlineMixin],
+    mixins: [HrefJump, mixinDevice, onlUtil],
     components: {
       OnlCgformAutoModal,
       OnlineQueryFormItem,
       ProcessInstPicModal,
-      AutoDesformDataFullScreen,
-      BindBpm,
-      BindBpmShowMyTask,
-      BindBpmButton
+      AutoDesformDataFullScreen
     },
     data() {
       return {
@@ -344,8 +328,7 @@
           export: true,
           detail: true,
           super_query: true,
-          bpm: true,
-          bind_bpm_show_my_task: true
+          bpm: true
         },
         hasBpmStatus: false,
         checkboxFlag: false,
@@ -407,28 +390,11 @@
         }
       },
       tableColumn() {
-        // 自定义序号列
-        const that = this
-        const customRender = (t, r, index) => {
-          // return parseInt(index) + 1;
-          return (that.table.pagination.current - 1) * that.table.pagination.pageSize + parseInt(index) + 1
-        }
-        // 处理列
         if (!this.settingColumns || this.settingColumns.length <= 0) {
           return this.defColumns;
         } else {
           const cols = this.defColumns.filter(item => {
-            // 自定义序号字段
             if (item.key == 'rowIndex' || item.dataIndex == 'action') {
-              if (item.key == 'rowIndex') {
-                item.title = '序号'
-                item.customRender = customRender
-              }
-              return true
-            }
-            // 自定义流程状态文本
-            if (item.key == 'bpm_status' || item.dataIndex == 'BPM_STATUS') {
-              item.customRender = this.getBpmStatusColumn().customRender
               return true
             }
             if (this.settingColumns.includes(item.dataIndex)) {
@@ -456,30 +422,30 @@
           this.hasBpmStatus = false;
         }
       },
-      // startProcess: function(record) {
-      //   var that = this;
-      //   this.$confirm({
-      //     title: '提示',
-      //     content: '确认提交流程吗?',
-      //     onOk: function() {
-      //       var param = {
-      //         flowCode: that.flowCodePre + that.currentTableName,
-      //         id: record.id,
-      //         formUrl: 'modules/bpm/task/form/OnlineFormDetail',
-      //         formUrlMobile: 'check/onlineForm/detail'
-      //       }
-      //       postAction(that.url.startProcess, param).then((res) => {
-      //         if (res.success) {
-      //           that.$message.success(res.message);
-      //           that.loadData();
-      //           that.onClearSelected();
-      //         } else {
-      //           that.$message.warning(res.message);
-      //         }
-      //       });
-      //     }
-      //   });
-      // },
+      startProcess: function(record) {
+        var that = this;
+        this.$confirm({
+          title: '提示',
+          content: '确认提交流程吗?',
+          onOk: function() {
+            var param = {
+              flowCode: that.flowCodePre + that.currentTableName,
+              id: record.id,
+              formUrl: 'modules/bpm/task/form/OnlineFormDetail',
+              formUrlMobile: 'check/onlineForm/detail'
+            }
+            postAction(that.url.startProcess, param).then((res) => {
+              if (res.success) {
+                that.$message.success(res.message);
+                that.loadData();
+                that.onClearSelected();
+              } else {
+                that.$message.warning(res.message);
+              }
+            });
+          }
+        });
+      },
       handlePreviewPic: function(record) {
         var flowCode = this.flowCodePre + this.currentTableName;
         var dataId = record.id;
@@ -586,7 +552,6 @@
               if (Number(result.total) > 0) {
                 this.table.pagination.total = Number(result.total)
                 this.table.dataSource = result.records
-                this.combineBpmDataList()
               } else {
                 this.table.pagination.total = 0;
                 this.table.dataSource = []
@@ -612,7 +577,6 @@
             let result = res.result;
             if (Number(result.total) > 0) {
               this.table.dataSource = result.records
-              this.combineBpmDataList()
             } else {
               this.table.dataSource = []
             }
