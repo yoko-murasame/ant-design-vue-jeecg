@@ -1,5 +1,5 @@
 <template>
-  <a-drawer title="权限管理" :width="800" :visible="visible" @close="close()">
+  <a-drawer title="Online表单权限管理" :width="800" :visible="visible" @close="close()">
     <a-tabs v-model="activeKey">
 
       <a-tab-pane tab="字段权限" key="a" forceRender>

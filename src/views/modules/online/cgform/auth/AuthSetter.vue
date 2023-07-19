@@ -15,12 +15,12 @@
           <a-tab-pane tab="角色授权" key="1" forceRender>
             <ls-role ref="roleRef" @select="onSelectRole"></ls-role>
           </a-tab-pane>
-          <!--<a-tab-pane tab="部门授权" key="2" forceRender>
+          <a-tab-pane tab="部门授权" key="2" forceRender>
             <ls-depart @select="onSelectDepart"></ls-depart>
           </a-tab-pane>
           <a-tab-pane tab="人员授权" key="3" forceRender>
             <ls-user></ls-user>
-          </a-tab-pane>-->
+          </a-tab-pane>
         </a-tabs>
       </a-col>
       <a-col :span="1"></a-col>

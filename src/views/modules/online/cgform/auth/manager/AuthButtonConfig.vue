@@ -31,7 +31,8 @@
     { code: 'export', title: '导出', status: 0 },
     { code: 'import', title: '导入', status: 0 },
     { code: 'bpm', title: '提交流程', status: 0 },
-    { code: 'super_query', title: '高级查询', status: 0 }
+    { code: 'super_query', title: '高级查询', status: 0 },
+    { code: 'bind_bpm_show_my_task', title: '筛选我的代办', status: 0 },
 
   ]
   export default {
