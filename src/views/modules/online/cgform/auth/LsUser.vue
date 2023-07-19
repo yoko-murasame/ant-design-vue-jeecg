@@ -57,6 +57,7 @@
         console.log(rows)
         this.selectionRows = rows
         this.selectedRowKeys = keys
+        this.$emit('select', rows[0].id)
       },
       clickThenCheck(record) {
         return {

@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="权限管理"
+    title="设计器权限管理"
     :width="800"
     :visible="visible"
     @close="close()">

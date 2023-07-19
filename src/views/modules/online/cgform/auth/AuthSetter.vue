@@ -15,11 +15,13 @@
           <a-tab-pane tab="角色授权" key="1" forceRender>
             <ls-role ref="roleRef" @select="onSelectRole"></ls-role>
           </a-tab-pane>
-          <a-tab-pane tab="部门授权" key="2" forceRender>
+          <!--Todo 开发部门授权功能-->
+          <a-tab-pane v-if="false" tab="部门授权" key="2" forceRender>
             <ls-depart @select="onSelectDepart"></ls-depart>
           </a-tab-pane>
-          <a-tab-pane tab="人员授权" key="3" forceRender>
-            <ls-user></ls-user>
+          <!--Todo 开发人员授权功能-->
+          <a-tab-pane v-if="false" tab="人员授权" key="3" forceRender>
+            <ls-user @select="onSelectUser"></ls-user>
           </a-tab-pane>
         </a-tabs>
       </a-col>
@@ -76,7 +78,9 @@
           c: 'dataref'
         },
 
-        activeRole: ''
+        activeRole: '',
+        activeDepart: '',
+        activeUser: ''
       }
     },
     methods: {
@@ -101,7 +105,12 @@
         this.authTabChange(this.activeKey)
       },
       onSelectDepart(departid) {
+        this.activeDepart = departid
         console.log('选中的部门ID', departid)
+      },
+      onSelectUser(userId) {
+        this.activeUser = userId
+        console.log('选中的人员ID', userId)
       },
       authTabChange(value) {
         // 切换 右侧tab 如果当前选中角色信息需要加载tab内选中信息
