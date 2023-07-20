@@ -4,7 +4,7 @@
       name="file"
       listType="picture-card"
       :multiple="isMultiple"
-      :action="uploadAction"
+      :action="customUploadAction || uploadAction"
       :headers="headers"
       :data="{biz:bizPath}"
       :fileList="fileList"
@@ -12,7 +12,6 @@
       :transform-file="transformFile"
       :disabled="disabled"
       :isMultiple="isMultiple"
-
       @change="handleChange"
       @preview="handlePreview"
       :class="[!isMultiple?'imgupload':'', (!isMultiple && picUrl)?'image-upload-single-over':'' ]">
@@ -60,6 +59,14 @@
       }
     },
     props: {
+      /**
+       * 自定义上传接口
+       */
+      customUploadAction: {
+        type: String,
+        required: false,
+        default: ''
+      },
       text: {
         type: String,
         required: false,
@@ -244,7 +251,10 @@
       // 预览
       handlePreview (file) {
         this.previewImage = file.url || file.thumbUrl
-        this.previewVisible = true
+        // this.previewVisible = true
+        this.$viewerApi({
+          images: [this.previewImage, ...this.fileList.filter(e => e.name !== file.name).map(e => e.url)]
+        })
       },
       getAvatarView() {
         if (this.fileList.length > 0) {

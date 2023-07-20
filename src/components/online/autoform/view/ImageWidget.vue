@@ -136,7 +136,10 @@
       },
       handlePreview(file) {
         this.previewImage = file.url || file.thumbUrl;
-        this.previewVisible = true;
+        // this.previewVisible = true;
+        this.$viewerApi({
+          images: [this.previewImage, ...this.fileList.filter(e => e.name !== file.name).map(e => e.url)]
+        })
       },
       handleCancel() {
         this.previewVisible = false;

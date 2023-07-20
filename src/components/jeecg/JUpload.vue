@@ -13,7 +13,7 @@
     <a-upload
       name="file"
       :multiple="multiple"
-      :action="uploadAction"
+      :action="customUploadAction || uploadAction"
       :headers="headers"
       :data="{'biz':bizPath}"
       :fileList="fileList"
@@ -85,6 +85,14 @@
       }
     },
     props: {
+      /**
+       * 自定义上传接口
+       */
+      customUploadAction: {
+        type: String,
+        required: false,
+        default: ''
+      },
       text: {
         type: String,
         required: false,
@@ -144,6 +152,13 @@
       },
       beforeUpload: {
         type: Function
+      },
+      /**
+       * 自定义文件分割符，默认,
+       */
+      splitChar: {
+        type: String,
+        default: ','
       }
     },
     watch: {
@@ -153,7 +168,7 @@
           let val = this.value
           if (val instanceof Array) {
             if (this.returnUrl) {
-              this.initFileList(val.join(','))
+              this.initFileList(val.join(this.splitChar))
             } else {
               this.initFileListArr(val)
             }
@@ -210,7 +225,7 @@
           // update-end- --- author:os_chengtgen ------ date:20190729 ---- for:issues:326,Jupload组件初始化bug
         }
         let fileList = []
-        let arr = paths.split(',')
+        let arr = paths.split(this.splitChar)
         for (var a = 0; a < arr.length; a++) {
           let url = getFileAccessHttpUrl(arr[a])
           fileList.push({
@@ -244,7 +259,7 @@
           // update-end-author:lvdandan date:20200603 for:【TESTA-514】【开源issue】多个文件同时上传时，控制台报错
         }
         if (arr.length > 0) {
-          path = arr.join(',')
+          path = arr.join(this.splitChar)
         }
         this.$emit('change', path)
       },
@@ -322,9 +337,15 @@
       handlePreview(file) {
         if (this.fileType === FILE_TYPE_IMG) {
           this.previewImage = file.url || file.thumbUrl
-          this.previewVisible = true
+          // console.log('扩展 $viewerApi', file, this.fileList)
+          // 使用v-viewer进行图片预览
+          // this.previewVisible = true;
+          this.$viewerApi({
+            images: [this.previewImage, ...this.fileList.filter(e => e.name !== file.name).map(e => e.url)]
+          })
         } else {
-          location.href = file.url
+          // location.href = file.url
+          window.open(file.url)
         }
       },
       handleCancel() {
@@ -352,7 +373,7 @@
             }
           }
           this.currentImg = last
-          this.$emit('change', arr.join(','))
+          this.$emit('change', arr.join(this.splitChar))
         }
       },
       moveNext() {
@@ -373,7 +394,7 @@
             }
           }
           this.currentImg = next
-          this.$emit('change', arr.join(','))
+          this.$emit('change', arr.join(this.splitChar))
         }
       },
       getIndexByUrl() {
