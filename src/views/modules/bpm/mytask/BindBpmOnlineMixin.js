@@ -27,7 +27,8 @@ export default {
         taskEntrust: '/act/task/taskEntrust',
         getBizProcessNodeInfo: '/act/process/extActProcessNode/getBizProcessNodeInfo',
         // 其余流程功能对接：发起流程、审批进度
-        startProcess: '/act/process/extActProcess/startMutilProcess',
+        // startProcess: '/act/process/extActProcess/startMutilProcess',
+        startProcess: '/workflow/common/startMutilProcess',
         callBackProcess: '/workflow/common/callBackProcess',
         finishProcess: '/workflow/common/finishProcess',
         getExtActProcess: '/workflow/common/getExtActProcess'

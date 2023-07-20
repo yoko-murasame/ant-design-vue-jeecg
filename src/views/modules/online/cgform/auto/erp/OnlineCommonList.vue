@@ -307,7 +307,8 @@
           optPre: '/online/cgform/api/form/',
           exportXls: '/online/cgform/api/exportXls/',
           buttonAction: '/online/cgform/api/doButton',
-          startProcess: '/act/process/extActProcess/startMutilProcess'
+          // startProcess: '/act/process/extActProcess/startMutilProcess'
+          startProcess: '/workflow/common/startMutilProcess'
         },
         lodash: lodash_object,
         table: {

@@ -56,7 +56,8 @@ export const JeecgBpmListMixin = {
       formUrlMobile: '',
       formData: {},
       url: {
-        startProcess: '/act/process/extActProcess/startMutilProcess',
+        // startProcess: '/act/process/extActProcess/startMutilProcess',
+        startProcess: '/workflow/common/startMutilProcess',
         getBizProcessNodeInfo: '/act/process/extActProcessNode/getBizProcessNodeInfo',
         invalidProcess: '/act/task/invalidBizProcess',
         queryFlowDataByCodeAndId: '/act/process/extActFlowData/queryFlowDataByCodeAndId',

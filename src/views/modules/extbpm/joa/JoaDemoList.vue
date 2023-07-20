@@ -203,7 +203,8 @@
           deleteBatch: '/test/joaDemo/deleteBatch',
           exportXlsUrl: 'test/joaDemo/exportXls',
           importExcelUrl: 'test/joaDemo/importExcel',
-          startProcess: '/act/process/extActProcess/startMutilProcess'
+          // startProcess: '/act/process/extActProcess/startMutilProcess'
+          startProcess: '/workflow/common/startMutilProcess'
        }
     }
   },

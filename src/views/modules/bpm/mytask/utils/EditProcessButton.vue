@@ -115,7 +115,8 @@ export default {
   data() {
     return {
       url: {
-        startProcess: '/act/process/extActProcess/startMutilProcess',
+        // startProcess: '/act/process/extActProcess/startMutilProcess',
+        startProcess: '/workflow/common/startMutilProcess',
         getAndInit: '/workflow/editapply/getAndInit',
         edit: '/workflow/editapply/edit'
       },

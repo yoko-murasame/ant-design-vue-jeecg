@@ -200,7 +200,8 @@
           list: '/joa/joaEmployeeLeave/list',
           delete: '/joa/joaEmployeeLeave/delete',
           deleteBatch: '/joa/joaEmployeeLeave/deleteBatch',
-          startProcess: '/act/process/extActProcess/startMutilProcess'
+          // startProcess: '/act/process/extActProcess/startMutilProcess'
+          startProcess: '/workflow/common/startMutilProcess'
         }
       }
     },

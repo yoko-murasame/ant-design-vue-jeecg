@@ -166,7 +166,8 @@
           list: '/joa/joaBusinesStrip/list',
           delete: '/joa/joaBusinesStrip/delete',
           deleteBatch: '/joa/joaBusinesStrip/deleteBatch',
-          startProcess: '/act/process/extActProcess/startMutilProcess'
+          // startProcess: '/act/process/extActProcess/startMutilProcess'
+          startProcess: '/workflow/common/startMutilProcess'
         }
       }
     },

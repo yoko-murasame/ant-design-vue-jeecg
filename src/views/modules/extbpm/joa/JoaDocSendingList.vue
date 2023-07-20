@@ -194,7 +194,8 @@
           list: '/joa/joaDocSending/list',
           delete: '/joa/joaDocSending/delete',
           deleteBatch: '/joa/joaDocSending/deleteBatch',
-          startProcess: '/act/process/extActProcess/startMutilProcess'
+          // startProcess: '/act/process/extActProcess/startMutilProcess'
+          startProcess: '/workflow/common/startMutilProcess'
         }
       }
     },

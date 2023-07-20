@@ -93,7 +93,8 @@
           loadFormItems: "/online/cgform/api/getFormItem/",
           loadEnhanceJs: "/online/cgform/api/getEnhanceJs/",
           optPre: "/online/cgform/api/form/",
-          flow: '/act/process/extActProcess/startMutilProcess'
+          // flow: '/act/process/extActProcess/startMutilProcess'
+          flow: '/workflow/common/startMutilProcess'
         },
         schema:{},
         uiSchema:{
