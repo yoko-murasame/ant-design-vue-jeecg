@@ -376,7 +376,7 @@
         <a-row :gutter="24">
           <a-col :span="12">
             <a-form-model-item label="图片上传" prop="imgList">
-              <j-image-upload bizPath="scott/pic" v-model="formData.imgList"></j-image-upload>
+              <j-image-upload bizPath="scott/pic" v-model="formData.imgList" :limit-size="30" :do-compress="true" :zip-percent="0.7"></j-image-upload>
             </a-form-model-item>
           </a-col>
           <a-col :span="12">选中的值(v-model)：{{ formData.imgList }}</a-col>
@@ -384,7 +384,7 @@
         <a-row :gutter="24" style="margin-top: 65px;margin-bottom:50px;">
           <a-col :span="12">
             <a-form-model-item label="文件上传" prop="fileList">
-              <j-upload v-model="formData.fileList"></j-upload>
+              <j-upload v-model="formData.fileList" file-type="file"></j-upload>
             </a-form-model-item>
           </a-col>
           <a-col :span="12">

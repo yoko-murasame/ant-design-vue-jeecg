@@ -33,7 +33,7 @@
   import Vue from 'vue'
   import { ACCESS_TOKEN } from '@/store/mutation-types'
   import { getFileAccessHttpUrl } from '@/api/manage'
-  import lrz from 'lrz'
+  import ImageZipCompressMixin from '@/components/yoko/mixins/ImageZipCompressMixin'
 
   const uidGenerator = () => {
     return '-' + parseInt(Math.random() * 10000 + 1, 10)
@@ -47,6 +47,7 @@
   }
   export default {
     name: 'JImageUpload',
+    mixins: [ImageZipCompressMixin],
     data() {
       return {
         uploadAction: window._CONFIG['domianURL'] + '/sys/common/upload',
@@ -59,14 +60,6 @@
       }
     },
     props: {
-      /**
-       * 自定义上传接口
-       */
-      customUploadAction: {
-        type: String,
-        required: false,
-        default: ''
-      },
       text: {
         type: String,
         required: false,
@@ -90,7 +83,7 @@
       isMultiple: {
         type: Boolean,
         required: false,
-        default: false
+        default: true
       },
       // update-begin-author:wangshuai date:20201021 for:LOWCOD-969 新增number属性，用于判断上传数量
       number: {
@@ -99,11 +92,6 @@
         default: 0
       },
       // update-end-author:wangshuai date:20201021 for:LOWCOD-969 新增number属性，用于判断上传数量
-      doCompress: {
-        type: Boolean,
-        required: false,
-        default: true
-      },
       limitWidth: {
         type: Number,
         required: false,
@@ -114,23 +102,33 @@
         required: false,
         default: 0
       },
+      /**
+       * 限制大小 单位为MB
+       */
+      limitSize: {
+        type: Number,
+        required: false,
+        default: 10
+      },
       acceptType: {
         type: String,
         required: false,
         default: 'image/*'
         // default: 'image/x-png, image/jpg, image/jpeg, image/gif'
       },
-      zipPercent: {
-        type: Number,
-        required: false,
-        default: 0.7
+      /**
+       * 自定义文件分割符，默认,
+       */
+      splitChar: {
+        type: String,
+        default: ','
       }
     },
     watch: {
       value: {
         handler(val, oldValue) {
           if (val instanceof Array) {
-            this.initFileList(val.join(','))
+            this.initFileList(val.join(this.splitChar))
           } else {
             this.initFileList(val)
           }
@@ -154,7 +152,7 @@
         }
         this.picUrl = true
         let fileList = []
-        let arr = paths.split(',')
+        let arr = paths.split(this.splitChar)
         for (var a = 0; a < arr.length; a++) {
           let url = getFileAccessHttpUrl(arr[a])
           fileList.push({
@@ -178,21 +176,23 @@
         }
 
         // 文件类型(file.type)、大小限制(file.size)
-        const isLt2M = file.size / 1024 / 1024 < 10
+        const isLt2M = file.size / 1024 / 1024 < this.limitSize
         if (!isLt2M) {
-          this.$message.error('图片大小限制 10MB!')
+          this.$message.error(`上传图片大小不能超过 ${this.limitSize}MB!`)
           return Promise.reject()
         }
 
         // 限制上传数量
         const isLimit = (this.fileList.length + fileList.length) > this.number
         const indexOfFile = fileList.findIndex(item => item.uid === file.uid) + this.fileList.length
-        if (isLimit && indexOfFile === this.number) {
-          this.$message.error('最多可上传' + this.number + '张图片')
-          return Promise.reject()
-        }
-        if (isLimit && indexOfFile > this.number) {
-          return Promise.reject()
+        if (this.number > 0) {
+          if (isLimit && indexOfFile === this.number) {
+            this.$message.error('最多可上传' + this.number + '张图片')
+            return Promise.reject()
+          }
+          if (isLimit && indexOfFile > this.number) {
+            return Promise.reject()
+          }
         }
 
         // 限制宽高
@@ -248,14 +248,6 @@
           this.handlePathChange()
         }
       },
-      // 预览
-      handlePreview (file) {
-        this.previewImage = file.url || file.thumbUrl
-        // this.previewVisible = true
-        this.$viewerApi({
-          images: [this.previewImage, ...this.fileList.filter(e => e.name !== file.name).map(e => e.url)]
-        })
-      },
       getAvatarView() {
         if (this.fileList.length > 0) {
           let url = this.fileList[0].url
@@ -283,7 +275,7 @@
           }
         }
         if (arr.length > 0) {
-          path = arr.join(',')
+          path = arr.join(this.splitChar)
         }
         this.$emit('change', path)
       },
@@ -298,57 +290,6 @@
       close () {
 
       },
-      transformFile(file) {
-        const that = this
-        return new Promise(resolve => {
-          // const reader = new FileReader()
-          // reader.readAsDataURL(file)
-          // reader.onload = () => {
-          //   const canvas = document.createElement('canvas')
-          //   const img = document.createElement('img')
-          //   img.src = reader.result
-          //   img.onload = () => {
-          //     const ctx = canvas.getContext('2d')
-          //     ctx.drawImage(img, 0, 0)
-          //     ctx.fillStyle = 'red'
-          //     ctx.textBaseline = 'middle'
-          //     ctx.fillText('PUSDN', 20, 20)
-          //     canvas.toBlob(resolve)
-          //   }
-          // }
-          if (that.doCompress && file.size / 1024 / 1024 > 2) {
-            that.compressImg(file).then((zippedFile) => {
-              // 回调函数返回file的值（将base64编码转成file）
-              const files = that.dataURLtoFile(zippedFile.base64, file.name)
-              resolve(files)
-            })
-          } else {
-            resolve(file)
-          }
-        })
-      },
-      // 压缩图片
-      compressImg (file) {
-        return lrz(file, {
-          quality: this.zipPercent
-        }).then((rst) => {
-          return rst
-        }).catch((err) => {
-          console.log(err)
-        })
-      },
-      // base64转码（压缩完成后的图片为base64编码，这个方法可以将base64编码转回file文件）
-      dataURLtoFile (dataUrl, filename) {
-        const arr = dataUrl.split(',')
-        const mime = arr[0].match(/:(.*?);/)[1]
-        const bStr = atob(arr[1])
-        let n = bStr.length
-        const u8arr = new Uint8Array(n)
-        while (n--) {
-          u8arr[n] = bStr.charCodeAt(n)
-        }
-        return new File([u8arr], filename, { type: mime })
-      }
     },
     model: {
       prop: 'value',

@@ -23,6 +23,7 @@
       :returnUrl="returnUrl"
       :listType="complistType"
       @preview="handlePreview"
+      :transform-file="transformFile"
       :class="{'uploadty-disabled':disabled}">
       <template>
         <div v-if="isImageComp">
@@ -48,10 +49,11 @@
   import Vue from 'vue'
   import { ACCESS_TOKEN } from '@/store/mutation-types'
   import { getFileAccessHttpUrl } from '@/api/manage'
+  import ImageZipCompressMixin, {
+    FILE_TYPE_ALL,
+    FILE_TYPE_IMG
+  } from '@/components/yoko/mixins/ImageZipCompressMixin'
 
-  const FILE_TYPE_ALL = 'all'
-  const FILE_TYPE_IMG = 'image'
-  const FILE_TYPE_TXT = 'file'
   const uidGenerator = () => {
     return '-' + parseInt(Math.random() * 10000 + 1, 10)
   }
@@ -64,6 +66,7 @@
   }
   export default {
     name: 'JUpload',
+    mixins: [ImageZipCompressMixin],
     data() {
       return {
         uploadAction: window._CONFIG['domianURL'] + '/sys/common/upload',
@@ -85,14 +88,6 @@
       }
     },
     props: {
-      /**
-       * 自定义上传接口
-       */
-      customUploadAction: {
-        type: String,
-        required: false,
-        default: ''
-      },
       text: {
         type: String,
         required: false,
@@ -333,20 +328,6 @@
       handleDelete(file) {
         // 如有需要新增 删除逻辑
         console.log(file)
-      },
-      handlePreview(file) {
-        if (this.fileType === FILE_TYPE_IMG) {
-          this.previewImage = file.url || file.thumbUrl
-          // console.log('扩展 $viewerApi', file, this.fileList)
-          // 使用v-viewer进行图片预览
-          // this.previewVisible = true;
-          this.$viewerApi({
-            images: [this.previewImage, ...this.fileList.filter(e => e.name !== file.name).map(e => e.url)]
-          })
-        } else {
-          // location.href = file.url
-          window.open(file.url)
-        }
       },
       handleCancel() {
         this.previewVisible = false
