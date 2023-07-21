@@ -44,19 +44,8 @@ import '@/assets/less/JAreaLinkage.less'
 import VueAreaLinkage from 'vue-area-linkage'
 import '@/components/jeecg/JVxeTable/install'
 import '@/components/JVxeCells/install'
+import Yoko from '@/components/yoko'
 
-// Yoko组件全局注册
-import CancelButton from '@/components/yoko/CancelButton'
-
-// 表单验证
-import { rules } from '@/utils/rules'
-// 注册动态表单组件（要不流程中不会显示）
-import DynamicForm from '@/components/online/autoform/index'
-// 不使用最新的打包后的包 还需要 yarn remove @jeecg/antd-online-mini
-// require('@jeecg/antd-online-mini')
-// require('@jeecg/antd-online-mini/dist/OnlineForm.css')
-
-Vue.prototype.rules = rules
 Vue.config.productionTip = false
 Vue.use(Storage, config.storageOptions)
 Vue.use(Antd)
@@ -68,9 +57,8 @@ Vue.use(Print)
 Vue.use(preview)
 Vue.use(vueBus)
 Vue.use(JeecgComponents)
-Vue.use(DynamicForm)
 Vue.use(VueAreaLinkage)
-Vue.use(CancelButton)
+Vue.use(Yoko)
 
 SSO.init(() => {
   main()
