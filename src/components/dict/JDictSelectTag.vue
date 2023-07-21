@@ -30,6 +30,7 @@
     name: 'JDictSelectTag',
     props: {
       dictCode: String,
+      options: Array,
       placeholder: String,
       disabled: Boolean,
       value: [String, Number],
@@ -49,7 +50,19 @@
       dictCode: {
         immediate: true,
         handler() {
-          this.initDictData()
+          if (!(this.options && this.options.length)) {
+            this.initDictData();
+          }
+        }
+      },
+      options: {
+        immediate: true,
+        deep: true,
+        handler(val) {
+          if (val && val.length > 0) {
+            // console.log('options', val);
+            this.setCurrentDictOptions([...val]);
+          }
         }
       }
     },
@@ -94,7 +107,7 @@
         } else {
           val = e
         }
-        console.log(val)
+        // console.log(val)
         this.$emit('change', val)
         // LOWCOD-2146 【菜单】数据规则，选择自定义SQL 规则值无法输入空格
         this.$emit('input', val)
