@@ -3,6 +3,7 @@
     <a-upload
       name="file"
       listType="picture-card"
+      :accept="acceptType"
       :multiple="isMultiple"
       :action="customUploadAction || uploadAction"
       :headers="headers"
@@ -109,12 +110,6 @@
         type: Number,
         required: false,
         default: 10
-      },
-      acceptType: {
-        type: String,
-        required: false,
-        default: 'image/*'
-        // default: 'image/x-png, image/jpg, image/jpeg, image/gif'
       },
       /**
        * 自定义文件分割符，默认,

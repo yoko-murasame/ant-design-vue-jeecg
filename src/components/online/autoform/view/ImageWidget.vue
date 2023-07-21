@@ -2,6 +2,7 @@
   <formitem-wapper :formitem="formitem">
     <a-upload
       name="file"
+      :accept="acceptType"
       :multiple="true"
       :action="customUploadAction || uploadAction"
       :data="{'isup':1}"

@@ -13,6 +13,7 @@
     <a-upload
       name="file"
       :multiple="multiple"
+      :accept="acceptType"
       :action="customUploadAction || uploadAction"
       :headers="headers"
       :data="{'biz':bizPath}"
@@ -88,6 +89,11 @@
       }
     },
     props: {
+      acceptType: {
+        type: String,
+        required: false,
+        default: '*'
+      },
       text: {
         type: String,
         required: false,

@@ -11,6 +11,12 @@ export const FILE_TYPE_IMG = 'image'
 export const FILE_TYPE_TXT = 'file'
 export default {
   props: {
+    acceptType: {
+      type: String,
+      required: false,
+      default: 'image/*'
+      // default: 'image/x-png, image/jpg, image/jpeg, image/gif'
+    },
     /**
      * 自定义上传接口
      */
