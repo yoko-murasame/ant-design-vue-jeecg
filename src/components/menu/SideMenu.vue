@@ -75,9 +75,9 @@
       },
       onClick(obj) {
         this.$emit('menuClick', obj)
-        console.log('onClick', obj)
+        // console.log('onClick', obj)
         // 更新代办数量
-        new MenuUtil().updateTodoNum()
+        // new MenuUtil().updateTodoNum()
       },
       onUpdateMenuTitle (obj) {
         this.$emit('updateMenuTitle', obj)

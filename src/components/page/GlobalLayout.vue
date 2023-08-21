@@ -114,7 +114,7 @@
       return {
         collapsed: false,
         activeMenu: {},
-        menus: []
+        // menus: []
       }
     },
     computed: {
@@ -122,7 +122,8 @@
         // 主路由
         mainRouters: state => state.permission.addRouters,
         // 后台菜单
-        permissionMenuList: state => state.user.permissionList
+        // permissionMenuList: state => state.user.permissionList
+        menus: state => state.user.permissionList
       })
     },
     watch: {
@@ -133,7 +134,7 @@
     created() {
       // --update-begin----author:scott---date:20190320------for:根据后台菜单配置，判断是否路由菜单字段，动态选择是否生成路由（为了支持参数URL菜单）------
       // this.menus = this.mainRouters.find((item) => item.path === '/').children;
-      this.menus = this.permissionMenuList
+      // this.menus = this.permissionMenuList
 
       // --update-begin----author:liusq---date:20210223------for:关于测边菜单遮挡内容问题详细说明 #2255
       this.collapsed = !this.sidebarOpened

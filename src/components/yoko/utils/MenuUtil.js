@@ -1,5 +1,6 @@
 import store from '@/store'
 import { getAction } from '@/api/manage'
+import vue from 'vue'
 
 export class MenuUtil {
   constructor() {
@@ -52,11 +53,14 @@ export class MenuUtil {
     if (num == null) {
       await this.fetchTodoNum()
     }
+    store.commit('SET_PERMISSIONLIST', [])
     const arr = this.getMenusByKey('/bpm/task/MyTaskList')
     arr.forEach(item => {
-      item.meta.todoNum = `${num || this.todoNum}`
+      item.meta.todoNum = `${num || this.todoNum || ''}`
       item.meta.style = this.style
     })
+    // 必须放在下一次渲染，要不数组内部的修改不会被感知
+    vue.nextTick(() => store.commit('SET_PERMISSIONLIST', this.menuList))
   }
 
   getMenuByKey(key) {

@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { putAction } from '@/api/manage'
+import { getAction, putAction } from '@/api/manage'
 import TaskDealModal from './TaskDealModal';
 import SelectEntrusterModal from './form/SelectEntrusterModal';
 import JEllipsis from '@/components/jeecg/JEllipsis'
@@ -112,6 +112,7 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { BpmNodeInfoMixin } from '@/views/modules/bpm/mixins/BpmNodeInfoMixin'
 import TaskNotifyMeModal from '../../extbpm/process/TaskNotifyMeModal.vue';
 import SelectSingleUserModal from './form/SelectSingleUserModal.vue';
+import { MenuUtil } from '@comp/yoko/utils/MenuUtil'
 
 export default {
   name: 'MyRunningTaskList',
@@ -202,6 +203,36 @@ export default {
     }
   },
   methods: {
+    loadData(arg) {
+      if (!this.url.list) {
+        this.$message.error('请设置url.list属性!')
+        return
+      }
+      // 加载数据 若传入参数1则加载第一页的内容
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      var params = this.getQueryParams() // 查询条件
+      this.loading = true
+      getAction(this.url.list, params).then(res => {
+        if (res.success) {
+          // update-begin---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
+          this.dataSource = res.result.records || res.result
+          if (res.result.total) {
+            this.ipagination.total = res.result.total
+          } else {
+            this.ipagination.total = 0
+          }
+          // 更新菜单代办
+          new MenuUtil().updateTodoNum(this.ipagination.total)
+          // update-end---author:zhangyafei    Date:20201118  for：适配不分页的数据列表------------
+        }
+        if (res.code === 510) {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
     searchReset() {
       this.queryParam = {};
       this.model.userName = '';
