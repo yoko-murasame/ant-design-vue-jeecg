@@ -4,6 +4,7 @@ import { ACCESS_TOKEN, USER_NAME, USER_INFO, USER_AUTH, SYS_BUTTON_AUTH, UI_CACH
 import { welcome } from '@/utils/util'
 import { queryPermissionsByUser } from '@/api/api'
 import { getAction } from '@/api/manage'
+import { MenuUtil } from '@comp/yoko/utils/MenuUtil'
 
 const user = {
   state: {
@@ -125,7 +126,7 @@ const user = {
     // 获取用户信息
     GetPermissionList({ commit }) {
       return new Promise((resolve, reject) => {
-        queryPermissionsByUser().then(response => {
+        queryPermissionsByUser().then(async response => {
           // update-begin----author:scott---date:20221018------for: 判断是否是 vue3 版本的菜单，给予提示 ---
           let routeList = response.result.menu
           var findVue3Menu = routeList.find(item => {
@@ -160,6 +161,8 @@ const user = {
             commit('SET_PERMISSIONLIST', menuData)
             // 设置系统安全模式
             commit('SET_SYS_SAFE_MODE', response.result.sysSafeMode)
+            // 更新代办数量
+            await new MenuUtil().updateTodoNum()
           } else {
             reject('getPermissionList: permissions must be a non-null array !')
           }

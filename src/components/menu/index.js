@@ -156,6 +156,7 @@ export default {
           <tag {...{ props, attrs }}>
             {this.renderIcon(menu.meta.icon)}
             <span>{menu.meta.title}</span>
+            {menu.meta.todoNum ? <span style={menu.meta.style}>{menu.meta.todoNum}</span> : null}
           </tag>
         </Item>
       )
@@ -170,6 +171,7 @@ export default {
           <span slot="title">
             {this.renderIcon(menu.meta.icon)}
             <span>{menu.meta.title}</span>
+            {menu.meta.todoNum ? <span style={menu.meta.style}>{menu.meta.todoNum}</span> : null}
           </span>
           {itemArr}
         </SubMenu>
@@ -199,6 +201,10 @@ export default {
         this.selectedKeys = obj.selectedKeys
         this.$emit('select', obj)
       },
+      // 看antd menu文档可知 子菜单午饭感知select的事件，因此统一通过click事件回调
+      click: obj => {
+        this.$emit('click', obj)
+      },
       openChange: this.onOpenChange
     }
 
@@ -208,6 +214,7 @@ export default {
       }
       return this.renderItem(item)
     })
+    // console.log('menuTree', menu, menuTree)
     // {...{ props, on: on }}
     return (
       <Menu vModel={this.selectedKeys} {...{ props, on: on }}>

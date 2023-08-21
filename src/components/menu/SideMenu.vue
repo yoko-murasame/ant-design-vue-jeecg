@@ -11,6 +11,7 @@
       :menu="menus"
       :theme="theme"
       @select="onSelect"
+      @click="onClick"
       @updateMenuTitle="onUpdateMenuTitle"
       :mode="mode"
       :style="smenuStyle">
@@ -24,6 +25,7 @@
   import Logo from '../tools/Logo'
   import SMenu from './index'
   import { mixin, mixinDevice } from '@/utils/mixin.js'
+  import { MenuUtil } from '@comp/yoko/utils/MenuUtil'
 
   export default {
     name: 'SideMenu',
@@ -69,6 +71,13 @@
     methods: {
       onSelect (obj) {
         this.$emit('menuSelect', obj)
+        // console.log('onSelect', obj)
+      },
+      onClick(obj) {
+        this.$emit('menuClick', obj)
+        console.log('onClick', obj)
+        // 更新代办数量
+        new MenuUtil().updateTodoNum()
       },
       onUpdateMenuTitle (obj) {
         this.$emit('updateMenuTitle', obj)
