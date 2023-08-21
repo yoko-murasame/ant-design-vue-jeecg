@@ -5,7 +5,21 @@ export class MenuUtil {
   constructor() {
     this.todoNum = 0
     this.style = {
-      color: 'red'
+      // color: 'red',
+      display: 'inline-block',
+      marginLeft: '5px',
+      width: '20px',
+      height: '20px',
+      color: '#fff',
+      fontWeight: 'normal',
+      lineHeight: '18px',
+      whiteSpace: 'nowrap',
+      textAlign: 'center',
+      background: '#f5222d',
+      borderRadius: '10px',
+      boxShadow: '0 0 0 1px #fff',
+      boxSizing: 'border-box',
+      verticalAlign: 'middle'
     }
     this.menuList = []
     this.fetchMenuList();
@@ -40,7 +54,7 @@ export class MenuUtil {
     }
     const arr = this.getMenusByKey('/bpm/task/MyTaskList')
     arr.forEach(item => {
-      item.meta.todoNum = `（${num || this.todoNum}）`
+      item.meta.todoNum = `${num || this.todoNum}`
       item.meta.style = this.style
     })
   }
