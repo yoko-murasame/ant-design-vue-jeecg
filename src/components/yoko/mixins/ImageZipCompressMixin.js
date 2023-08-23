@@ -8,6 +8,7 @@ import lrz from 'lrz'
  */
 export const FILE_TYPE_ALL = 'all'
 export const FILE_TYPE_IMG = 'image'
+export const FILE_TYPE_VIDEO = 'video'
 export const FILE_TYPE_TXT = 'file'
 export default {
   props: {
@@ -64,6 +65,17 @@ export default {
   data() {
     return {
       fileList: []
+    }
+  },
+  computed: {
+    isImageComp() {
+      return this.fileType === FILE_TYPE_IMG
+    },
+    isVideoComp() {
+      return this.fileType === FILE_TYPE_VIDEO
+    },
+    complistType() {
+      return this.fileType === FILE_TYPE_IMG ? 'picture-card' : 'text'
     }
   },
   methods: {
@@ -132,7 +144,11 @@ export default {
         })
       } else {
         // location.href = file.url
-        window.open(file.url)
+        if (this.isVideoComp) {
+          this.$emit('showVideo', file.url, this.fileList.map(e => e.url))
+        } else {
+          window.open(file.url)
+        }
       }
     }
   }

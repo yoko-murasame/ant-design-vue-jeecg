@@ -52,7 +52,8 @@
   import { getFileAccessHttpUrl } from '@/api/manage'
   import ImageZipCompressMixin, {
     FILE_TYPE_ALL,
-    FILE_TYPE_IMG
+    FILE_TYPE_IMG,
+    FILE_TYPE_VIDEO
   } from '@/components/yoko/mixins/ImageZipCompressMixin'
 
   const uidGenerator = () => {
@@ -177,14 +178,6 @@
             this.initFileList(val)
           }
         }
-      }
-    },
-    computed: {
-      isImageComp() {
-        return this.fileType === FILE_TYPE_IMG
-      },
-      complistType() {
-        return this.fileType === FILE_TYPE_IMG ? 'picture-card' : 'text'
       }
     },
     created() {
