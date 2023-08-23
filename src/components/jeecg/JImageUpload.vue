@@ -1,5 +1,5 @@
 <template>
-  <div class="img">
+  <div class="img" :style="{ width: visibleWidth }">
     <a-upload
       name="file"
       listType="picture-card"
@@ -95,11 +95,17 @@
         required: false,
         default: true
       },
-      // 图片链接后缀，可用于oss图片压缩参数，拼接到?后面
-      urlSuffix: {
-        type: String,
+      // 作为列表组件展示时的限制宽度
+      visibleWidth: {
+        type: [Number, String],
         required: false,
-        default: ''
+        default: 'auto'
+      },
+      // 作为列表组件展示时的限制数量，0不限制
+      visibleNumber: {
+        type: Number,
+        required: false,
+        default: 0
       },
       // update-begin-author:wangshuai date:20201021 for:LOWCOD-969 新增number属性，用于判断上传数量
       number: {
@@ -161,10 +167,10 @@
           return ''
         }
         // url编码
-        const suffix = encodeURIComponent(this.urlSuffix)
-        return suffix ? ('?' + suffix) : ''
+        // const suffix = encodeURIComponent(this.urlSuffix)
+        // return suffix ? ('?' + suffix) : ''
         // return encodeURIComponent(this.urlSuffix ? ('?' + this.urlSuffix) : '')
-        // return this.urlSuffix ? ('?' + this.urlSuffix) : ''
+        return this.urlSuffix ? ('?' + this.urlSuffix) : ''
       },
       initFileList(paths) {
         if (!paths || paths.length == 0) {
@@ -174,7 +180,10 @@
         this.picUrl = true
         let fileList = []
         let arr = paths.split(this.splitChar)
-        for (var a = 0; a < arr.length; a++) {
+        // 限制展示时的图片数量
+        let realLength = this.visibleNumber > 0 ? this.visibleNumber : arr.length
+        realLength = realLength > arr.length ? arr.length : realLength
+        for (var a = 0; a < realLength; a++) {
           let url = getFileAccessHttpUrl(arr[a]) + this.getUrlSuffix(arr[a])
           fileList.push({
             uid: uidGenerator(),

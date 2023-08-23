@@ -60,7 +60,15 @@ export default {
     splitChar: {
       type: String,
       default: ','
-    }
+    },
+    /**
+     * 图片链接后缀，可用于oss图片压缩参数，拼接到?后面
+     */
+    urlSuffix: {
+      type: String,
+      required: false,
+      default: ''
+    },
   },
   data() {
     return {
@@ -133,6 +141,10 @@ export default {
       }
       return new File([u8arr], filename, { type: mime })
     },
+    // 如果带了oss图片压缩参数，则在预览时去除
+    trimSuffix(url) {
+      return url.indexOf('?') > -1 ? url.substring(0, url.indexOf('?')) : url
+    },
     handlePreview(file) {
       if (this.fileType === FILE_TYPE_IMG) {
         this.previewImage = file.url || file.thumbUrl
@@ -140,7 +152,7 @@ export default {
         // 使用v-viewer进行图片预览
         // this.previewVisible = true;
         this.$viewerApi({
-          images: [this.previewImage, ...this.fileList.filter(e => e.name !== file.name).map(e => e.url)]
+          images: [this.trimSuffix(this.previewImage), ...this.fileList.filter(e => e.name !== file.name).map(e => this.trimSuffix(e.url))]
         })
       } else {
         // location.href = file.url
