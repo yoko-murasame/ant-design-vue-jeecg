@@ -4,7 +4,7 @@
       <div class="top">
         <div class="header">
           <a href="/">
-            <img src="~@/assets/dark-icon.jpeg" class="logo" alt="logo">
+            <img src="~@/assets/qianzhihe.png" class="logo" alt="logo">
             <span class="title">{{ systemName }}</span>
           </a>
         </div>
