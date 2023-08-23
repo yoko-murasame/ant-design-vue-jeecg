@@ -15,14 +15,17 @@
       :isMultiple="isMultiple"
       @change="handleChange"
       @preview="handlePreview"
-      :class="[!isMultiple?'imgupload':'', (!isMultiple && picUrl)?'image-upload-single-over':'' ]">
-      <div>
+      :class="[!isMultiple?'imgupload':'', (!isMultiple && picUrl)?'image-upload-single-over':'', buttonVisible? '' :'hidden-button' ]">
+      <div ref="buttonVisibleRef">
         <!--<img v-if="!isMultiple && picUrl" :src="getAvatarView()" style="width:100%;height:100%"/>-->
         <div class="iconp">
           <a-icon :type="uploadLoading ? 'loading' : 'plus'" />
           <div class="ant-upload-text">{{ text }}</div>
         </div>
       </div>
+      <!--<div v-if="!buttonVisible && !fileList.length" style="padding: 4px 11px">-->
+      <!--  暂无数据-->
+      <!--</div>-->
       <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel()">
         <img alt="example" style="width: 100%" :src="previewImage"/>
       </a-modal>
@@ -86,6 +89,18 @@
         required: false,
         default: true
       },
+      // 是否显示上传按钮（可以强制隐藏）
+      buttonVisible: {
+        type: Boolean,
+        required: false,
+        default: true
+      },
+      // 图片链接后缀，可用于oss图片压缩参数，拼接到?后面
+      urlSuffix: {
+        type: String,
+        required: false,
+        default: ''
+      },
       // update-begin-author:wangshuai date:20201021 for:LOWCOD-969 新增number属性，用于判断上传数量
       number: {
         type: Number,
@@ -140,6 +155,17 @@
       this.headers = { 'X-Access-Token': token }
     },
     methods: {
+      getUrlSuffix(url) {
+        // oss压缩gif不支持，排除
+        if (url && ~url.indexOf('.gif')) {
+          return ''
+        }
+        // url编码
+        const suffix = encodeURIComponent(this.urlSuffix)
+        return suffix ? ('?' + suffix) : ''
+        // return encodeURIComponent(this.urlSuffix ? ('?' + this.urlSuffix) : '')
+        // return this.urlSuffix ? ('?' + this.urlSuffix) : ''
+      },
       initFileList(paths) {
         if (!paths || paths.length == 0) {
           this.fileList = []
@@ -149,7 +175,7 @@
         let fileList = []
         let arr = paths.split(this.splitChar)
         for (var a = 0; a < arr.length; a++) {
-          let url = getFileAccessHttpUrl(arr[a])
+          let url = getFileAccessHttpUrl(arr[a]) + this.getUrlSuffix(arr[a])
           fileList.push({
             uid: uidGenerator(),
             name: getFileName(arr[a]),
@@ -303,4 +329,7 @@
   /* update--end--autor:lvdandan-----date:20201016------for：j-image-upload图片组件单张图片详情回显空白*/
 
   /deep/ .image-upload-single-over .ant-upload-select{display: none}
+  /deep/ .hidden-button > .ant-upload-select {
+    display: none;
+  }
 </style>
