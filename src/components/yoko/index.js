@@ -11,6 +11,9 @@ import DynamicForm from '@/components/online/autoform/index'
 // 表单验证
 import { rules } from '@/utils/rules'
 
+// 阿里云播放器
+import VueAliplayerV2 from 'vue-aliplayer-v2'
+
 /* v-viewer 图片预览 */
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
@@ -24,6 +27,8 @@ export default {
     Vue.use(DynamicForm)
     // 表单验证
     Vue.prototype.rules = rules
+    // 阿里云播放器
+    Vue.use(VueAliplayerV2);
     // 图片插件
     Vue.use(Viewer)
     Viewer.setDefaults({
