@@ -53,8 +53,11 @@ export class MenuUtil {
     if (num == null) {
       await this.fetchTodoNum()
     }
-    store.commit('SET_PERMISSIONLIST', [])
     const arr = this.getMenusByKey('/bpm/task/MyTaskList')
+    if (!arr || !arr.length) {
+      return
+    }
+    store.commit('SET_PERMISSIONLIST', [])
     arr.forEach(item => {
       item.meta.todoNum = `${num || this.todoNum || ''}`
       item.meta.style = this.style
