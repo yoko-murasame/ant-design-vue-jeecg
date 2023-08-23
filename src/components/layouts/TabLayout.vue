@@ -164,16 +164,16 @@
       // update-begin-author:sunjianlei date:20191223 for: 修复从单页模式切换回多页模式后首页不居第一位的 BUG
       // 将首页添加到第一位
       addIndexToFirst() {
-        this.pageList.splice(0, 0, {
-          name: 'dashboard-analysis',
-          path: indexKey,
-          fullPath: indexKey,
-          meta: {
-            icon: 'dashboard',
-            title: '首页'
-          }
-        })
-        this.linkList.splice(0, 0, indexKey)
+        // this.pageList.splice(0, 0, {
+        //   name: 'dashboard-analysis',
+        //   path: indexKey,
+        //   fullPath: indexKey,
+        //   meta: {
+        //     icon: 'dashboard',
+        //     title: '首页'
+        //   }
+        // })
+        // this.linkList.splice(0, 0, indexKey)
       },
       // update-end-author:sunjianlei date:20191223 for: 修复从单页模式切换回多页模式后首页不居第一位的 BUG
 
