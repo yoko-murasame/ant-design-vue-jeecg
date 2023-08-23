@@ -388,7 +388,7 @@
 <style scoped>
   @import '~@assets/less/common.less';
 </style>
-<style lang="less">
+<style lang="less" scoped>
   .ant-card-body .table-operator {
     margin-bottom: 18px;
   }
