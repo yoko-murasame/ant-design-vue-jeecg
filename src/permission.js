@@ -64,7 +64,16 @@ router.beforeEach((to, from, next) => {
             })
           })
       } else {
-        next()
+        if (process.env.VUE_APP_ENABLE_ROUTER_REDIRECT === 'true' && to.query.redirect) {
+          const redirect = decodeURIComponent(to.query.redirect)
+          // console.log('redirect before', redirect, to, { ...to.query })
+          delete to.query.redirect
+          // console.log('redirect end', to, { ...to.query })
+          // 跳转到目的路由
+          next({ path: redirect })
+        } else {
+          next()
+        }
       }
     }
   } else {
