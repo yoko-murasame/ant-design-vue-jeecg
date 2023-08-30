@@ -72,7 +72,8 @@ export default {
             formTableName: this.currentTableName
           })
         if (!success) {
-          this.$message.error(message)
+          // this.$message.error(message)
+          console.error(message)
           throw new Error(message)
         }
         console.log('获取processDefinitionId', result)
