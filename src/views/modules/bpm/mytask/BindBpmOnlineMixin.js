@@ -1,5 +1,5 @@
 import { getAction, postAction, putAction } from '@api/manage'
-import { flatMap, intersectionWith } from 'lodash'
+import { flatMap, intersectionWith, throttle } from 'lodash'
 
 /**
  * 高度封装流程接入核心方法类
@@ -51,9 +51,23 @@ export default {
     }
   },
   created() {
+    this.combineBpmDataList = throttle(this.combineBpmDataList, 2000)
     console.log('BindBpmOnlineMixin', this.path, this.formUrl);
   },
+  watch: {
+    '$route'() {
+      this.clearOnlineConfig()
+    }
+  },
   methods: {
+    /**
+     * 清空在线表单流程相关配置，在切换表单（路由改变）时触发
+     */
+    clearOnlineConfig() {
+      console.log('clearOnlineConfig')
+      this.myTaskList = null
+      this.processDefinitionId = null
+    },
     /**
      * 获取flowCode,如果是多流程列表,可能需要复写此方法
      * @param record
@@ -63,6 +77,8 @@ export default {
     },
     /**
      * 获取processDefinitionId,如果是多流程列表,可能需要复写此方法
+     * 编码表单：覆盖 data.processDefinitionId 即可
+     * online表单：自动根据 onl_表明 去请求数据库获取 processDefinitionId
      */
     async getProcessDefinitionId() {
       if (!this.processDefinitionId) {
@@ -182,6 +198,7 @@ export default {
       })
       !success && this.$message.error(message)
       this.myTaskList = result.records || []
+      // console.log('fetchBpmDataList', result, this.myTaskList)
     },
     /**
      * 将我的待办列表，映射到数据列表
@@ -191,6 +208,7 @@ export default {
      * @returns {Promise<void>}
      */
     async combineBpmDataList() {
+      // console.log('combineBpmDataList', this.myTaskList, this.flowCodePre, this.currentTableName)
       if (!this.myTaskList || !this.myTaskList.length) {
         await this.fetchBpmDataList();
       }
