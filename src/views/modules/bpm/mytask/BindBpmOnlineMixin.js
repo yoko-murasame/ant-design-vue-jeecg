@@ -47,11 +47,13 @@ export default {
       taskId: '',
       myTaskList: null,
       formData: {},
-      trackName: '审批进度'
+      trackName: '审批进度',
+      flowCodePre: 'onl_'
     }
   },
   created() {
-    this.combineBpmDataList = throttle(this.combineBpmDataList, 2000)
+    this.combineBpmDataList = throttle(this.combineBpmDataList, 3000, { 'trailing': false })
+    this.getProcessDefinitionId = throttle(this.getProcessDefinitionId, 3000, { 'trailing': false })
     console.log('BindBpmOnlineMixin', this.path, this.formUrl);
   },
   watch: {
@@ -82,7 +84,7 @@ export default {
      */
     async getProcessDefinitionId() {
       if (!this.processDefinitionId) {
-        console.log('获取processDefinitionId', this.flowCodePre, this.currentTableName)
+        // console.log('获取processDefinitionId', this.flowCodePre, this.currentTableName)
         const { result, success, message } = await getAction(this.url.getExtActProcess, {
             relationCode: this.flowCodePre + this.currentTableName,
             formTableName: this.currentTableName
@@ -92,7 +94,7 @@ export default {
           console.error(message)
           throw new Error(message)
         }
-        console.log('获取processDefinitionId', result)
+        console.log('获取processDefinitionId', this.flowCodePre, this.currentTableName, result)
         this.processDefinitionId = result.processKey
       }
       return this.processDefinitionId;
@@ -222,7 +224,7 @@ export default {
         }
         return false
       });
-      console.log('加载我的待办列表，映射到数据列表', recordsWithTask);
+      console.log('加载我的待办列表，映射到数据列表', recordsWithTask, this.table.dataSource, this.myTaskList);
     },
     /**
      * 加载流程数据，需要在loadData后执行，注入流程数据到 record.bpmData

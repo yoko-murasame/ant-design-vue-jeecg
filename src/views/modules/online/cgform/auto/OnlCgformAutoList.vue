@@ -373,7 +373,7 @@
     watch: {
       '$route'() {
         // 刷新参数放到这里去触发，就可以刷新相同界面了
-        console.log('OnlCgformAutoList::initAutoList')
+        console.log('Online自动列表加载::OnlCgformAutoList::initAutoList')
         this.initAutoList()
       }
     },
