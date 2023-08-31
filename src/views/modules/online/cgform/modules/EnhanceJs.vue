@@ -8,6 +8,11 @@
     wrapClassName="ant-modal-cust-warp"
     style="top:5%;height: 95%;">
 
+    <div style="height:32px;line-height:30px;margin-bottom: 0px">
+      请务必使用foo(row,keys,rows){console.log(this)}形式编写方法,多个方法必须用逗号隔开!this指向当前对象
+      <a target="blank" href="https://www.kancloud.cn/zhangdaiscott/jeecg-boot/2044101">默认钩子文档</a>
+    </div>
+
     <a-form style="height: 100%;">
       <j-code-editor
         ref="codeEditor"
@@ -181,12 +186,15 @@
 
 </script>
 
-<style scoped>
+<style lang="less" scoped>
   .js-type-select{
     position:absolute;
     z-index:10;
     right:58px;
-    top:80px;
+    top:100px;
     max-width:146px;
+  }
+  /deep/ .ant-modal-body {
+    padding: 6px;
   }
 </style>
