@@ -662,8 +662,9 @@
         this.loadData();
       },
       handleAdd() {
+        console.log("code", this.isDesForm, this.code, this.desFormCode, this.formTemplate)
         if (this.isDesForm === 'Y') {
-          this.$refs.desformModal.open('add', this.desFormCode, null, '新增数据')
+          this.$refs.desformModal.open('add', this.desFormCode, null, '新增数据', false, this.code)
         } else {
           this.cgButtonJsHandler('beforeAdd')
           this.$refs.modal.add(this.formTemplate);
@@ -715,8 +716,9 @@
         })
       },
       handleEdit(record) {
+        console.log("handleEdit", record)
         if (this.isDesForm === 'Y') {
-          this.$refs.desformModal.open('edit', this.desFormCode, record.id, '编辑数据', true)
+          this.$refs.desformModal.open('edit', this.desFormCode, record.id, '编辑数据', true, this.code)
         } else {
           this.cgButtonLinkHandler(record, 'beforeEdit', 'js')
           this.$refs.modal.edit(this.formTemplate, record.id);
@@ -728,7 +730,7 @@
       },
       handleDetail(record) {
         if (this.isDesForm === 'Y') {
-          this.$refs.desformModal.open('detail', this.desFormCode, record.id, '查看数据', true)
+          this.$refs.desformModal.open('detail', this.desFormCode, record.id, '查看数据', true, this.code)
         } else {
           this.$refs.modal.detail(this.formTemplate, record.id);
         }
@@ -898,12 +900,18 @@
       },
       initCgEnhanceJs(enhanceJs) {
         // console.log("--onlineList-js增强",enhanceJs)
-        if (enhanceJs) {
-          let Obj = eval('(' + enhanceJs + ')');
-          this.EnhanceJS = new Obj(getAction, postAction, deleteAction);
-          this.cgButtonJsHandler('created')
-        } else {
-          this.EnhanceJS = ''
+        const that = this
+        try {
+          if (enhanceJs) {
+            let Obj = eval('(' + enhanceJs + ')');
+            this.EnhanceJS = new Obj(getAction, postAction, deleteAction, that);
+            this.cgButtonJsHandler('created')
+          } else {
+            this.EnhanceJS = ''
+          }
+        } catch (e) {
+          this.$message.error('js增强报错，请检查代码！')
+          console.error('js增强报错，请检查代码！如果是多个方法请确保以逗号隔开！', e)
         }
       },
       initCgButtonList(btnList) {
@@ -922,9 +930,21 @@
         this.cgButtonLinkList = [...linkArr]
         this.cgButtonList = [...buttonArr]
       },
+      /**
+       * 执行逻辑
+       * js增强代码中有 created 的方法，会直接执行
+       * 其余的代码，根据不同的 buttonCode 执行
+       * @param buttonCode 方法名称
+       */
       cgButtonJsHandler(buttonCode) {
+        // console.log('this.EnhanceJS', buttonCode, this.EnhanceJS, this.EnhanceJS[buttonCode])
+        // console.log('this.EnhanceJS', typeof this.EnhanceJS[buttonCode] === 'function', typeof this.EnhanceJS[buttonCode])
         if (this.EnhanceJS[buttonCode]) {
-          this.EnhanceJS[buttonCode](this)
+          // this.EnhanceJS[buttonCode](this)
+          const keys = this.table.selectedRowKeys
+          const rows = this.table.selectionRows
+          const row = (rows || [])[0]
+          this.EnhanceJS[buttonCode].bind(this)(row, keys, rows)
         }
       },
       cgButtonActionHandler(buttonCode) {
@@ -955,7 +975,10 @@
       cgButtonLinkHandler(record, buttonCode, optType) {
         if (optType == 'js') {
           if (this.EnhanceJS[buttonCode]) {
-            this.EnhanceJS[buttonCode](this, record)
+            // this.EnhanceJS[buttonCode](this, record)
+            const keys = this.table.selectedRowKeys
+            const rows = this.table.selectionRows
+            this.EnhanceJS[buttonCode].bind(this)(record, keys, rows)
           }
         } else if (optType == 'action') {
           let params = {
