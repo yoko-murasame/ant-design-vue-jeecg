@@ -3,8 +3,8 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchByquery">
         <a-row :gutter="24" v-if="queryInfo && queryInfo.length>0 || hasBpmStatus">
-          <template v-if="buttonSwitch.bind_bpm_show_my_task">
-            <a-col :xl="2" :lg="2" :md="2" :sm="24">
+          <template v-if="buttonSwitch.bind_bpm_show_my_task && processDefinitionId">
+            <a-col :xl="2" :lg="3" :md="4" :sm="24">
               <bind-bpm-show-my-task v-model="queryParam.checked" :parent="vm"></bind-bpm-show-my-task>
             </a-col>
           </template>
@@ -510,11 +510,6 @@
         if (!this.$route.params.code) {
           return false
         }
-        // 清空高级查询条件
-        this.superQuery.params = ''
-        if (this.$refs.superQuery) {
-          this.$refs.superQuery.handleReset()
-        }
 
         this.table.loading = true
         this.code = this.$route.params.code
@@ -569,6 +564,13 @@
             this.table.selectedRowKeys = [];
           } else {
             this.$message.warning(res.message)
+          }
+          // 清空高级查询条件
+          console.log('现在才清空高级查询条件')
+          this.superQuery.params = ''
+          if (this.$refs.superQuery) {
+            // 清空高级查询组件中的查询条件，会触发历史online表单的数据加载，因此放在code改变之后，再将loadData节流化
+            this.$refs.superQuery.handleReset()
           }
         })
       },

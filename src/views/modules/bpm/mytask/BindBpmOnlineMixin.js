@@ -52,6 +52,7 @@ export default {
     }
   },
   created() {
+    this.loadData = throttle(this.loadData, 3000, { 'trailing': false })
     this.combineBpmDataList = throttle(this.combineBpmDataList, 3000, { 'trailing': false })
     this.getProcessDefinitionId = throttle(this.getProcessDefinitionId, 3000, { 'trailing': false })
     console.log('BindBpmOnlineMixin', this.path, this.formUrl);
@@ -211,6 +212,10 @@ export default {
      */
     async combineBpmDataList() {
       // console.log('combineBpmDataList', this.myTaskList, this.flowCodePre, this.currentTableName)
+      if (!this.hasBpmStatus || !this.buttonSwitch.bpm) {
+        console.log('非流程表单，不加载流程数据')
+        return
+      }
       if (!this.myTaskList || !this.myTaskList.length) {
         await this.fetchBpmDataList();
       }
