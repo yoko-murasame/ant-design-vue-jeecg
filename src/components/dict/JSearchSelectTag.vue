@@ -92,8 +92,8 @@
       this.lastLoad = 0
       return {
         loading: false,
-        selectedValue: [],
-        selectedAsyncValue: [],
+        selectedValue: undefined, // [],
+        selectedAsyncValue: undefined, // [],
         options: []
       }
     },
@@ -106,12 +106,14 @@
         immediate: true,
         handler(val) {
           if (!val) {
-            if (val == 0) {
-              this.initSelectValue()
-            } else {
-              this.selectedValue = []
-              this.selectedAsyncValue = []
-            }
+            this.selectedValue = undefined // []
+            this.selectedAsyncValue = undefined // []
+            // if (val == 0) {
+            //   this.initSelectValue()
+            // } else {
+            //   this.selectedValue = undefined // []
+            //   this.selectedAsyncValue = undefined // []
+            // }
           } else {
             this.initSelectValue()
           }
@@ -164,8 +166,8 @@
                     }
                     this.selectedAsyncValue = itemArray
                   } else {
-                    this.selectedAsyncValue = []
-                    this.selectedValue = []
+                    this.selectedAsyncValue = undefined // []
+                    this.selectedValue = undefined // []
                   }
                 } else {
                   let obj = {
@@ -185,7 +187,7 @@
             if (this.value) {
               this.selectedValue = this.value.split(',')
             } else {
-              this.selectedValue = []
+              this.selectedValue = undefined // []
             }
           } else {
             this.selectedValue = this.value.toString()
