@@ -14,6 +14,7 @@
     :disabled="disabled"
     :value="getValueSting"
     @change="handleInput"
+    :allow-clear="allowClear"
     v-bind="$attrs">
     <a-select-option :value="undefined">请选择</a-select-option>
     <a-select-option v-for="(item, key) in dictOptions" :key="key" :value="item.value">
@@ -26,6 +27,7 @@
 
 <script>
   import { ajaxGetDictItems, getDictItemsFromCache } from '@/api/api'
+  import { debounce } from 'lodash'
 
   export default {
     name: 'JDictSelectTag',
@@ -34,6 +36,7 @@
       options: Array,
       placeholder: String,
       disabled: Boolean,
+      allowClear: { type: Boolean, default: true },
       value: [String, Number],
       type: String,
       getPopupContainer: {
@@ -50,8 +53,8 @@
     watch: {
       dictCode: {
         immediate: true,
-        handler() {
-          if (!(this.options && this.options.length)) {
+        handler(val) {
+          if (!(this.options && this.options.length) && val) {
             this.initDictData();
           }
         }
@@ -74,6 +77,7 @@
       } else {
         this.tagType = this.type
       }
+      this.initDictData = debounce(this.initDictData, 1000)
       // 获取字典数据
       // this.initDictData();
     },

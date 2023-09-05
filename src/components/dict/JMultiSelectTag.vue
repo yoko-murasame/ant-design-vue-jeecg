@@ -13,7 +13,7 @@
     :getPopupContainer="getParentContainer"
     optionFilterProp="children"
     :filterOption="filterOption"
-    allowClear>
+    :allowClear="allowClear">
     <a-select-option
       v-for="(item,index) in dictOptions"
       :key="index"
@@ -28,12 +28,15 @@
 
 <script>
   import { ajaxGetDictItems, getDictItemsFromCache } from '@/api/api'
+  import { debounce } from 'lodash'
+
   export default {
     name: 'JMultiSelectTag',
     props: {
       dictCode: String,
       placeholder: String,
       disabled: Boolean,
+      allowClear: { type: Boolean, default: true },
       value: String,
       type: String,
       options: Array,
@@ -61,17 +64,22 @@
       } else {
         this.tagType = this.type
       }
+      this.initDictData = debounce(this.initDictData, 1000)
       // 获取字典数据
       // this.initDictData();
     },
     watch: {
       options: function(val) {
-        this.setCurrentDictOptions(val)
+        if (val && val.length) {
+          this.setCurrentDictOptions(val)
+        }
       },
       dictCode: {
         immediate: true,
-        handler() {
-          this.initDictData()
+        handler(val) {
+          if (val) {
+            this.initDictData()
+          }
         }
       },
       value (val) {

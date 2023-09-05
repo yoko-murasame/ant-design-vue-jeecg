@@ -98,6 +98,7 @@
       }
     },
     created() {
+      this.initDictData = debounce(this.initDictData, 1000)
       this.initDictData()
     },
     watch: {
@@ -117,12 +118,14 @@
         }
       },
       'dict': {
-        handler() {
-          this.initDictData()
+        immediate: true,
+        handler(val) {
+          val && this.initDictData()
         }
       },
       'dictOptions': {
         deep: true,
+        immediate: true,
         handler(val) {
           if (val && val.length > 0) {
             this.options = [...val]
