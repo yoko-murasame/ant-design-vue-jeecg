@@ -64,14 +64,17 @@
       } else {
         this.tagType = this.type
       }
-      this.initDictData = debounce(this.initDictData, 1000)
+      this.initDictData = debounce(this.initDictData, 100)
       // 获取字典数据
       // this.initDictData();
     },
     watch: {
-      options: function(val) {
-        if (val && val.length) {
-          this.setCurrentDictOptions(val)
+      options: {
+        immediate: true,
+        handler(val) {
+          if (val && val.length) {
+            this.setCurrentDictOptions(val)
+          }
         }
       },
       dictCode: {
@@ -82,11 +85,14 @@
           }
         }
       },
-      value (val) {
-        if (!val) {
-          this.arrayValue = []
-        } else {
-          this.arrayValue = this.value.split(this.spliter)
+      value: {
+        immediate: true,
+        handler(val) {
+          if (!val) {
+            this.arrayValue = []
+          } else {
+            this.arrayValue = this.value.split(this.spliter)
+          }
         }
       }
     },
