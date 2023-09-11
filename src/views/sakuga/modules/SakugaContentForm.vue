@@ -28,6 +28,7 @@
                 :trigger-change="true"
                 :number="200"
                 :buttonVisible="true"
+                :do-compress="false"
                 bizPath="picture"
               ></j-upload>
             </a-form-item>
