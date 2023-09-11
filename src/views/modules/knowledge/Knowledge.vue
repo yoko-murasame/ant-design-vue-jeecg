@@ -25,7 +25,7 @@
             <!-- <div class="box-flex">文档目录</div> -->
             <div class="flex-unshrink" v-if="show || isSearch">
               <a-button-group>
-                <a-button :disabled="!!edit_data.id" type="primary" icon="plus" @click="handleAddFolder"></a-button>
+                <a-button :disabled="false && !!edit_data.id" type="primary" icon="plus" @click="handleAddFolder"></a-button>
                 <a-button icon="edit" @click="handleEditFolder"></a-button>
                 <!-- <a-popconfirm title="确定删除吗?" @confirm="() => handleDeleteFolder"> -->
                 <a-button icon="delete" @click="handleDeleteFolder"></a-button>
@@ -1119,6 +1119,87 @@ export default {
   }
 }
 </script>
+<style scoped>
+.dis-boxflex {
+  display: flex;
+  align-items: center;
+}
+
+.space-around {
+  justify-content: space-around;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.box-flex {
+  flex: 1;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.flex-3 {
+  flex: 3;
+}
+
+.flex-unshrink {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.align-start {
+  align-items: flex-start;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+.align-stretch {
+  align-items: stretch;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.split-text {
+  display: inline-block;
+  margin: 0 12px;
+}
+
+/*禁用效果样式调整*/
+.ant-select-disabled,
+.ant-input-number-disabled,
+.ant-input-disabled {
+  background: none !important;
+  cursor: not-allowed;
+  color: rgba(0, 0, 0, 0.65) !important;
+}
+
+.ant-btn-danger {
+  background: #ff4d4f !important;
+}
+</style>
 <style lang="less" scoped>
   /deep/ .button-ellipsis {
     span {
