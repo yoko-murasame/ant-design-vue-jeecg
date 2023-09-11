@@ -195,7 +195,7 @@ export default {
       path: 'modules/bpm/task/form/FormLoading',
       formData: {},
 		    url: {
-        list: '/act/task/list',
+        list: '/workflow/common/myTaskList', // 旧接口：/act/task/list
         claim: '/act/task/claim',
         taskEntrust: '/act/task/taskEntrust'
       },

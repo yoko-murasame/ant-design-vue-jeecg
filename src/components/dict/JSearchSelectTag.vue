@@ -92,12 +92,13 @@
       this.lastLoad = 0
       return {
         loading: false,
-        selectedValue: [],
-        selectedAsyncValue: [],
+        selectedValue: undefined, // [],
+        selectedAsyncValue: undefined, // [],
         options: []
       }
     },
     created() {
+      this.initDictData = debounce(this.initDictData, 1000)
       this.initDictData()
     },
     watch: {
@@ -105,24 +106,28 @@
         immediate: true,
         handler(val) {
           if (!val) {
-            if (val == 0) {
-              this.initSelectValue()
-            } else {
-              this.selectedValue = []
-              this.selectedAsyncValue = []
-            }
+            this.selectedValue = undefined // []
+            this.selectedAsyncValue = undefined // []
+            // if (val == 0) {
+            //   this.initSelectValue()
+            // } else {
+            //   this.selectedValue = undefined // []
+            //   this.selectedAsyncValue = undefined // []
+            // }
           } else {
             this.initSelectValue()
           }
         }
       },
       'dict': {
-        handler() {
-          this.initDictData()
+        immediate: true,
+        handler(val) {
+          val && this.initDictData()
         }
       },
       'dictOptions': {
         deep: true,
+        immediate: true,
         handler(val) {
           if (val && val.length > 0) {
             this.options = [...val]
@@ -161,8 +166,8 @@
                     }
                     this.selectedAsyncValue = itemArray
                   } else {
-                    this.selectedAsyncValue = []
-                    this.selectedValue = []
+                    this.selectedAsyncValue = undefined // []
+                    this.selectedValue = undefined // []
                   }
                 } else {
                   let obj = {
@@ -182,7 +187,7 @@
             if (this.value) {
               this.selectedValue = this.value.split(',')
             } else {
-              this.selectedValue = []
+              this.selectedValue = undefined // []
             }
           } else {
             this.selectedValue = this.value.toString()
