@@ -26,6 +26,7 @@ export const CONTENT_WIDTH_TYPE = {
   Fluid: 'Fluid',
   Fixed: 'Fixed'
 }
+// 知识库关联
 export const PROJECT = 'project'
 export const PROJECT_ID = 'projectId'
 export const PROJECT_NAME = 'projectName'
