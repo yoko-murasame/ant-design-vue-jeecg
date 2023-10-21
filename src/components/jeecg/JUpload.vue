@@ -338,7 +338,7 @@
         // console.log(this.currentImg)
         let index = this.getIndexByUrl()
         if (index == 0) {
-          this.$message.warn('未知的操作')
+          this.$message.warn('已到最前~')
         } else {
           let curr = this.fileList[index].url
           let last = this.fileList[index - 1].url
@@ -387,49 +387,55 @@
       }
     },
     mounted() {
-      const moverObj = document.getElementById(this.containerId + '-mover')
-      if (moverObj) {
-        moverObj.addEventListener('mouseover', () => {
-          this.moverHold = true
-          this.moveDisplay = 'block'
-        })
-        moverObj.addEventListener('mouseout', () => {
-          this.moverHold = false
-          this.moveDisplay = 'none'
-        })
+      // 修复id被antd form的v-decorator覆盖的问题，会导致图片移动功能失效
+      if (this.$el.getAttribute('id')) {
+        this.containerId = this.$el.getAttribute('id')
       }
-
-      let picList = document.getElementById(this.containerId) ? document.getElementById(this.containerId).getElementsByClassName('ant-upload-list-picture-card') : []
-      if (picList && picList.length > 0) {
-        picList[0].addEventListener('mouseover', (ev) => {
-          ev = ev || window.event
-          let target = ev.target || ev.srcElement
-          if (target.className == 'ant-upload-list-item-info') {
-            this.showMoverTask = false
-            let item = target.parentElement
-            this.left = item.offsetLeft
-            this.top = item.offsetTop + item.offsetHeight - 50
+      this.$nextTick(() => {
+        const moverObj = document.getElementById(this.containerId + '-mover')
+        if (moverObj) {
+          moverObj.addEventListener('mouseover', () => {
+            this.moverHold = true
             this.moveDisplay = 'block'
-            this.currentImg = target.getElementsByTagName('img')[0].src
-          }
-        })
-
-        picList[0].addEventListener('mouseout', (ev) => {
-          ev = ev || window.event
-          let target = ev.target || ev.srcElement
-          // console.log('移除',target)
-          if (target.className == 'ant-upload-list-item-info') {
-            this.showMoverTask = true
-            setTimeout(() => {
-              if (this.moverHold === false) { this.moveDisplay = 'none' }
-            }, 100)
-          }
-          if (target.className == 'ant-upload-list-item ant-upload-list-item-done' || target.className == 'ant-upload-list ant-upload-list-picture-card') {
+          })
+          moverObj.addEventListener('mouseout', () => {
+            this.moverHold = false
             this.moveDisplay = 'none'
-          }
-        })
-        // ---------------------------- end 图片左右换位置 -------------------------------------
-      }
+          })
+        }
+
+        let picList = document.getElementById(this.containerId) ? document.getElementById(this.containerId).getElementsByClassName('ant-upload-list-picture-card') : []
+        if (picList && picList.length > 0) {
+          picList[0].addEventListener('mouseover', (ev) => {
+            ev = ev || window.event
+            let target = ev.target || ev.srcElement
+            if (target.className == 'ant-upload-list-item-info') {
+              this.showMoverTask = false
+              let item = target.parentElement
+              this.left = item.offsetLeft
+              this.top = item.offsetTop + item.offsetHeight - 50
+              this.moveDisplay = 'block'
+              this.currentImg = target.getElementsByTagName('img')[0].src
+            }
+          })
+
+          picList[0].addEventListener('mouseout', (ev) => {
+            ev = ev || window.event
+            let target = ev.target || ev.srcElement
+            // console.log('移除',target)
+            if (target.className == 'ant-upload-list-item-info') {
+              this.showMoverTask = true
+              setTimeout(() => {
+                if (this.moverHold === false) { this.moveDisplay = 'none' }
+              }, 100)
+            }
+            if (target.className == 'ant-upload-list-item ant-upload-list-item-done' || target.className == 'ant-upload-list ant-upload-list-picture-card') {
+              this.moveDisplay = 'none'
+            }
+          })
+          // ---------------------------- end 图片左右换位置 -------------------------------------
+        }
+      })
     },
     model: {
       prop: 'value',
