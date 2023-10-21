@@ -5,15 +5,35 @@
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="24">
-            <a-col :xl="6" :lg="6" :md="6" :sm="24">
-              <a-form-item label="查找目录">
-                <a-input-search allowClear placeholder="请输入目录名称" style="width: 300px" @search="onSearchFolder"/>
+            <!--<a-col :xl="6" :lg="6" :md="6" :sm="12">-->
+            <!--  <a-form-item label="查找目录">-->
+            <!--    <a-input-search allowClear placeholder="请输入目录名称" style="width: 300px" v-model="queryParam.folderName" @search="onSearchFolder"/>-->
+            <!--  </a-form-item>-->
+            <!--</a-col>-->
+            <a-col :xl="6" :lg="6" :md="6" :sm="12">
+              <a-form-item label="查找文件">
+                <a-input-search allowClear placeholder="请输入文件名称" style="width: 300px"
+                                v-model="queryParam.fileName" @search="onSearchFile"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="6" :md="6" :sm="12">
+              <a-form-item label="文件标签">
+                <j-search-select-tag
+                  keep-input
+                  v-model="queryParam.tags"
+                  placeholder="请输入标签"
+                  dict="technical_file,tags,tags"
+                  :async="true"
+                  :pageSize="50"
+                  mode="tags"
+                />
               </a-form-item>
             </a-col>
             <a-col :xl="6" :lg="6" :md="6" :sm="24">
-              <a-form-item label="查找文件">
-                <a-input-search allowClear placeholder="请输入文件名称" style="width: 300px" @search="onSearchFile"/>
-              </a-form-item>
+            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="onSearchFile" icon="search">查询</a-button>
+              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+            </span>
             </a-col>
           </a-row>
         </a-form>
@@ -23,9 +43,10 @@
         <a-col :md="8" :sm="24">
           <div class="dis-boxflex">
             <!-- <div class="box-flex">文档目录</div> -->
-            <div class="flex-unshrink" v-if="show || isSearch">
+            <div class="flex-unshrink" style="margin-right: 1vh" v-if="show || isSearch">
               <a-button-group>
-                <a-button :disabled="false && !!selectedNode.id" title="新增" type="primary" icon="plus" @click="handleAddFolder"></a-button>
+                <a-button :disabled="false && !!selectedNode.id" title="新增" type="primary" icon="plus"
+                          @click="handleAddFolder"></a-button>
                 <a-button title="编辑" icon="edit" @click="handleEditFolder"></a-button>
                 <a-button title="删除" icon="delete" @click="deleteFolder"></a-button>
                 <a-button title="刷新" icon="reload" @click="onSearchFolder"></a-button>
@@ -35,6 +56,16 @@
                 <a-button icon="arrow-down" @click="handleDown"></a-button>
               </a-button-group>
             </div>
+            <a-form style="flex: 1" layout="inline">
+              <a-row :gutter="0">
+                <a-col :xl="24" :lg="24" :md="24" :sm="24">
+                  <a-form-item label="">
+                    <a-input-search v-model="queryParam.folderName" allowClear placeholder="筛选目录"
+                                    style="width: 300px" @search="onSearchFolder"/>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </a-form>
           </div>
           <!--全部默认展示到额树-->
           <a-tree
@@ -50,15 +81,17 @@
             @select="onSelectThis"
           >
             <template v-slot:customIcon="props">
-              <a-icon style="display: inline-block" :type="getIcon(props)" />
+              <a-icon style="display: inline-block" :type="getIcon(props)"/>
             </template>
             <template v-slot:nodeTitle="props">
               <div class="dis-boxflex" :title="props.name">
-                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '' : ''}">{{ props.name
-                }}
+                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '' : ''}">{{
+                    props.name
+                  }}
                 </div>
                 <div class="flex-unshrink">
-                  {{ props.childFolderSize && props.childFolderSize > 0 ? '子目录 ' + props.childFolderSize : ''
+                  {{
+                    props.childFolderSize && props.childFolderSize > 0 ? '子目录 ' + props.childFolderSize : ''
                   }}{{ props.childFileSize && props.childFileSize > 0 ? '&nbsp子文件 ' + props.childFileSize : '' }}
                 </div>
               </div>
@@ -79,15 +112,17 @@
             @select="onSelectThis"
           >
             <template v-slot:customIcon="props">
-              <a-icon style="display: inline-block" :type="getIcon(props)" />
+              <a-icon style="display: inline-block" :type="getIcon(props)"/>
             </template>
             <template v-slot:nodeTitle="props">
               <div class="dis-boxflex" :title="props.name">
-                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '' : ''}">{{ props.name
-                }}
+                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '' : ''}">{{
+                    props.name
+                  }}
                 </div>
                 <div class="flex-unshrink">
-                  {{ props.childFolderSize && props.childFolderSize > 0 ? '子目录 ' + props.childFolderSize : ''
+                  {{
+                    props.childFolderSize && props.childFolderSize > 0 ? '子目录 ' + props.childFolderSize : ''
                   }}&nbsp;{{ props.childFileSize && props.childFileSize > 0 ? '子文件 ' + props.childFileSize : '' }}
                 </div>
               </div>
@@ -132,7 +167,7 @@
               :loading="loading"
               @change="handleTableChange"
             >
-              <template slot="name" slot-scope="text, record">
+              <template v-slot:nameSlot="text, record">
                 <a-button
                   type="link"
                   @click="handlePreview(record)"
@@ -143,17 +178,38 @@
                 </a-button>
               </template>
 
-              <template slot="action" slot-scope="text, record">
+              <template v-slot:tagsSlot="tags, row">
+                <a-tag v-for="(tag, idx) in tags.split(',')"
+                       :title="tag" :key="tag + idx"
+                       style="margin-right: .2vh !important;"
+                       :color="getTagColor(tag)">{{ tag }}
+                </a-tag>
+              </template>
 
+              <template slot="action" slot-scope="text, record">
+                <a href="javascript:;" @click="changeTags(record)">标签</a>
+                <a-divider type="vertical"/>
                 <a :href="downloadCompleteUrl + record.id" target="_blank">下载</a>
+                <a-divider type="vertical"/>
+                <a href="javascript:;" @click="changeFileName(record)">重命名</a>
                 <a-divider type="vertical"/>
                 <a href="javascript:;" v-show="false" @click="e => showQrCode(record, e)">二维码</a>
                 <a-divider v-show="false" type="vertical"/>
-                <a-popconfirm title="确定删除吗?" @confirm="() => deleteFile(record.id)">
-                  <a>删除</a>
-                </a-popconfirm>
-                <a-divider type="vertical"/>
-                <a href="javascript:;" @click="handleShowHistoryList(record.id)">版本管理</a>
+                <a-dropdown>
+                  <a class="ant-dropdown-link">更多
+                    <a-icon type="down"/>
+                  </a>
+                  <a-menu slot="overlay">
+                    <a-menu-item>
+                      <a href="javascript:;" @click="handleShowHistoryList(record.id)">版本管理</a>
+                    </a-menu-item>
+                    <a-menu-item>
+                      <a-popconfirm title="确定删除吗?" @confirm="() => deleteFile(record.id)">
+                        <a>删除</a>
+                      </a-popconfirm>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
               </template>
             </a-table>
           </div>
@@ -163,11 +219,39 @@
     <folder-modal ref="folderModal" @ok="folderModalFormOk(arguments)"></folder-modal>
     <!-- 历史版本 -->
     <history-list ref="historyList" @ok="handleCloseVersionHistoryList"></history-list>
+    <!--重命名-->
+    <a-modal
+      v-model="renameVisible"
+      title="请输入新文件名称"
+      ok-text="确认"
+      cancel-text="取消"
+      @ok="doRenameFile(true)"
+      @cancel="doRenameFile(false)">
+      <a-input v-model="rename" placeholder="请输入新文件名称"></a-input>
+    </a-modal>
+    <!--打标签-->
+    <a-modal
+      v-model="tagsVisible"
+      title="请输入标签"
+      ok-text="确认"
+      cancel-text="取消"
+      @ok="doChangeTags(true)"
+      @cancel="doChangeTags(false)">
+      <j-search-select-tag
+        keep-input
+        v-model="tags"
+        placeholder="请输入标签"
+        dict="technical_file,tags,tags"
+        :async="true"
+        :pageSize="50"
+        mode="tags"
+      />
+    </a-modal>
   </div>
 </template>
 
 <script>
-import { deleteAction, getAction, postAction } from '@/api/manage'
+import { deleteAction, getAction, postAction, putAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { ACCESS_TOKEN, BUSINESS_ID } from '@/store/mutation-types'
 import { union } from 'lodash'
@@ -194,7 +278,7 @@ const columns = [
     ellipsis: true,
     dataIndex: 'name',
     fixed: 'left',
-    scopedSlots: { customRender: 'name' }
+    scopedSlots: { customRender: 'nameSlot' }
     // width: 380
     // width: 280,
   },
@@ -216,6 +300,13 @@ const columns = [
     width: 100,
     dataIndex: 'size'
   },
+  {
+    title: '标签',
+    align: 'center',
+    width: 200,
+    dataIndex: 'tags',
+    scopedSlots: { customRender: 'tagsSlot' }
+  },
   // {
   //   title: '上传时间',
   //   align: 'center',
@@ -227,7 +318,7 @@ const columns = [
     align: 'center',
     width: 100,
     dataIndex: 'version',
-    customRender: function(t, r, index) {
+    customRender: function (t, r, index) {
       return 'V' + (r.version + 1)
     }
   },
@@ -237,7 +328,7 @@ const columns = [
     // fixed: 'right',
     scopedSlots: { customRender: 'action' },
     align: 'center',
-    width: 200,
+    width: 210,
     fixed: 'right'
   }
 ]
@@ -262,6 +353,12 @@ export default {
       page: 1, // 当前页数
       page_size: 20, // 默认每页条数.
 
+      queryParam: {
+        folderName: null,
+        fileName: null,
+        tags: null
+      },
+
       treeData: [], // 左侧树数据
       selectedIds: [],
       selectedNode: {},
@@ -281,13 +378,23 @@ export default {
         deleteFileUrl: '/technical/file',
         searchFolder: '/technical/folder/business/search/folder',
         searchFile: '/technical/folder/business/search/file',
-        downLoadUrl: '/technical/file/download/'
+        downLoadUrl: '/technical/file/download/',
+        rename: '/technical/file/rename',
+        reTags: '/technical/file/reTags'
       },
       show: true,
       expandedKeys: [],
       debug: process.env.NODE_ENV === 'development',
       isSearch: false,
-      multiple: false
+      multiple: false,
+      // 重命名功能
+      rename: '',
+      renameFile: null,
+      renameVisible: false,
+      // 打标签功能
+      tags: '',
+      tagsFile: null,
+      tagsVisible: false
     }
   },
   computed: {
@@ -302,13 +409,84 @@ export default {
     this.loadAllTree(true);
   },
   methods: {
+    getTagColor(tag) {
+      if (!this.queryParam.tags) {
+        return ''
+      }
+      const tags = this.queryParam.tags.split(',')
+      return tags.includes(tag) ? 'green' : ''
+    },
+    searchReset() {
+      this.queryParam = {
+        folderName: null,
+        fileName: null,
+        tags: null
+      }
+      this.onSearchFile()
+    },
+    /**
+     * 变更标签方法
+     * @param flag
+     */
+    doChangeTags(flag) {
+      if (flag) {
+        console.log('标签', this.tagsFile, this.tags)
+        putAction(`${this.url.reTags}?fileId=${this.tagsFile.id}&tags=${this.tags}`)
+        .then(res => {
+          if (res.success) {
+            this.$message.success('操作成功');
+            this.loadFileData()
+          } else {
+            this.$message.error('操作失败：', res.message)
+          }
+          this.tagsVisible = false
+        })
+      } else {
+        this.tags = ''
+        this.tagsFile = null
+        this.tagsVisible = false
+      }
+    },
+    changeTags(record) {
+      this.tags = record.tags || undefined
+      this.tagsFile = record
+      this.tagsVisible = true
+    },
+    /**
+     * 重命名文件
+     * @param flag 执行flag
+     */
+    doRenameFile(flag) {
+      if (flag) {
+        console.log('新文件名', this.renameFile, this.rename)
+        putAction(`${this.url.rename}?fileId=${this.renameFile.id}&name=${this.rename}`)
+        .then(res => {
+          if (res.success) {
+            this.$message.success('操作成功');
+            this.loadFileData()
+          } else {
+            this.$message.error('操作失败：', res.message)
+          }
+          this.renameVisible = false
+        })
+      } else {
+        this.rename = ''
+        this.renameFile = null
+        this.renameVisible = false
+      }
+    },
+    changeFileName(record) {
+      this.rename = record.name
+      this.renameFile = record
+      this.renameVisible = true
+    },
     getIcon(node) {
       const { expanded, childFolderSize, childFileSize } = node
       return (expanded || childFolderSize || childFileSize) ? 'folder-open' : 'folder'
     },
     /**
-       * 文件上传后的回调
-       */
+     * 文件上传后的回调
+     */
     async onUploadCallback(fileLength) {
       const { id: folderId } = this.selectedNode;
       if (!folderId) {
@@ -317,8 +495,8 @@ export default {
       this.onSearchFolder(null, folderId)
     },
     /**
-       * 手动加载到指定树层级的数据
-       */
+     * 手动加载到指定树层级的数据
+     */
     loadSearchFolderTree(folderTreeId) {
       const that = this;
       return new Promise(async resolve => {
@@ -353,6 +531,7 @@ export default {
         this.$message.info('请选择项目！');
         return;
       }
+      folderName = folderName || this.queryParam.folderName
       if (typeof folderId !== 'string') {
         folderId = '';
       }
@@ -386,26 +565,31 @@ export default {
         }
       });
     },
-    onSearchFile(e) {
+    onSearchFile() {
       if (!this[BUSINESS_ID]) {
         this.$message.info('请选择项目！');
         return;
       }
-      if (!e) {
-        console.log('onSearchFile clear', e);
+      this.queryParam.folderName = ''
+      const fileName = this.queryParam.fileName
+      const tags = this.queryParam.tags
+      if (!tags && (typeof fileName !== 'string' || !fileName)) {
         this.loadAllTree(true);
         return;
       }
-      getAction(`${this.url.searchFile}?businessId=${this[BUSINESS_ID]}&fileName=${e}`).then(res => {
+      getAction(`${this.url.searchFile}`, {
+        businessId: this[BUSINESS_ID],
+        fileName,
+        tags
+      }).then(res => {
         if (res.success) {
           this.selectedIds = [];
           this.expandedKeys = res.result.reduce((pre, cur) => {
             this.selectedIds.push(cur.file.folderId);
             return union(pre, cur.folderTreeId)
           }, []);
-          console.log('onSearchFile', e, res, this.selectedIds, this.expandedKeys);
           this.isSearch = false;
-          this.isSearch = !!(e && e.trim());
+          this.isSearch = !!(fileName && fileName.trim()) || !!(tags && tags.trim());
           this.show = !this.isSearch;
           this.multiple = this.isSearch;
           this.loadFileData();
@@ -589,11 +773,11 @@ export default {
               item.isLeaf = item.childFolderSize === 0
               return item
             });
-              // this.debug && console.log('child load finished1', this.treeData)
-              // this.treeData = [...this.treeData];
-              // this.debug && console.log('child load finished2', this.treeData);
-              // treeNode.dataRef.children = result;
-              // this.$forceUpdate();
+            // this.debug && console.log('child load finished1', this.treeData)
+            // this.treeData = [...this.treeData];
+            // this.debug && console.log('child load finished2', this.treeData);
+            // treeNode.dataRef.children = result;
+            // this.$forceUpdate();
             this.$set(dataRef, 'children', result);
             resolve(result)
           } else {
@@ -944,10 +1128,10 @@ export default {
       if (item.bimfaceFile && item.bimfaceFile.fileId) {
         // this.$router.push({name:'construction-drawing-detail',query: {id:item.bimfaceFile.fileId}})
         /* let routeUrl = this.$router.resolve({
-              name:'construction-drawing-detail',
-              query: {id:item.bimfaceFile.fileId}
-            });
-            window.open(routeUrl.href, '_blank'); */
+         name:'construction-drawing-detail',
+         query: {id:item.bimfaceFile.fileId}
+         });
+         window.open(routeUrl.href, '_blank'); */
         // this.$refs.bimfaceDetail.show(item.bimfaceFile.fileId)
       } else {
         if (item.type === 'DOCUMENT' || item.type === 'PICTURE') {
@@ -1124,74 +1308,78 @@ export default {
 }
 </style>
 <style lang="less" scoped>
-  /deep/ .button-ellipsis {
-    span {
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      text-align: left !important;
-      width: 100% !important;
-    }
+/deep/ .button-ellipsis {
+  span {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: left !important;
+    width: 100% !important;
   }
+}
 
-  .card-img {
-    display: block;
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-  }
+.card-img {
+  display: block;
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
 
-  .card-info-div {
-    margin-top: 15px;
-  }
+.card-info-div {
+  margin-top: 15px;
+}
 
-  .bg-gray {
-    padding: 12px;
-    background: #f2f2f2;
-    margin-bottom: 16px;
-  }
+.bg-gray {
+  padding: 12px;
+  background: #f2f2f2;
+  margin-bottom: 16px;
+}
 </style>
 <style lang="less" scoped>
-  .card-div {
-    border-radius: 8px;
+.card-div {
+  border-radius: 8px;
 
-    /deep/ .ant-card-head {
-      padding: 0 12px;
-      min-height: unset;
-      height: auto;
-    }
-
-    /deep/ .ant-card-head-title,
-    /deep/ .ant-card-extra {
-      padding: 8px 0;
-    }
-
-    /deep/ .ant-card-body {
-      padding: 16px;
-    }
+  /deep/ .ant-card-head {
+    padding: 0 12px;
+    min-height: unset;
+    height: auto;
   }
 
-  .inline-flex {
-    display: inline-flex;
-    align-items: center;
+  /deep/ .ant-card-head-title,
+  /deep/ .ant-card-extra {
+    padding: 8px 0;
   }
+
+  /deep/ .ant-card-body {
+    padding: 16px;
+  }
+}
+
+.inline-flex {
+  display: inline-flex;
+  align-items: center;
+}
 </style>
 <style lang="less" scoped>
 /deep/ .ant-tree li .ant-tree-node-content-wrapper {
   padding: 0 !important;
 }
+
 /deep/ .ant-tag {
   margin-right: 0 !important;
   width: 4vh;
 }
+
 //修复自定义的树菜单title样式第二步
 /deep/ .ant-tree-title {
   display: inline-block;
   width: calc(100% - 24px);
 }
+
 /deep/ .layer-manager-container {
   .ant-card-body {
     padding: 0vh !important;
   }
+
   .inner-tree {
     border-right: .5px rgba(232, 232, 232, 0.5) solid;
     // 实际的树
@@ -1199,25 +1387,31 @@ export default {
       max-height: 67vh;
       overflow-y: auto;
       padding-right: .5vh;
-      &::-webkit-scrollbar{
-        width:6px;
-        height:6px;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
       }
-      &::-webkit-scrollbar-track{
+
+      &::-webkit-scrollbar-track {
         background: rgb(239, 239, 239);
-        border-radius:2px;
+        border-radius: 2px;
       }
-      &::-webkit-scrollbar-thumb{
+
+      &::-webkit-scrollbar-thumb {
         background: #bfbfbf;
-        border-radius:6px;
+        border-radius: 6px;
       }
-      &::-webkit-scrollbar-thumb:hover{
+
+      &::-webkit-scrollbar-thumb:hover {
         background: #3fa9fb;
       }
-      &::-webkit-scrollbar-corner{
+
+      &::-webkit-scrollbar-corner {
         background: #69c3ff;
       }
     }
+
     // 按钮等
     .inner-tree-flex {
       display: -ms-flexbox;
@@ -1229,8 +1423,10 @@ export default {
       .ant-form-item {
         margin-right: 0;
         width: 100%;
+
         .ant-form-item-control-wrapper {
           width: 100%;
+
           .ant-form-item-control {
             line-height: 32px;
             width: 100%;
@@ -1239,6 +1435,7 @@ export default {
       }
     }
   }
+
   .inner-container {
     border-left: .5px rgba(232, 232, 232, 0.5) solid;
   }
