@@ -12,6 +12,11 @@
       @ok="handleModalOk"
       :confirmLoading="modalConfirmLoading"
       @cancel="handleModalCancel" >
+
+      <template v-slot:footer>
+        <cancel-button :disableSubmit="true" key="back" @click="handleModalCancel"/>
+        <a-button type="primary" @click="handleModalOk" v-if="false">确定</a-button>
+      </template>
       <!-- :centered="true" -->
       <a-table
         ref="table"
@@ -27,7 +32,7 @@
           {{ index + 1 }}
         </template>
         <template slot="version" slot-scope="text, record, index">
-          V{{ text }}
+          V{{ text + 1 }}
         </template>
         <template slot="name" slot-scope="text, record, index">
           <div style="cursor: pointer" @click="goToDetail(record)" title="点击查看">{{ text }}</div>
@@ -211,7 +216,7 @@ export default {
       getAction('/technical/file/reVersion?fileId=' + id).then((res) => {
         if (res.success) {
           that.backNeedRefresh = true
-          that.$message.success(res.message)
+          that.$message.success("成功")
           // that.loadData();
         } else {
           that.$message.warning(res.message)

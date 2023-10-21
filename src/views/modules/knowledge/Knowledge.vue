@@ -3,7 +3,7 @@
     <a-card :bordered="false">
       <!-- 查询区域 -->
       <div class="table-page-search-wrapper">
-        <a-form layout="inline" @keyup.enter.native="searchQuery">
+        <a-form layout="inline">
           <a-row :gutter="24">
             <a-col :xl="6" :lg="6" :md="6" :sm="24">
               <a-form-item label="查找目录">
@@ -25,11 +25,10 @@
             <!-- <div class="box-flex">文档目录</div> -->
             <div class="flex-unshrink" v-if="show || isSearch">
               <a-button-group>
-                <a-button :disabled="false && !!edit_data.id" type="primary" icon="plus" @click="handleAddFolder"></a-button>
-                <a-button icon="edit" @click="handleEditFolder"></a-button>
-                <!-- <a-popconfirm title="确定删除吗?" @confirm="() => handleDeleteFolder"> -->
-                <a-button icon="delete" @click="handleDeleteFolder"></a-button>
-                <!-- </a-popconfirm> -->
+                <a-button :disabled="false && !!selectedNode.id" title="新增" type="primary" icon="plus" @click="handleAddFolder"></a-button>
+                <a-button title="编辑" icon="edit" @click="handleEditFolder"></a-button>
+                <a-button title="删除" icon="delete" @click="deleteFolder"></a-button>
+                <a-button title="刷新" icon="reload" @click="onSearchFolder"></a-button>
               </a-button-group>
               <a-button-group v-show="false" style="margin-left: 12px">
                 <a-button icon="arrow-up" @click="handleUp"></a-button>
@@ -114,7 +113,7 @@
                 <a-button
                   size="small"
                   type="primary"
-                  :disabled="!selectedIds || selectedIds.length <= 0 || !edit_data || !edit_data.isLeaf"
+                  :disabled="!selectedIds || selectedIds.length <= 0 || !selectedNode || !selectedNode.isLeaf"
                 >上传文件
                 </a-button
                 >
@@ -150,7 +149,7 @@
                 <a-divider type="vertical"/>
                 <a href="javascript:;" v-show="false" @click="e => showQrCode(record, e)">二维码</a>
                 <a-divider v-show="false" type="vertical"/>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDeleteUrlWithId(record.id)">
+                <a-popconfirm title="确定删除吗?" @confirm="() => deleteFile(record.id)">
                   <a>删除</a>
                 </a-popconfirm>
                 <a-divider type="vertical"/>
@@ -224,6 +223,15 @@ const columns = [
   //   dataIndex: 'createTime'
   // },
   {
+    title: '版本',
+    align: 'center',
+    width: 100,
+    dataIndex: 'version',
+    customRender: function(t, r, index) {
+      return 'V' + (r.version + 1)
+    }
+  },
+  {
     title: '操作',
     dataIndex: 'action',
     // fixed: 'right',
@@ -246,20 +254,17 @@ export default {
       businessName: '知识库',
       cardList: [],
       cardListLoading: true, // 加载中
+
+      disableMixinCreated: true,
       // 分页
       total: 0,
       page_sizeOptions: ['20', '30', '40', '50'], // 每页条数选项
       page: 1, // 当前页数
       page_size: 20, // 默认每页条数.
 
-      checkedList: [], // 已选列表
-      indeterminate: false, // 是否半选
-      checkAll: false, // 是否全选
-
       treeData: [], // 左侧树数据
       selectedIds: [],
-      edit_data: {},
-      downLoadUrl: '/technical/file/download/',
+      selectedNode: {},
       uploadConfig: {
         action: '/technical/file/upload',
         name: 'multipartFiles',
@@ -269,17 +274,15 @@ export default {
         'X-Access-Token': Vue.ls.get(ACCESS_TOKEN)
       },
       fileList: [], // 用于清空上传文件数据
-
       columns,
       url: {
-        previewUrl: '/technical/file/getWpsOnlineUrl',
-        // list: "/project/getAllList",
         list: '/technical/file/files?folderId=',
-        delete: '/technical/file',
+        deleteFolderUrl: '/technical/folder/business/',
+        deleteFileUrl: '/technical/file',
         searchFolder: '/technical/folder/business/search/folder',
-        searchFile: '/technical/folder/business/search/file'
+        searchFile: '/technical/folder/business/search/file',
+        downLoadUrl: '/technical/file/download/'
       },
-      wpsPreview: false,
       show: true,
       expandedKeys: [],
       debug: process.env.NODE_ENV === 'development',
@@ -289,7 +292,7 @@ export default {
   },
   computed: {
     downloadCompleteUrl: function () {
-      return window._CONFIG['domianURL'] + this.downLoadUrl
+      return window._CONFIG['domianURL'] + this.url.downLoadUrl
     },
     uploadCompleteUrl: function () {
       return window._CONFIG['domianURL'] + this.uploadConfig.action
@@ -307,34 +310,11 @@ export default {
        * 文件上传后的回调
        */
     async onUploadCallback(fileLength) {
-      const that = this;
-      const { id: folderId } = this.edit_data;
+      const { id: folderId } = this.selectedNode;
       if (!folderId) {
         return;
       }
-      const res = await getAction(`${this.url.searchFolder}?businessId=${this[BUSINESS_ID]}&folderId=${folderId}`);
-      if (res.success) {
-        this.selectedIds = [];
-        this.expandedKeys = res.result.reduce((pre, cur) => {
-          this.selectedIds.push(cur.folder.id);
-          return union(pre, cur.folderTreeId)
-        }, []);
-        // 刷新树
-        await this.getTreeRootData();
-        await this.loadSearchFolderTree(this.expandedKeys);
-        that.isSearch = false;
-        that.show = false;
-        console.log('onSearchFolder', folderId, res, this.selectedIds, this.expandedKeys, this.treeData);
-        setTimeout(() => {
-          that.show = true;
-          that.loadData();
-        }, 100);
-      } else {
-        this.$notification.error({
-          message: '出错提示',
-          description: res.message
-        });
-      }
+      this.onSearchFolder(null, folderId)
     },
     /**
        * 手动加载到指定树层级的数据
@@ -368,29 +348,36 @@ export default {
         this.getTreeRootData().then((treeNode) => this.show = true)
       }
     },
-    onSearchFolder(e) {
+    onSearchFolder(folderName, folderId) {
       if (!this[BUSINESS_ID]) {
         this.$message.info('请选择项目！');
         return;
       }
-      if (!e) {
-        console.log('onSearchFolder clear', e);
+      if (typeof folderId !== 'string') {
+        folderId = '';
+      }
+      if (!folderId && (!folderName || typeof folderName !== 'string')) {
+        console.log('onSearchFolder clear', folderName);
         this.loadAllTree(true);
         return;
       }
-      getAction(`${this.url.searchFolder}?businessId=${this[BUSINESS_ID]}&folderName=${e}`).then(res => {
+      getAction(`${this.url.searchFolder}`, {
+        businessId: this[BUSINESS_ID],
+        folderName,
+        folderId
+      }).then(res => {
         if (res.success) {
           this.selectedIds = [];
           this.expandedKeys = res.result.reduce((pre, cur) => {
             this.selectedIds.push(cur.folder.id);
             return union(pre, cur.folderTreeId)
           }, []);
-          console.log('onSearchFolder', e, res, this.selectedIds, this.expandedKeys);
+          console.log('onSearchFolder', folderName, res, this.selectedIds, this.expandedKeys);
           this.isSearch = false;
-          this.isSearch = !!(e && e.trim());
+          this.isSearch = !!(folderName && folderName.trim());
           this.show = !this.isSearch;
           this.multiple = this.isSearch;
-          this.loadData();
+          this.loadFileData();
         } else {
           this.$notification.error({
             message: '出错提示',
@@ -421,7 +408,7 @@ export default {
           this.isSearch = !!(e && e.trim());
           this.show = !this.isSearch;
           this.multiple = this.isSearch;
-          this.loadData();
+          this.loadFileData();
         } else {
           this.$notification.error({
             message: '出错提示',
@@ -430,9 +417,11 @@ export default {
         }
       });
     },
-    handleChange(value) {
-      console.log('选择项目变化', value)
-    },
+    /**
+     * 控制默认生产的目录
+     * @deprecated 使用 initialFolders 参数替代（支持JSON格式）
+     * @returns {string|string}
+     */
     subFolders() {
       const folders = []
       return folders.length ? folders.join(',') : ''
@@ -467,27 +456,7 @@ export default {
         })
       })
     },
-    getCardList(isRefresh) {
-      this.cardListLoading = true
-      if (this.selectedIds && this.selectedIds.length > 0) {
-        getAction('/technical/file/files?folderId=' + this.selectedIds[0]).then(res => {
-          if (res.success) {
-            this.cardListLoading = false
-            this.cardList = res.result
-            this.total = res.result.length
-          } else {
-            this.cardListLoading = false
-            this.$notification.error({
-              message: '出错提醒',
-              description: res.message
-            })
-          }
-        })
-      } else {
-        this.cardListLoading = false
-      }
-    },
-    loadData(arg) {
+    loadFileData(arg) {
       if (!this.url.list) {
         this.$message.error('请设置url.list属性!')
         return
@@ -499,7 +468,7 @@ export default {
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      var params = this.getQueryParams() // 查询条件
+      let params = this.getQueryParams() // 查询条件
       this.loading = true
       getAction(this.url.list + this.selectedIds[0], params).then(res => {
         if (res.success) {
@@ -515,24 +484,9 @@ export default {
       })
     },
 
-    onCheckAllChange(e) {
-      this.debug && console.log(e.target.checked)
-      this.checkAll = e.target.checked
-      this.indeterminate = false
-      this.checkedList = e.target.checked
-        ? this.cardList.map(item => {
-          return item.id
-        })
-        : []
-    },
-    onCheckboxChange(checkedList) {
-      this.debug && console.log(checkedList)
-      this.indeterminate = !!checkedList.length && checkedList.length < this.cardList.length
-      this.checkAll = checkedList.length === this.cardList.length
-    },
     /**
      * 选中节点的操作
-     * 1.保存选中的data -> this.edit_data
+     * 1.保存选中的data -> this.selectedNode
      * 2.保存当前选中的id
      * 3.当状态为选中时，判断目录是否有子目录和子目录数据，去加载数据
      * 4.当状态为选中时，加载文件列表
@@ -540,9 +494,9 @@ export default {
      */
     onSelectThis(selectedKeys, e) {
       this.selectedIds = selectedKeys;
-      this.edit_data = e.selectedNodes && e.selectedNodes.length > 0 ? e.node.dataRef : {};
-      // this.debug && console.log(selectedKeys, e);
-      // this.debug && console.log(this.edit_data);
+      this.selectedNode = e.selectedNodes && e.selectedNodes.length > 0 ? e.node.dataRef : {};
+      this.debug && console.log(selectedKeys, e);
+      this.debug && console.log(this.selectedNode);
       // this.debug && console.log('展开的id | 选中的id:', this.expandedKeys, this.selectedIds, this.$refs.tree);
       if (e.selected) {
         // e.node.dataRef &&
@@ -550,7 +504,9 @@ export default {
         // !(e.node.dataRef.children && e.node.dataRef.children.length) &&
         // this.onLoadChildrenData(e.node, false);
         // 设置叶子节点时才展示文件列表
-        e.node.dataRef && e.node.dataRef.isLeaf && this.loadData();
+        // e.node.dataRef && e.node.dataRef.isLeaf && this.loadFileData();
+        // 都展示文件列表
+        e.node.dataRef && this.loadFileData();
       }
       // 选中且未展开时设置自动展开
       e.selected && !e.node.expanded && e.node.dataRef && e.node.dataRef.childFolderSize && e.node.onExpand()
@@ -561,12 +517,11 @@ export default {
         console.log('加载选择的搜索项', selectedKeys, e);
         this.multiple = false;
         this.selectedIds = [e.node.dataRef.id];
-        this.loadData();
+        this.loadFileData();
       }
-      console.log('选中节点', selectedKeys, this.$refs.tree, this.edit_data, this.selectedIds, this.expandedKeys)
+      console.log('选中节点', selectedKeys, this.$refs.tree, this.selectedNode, this.selectedIds, this.expandedKeys)
     },
     getTreeRootData() {
-      this.debug && console.log('subFolders', this.subFolders())
       return new Promise((resolve, reject) => {
         postAction(`/technical/folder/business/findRoot?businessId=${this.businessId}&businessName=${this.businessName}&type=DOCUMENT`, {
           subFolders: this.subFolders(),
@@ -590,9 +545,9 @@ export default {
               if (res.result.length > 0) {
                 this.debug && console.log('展开的id | 选中的id:', this.expandedKeys, this.selectedIds);
                 this.selectedIds = [res.result[0].id]
-                this.edit_data = res.result[0]
+                this.selectedNode = res.result[0]
                 // 加载关联文件
-                this.loadData()
+                this.loadFileData()
                 // 目录
                 this.onLoadChildrenData().then(res2 => {
                   // this.expandedKeys = [res.result[0].id];
@@ -663,9 +618,9 @@ export default {
     },
     handleEditFolder() {
       let params = {}
-      this.debug && console.log('即将编辑的数据', this.edit_data)
+      this.debug && console.log('即将编辑的数据', this.selectedNode)
       if (this.selectedIds && this.selectedIds.length > 0) {
-        params = this.edit_data
+        params = this.selectedNode
         this.$refs.folderModal.edit(params)
         this.$refs.folderModal.title = '编辑'
         this.$refs.folderModal.disableSubmit = false
@@ -673,23 +628,23 @@ export default {
         this.$message.warning('请选择您要操作的目录！')
       }
     },
-    handleDeleteFolder() {
+    deleteFolder() {
       let that = this
-      this.debug && console.log('删除前', that.treeData)
+      const deletedData = { ...that.selectedNode }
       if (that.selectedIds && that.selectedIds.length > 0) {
         that.$confirm({
           title: '确定删除?',
           content: '删除后无法恢复，请谨慎操作！',
           onOk() {
-            deleteAction('/technical/folder/business/' + that.selectedIds[0]).then(res => {
+            deleteAction(that.url.deleteFolderUrl + that.selectedIds[0]).then(res => {
               if (res.success) {
-                const newTreeData = that.changeTreeData(that.treeData, { id: that.selectedIds[0] }, 3)
+                const newTreeData = that.changeTreeData(that.treeData, deletedData, 3)
                 that.treeData = (newTreeData || []).filter(e => e)
-                that.debug && console.log('删除后', that.treeData)
                 that.selectedIds = []
-                that.edit_data = {}
+                that.selectedNode = {}
+                that.dataSource = []
                 that.$forceUpdate()
-                // that.getTreeRootData()
+                that.$message.success('删除成功')
               } else {
                 that.$notification.error({
                   message: '出错提示',
@@ -707,36 +662,30 @@ export default {
     },
     folderModalFormOk(args) {
       const treeData = this.treeData
-      this.debug && console.log('返回的数据', args)
-      this.debug && console.log('返回修改前treeData', treeData)
+      this.debug && console.log('返回Form的数据', args)
+      this.debug && console.log('返回修改后---treeData', JSON.parse(JSON.stringify(treeData)))
       const data = args[0]
+      const type = args[1] ? 1 : 2
+      // 设置新节点是否为叶子节点
+      data.isLeaf = !(args[0].hasChild)
       // 设置新节点的slot属性
       data.scopedSlots = { title: 'nodeTitle', icon: 'customIcon' }
-      // 设置新节点是否为叶子节点
-      data.isLeaf = data.childFolderSize === 0 && data.childFileSize === 0
-      const type = args[1] ? 1 : 2
-      if (data && data.level === 'ROOT' && !treeData.filter(e => e.id === data.id)[0]) {
+      // 新增时展开父节点
+      this.$set(this.selectedNode, 'expanded', true)
+      if (data && data.parentId === '' && !treeData.filter(e => e.id === data.id)[0]) {
         treeData.push(data)
         this.treeData = [...treeData]
       } else {
         // 用户自己选择节点操作
         this.treeData = this.changeTreeData(treeData, data, type)
       }
-      // if (data && treeData) {
-      //   //用户自己选择节点操作
-      //   this.treeData = this.changeTreeData(treeData, data, type)
-      // } else {
-      //   treeData.push(data)
-      //   this.treeData = [...treeData]
-      // }
-      this.debug && console.log('返回修改后---treeData', treeData)
+      this.debug && console.log('返回修改后---treeData', JSON.parse(JSON.stringify(treeData)))
       this.$forceUpdate()
-      // this.getTreeRootData()
     },
     getChidlNode(arr, id) {
-      var hasFound = false; // 表示是否有找到id值
-      var result = null
-      var fn = function (data) {
+      let hasFound = false; // 表示是否有找到id值
+      let result = null
+      let fn = function (data) {
         if (Array.isArray(data) && !hasFound) {
           // 判断是否是数组并且没有的情况下，
           data.forEach(item => {
@@ -766,90 +715,68 @@ export default {
       if (type == 2 && !flag) {
         for (let i = 0; i < treeData.length; i++) {
           if (data.id == treeData[i].id) {
-            treeData[i] = data
-            this.edit_data = data
+            // data.isLeaf = !(data.hasChild)
+            // data.children = treeData[i].children
+            // treeData[i] = data
+            Object.assign(treeData[i], data)
+            this.selectedNode = treeData[i]
             flag = true
+            // todo 修改排序后，拿到父节点重置孩子的排序
+            // console.log('修改的节点', treeData[i], data)
             break
           } else {
             treeData[i].children =
-                treeData[i].children && treeData[i].children.length > 0
-                  ? this.changeTreeData(treeData[i].children, data, type, treeData[i])
-                  : undefined
+              treeData[i].children && treeData[i].children.length
+                ? this.changeTreeData(treeData[i].children, data, type, treeData[i])
+                : undefined
           }
         }
-      } else if (type == 1 && !flag) {
+      } else if (type === 1 && !flag) {
         for (let i = 0; i < treeData.length; i++) {
-          if (data.parentId == treeData[i].id) {
+          if (data.parentId === treeData[i].id) {
             if (treeData[i].children) {
               treeData[i].children.push(data)
             } else {
               treeData[i].children = [data]
             }
             // 文件加统计+1
-            treeData[i].childFolderSize += 1
+            treeData[i].isLeaf = false
+            treeData[i].hasChild = '1'
             break
           } else {
             treeData[i].children =
-                treeData[i].children && treeData[i].children.length > 0
-                  ? this.changeTreeData(treeData[i].children, data, type, treeData[i])
-                  : undefined
+              treeData[i].children && treeData[i].children.length
+                ? this.changeTreeData(treeData[i].children, data, type, treeData[i])
+                : undefined
           }
         }
-      } else if (type == 3 && !flag) {
+      } else if (type === 3 && !flag) {
         for (let i = 0; i < treeData.length; i++) {
           if (!treeData[i]) {
             continue
           }
-          if (data.id == treeData[i].id) {
-            delete treeData[i]
-            // 文件加统计-1
-            parent.childFolderSize -= 1
+          if (data.parentId === '') {
+            treeData = treeData.filter(e => e.id !== data.id)
+          } else if (treeData[i].id === data.parentId) {
+            treeData[i].children = treeData[i].children.filter(e => e.id !== data.id)
+            treeData[i].isLeaf = treeData[i].children.length < 1
+            treeData[i].hasChild = treeData[i].children.length > 0
             break
           } else {
             treeData[i].children =
-                treeData[i].children && treeData[i].children.length > 0
-                  ? this.changeTreeData(treeData[i].children, data, type, treeData[i])
-                  : undefined
+              treeData[i].children && treeData[i].children.length
+                ? this.changeTreeData(treeData[i].children, data, type, treeData[i])
+                : undefined
           }
         }
       }
       return treeData
     },
-    handleBatchDelete() {
-      let that = this
-      let fileIds = this.selectedRowKeys ? this.selectedRowKeys.join(',') : ''
-      if (that.selectedRowKeys && that.selectedRowKeys.length > 0) {
-        that.$confirm({
-          title: '确定删除?',
-          content: '删除后无法恢复，请谨慎操作！',
-          onOk() {
-            deleteAction('/technical/file/deleteAll?fileIds=' + fileIds)
-              .then(res => {
-                if (res.success) {
-                  that.$message.success(res.message)
-                  that.loadData()
-                  that.updataThisNode()
-                  that.onClearSelected()
-                } else {
-                  that.$message.warning(res.message)
-                }
-              })
-              .finally(() => {
-                that.loading = false
-              })
-          },
-          onCancel() {
-          }
-        })
-      } else {
-        this.$message.warning('请选择您要删除的文件！')
-      }
-    },
     handleUp() {
       if (this.selectedIds && this.selectedIds.length > 0) {
         this.debug && console.log(this.selectedIds)
         const treeData = this.treeData
-        this.changeSortTreeData(this.edit_data, 1)
+        this.changeSortTreeData(this.selectedNode, 1)
       } else {
         this.$message.warning('请选择您要操作的目录！')
       }
@@ -858,7 +785,7 @@ export default {
       if (this.selectedIds && this.selectedIds.length > 0) {
         this.debug && console.log(this.selectedIds)
         const treeData = this.treeData
-        this.changeSortTreeData(this.edit_data, -1)
+        this.changeSortTreeData(this.selectedNode, -1)
       } else {
         this.$message.warning('请选择您要操作的目录！')
       }
@@ -870,7 +797,7 @@ export default {
       if (!(treeData instanceof Array) || !treeData.length) {
         return
       }
-      const arr = that.findSameLevelNode(treeData, that.edit_data)
+      const arr = that.findSameLevelNode(treeData, that.selectedNode)
       let idArr = arr.map(item => {
         return item.id
       })
@@ -911,7 +838,7 @@ export default {
       let arr = []
       if (data.parentId) {
         for (let i = 0; i < treeData.length; i++) {
-          if (data.parentId == treeData[i].id) {
+          if (data.parentId === treeData[i].id) {
             arr = treeData[i].children
             break
           } else {
@@ -960,14 +887,12 @@ export default {
           description: errorArr.join(' \n '),
           duration: null
         })
-        this.onUploadCallback();
+        // this.onUploadCallback();
         this.fileList = []
-        // this.loadData()
       } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
         this.$message.success('文件上传成功')
         this.onUploadCallback(this.fileList.length);
         this.fileList = []
-        // this.loadData()
       }
     },
     beforeUploadFile(file, fileList) {
@@ -1007,11 +932,11 @@ export default {
           message: '出错提示',
           description: errorArr.join(' \n')
         })
-        this.loadData()
+        this.loadFileData()
         this.updataThisNode()
       } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
         this.$message.success('文件上传成功')
-        this.loadData()
+        this.loadFileData()
         this.updataThisNode()
       }
     },
@@ -1040,7 +965,7 @@ export default {
       this.$refs.historyList.show(id)
     },
     handleCloseVersionHistoryList() {
-      this.loadData()
+      this.loadFileData()
       this.updataThisNode()
     },
     updataThisNode() {
@@ -1049,19 +974,20 @@ export default {
       if (!(treeData instanceof Array) || !treeData.length) {
         return
       }
-      const arr = that.findSameLevelNode(treeData, that.edit_data)
+      const arr = that.findSameLevelNode(treeData, that.selectedNode)
       let idArr = arr.map(item => {
         return item.id
       })
-      let index = idArr.indexOf(that.edit_data.id)
+      let index = idArr.indexOf(that.selectedNode.id)
       if (index >= 0) {
-        getAction('/technical/folder/findOne?folderId=' + that.edit_data.id).then(res => {
+        getAction('/technical/folder/findOne?folderId=' + that.selectedNode.id).then(res => {
           if (res.success) {
             arr[index].childFileSize = res.result.childFileSize
             arr[index].childFolderSize = res.result.childFolderSize
             // arr[index].scopedSlots = { title: 'nodeTitle' }
             that.treeData = [...treeData]
-            that.$message.success('树节点更新成功！')
+            console.log('树节点更新成功')
+            // that.$message.success('树节点更新成功！')
           } else {
             that.$notification.error({
               message: '出错提示',
@@ -1072,49 +998,46 @@ export default {
       }
     },
     handlePreview(record) {
-      if (!this.wpsPreview) {
-        window.open(this.downloadCompleteUrl + record.id)
-        return
-      }
-      // 下面是在线预览功能，这里没去对接，因此不走此逻辑，全部直接下载
-      if (record.suffix && record.suffix.toLowerCase() == 'pdf') {
-        window.open(this.downloadCompleteUrl + record.id)
-      } else {
-        getAction('/technical/file/getALiOSSOnlineUrl?fileId=' + record.id).then(res => {
-          if (res.success) {
-            if (res.result && res.result.wpsUrl) {
-              window.open(res.result.wpsUrl)
-            } else {
-              this.$notification.error({
-                message: '出错提示',
-                description: '获取文件预览链接失败'
-              })
-            }
-          } else {
-            this.$notification.error({
-              message: '出错提示',
-              description: res.message
-            })
-          }
-        })
-      }
+      window.open(this.downloadCompleteUrl + record.id)
     },
-    handleDeleteUrlWithId: function (id) {
+    deleteFile(id) {
       // 第二种删除 url直接最后拼接/id
-      if (!this.url.delete) {
+      if (!this.url.deleteFileUrl) {
         this.$message.error('请设置url.delete属性!')
         return
       }
-      var that = this;
-      deleteAction(that.url.delete + '/' + id).then((res) => {
+      let that = this;
+      deleteAction(that.url.deleteFileUrl + '/' + id).then((res) => {
         if (res.success) {
           that.$message.success(res.message);
           that.onUploadCallback();
-          // that.loadData();
+          // that.loadFileData();
         } else {
           that.$message.warning(res.message);
         }
       });
+    },
+    getRootNode(node) {
+      if (node.parentId === '0') {
+        return node
+      }
+      node = this.getNode(node.parentId, this.treeData)
+      return this.getRootNode(node)
+    },
+    getNode(id, arr) {
+      if (!arr || !arr.length) {
+        return null
+      }
+      let target = arr.filter(e => e.id === id)[0]
+      if (!target) {
+        for (let i = 0; i < arr.length; i++) {
+          target = this.getNode(id, arr[i].children)
+          if (target) {
+            break
+          }
+        }
+      }
+      return target
     }
   }
 }
