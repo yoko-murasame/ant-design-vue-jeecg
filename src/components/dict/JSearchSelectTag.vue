@@ -43,6 +43,7 @@
 <script>
   import { ajaxGetDictItems, getDictItemsFromCache } from '@/api/api'
   import debounce from 'lodash/debounce'
+  import { uniqWith } from 'lodash'
   import { getAction } from '../../api/manage'
 
   export default {
@@ -155,20 +156,43 @@
                 // update-begin---author:wangshuai ---date:20221115  for：[issues/4213]JSearchSelectTag改造支持多选------------
                 // 判断是否多选
                 if (this.mode === 'multiple') {
-                  if (res.result && res.result.length > 0) {
+                  if (this.keepInput) {
                     let itemArray = []
                     let valueArray = this.value.split(',')
-                    for (let i = 0; i < res.result.length; i++) {
+                    for (let i = 0; i < valueArray.length; i++) {
                       itemArray.push({
                         key: valueArray[i],
-                        label: res.result[i]
+                        label: res.result[i] || valueArray[i]
                       })
                     }
-                    this.selectedAsyncValue = itemArray
+                    this.selectedAsyncValue = uniqWith(itemArray, (a, b) => (a.key !== '' && a.key === b.key))
                   } else {
-                    this.selectedAsyncValue = undefined // []
-                    this.selectedValue = undefined // []
+                    if (res.result && res.result.length > 0) {
+                      let itemArray = []
+                      let valueArray = this.value.split(',')
+                      for (let i = 0; i < res.result.length; i++) {
+                        itemArray.push({
+                          key: valueArray[i],
+                          label: res.result[i]
+                        })
+                      }
+                      this.selectedAsyncValue = itemArray
+                    } else {
+                      this.selectedAsyncValue = undefined // []
+                      this.selectedValue = undefined // []
+                    }
                   }
+                } else if (this.mode === 'tags') {
+                  // 标签模式一定需要保留输入
+                  let itemArray = []
+                  let valueArray = this.value.split(',')
+                  for (let i = 0; i < valueArray.length; i++) {
+                    itemArray.push({
+                      key: valueArray[i],
+                      label: res.result[i] || valueArray[i]
+                    })
+                  }
+                  this.selectedAsyncValue = uniqWith(itemArray, (a, b) => (a.key !== '' && a.key === b.key))
                 } else {
                   let obj = {
                     key: this.value,
@@ -184,6 +208,12 @@
           // update-begin---author:wangshuai ---date:20221115  for：[issues/4213]JSearchSelectTag改造支持多选------------
           // 判断是否为多选
           if (this.mode === 'multiple') {
+            if (this.value) {
+              this.selectedValue = this.value.split(',')
+            } else {
+              this.selectedValue = undefined // []
+            }
+          } else if (this.mode === 'tags') {
             if (this.value) {
               this.selectedValue = this.value.split(',')
             } else {
@@ -209,10 +239,43 @@
               return
             }
             // 是否保留输入值
-            if (!this.keepInput && res.result && !res.result.length) {
-              this.options = [{ text: value, title: value, value: value }]
+            if (this.mode === 'multiple') {
+              if (this.keepInput) {
+                const options = value.split(',').map(item => ({ text: item, title: item, value: item }))
+                // res.result的值需要拆分成列表
+                const allValues = res.result.reduce((pre, cur) => {
+                  const values = cur.value.split(',')
+                  const texts = cur.text && cur.text.split(',') || []
+                  const titles = cur.title && cur.title.split(',') || []
+                  for (let i = 0; i < values.length; i++) {
+                    values[i] && pre.push({ text: texts[i], title: titles[i], value: values[i] })
+                  }
+                  return pre
+                }, [])
+                this.options = uniqWith([...options, ...allValues], (a, b) => (a.value !== '' && a.value === b.value))
+              } else {
+                this.options = res.result
+              }
+            } else if (this.mode === 'tags') {
+              // 标签模式一定需要保留输入
+              const options = value.split(',').map(item => ({ text: item, title: item, value: item }))
+              // res.result的值需要拆分成列表
+              const allValues = res.result.reduce((pre, cur) => {
+                const values = cur.value.split(',')
+                const texts = cur.text && cur.text.split(',') || []
+                const titles = cur.title && cur.title.split(',') || []
+                for (let i = 0; i < values.length; i++) {
+                  values[i] && pre.push({ text: texts[i], title: titles[i], value: values[i] })
+                }
+                return pre
+              }, [])
+              this.options = uniqWith([...options, ...allValues], (a, b) => (a.value !== '' && a.value === b.value))
             } else {
-              this.options = res.result
+              if (this.keepInput) {
+                this.options = [{ text: value, title: value, value: value }, ...res.result]
+              } else {
+                this.options = res.result
+              }
             }
             console.log('我是第一个', res)
           } else {
@@ -259,7 +322,22 @@
             getAction(`/sys/dict/loadDict/${this.dict}`, { pageSize: this.pageSize, keyword: '' }).then(res => {
               this.loading = false
               if (res.success) {
-                this.options = res.result
+                if (this.mode === 'multiple' || this.mode === 'tags') {
+                  // 标签模式，每个项都得分离
+                  const allValues = this.options = res.result.reduce((pre, cur) => {
+                    const values = cur.value.split(',')
+                    const texts = cur.text && cur.text.split(',') || []
+                    const titles = cur.title && cur.title.split(',') || []
+                    const labels = cur.label && cur.label.split(',') || []
+                    for (let i = 0; i < values.length; i++) {
+                      values[i] && pre.push({ text: texts[i], title: titles[i], value: values[i], label: labels[i] })
+                    }
+                    return pre
+                  }, [])
+                  this.options = uniqWith(allValues, (a, b) => (a.value !== '' && a.value === b.value))
+                } else {
+                  this.options = uniqWith(res.result, (a, b) => (a.value !== '' && a.value === b.value))
+                }
               } else {
                 this.$message.warning(res.message)
               }
@@ -286,6 +364,12 @@
               keyArray.push(selectedObj[i].key)
             }
             this.selectedValue = keyArray
+          } else if (this.mode === 'tags') {
+            let keyArray = []
+            for (let i = 0; i < selectedObj.length; i++) {
+              keyArray.push(selectedObj[i].key)
+            }
+            this.selectedValue = keyArray
           } else {
             this.selectedValue = selectedObj.key
           }
@@ -302,6 +386,8 @@
       callback() {
         // update-begin---author:wangshuai ---date:20221115  for：[issues/4213]JSearchSelectTag改造支持多选------------
         if (this.mode === 'multiple') {
+          this.$emit('change', this.selectedValue.join(','))
+        } else if(this.mode === 'tags') {
           this.$emit('change', this.selectedValue.join(','))
         } else {
           this.$emit('change', this.selectedValue)
