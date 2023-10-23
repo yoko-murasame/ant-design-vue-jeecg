@@ -1,6 +1,6 @@
 <template>
   <div v-show="true">
-    <a-card :bordered="false">
+    <a-card :bordered="false" class="layer-manager-container">
       <!-- 查询区域 -->
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
@@ -38,10 +38,9 @@
           </a-row>
         </a-form>
       </div>
-
       <a-row :gutter="16">
-        <a-col :md="8" :sm="24">
-          <div class="dis-boxflex">
+        <a-col :md="8" :sm="24" class="inner-tree">
+          <div class="inner-tree-flex">
             <!-- <div class="box-flex">文档目录</div> -->
             <div class="flex-unshrink" style="margin-right: 1vh" v-if="show || isSearch">
               <a-button-group>
@@ -61,7 +60,7 @@
                 <a-col :xl="24" :lg="24" :md="24" :sm="24">
                   <a-form-item label="">
                     <a-input-search v-model="queryParam.folderName" allowClear placeholder="查找目录"
-                                    style="width: 300px" @search="onSearchFolder"/>
+                                    style="width: 100%" @search="onSearchFolder"/>
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -145,7 +144,6 @@
                 :name="uploadConfig.name"
                 :multiple="uploadConfig.multiple"
               >
-                <!-- :before-upload="beforeUploadFile" -->
                 <a-button
                   size="small"
                   type="primary"
@@ -156,216 +154,41 @@
               </a-upload>
             </div>
           </div>
-
-          <div>
-            <a-table
-              size="small"
-              ref="table"
-              rowKey="id"
-              :columns="columns"
-              :dataSource="dataSource"
-              :pagination="false"
-              :loading="loading"
-              @change="handleTableChange"
-            >
-              <template v-slot:nameSlot="text, record">
-                <a-button
-                  type="link"
-                  @click="handlePreview(record)"
-                  :title="text"
-                  class="button-ellipsis"
-                  style="width: 100%; padding: 0;"
-                >{{ text }}
-                </a-button>
-              </template>
-
-              <template v-slot:tagsSlot="tags, row">
-                <template v-if="tags">
-                  <a-tag v-for="(tag, idx) in tags.split(',')"
-                         :title="tag" :key="tag + idx"
-                         style="margin-right: .2vh !important;"
-                         :color="getTagColor(tag)">{{ tag }}
-                  </a-tag>
-                </template>
-                <span v-else>暂无标签</span>
-              </template>
-
-              <template slot="action" slot-scope="text, record">
-                <a href="javascript:;" @click="changeTags(record)">标签</a>
-                <a-divider type="vertical"/>
-                <a :href="downloadCompleteUrl + record.id" target="_blank">下载</a>
-                <a-divider type="vertical"/>
-                <a href="javascript:;" @click="changeFileName(record)">重命名</a>
-                <a-divider type="vertical"/>
-                <a href="javascript:;" v-show="false" @click="e => showQrCode(record, e)">二维码</a>
-                <a-divider v-show="false" type="vertical"/>
-                <a-dropdown>
-                  <a class="ant-dropdown-link">更多
-                    <a-icon type="down"/>
-                  </a>
-                  <a-menu slot="overlay">
-                    <a-menu-item>
-                      <a href="javascript:;" @click="$refs.historyList.show(record.id)">版本管理</a>
-                    </a-menu-item>
-                    <a-menu-item>
-                      <a-popconfirm title="确定删除吗?" @confirm="() => deleteFile(record.id)">
-                        <a>删除</a>
-                      </a-popconfirm>
-                    </a-menu-item>
-                  </a-menu>
-                </a-dropdown>
-              </template>
-            </a-table>
-          </div>
+          <!--文件列表-->
+          <file-list ref="fileList" v-if="show || isSearch" :selected-ids="selectedIds" :search-params="queryParam" @reload="loadAllTree()"></file-list>
         </a-col>
       </a-row>
     </a-card>
     <folder-modal ref="folderModal" @ok="folderModalFormOk(arguments)"></folder-modal>
-    <!-- 历史版本 -->
-    <history-list ref="historyList" @ok="loadAllTree(true)"></history-list>
-    <!--重命名-->
-    <a-modal
-      v-model="renameVisible"
-      title="请输入新文件名称"
-      ok-text="确认"
-      cancel-text="取消"
-      @ok="doRenameFile(true)"
-      @cancel="doRenameFile(false)">
-      <a-input v-model="rename" placeholder="请输入新文件名称"></a-input>
-    </a-modal>
-    <!--打标签-->
-    <a-modal
-      v-model="tagsVisible"
-      title="请输入标签"
-      ok-text="确认"
-      cancel-text="取消"
-      @ok="doChangeTags(true)"
-      @cancel="doChangeTags(false)">
-      <j-search-select-tag
-        keep-input
-        v-model="tags"
-        placeholder="请输入标签"
-        dict="technical_file,tags,tags"
-        :async="true"
-        :pageSize="50"
-        mode="tags"
-      />
-    </a-modal>
   </div>
 </template>
 
 <script>
 import { deleteAction, getAction, postAction, putAction } from '@/api/manage'
-import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import { ACCESS_TOKEN, BUSINESS_ID } from '@/store/mutation-types'
 import { union } from 'lodash'
-import QRCode from 'qrcodejs2'
 import Vue from 'vue'
 import folderConfig from './modules/folderConfig'
 import FolderModal from './modules/FolderModal'
 import HistoryList from './modules/HistoryList'
+import FileList from '@views/modules/knowledge/modules/FileList'
 
-const columns = [
-  // {
-  //   title: '序号',
-  //   dataIndex: '',
-  //   key: 'rowIndex',
-  //   width: 70,
-  //   align: 'center',
-  //   customRender: function(t, r, index) {
-  //     return parseInt(index) + 1
-  //   }
-  // },
-  {
-    title: '文件名称',
-    align: 'left',
-    ellipsis: true,
-    dataIndex: 'name',
-    fixed: 'left',
-    scopedSlots: { customRender: 'nameSlot' }
-    // width: 380
-    // width: 280,
-  },
-  // {
-  //   title: '上传人',
-  //   align: 'center',
-  //   width: 100,
-  //   dataIndex: 'uploadBy'
-  // },
-  // {
-  //   title: '类型',
-  //   align: 'center',
-  //   dataIndex: 'suffix',
-  //   width: 100
-  // },
-  {
-    title: '文件大小',
-    align: 'center',
-    width: 100,
-    dataIndex: 'size'
-  },
-  {
-    title: '标签',
-    align: 'center',
-    width: 200,
-    dataIndex: 'tags',
-    scopedSlots: { customRender: 'tagsSlot' }
-  },
-  // {
-  //   title: '上传时间',
-  //   align: 'center',
-  //   width: 120,
-  //   dataIndex: 'createTime'
-  // },
-  {
-    title: '版本',
-    align: 'center',
-    width: 100,
-    dataIndex: 'version',
-    customRender: function (t, r, index) {
-      return 'V' + (r.version + 1)
-    }
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    // fixed: 'right',
-    scopedSlots: { customRender: 'action' },
-    align: 'center',
-    width: 210,
-    fixed: 'right'
-  }
-]
 export default {
-  name: 'SafetyFile',
+  name: 'Knowledge',
   components: {
     FolderModal,
-    HistoryList
+    HistoryList,
+    FileList
   },
-  mixins: [JeecgListMixin],
   data() {
     return {
       businessId: 'KNOWLEDGE_BASE',
       businessName: '知识库',
-      cardList: [],
-      cardListLoading: true, // 加载中
-
-      disableMixinCreated: true,
-      // 分页
-      total: 0,
-      page_sizeOptions: ['20', '30', '40', '50'], // 每页条数选项
-      page: 1, // 当前页数
-      page_size: 20, // 默认每页条数.
-
       queryParam: {
         folderName: null,
         fileName: null,
         tags: null
       },
-
-      treeData: [], // 左侧树数据
-      selectedIds: [],
-      selectedNode: {},
       uploadConfig: {
         action: '/technical/file/upload',
         name: 'multipartFiles',
@@ -375,115 +198,38 @@ export default {
         'X-Access-Token': Vue.ls.get(ACCESS_TOKEN)
       },
       fileList: [], // 用于清空上传文件数据
-      columns,
       url: {
-        list: '/technical/file/files?folderId=',
         deleteFolderUrl: '/technical/folder/business/',
-        deleteFileUrl: '/technical/file/',
         searchFolder: '/technical/folder/business/search/folder',
         searchFile: '/technical/folder/business/search/file',
-        downLoadUrl: '/technical/file/download/',
-        rename: '/technical/file/rename',
-        reTags: '/technical/file/reTags',
         findPath: '/technical/folder/findPath/'
       },
-      show: true,
-      expandedKeys: [],
       debug: process.env.NODE_ENV !== 'production',
+      show: true,
       isSearch: false,
       multiple: false,
-      // 重命名功能
-      rename: '',
-      renameFile: null,
-      renameVisible: false,
-      // 打标签功能
-      tags: '',
-      tagsFile: null,
-      tagsVisible: false
+      treeData: [], // 左侧树数据
+      selectedIds: [],
+      selectedNode: {},
+      expandedKeys: [],
     }
   },
   computed: {
-    downloadCompleteUrl: function () {
-      return window._CONFIG['domianURL'] + this.url.downLoadUrl
-    },
     uploadCompleteUrl: function () {
       return window._CONFIG['domianURL'] + this.uploadConfig.action
     }
   },
   mounted() {
-    this.loadAllTree(true);
+    this.loadAllTree();
   },
   methods: {
-    getTagColor(tag) {
-      if (!this.queryParam.tags) {
-        return ''
-      }
-      const tags = this.queryParam.tags.split(',')
-      return tags.includes(tag) ? 'green' : ''
-    },
     searchReset() {
       this.queryParam = {
         folderName: null,
         fileName: null,
         tags: null
       }
-      this.onSearchFile()
-    },
-    /**
-     * 变更标签方法
-     * @param flag
-     */
-    doChangeTags(flag) {
-      if (flag) {
-        console.log('标签', this.tagsFile, this.tags)
-        putAction(`${this.url.reTags}?fileId=${this.tagsFile.id}&tags=${this.tags}`)
-        .then(res => {
-          if (res.success) {
-            this.$message.success('操作成功');
-            this.loadFileData()
-          } else {
-            this.$message.error('操作失败：', res.message)
-          }
-          this.tagsVisible = false
-        })
-      } else {
-        this.tags = ''
-        this.tagsFile = null
-        this.tagsVisible = false
-      }
-    },
-    changeTags(record) {
-      this.tags = record.tags || undefined
-      this.tagsFile = record
-      this.tagsVisible = true
-    },
-    /**
-     * 重命名文件
-     * @param flag 执行flag
-     */
-    doRenameFile(flag) {
-      if (flag) {
-        console.log('新文件名', this.renameFile, this.rename)
-        putAction(`${this.url.rename}?fileId=${this.renameFile.id}&name=${this.rename}`)
-        .then(res => {
-          if (res.success) {
-            this.$message.success('操作成功');
-            this.loadFileData()
-          } else {
-            this.$message.error('操作失败：', res.message)
-          }
-          this.renameVisible = false
-        })
-      } else {
-        this.rename = ''
-        this.renameFile = null
-        this.renameVisible = false
-      }
-    },
-    changeFileName(record) {
-      this.rename = record.name
-      this.renameFile = record
-      this.renameVisible = true
+      this.loadAllTree()
     },
     getIcon(node) {
       const { expanded, childFolderSize, childFileSize } = node
@@ -526,9 +272,9 @@ export default {
         resolve(that.treeData);
       });
     },
-    loadAllTree(flag) {
+    loadAllTree(flag = true) {
       this.selectedIds = [];
-      this.dataSource = [];
+      this.$refs.fileList.dataSource = [];
       if (!flag) {
         this.show = false;
         this.isSearch = false;
@@ -549,7 +295,7 @@ export default {
       }
       if (!folderId && (!folderName || typeof folderName !== 'string')) {
         console.log('onSearchFolder clear', folderName);
-        this.loadAllTree(true);
+        this.loadAllTree();
         return;
       }
       getAction(`${this.url.searchFolder}`, {
@@ -568,7 +314,6 @@ export default {
           this.isSearch = !!(folderName && folderName.trim());
           this.show = !this.isSearch;
           this.multiple = this.isSearch;
-          this.loadFileData();
         } else {
           this.$notification.error({
             message: '出错提示',
@@ -586,7 +331,7 @@ export default {
       const fileName = this.queryParam.fileName
       const tags = this.queryParam.tags
       if (!tags && (typeof fileName !== 'string' || !fileName)) {
-        this.loadAllTree(true);
+        this.loadAllTree();
         return;
       }
       getAction(`${this.url.searchFile}`, {
@@ -604,7 +349,6 @@ export default {
           this.isSearch = !!(fileName && fileName.trim()) || !!(tags && tags.trim());
           this.show = !this.isSearch;
           this.multiple = this.isSearch;
-          this.loadFileData();
         } else {
           this.$notification.error({
             message: '出错提示',
@@ -613,64 +357,6 @@ export default {
         }
       });
     },
-    showQrCode(record, e) {
-      e.preventDefault()
-      this.debug && console.log('显示二维码', record)
-      this.$alert('<div id="qrCode" ref="qrCode"></div>', '扫一扫', {
-        dangerouslyUseHTMLString: true,
-        center: true,
-        customClass: 'qr-code-messagebox',
-        showConfirmButton: false,
-        closeOnClickModal: true
-      }).then(action => {
-        this.debug && console.log(action, this.$refs.qrCode)
-      })
-      let url = record.ossFile.url
-      // 处理本地文件链接
-      if (!~record.ossFile.url.indexOf('http')) {
-        url = this.downloadCompleteUrl + record.id
-      }
-      this.$nextTick(() => {
-        const qrCodeDiv = document.getElementById('qrCode')
-        qrCodeDiv.innerHTML = ''
-        new QRCode(qrCodeDiv, {
-          text: url,
-          width: 100,
-          height: 100,
-          colorDark: '#333333', // 二维码颜色
-          colorLight: '#ffffff', // 二维码背景色
-          correctLevel: QRCode.CorrectLevel.L // 容错率，L/M/H
-        })
-      })
-    },
-    loadFileData(arg) {
-      if (!this.url.list) {
-        this.$message.error('请设置url.list属性!')
-        return
-      }
-      if (!this.selectedIds || !this.selectedIds[0]) {
-        return
-      }
-      // 加载数据 若传入参数1则加载第一页的内容
-      if (arg === 1) {
-        this.ipagination.current = 1
-      }
-      let params = this.getQueryParams() // 查询条件
-      this.loading = true
-      getAction(this.url.list + this.selectedIds[0], params).then(res => {
-        if (res.success) {
-          this.dataSource = res.result
-          this.ipagination.total = res.result.total
-        } else {
-          this.$notification.error({
-            message: '出错提示',
-            description: res.message
-          })
-        }
-        this.loading = false
-      })
-    },
-
     /**
      * 选中节点的操作
      * 1.保存选中的data -> this.selectedNode
@@ -693,7 +379,7 @@ export default {
         // 设置叶子节点时才展示文件列表
         // e.node.dataRef && e.node.dataRef.isLeaf && this.loadFileData();
         // 都展示文件列表
-        e.node.dataRef && this.loadFileData();
+        // e.node.dataRef && this.loadFileData();
       }
       // 选中且未展开时设置自动展开
       e.selected && !e.node.expanded && e.node.dataRef && e.node.dataRef.childFolderSize && e.node.onExpand()
@@ -704,7 +390,6 @@ export default {
         console.log('加载选择的搜索项', selectedKeys, e);
         this.multiple = false;
         this.selectedIds = [e.node.dataRef.id];
-        this.loadFileData();
       }
       console.log('选中节点', selectedKeys, this.$refs.tree, this.selectedNode, this.selectedIds, this.expandedKeys)
     },
@@ -734,8 +419,6 @@ export default {
               this.selectedNode = res.result[0]
             }
             this.debug && console.log('展开的id | 选中的id:', this.expandedKeys, this.selectedIds);
-            // 加载关联文件
-            this.loadFileData()
             // 展开到指定层级目录
             this.loadExpandedKeys(this.selectedIds[0])
             .then(paths => this.loadSearchFolderTree(paths))
@@ -819,7 +502,7 @@ export default {
               if (res.success) {
                 // 选回父节点
                 that.selectedNode = deletedData.parentId ? { id: deletedData.parentId } : {}
-                that.loadAllTree(true)
+                that.loadAllTree()
                 that.$message.success('删除成功')
               } else {
                 that.$notification.error({
@@ -838,7 +521,7 @@ export default {
     },
     folderModalFormOk(args) {
       this.selectedNode = args[0]
-      this.loadAllTree(true)
+      this.loadAllTree()
     },
     /**
      * 上移操作 todo
@@ -907,19 +590,8 @@ export default {
       } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
         this.$message.success('文件上传成功')
         this.fileList = []
-        this.loadAllTree(true)
+        this.loadAllTree()
       }
-    },
-    beforeUploadFile(file, fileList) {
-      this.debug && console.log(file, fileList)
-      this.fileList = [...this.fileList, file]
-      return new Promise((resolve, reject) => {
-        if (this.fileList.length == fileList.length) {
-          resolve()
-        } else {
-          reject()
-        }
-      })
     },
     /**
      * 上传文件夹 暂未用到
@@ -953,26 +625,8 @@ export default {
         })
       } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
         this.$message.success('文件上传成功')
-        this.loadAllTree(true)
+        this.loadAllTree()
       }
-    },
-    handlePreview(record) {
-      window.open(this.downloadCompleteUrl + record.id)
-    },
-    /**
-     * 删除文件
-     * @param id
-     */
-    deleteFile(id) {
-      let that = this;
-      deleteAction(that.url.deleteFileUrl + id).then((res) => {
-        if (res.success) {
-          that.$message.success(res.message);
-          that.loadAllTree(true)
-        } else {
-          that.$message.warning(res.message);
-        }
-      });
     },
     /**
      * 获取指定节点的根节点
@@ -1010,139 +664,6 @@ export default {
   }
 }
 </script>
-<style scoped>
-.dis-boxflex {
-  display: flex;
-  align-items: center;
-}
-
-.space-around {
-  justify-content: space-around;
-}
-
-.justify-end {
-  justify-content: flex-end;
-}
-
-.box-flex {
-  flex: 1;
-}
-
-.flex-2 {
-  flex: 2;
-}
-
-.flex-3 {
-  flex: 3;
-}
-
-.flex-unshrink {
-  flex-grow: 0;
-  flex-shrink: 0;
-}
-
-.align-start {
-  align-items: flex-start;
-}
-
-.align-end {
-  align-items: flex-end;
-}
-
-.align-stretch {
-  align-items: stretch;
-}
-
-.ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.line-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.line-3 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-}
-
-.split-text {
-  display: inline-block;
-  margin: 0 12px;
-}
-
-/*禁用效果样式调整*/
-.ant-select-disabled,
-.ant-input-number-disabled,
-.ant-input-disabled {
-  background: none !important;
-  cursor: not-allowed;
-  color: rgba(0, 0, 0, 0.65) !important;
-}
-
-.ant-btn-danger {
-  background: #ff4d4f !important;
-}
-</style>
-<style lang="less" scoped>
-/deep/ .button-ellipsis {
-  span {
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    text-align: left !important;
-    width: 100% !important;
-  }
-}
-
-.card-img {
-  display: block;
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-}
-
-.card-info-div {
-  margin-top: 15px;
-}
-
-.bg-gray {
-  padding: 12px;
-  background: #f2f2f2;
-  margin-bottom: 16px;
-}
-</style>
-<style lang="less" scoped>
-.card-div {
-  border-radius: 8px;
-
-  /deep/ .ant-card-head {
-    padding: 0 12px;
-    min-height: unset;
-    height: auto;
-  }
-
-  /deep/ .ant-card-head-title,
-  /deep/ .ant-card-extra {
-    padding: 8px 0;
-  }
-
-  /deep/ .ant-card-body {
-    padding: 16px;
-  }
-}
-
-.inline-flex {
-  display: inline-flex;
-  align-items: center;
-}
-</style>
 <style lang="less" scoped>
 /deep/ .ant-tree li .ant-tree-node-content-wrapper {
   padding: 0 !important;
@@ -1160,10 +681,10 @@ export default {
 }
 
 /deep/ .layer-manager-container {
+  border-radius: 1vh;
   .ant-card-body {
-    padding: 0vh !important;
+    padding: 1vh !important;
   }
-
   .inner-tree {
     border-right: .5px rgba(232, 232, 232, 0.5) solid;
     // 实际的树
@@ -1207,10 +728,8 @@ export default {
       .ant-form-item {
         margin-right: 0;
         width: 100%;
-
         .ant-form-item-control-wrapper {
           width: 100%;
-
           .ant-form-item-control {
             line-height: 32px;
             width: 100%;

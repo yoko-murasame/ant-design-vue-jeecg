@@ -39,4 +39,84 @@
   #app {
     height: 100%;
   }
+
+  .dis-boxflex {
+    display: flex;
+    align-items: center;
+  }
+
+  .space-around {
+    justify-content: space-around;
+  }
+
+  .justify-end {
+    justify-content: flex-end;
+  }
+
+  .box-flex {
+    flex: 1;
+  }
+
+  .flex-2 {
+    flex: 2;
+  }
+
+  .flex-3 {
+    flex: 3;
+  }
+
+  .flex-unshrink {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  .align-start {
+    align-items: flex-start;
+  }
+
+  .align-end {
+    align-items: flex-end;
+  }
+
+  .align-stretch {
+    align-items: stretch;
+  }
+
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .line-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .split-text {
+    display: inline-block;
+    margin: 0 12px;
+  }
+
+  /*禁用效果样式调整*/
+  .ant-select-disabled,
+  .ant-input-number-disabled,
+  .ant-input-disabled {
+    background: none !important;
+    cursor: not-allowed;
+    color: rgba(0, 0, 0, 0.65) !important;
+  }
+
+  .ant-btn-danger {
+    background: #ff4d4f !important;
+  }
 </style>
