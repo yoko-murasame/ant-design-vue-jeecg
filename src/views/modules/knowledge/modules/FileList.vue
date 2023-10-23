@@ -95,7 +95,7 @@
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import HistoryList from '@views/modules/knowledge/modules/HistoryList.vue'
 import QRCode from 'qrcodejs2'
-import { deleteAction, getAction, putAction } from '@api/manage'
+import { deleteAction, postAction, putAction } from '@api/manage'
 
 export default {
   name: 'FileList',
@@ -214,7 +214,7 @@ export default {
         }
       ],
       url: {
-        list: '/technical/file/files?folderId=',
+        list: '/technical/file/files',
         deleteFileUrl: '/technical/file/',
         downLoadUrl: '/technical/file/download/',
         rename: '/technical/file/rename',
@@ -245,7 +245,10 @@ export default {
       }
       let params = this.getQueryParams() // 查询条件
       this.loading = true
-      getAction(this.url.list + this.selectedIds[0], params).then(res => {
+      postAction(this.url.list, {
+        ...params,
+        folderId: this.selectedIds[0]
+      }).then(res => {
         if (res.success) {
           this.dataSource = res.result
           this.ipagination.total = res.result.total
