@@ -114,7 +114,7 @@
               <a-icon style="display: inline-block" :type="getIcon(props)"/>
             </template>
             <template v-slot:nodeTitle="props">
-              <div class="dis-boxflex" :title="props.name">
+              <div class="dis-boxflex" :title="props.name" :style="{ backgroundColor: searchResult.includes(props.id) ? 'rgba(186,231,255,.3)' : ''}">
                 <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '#01b683' : ''}">
                   {{
                     props.name
@@ -212,6 +212,7 @@ export default {
       selectedIds: [],
       selectedNode: {},
       expandedKeys: [],
+      searchResult: []
     }
   },
   computed: {
@@ -274,6 +275,7 @@ export default {
     },
     loadAllTree(flag = true) {
       this.selectedIds = [];
+      this.searchResult = [];
       this.$refs.fileList.dataSource = [];
       if (!flag) {
         this.show = false;
@@ -309,6 +311,7 @@ export default {
             this.selectedIds.push(cur.folder.id);
             return union(pre, cur.folderTreeId)
           }, []);
+          this.searchResult = [...this.selectedIds]
           console.log('onSearchFolder', folderName, res, this.selectedIds, this.expandedKeys);
           this.isSearch = false;
           this.isSearch = !!(folderName && folderName.trim());
@@ -345,6 +348,8 @@ export default {
             this.selectedIds.push(cur.file.folderId);
             return union(pre, cur.folderTreeId)
           }, []);
+          this.searchResult = [...this.selectedIds]
+          console.log('onSearchFile', fileName, res, this.selectedIds, this.expandedKeys)
           this.isSearch = false;
           this.isSearch = !!(fileName && fileName.trim()) || !!(tags && tags.trim());
           this.show = !this.isSearch;
