@@ -70,7 +70,7 @@
           <!--全部默认展示到额树-->
           <a-tree
             v-if="show"
-            default-expand-all
+            :expanded-keys.sync="expandedKeys"
             ref="tree"
             :blockNode="true"
             :show-icon="true"
@@ -116,7 +116,8 @@
             </template>
             <template v-slot:nodeTitle="props">
               <div class="dis-boxflex" :title="props.name">
-                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '' : ''}">{{
+                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '' : ''}">
+                  {{
                     props.name
                   }}
                 </div>
@@ -179,11 +180,14 @@
               </template>
 
               <template v-slot:tagsSlot="tags, row">
-                <a-tag v-for="(tag, idx) in tags.split(',')"
-                       :title="tag" :key="tag + idx"
-                       style="margin-right: .2vh !important;"
-                       :color="getTagColor(tag)">{{ tag }}
-                </a-tag>
+                <template v-if="tags">
+                  <a-tag v-for="(tag, idx) in tags.split(',')"
+                         :title="tag" :key="tag + idx"
+                         style="margin-right: .2vh !important;"
+                         :color="getTagColor(tag)">{{ tag }}
+                  </a-tag>
+                </template>
+                <span v-else>暂无标签</span>
               </template>
 
               <template slot="action" slot-scope="text, record">
@@ -201,7 +205,7 @@
                   </a>
                   <a-menu slot="overlay">
                     <a-menu-item>
-                      <a href="javascript:;" @click="handleShowHistoryList(record.id)">版本管理</a>
+                      <a href="javascript:;" @click="$refs.historyList.show(record.id)">版本管理</a>
                     </a-menu-item>
                     <a-menu-item>
                       <a-popconfirm title="确定删除吗?" @confirm="() => deleteFile(record.id)">
@@ -218,7 +222,7 @@
     </a-card>
     <folder-modal ref="folderModal" @ok="folderModalFormOk(arguments)"></folder-modal>
     <!-- 历史版本 -->
-    <history-list ref="historyList" @ok="handleCloseVersionHistoryList"></history-list>
+    <history-list ref="historyList" @ok="loadAllTree(true)"></history-list>
     <!--重命名-->
     <a-modal
       v-model="renameVisible"
@@ -375,16 +379,17 @@ export default {
       url: {
         list: '/technical/file/files?folderId=',
         deleteFolderUrl: '/technical/folder/business/',
-        deleteFileUrl: '/technical/file',
+        deleteFileUrl: '/technical/file/',
         searchFolder: '/technical/folder/business/search/folder',
         searchFile: '/technical/folder/business/search/file',
         downLoadUrl: '/technical/file/download/',
         rename: '/technical/file/rename',
-        reTags: '/technical/file/reTags'
+        reTags: '/technical/file/reTags',
+        findPath: '/technical/folder/findPath/'
       },
       show: true,
       expandedKeys: [],
-      debug: process.env.NODE_ENV === 'development',
+      debug: process.env.NODE_ENV !== 'production',
       isSearch: false,
       multiple: false,
       // 重命名功能
@@ -485,14 +490,21 @@ export default {
       return (expanded || childFolderSize || childFileSize) ? 'folder-open' : 'folder'
     },
     /**
-     * 文件上传后的回调
+     * 加载指定选中节点的路径
+     * @param folderId
+     * @returns {Promise<unknown>}
      */
-    async onUploadCallback(fileLength) {
-      const { id: folderId } = this.selectedNode;
-      if (!folderId) {
-        return;
-      }
-      this.onSearchFolder(null, folderId)
+    loadExpandedKeys(folderId) {
+      return new Promise(resolve => {
+        getAction(`${this.url.findPath}${folderId}`).then(res => {
+          if (res.success) {
+            this.expandedKeys = res.result
+            resolve(res.result)
+          } else {
+            resolve([])
+          }
+        })
+      })
     },
     /**
      * 手动加载到指定树层级的数据
@@ -601,15 +613,6 @@ export default {
         }
       });
     },
-    /**
-     * 控制默认生产的目录
-     * @deprecated 使用 initialFolders 参数替代（支持JSON格式）
-     * @returns {string|string}
-     */
-    subFolders() {
-      const folders = []
-      return folders.length ? folders.join(',') : ''
-    },
     showQrCode(record, e) {
       e.preventDefault()
       this.debug && console.log('显示二维码', record)
@@ -707,40 +710,36 @@ export default {
     },
     getTreeRootData() {
       return new Promise((resolve, reject) => {
-        postAction(`/technical/folder/business/findRoot?businessId=${this.businessId}&businessName=${this.businessName}&type=DOCUMENT`, {
-          subFolders: this.subFolders(),
-          initialFolders: JSON.stringify(folderConfig)
+        postAction(`/technical/folder/business/findRoot`, {
+          initialFolders: folderConfig,
+          businessId: this.businessId,
+          businessName: this.businessName,
+          type: 'DOCUMENT'
         }).then(res => {
           if (res.success) {
-            this.treeData = res.result.map(item => {
+            const tree = this.treeData = res.result.map(item => {
               item.scopedSlots = { title: 'nodeTitle', icon: 'customIcon' }
               // 判断节点是否包含子目录，不包含时不去请求
               item.isLeaf = item.childFolderSize === 0
               return item
             })
-            // this.debug && console.log('重置tree前', this.treeData, res.result)
-            // 重新重置根节点
-            // const tree = this.$refs.tree // root在this.$refs.tree中找到
-            const tree = this.treeData
-            // this.debug && console.log(tree)
-            // tree.updateTreeData(this.treeData)
-            this.debug && console.log('重置tree后', this.treeData)
-            if (!(this.selectedIds && this.selectedIds.length > 0)) {
-              if (res.result.length > 0) {
-                this.debug && console.log('展开的id | 选中的id:', this.expandedKeys, this.selectedIds);
-                this.selectedIds = [res.result[0].id]
-                this.selectedNode = res.result[0]
-                // 加载关联文件
-                this.loadFileData()
-                // 目录
-                this.onLoadChildrenData().then(res2 => {
-                  // this.expandedKeys = [res.result[0].id];
-                  resolve(tree)
-                })
-              }
-            } else {
-              resolve(tree);
+            if (!(tree && tree.length > 0)) {
+              resolve([])
             }
+            // 重置回选项
+            if (this.selectedNode.id) {
+              this.selectedIds = [this.selectedNode.id]
+            } else {
+              this.selectedIds = [res.result[0].id]
+              this.selectedNode = res.result[0]
+            }
+            this.debug && console.log('展开的id | 选中的id:', this.expandedKeys, this.selectedIds);
+            // 加载关联文件
+            this.loadFileData()
+            // 展开到指定层级目录
+            this.loadExpandedKeys(this.selectedIds[0])
+            .then(paths => this.loadSearchFolderTree(paths))
+            .then(() => resolve(tree))
           } else {
             this.$notification.error({
               message: '出错提示',
@@ -751,16 +750,18 @@ export default {
         })
       })
     },
+    /**
+     * 加载子节点数据
+     * @param treeNode 目标节点
+     * @param cacheFlag 如果手动加载的数据，antdTree无法识别会重新加载，因此引入缓存标识
+     * @returns {Promise<unknown>}
+     */
     onLoadChildrenData(treeNode, cacheFlag = true) {
-      return new Promise((resolve, reject) => {
-        // if (treeNode.dataRef.children) {
-        //   resolve();
-        //   return;
-        // }
+      return new Promise(resolve => {
         // 默认初始第一个节点
         const { dataRef } = treeNode || { dataRef: this.treeData[0] };
-        // 修复默认展开“房建二级”目录后，收起再展开会导致列表异常（dataRef指向相同，但是不知道为什么没有缓存结果，因此直接放行）
-        if (cacheFlag && treeNode && dataRef.name === this.treeData[0].name) {
+        // 修复展开根目录后，收起再展开会导致列表异常（dataRef指向相同，但是不知道为什么没有缓存结果，因此直接放行）
+        if (cacheFlag && treeNode && dataRef.children && dataRef.children.length) {
           resolve();
           return
         }
@@ -773,11 +774,6 @@ export default {
               item.isLeaf = item.childFolderSize === 0
               return item
             });
-            // this.debug && console.log('child load finished1', this.treeData)
-            // this.treeData = [...this.treeData];
-            // this.debug && console.log('child load finished2', this.treeData);
-            // treeNode.dataRef.children = result;
-            // this.$forceUpdate();
             this.$set(dataRef, 'children', result);
             resolve(result)
           } else {
@@ -786,7 +782,6 @@ export default {
               description: res.message
             })
             resolve([])
-            // reject()
           }
         })
       })
@@ -822,12 +817,9 @@ export default {
           onOk() {
             deleteAction(that.url.deleteFolderUrl + that.selectedIds[0]).then(res => {
               if (res.success) {
-                const newTreeData = that.changeTreeData(that.treeData, deletedData, 3)
-                that.treeData = (newTreeData || []).filter(e => e)
-                that.selectedIds = []
-                that.selectedNode = {}
-                that.dataSource = []
-                that.$forceUpdate()
+                // 选回父节点
+                that.selectedNode = deletedData.parentId ? { id: deletedData.parentId } : {}
+                that.loadAllTree(true)
                 that.$message.success('删除成功')
               } else {
                 that.$notification.error({
@@ -845,195 +837,35 @@ export default {
       }
     },
     folderModalFormOk(args) {
-      const treeData = this.treeData
-      this.debug && console.log('返回Form的数据', args)
-      this.debug && console.log('返回修改后---treeData', JSON.parse(JSON.stringify(treeData)))
-      const data = args[0]
-      const type = args[1] ? 1 : 2
-      // 设置新节点是否为叶子节点
-      data.isLeaf = !(args[0].hasChild)
-      // 设置新节点的slot属性
-      data.scopedSlots = { title: 'nodeTitle', icon: 'customIcon' }
-      // 新增时展开父节点
-      this.$set(this.selectedNode, 'expanded', true)
-      if (data && data.parentId === '' && !treeData.filter(e => e.id === data.id)[0]) {
-        treeData.push(data)
-        this.treeData = [...treeData]
-      } else {
-        // 用户自己选择节点操作
-        this.treeData = this.changeTreeData(treeData, data, type)
-      }
-      this.debug && console.log('返回修改后---treeData', JSON.parse(JSON.stringify(treeData)))
-      this.$forceUpdate()
+      this.selectedNode = args[0]
+      this.loadAllTree(true)
     },
-    getChidlNode(arr, id) {
-      let hasFound = false; // 表示是否有找到id值
-      let result = null
-      let fn = function (data) {
-        if (Array.isArray(data) && !hasFound) {
-          // 判断是否是数组并且没有的情况下，
-          data.forEach(item => {
-            if (item.id === id) {
-              // 数据循环每个子项，并且判断子项下边是否有id值
-              result = item // 返回的结果等于每一项
-              hasFound = true // 并且找到id值
-            } else if (item.children) {
-              fn(item.children) // 递归调用下边的子项
-            }
-          })
-        }
-      }
-      fn(arr) // 调用一下
-      return result
-    },
-    // 遍历修改树节点
-    changeTreeData(treeData = [], data, type, parent) {
-      // type 1新增 2编辑 3删除
-      if (!(treeData instanceof Array) || !treeData.length) {
-        return
-      }
-      if (!data) {
-        return
-      }
-      let flag = false // 是否找到当前data数据
-      if (type == 2 && !flag) {
-        for (let i = 0; i < treeData.length; i++) {
-          if (data.id == treeData[i].id) {
-            // data.isLeaf = !(data.hasChild)
-            // data.children = treeData[i].children
-            // treeData[i] = data
-            Object.assign(treeData[i], data)
-            this.selectedNode = treeData[i]
-            flag = true
-            // todo 修改排序后，拿到父节点重置孩子的排序
-            // console.log('修改的节点', treeData[i], data)
-            break
-          } else {
-            treeData[i].children =
-              treeData[i].children && treeData[i].children.length
-                ? this.changeTreeData(treeData[i].children, data, type, treeData[i])
-                : undefined
-          }
-        }
-      } else if (type === 1 && !flag) {
-        for (let i = 0; i < treeData.length; i++) {
-          if (data.parentId === treeData[i].id) {
-            if (treeData[i].children) {
-              treeData[i].children.push(data)
-            } else {
-              treeData[i].children = [data]
-            }
-            // 文件加统计+1
-            treeData[i].isLeaf = false
-            treeData[i].hasChild = '1'
-            break
-          } else {
-            treeData[i].children =
-              treeData[i].children && treeData[i].children.length
-                ? this.changeTreeData(treeData[i].children, data, type, treeData[i])
-                : undefined
-          }
-        }
-      } else if (type === 3 && !flag) {
-        for (let i = 0; i < treeData.length; i++) {
-          if (!treeData[i]) {
-            continue
-          }
-          if (data.parentId === '') {
-            treeData = treeData.filter(e => e.id !== data.id)
-          } else if (treeData[i].id === data.parentId) {
-            treeData[i].children = treeData[i].children.filter(e => e.id !== data.id)
-            treeData[i].isLeaf = treeData[i].children.length < 1
-            treeData[i].hasChild = treeData[i].children.length > 0
-            break
-          } else {
-            treeData[i].children =
-              treeData[i].children && treeData[i].children.length
-                ? this.changeTreeData(treeData[i].children, data, type, treeData[i])
-                : undefined
-          }
-        }
-      }
-      return treeData
-    },
+    /**
+     * 上移操作 todo
+     */
     handleUp() {
       if (this.selectedIds && this.selectedIds.length > 0) {
         this.debug && console.log(this.selectedIds)
         const treeData = this.treeData
-        this.changeSortTreeData(this.selectedNode, 1)
       } else {
         this.$message.warning('请选择您要操作的目录！')
       }
     },
+    /**
+     * 下移操作 todo
+     */
     handleDown() {
       if (this.selectedIds && this.selectedIds.length > 0) {
         this.debug && console.log(this.selectedIds)
         const treeData = this.treeData
-        this.changeSortTreeData(this.selectedNode, -1)
       } else {
         this.$message.warning('请选择您要操作的目录！')
       }
     },
-    changeSortTreeData(data, type) {
-      // 修改同层节点顺序 type 1上移 -1下移
-      let that = this
-      const treeData = that.treeData
-      if (!(treeData instanceof Array) || !treeData.length) {
-        return
-      }
-      const arr = that.findSameLevelNode(treeData, that.selectedNode)
-      let idArr = arr.map(item => {
-        return item.id
-      })
-      let index = idArr.indexOf(data.id)
-      if (index >= 0) {
-        if (index == 0 && type == 1) {
-          that.$message.warning('不允许上移!')
-          return
-        } else if (index == idArr.length - 1 && type == -1) {
-          that.$message.warning('不允许下移!')
-          return
-        }
-        if (type == 1 || type == -1) {
-          let sourceId = data.id
-          let targetId = arr[index - type].id
-          getAction('/technical/folder/reOrder?sourceId=' + sourceId + '&targetId=' + targetId).then(res => {
-            if (res.success) {
-              let obj = arr[index]
-
-              arr[index] = arr[index - type]
-              arr[index - type] = obj
-              that.treeData = [...treeData]
-              that.$message.success('操作成功！')
-            } else {
-              that.$notification.error({
-                message: '出错提示',
-                description: res.message
-              })
-            }
-          })
-        }
-      }
-    },
-    findSameLevelNode(treeData = [], data) {
-      if (!(treeData instanceof Array) || !treeData.length) {
-        return
-      }
-      let arr = []
-      if (data.parentId) {
-        for (let i = 0; i < treeData.length; i++) {
-          if (data.parentId === treeData[i].id) {
-            arr = treeData[i].children
-            break
-          } else {
-            this.findSameLevelNode(treeData[i].children, data)
-          }
-        }
-      } else {
-        arr = treeData
-      }
-      return arr
-    },
+    /**
+     * 文件上传监听
+     * @param e
+     */
     handleUploadFileChange(e) {
       this.debug && console.log(e)
       // 上传进度显示
@@ -1071,12 +903,11 @@ export default {
           description: errorArr.join(' \n '),
           duration: null
         })
-        // this.onUploadCallback();
         this.fileList = []
       } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
         this.$message.success('文件上传成功')
-        this.onUploadCallback(this.fileList.length);
         this.fileList = []
+        this.loadAllTree(true)
       }
     },
     beforeUploadFile(file, fileList) {
@@ -1090,6 +921,10 @@ export default {
         }
       })
     },
+    /**
+     * 上传文件夹 暂未用到
+     * @param e
+     */
     handleUploadFileDirectoryChange(e) {
       this.debug && console.log(e)
       let fileList = [...e.fileList]
@@ -1116,98 +951,47 @@ export default {
           message: '出错提示',
           description: errorArr.join(' \n')
         })
-        this.loadFileData()
-        this.updataThisNode()
       } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
         this.$message.success('文件上传成功')
-        this.loadFileData()
-        this.updataThisNode()
-      }
-    },
-    goToDetail(item) {
-      if (item.bimfaceFile && item.bimfaceFile.fileId) {
-        // this.$router.push({name:'construction-drawing-detail',query: {id:item.bimfaceFile.fileId}})
-        /* let routeUrl = this.$router.resolve({
-         name:'construction-drawing-detail',
-         query: {id:item.bimfaceFile.fileId}
-         });
-         window.open(routeUrl.href, '_blank'); */
-        // this.$refs.bimfaceDetail.show(item.bimfaceFile.fileId)
-      } else {
-        if (item.type === 'DOCUMENT' || item.type === 'PICTURE') {
-          // item.ossFile.url && window.open(item.ossFile.url)
-          window.open(this.downloadCompleteUrl + item.id)
-          return
-        }
-        this.$notification.warning({
-          message: '提示',
-          description: '当前模型/图纸转化失败'
-        })
-      }
-    },
-    handleShowHistoryList(id) {
-      this.$refs.historyList.show(id)
-    },
-    handleCloseVersionHistoryList() {
-      this.loadFileData()
-      this.updataThisNode()
-    },
-    updataThisNode() {
-      let that = this
-      const treeData = that.treeData
-      if (!(treeData instanceof Array) || !treeData.length) {
-        return
-      }
-      const arr = that.findSameLevelNode(treeData, that.selectedNode)
-      let idArr = arr.map(item => {
-        return item.id
-      })
-      let index = idArr.indexOf(that.selectedNode.id)
-      if (index >= 0) {
-        getAction('/technical/folder/findOne?folderId=' + that.selectedNode.id).then(res => {
-          if (res.success) {
-            arr[index].childFileSize = res.result.childFileSize
-            arr[index].childFolderSize = res.result.childFolderSize
-            // arr[index].scopedSlots = { title: 'nodeTitle' }
-            that.treeData = [...treeData]
-            console.log('树节点更新成功')
-            // that.$message.success('树节点更新成功！')
-          } else {
-            that.$notification.error({
-              message: '出错提示',
-              description: res.message
-            })
-          }
-        })
+        this.loadAllTree(true)
       }
     },
     handlePreview(record) {
       window.open(this.downloadCompleteUrl + record.id)
     },
+    /**
+     * 删除文件
+     * @param id
+     */
     deleteFile(id) {
-      // 第二种删除 url直接最后拼接/id
-      if (!this.url.deleteFileUrl) {
-        this.$message.error('请设置url.delete属性!')
-        return
-      }
       let that = this;
-      deleteAction(that.url.deleteFileUrl + '/' + id).then((res) => {
+      deleteAction(that.url.deleteFileUrl + id).then((res) => {
         if (res.success) {
           that.$message.success(res.message);
-          that.onUploadCallback();
-          // that.loadFileData();
+          that.loadAllTree(true)
         } else {
           that.$message.warning(res.message);
         }
       });
     },
+    /**
+     * 获取指定节点的根节点
+     * @param node
+     * @returns {*}
+     */
     getRootNode(node) {
-      if (node.parentId === '0') {
+      if (node.parentId === '') {
         return node
       }
       node = this.getNode(node.parentId, this.treeData)
       return this.getRootNode(node)
     },
+    /**
+     * 获取指定节点
+     * @param id
+     * @param arr
+     * @returns {*|null}
+     */
     getNode(id, arr) {
       if (!arr || !arr.length) {
         return null
