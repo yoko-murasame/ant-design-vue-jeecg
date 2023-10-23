@@ -244,6 +244,9 @@
                 const options = value.split(',').map(item => ({ text: item, title: item, value: item }))
                 // res.result的值需要拆分成列表
                 const allValues = res.result.reduce((pre, cur) => {
+                  if (null === cur) {
+                    return pre
+                  }
                   const values = cur.value.split(',')
                   const texts = cur.text && cur.text.split(',') || []
                   const titles = cur.title && cur.title.split(',') || []
@@ -261,6 +264,9 @@
               const options = value.split(',').map(item => ({ text: item, title: item, value: item }))
               // res.result的值需要拆分成列表
               const allValues = res.result.reduce((pre, cur) => {
+                if (null === cur) {
+                  return pre
+                }
                 const values = cur.value.split(',')
                 const texts = cur.text && cur.text.split(',') || []
                 const titles = cur.title && cur.title.split(',') || []
@@ -325,6 +331,9 @@
                 if (this.mode === 'multiple' || this.mode === 'tags') {
                   // 标签模式，每个项都得分离
                   const allValues = this.options = res.result.reduce((pre, cur) => {
+                    if (null === cur) {
+                      return pre
+                    }
                     const values = cur.value.split(',')
                     const texts = cur.text && cur.text.split(',') || []
                     const titles = cur.title && cur.title.split(',') || []
