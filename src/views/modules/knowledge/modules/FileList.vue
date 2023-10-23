@@ -132,7 +132,7 @@ export default {
   computed: {
     downloadCompleteUrl: function () {
       return window._CONFIG['domianURL'] + this.url.downLoadUrl
-    },
+    }
   },
   data() {
     return {
@@ -210,7 +210,7 @@ export default {
           scopedSlots: { customRender: 'action' },
           align: 'center',
           width: 300,
-          fixed: 'right'
+          // fixed: 'right'
         }
       ],
       url: {
@@ -247,6 +247,7 @@ export default {
       this.loading = true
       postAction(this.url.list, {
         ...params,
+        id: this.queryParam.id,
         folderId: this.selectedIds[0]
       }).then(res => {
         if (res.success) {
