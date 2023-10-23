@@ -60,7 +60,7 @@
               <a-row :gutter="0">
                 <a-col :xl="24" :lg="24" :md="24" :sm="24">
                   <a-form-item label="">
-                    <a-input-search v-model="queryParam.folderName" allowClear placeholder="筛选目录"
+                    <a-input-search v-model="queryParam.folderName" allowClear placeholder="查找目录"
                                     style="width: 300px" @search="onSearchFolder"/>
                   </a-form-item>
                 </a-col>
@@ -85,7 +85,7 @@
             </template>
             <template v-slot:nodeTitle="props">
               <div class="dis-boxflex" :title="props.name">
-                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '' : ''}">{{
+                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '#01b683' : ''}">{{
                     props.name
                   }}
                 </div>
@@ -116,7 +116,7 @@
             </template>
             <template v-slot:nodeTitle="props">
               <div class="dis-boxflex" :title="props.name">
-                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '' : ''}">
+                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '#01b683' : ''}">
                   {{
                     props.name
                   }}
