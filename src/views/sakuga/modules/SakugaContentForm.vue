@@ -19,6 +19,19 @@
           <!--  </a-form-item>-->
           <!--</a-col>-->
           <a-col :span="24">
+            <a-form-item label="知识库测试" :labelCol="labelCol" :wrapperCol="wrapperCol">
+              <!--<j-image-upload isMultiple biz-path="picture" v-decorator="['picture']" ></j-image-upload>-->
+              <j-upload-knowledge
+                file-type="file"
+                accept="*"
+                v-decorator="['picture', validatorRules.picture]"
+                :number="200"
+                knowledge-path="默认目录,测试1,ceshi3,ceshi3-1,ceshi3-1-1"
+                :show-tags-dialog="true"
+              ></j-upload-knowledge>
+            </a-form-item>
+          </a-col>
+          <a-col :span="24">
             <a-form-item label="图片(限制200)" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <!--<j-image-upload isMultiple biz-path="picture" v-decorator="['picture']" ></j-image-upload>-->
               <j-upload
