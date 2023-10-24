@@ -233,7 +233,7 @@ export default {
   methods: {
     onHistoryOk() {
       this.loadFileData()
-      this.$emit('reload')
+      // this.$emit('reload')
     },
     loadFileData(arg) {
       if (!this.url.list) {
@@ -372,6 +372,7 @@ export default {
       deleteAction(that.url.deleteFileUrl + id).then((res) => {
         if (res.success) {
           that.$message.success(res.message);
+          that.loadFileData()
           that.$emit('reload')
         } else {
           that.$message.warning(res.message);

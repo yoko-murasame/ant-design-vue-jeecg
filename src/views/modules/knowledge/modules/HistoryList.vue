@@ -35,16 +35,16 @@
           V{{ text + 1 }}
         </template>
         <template slot="name" slot-scope="text, record, index">
-          <div style="cursor: pointer" @click="goToDetail(record)" title="点击查看">{{ text }}</div>
+          <div style="cursor: pointer;color:#40a9ff;" @click="goToDetail(record)" title="点击查看">{{ text }}</div>
         </template>
         <template slot="action" slot-scope="text, record">
           <a @click="handleRecoverVersion(record.id)">恢复至本版本</a>
           <a-divider type="vertical"/>
+          <a :href="downloadCompleteUrl+record.id + '?forceDownload=true'" target="_blank" >下载</a>
+          <a-divider type="vertical"/>
           <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
             <a>删除</a>
           </a-popconfirm>
-          <a-divider type="vertical"/>
-          <a :href="downloadCompleteUrl+record.id" target="_blank" >下载</a>
         </template>
       </a-table>
     </a-modal>
