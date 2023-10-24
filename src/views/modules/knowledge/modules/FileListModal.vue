@@ -27,12 +27,14 @@ export default {
   data() {
     return {
       modalWidth: 1000,
-      title: '文件列表',
+      title: '知识库列表',
       visible: false,
       selectedIds: [],
       queryParam: {
         folderId: null,
-        id: null
+        ids: null,
+        name: null,
+        names: null
       }
     }
   },
@@ -43,12 +45,9 @@ export default {
   mounted() {
   },
   methods: {
-    show(folderId = '', ids = []) {
-      this.selectedIds = [folderId]
-      this.queryParam = {
-        folderId: folderId,
-        id: ids.join(',')
-      }
+    show(param = { folderId: '' }) {
+      this.selectedIds = [param.folderId]
+      this.queryParam = { ...param }
       this.visible = true
     },
     handleCancel() {

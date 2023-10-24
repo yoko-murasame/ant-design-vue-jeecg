@@ -60,7 +60,7 @@
     </a-table>
 
     <!-- 历史版本 -->
-    <history-list ref="historyList" @ok="$emit('reload')"></history-list>
+    <history-list ref="historyList" @ok="onHistoryOk"></history-list>
     <!--重命名-->
     <a-modal
       v-model="renameVisible"
@@ -118,7 +118,7 @@ export default {
         // 必须重置值才会触发监听
         this.queryParam = { ...val }
       },
-      immediate: false,
+      immediate: true,
       deep: true
     },
     selectedIds: {
@@ -231,6 +231,10 @@ export default {
     }
   },
   methods: {
+    onHistoryOk() {
+      this.loadFileData()
+      this.$emit('reload')
+    },
     loadFileData(arg) {
       if (!this.url.list) {
         this.$message.error('请设置url.list属性!')
@@ -247,7 +251,6 @@ export default {
       this.loading = true
       postAction(this.url.list, {
         ...params,
-        id: this.queryParam.id,
         folderId: this.selectedIds[0]
       }).then(res => {
         if (res.success) {
@@ -352,7 +355,7 @@ export default {
       window.open(this.downloadCompleteUrl + record.id)
     },
     handleDownload(record) {
-      const url = this.downloadCompleteUrl + record.id; // 图片的URL
+      const url = this.downloadCompleteUrl + record.id + "?forceDownload=true"; // 图片的URL
       const link = document.createElement('a');
       link.href = url;
       link.download = record.name; // 下载的文件名
