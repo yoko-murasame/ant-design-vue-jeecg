@@ -20,7 +20,7 @@
       :fileList="fileList"
       :beforeUpload="doBeforeUpload"
       @change="handleChange"
-      :disabled="disabled || (knowledgePath && !knowledgeFolder)"
+      :disabled="knowledgePath ? (!knowledgeFolder || disabled) : disabled"
       :returnUrl="returnUrl"
       :listType="complistType"
       @preview="handlePreview"
