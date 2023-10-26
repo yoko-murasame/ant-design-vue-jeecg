@@ -1,0 +1,90 @@
+// 优化表单禁用效果
+/deep/ .view-mode {
+  .ant-form-item-control {
+    cursor: not-allowed !important;
+  }
+  .ant-form-item-label {
+    pointer-events: none !important;
+    label {
+      //color: rgba(51, 59, 59, 0.5) !important;
+      color: rgba(0, 0, 0, 0.5) !important;
+    }
+  }
+  input,
+  .ant-calendar-picker,
+  .ant-select,
+  .ant-select-selection {
+    border: none !important;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+  }
+}
+
+/deep/ .ant-form-item {
+  margin-bottom: 1vh;
+}
+
+// 表单form-item对齐长label
+/deep/ .ant-form-item-label {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  line-height: 20px;
+  margin-top: .8vh;
+  margin-left: 1.5vh;
+  margin-right: 1vh;
+  padding-left: 0;
+  label {
+    //这是关键
+    white-space: normal;
+    text-align: left;
+    //color: #909399;
+    //color: rgba(51, 59, 59, 0.5);
+    width: auto;
+    // padding-right: 32px;
+    font-size: 1.4vh;
+    &:after {
+      content: none !important; //解决上面的样式label后面会有空格
+    }
+  }
+  // 绝对定位必填*号
+  overflow: visible;
+  label {
+    overflow: visible;
+  }
+  .ant-form-item-required {
+    position: relative;
+    &::before {
+      display: inline-block;
+      margin-right: 4px;
+      color: #f5222d;
+      font-size: 14px;
+      font-family: SimSun, sans-serif;
+      line-height: 1;
+      content: '*';
+      position: absolute;
+      left: -12px;
+      top: 3px;
+    }
+  }
+}
+
+.fixThirdLine {
+  /deep/ .ant-form-item-label {
+    height: 60px !important;
+  }
+}
+
+.fix-three-column-long-label {
+  /deep/ .ant-form-item-label {
+    height: auto !important;
+    line-height: 16px;
+  }
+}
+
+.header {
+  text-align: center;
+  font-size: 2vh;
+  font-weight: bold;
+  margin-bottom: 1vh;
+}
