@@ -12,8 +12,12 @@
             <!--</a-col>-->
             <a-col :xl="6" :lg="6" :md="6" :sm="12">
               <a-form-item label="查找文件">
-                <a-input-search allowClear placeholder="请输入文件名称" style="width: 300px"
-                                v-model="queryParam.fileName" @search="onSearchFile"/>
+                <a-input-search
+                  allowClear
+                  placeholder="请输入文件名称"
+                  style="width: 300px"
+                  v-model="queryParam.fileName"
+                  @search="onSearchFile"/>
               </a-form-item>
             </a-col>
             <a-col :xl="6" :lg="6" :md="6" :sm="12">
@@ -30,10 +34,10 @@
               </a-form-item>
             </a-col>
             <a-col :xl="6" :lg="6" :md="6" :sm="24">
-            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="onSearchFile" icon="search">查询</a-button>
-              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-            </span>
+              <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+                <a-button type="primary" @click="onSearchFile" icon="search">查询</a-button>
+                <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+              </span>
             </a-col>
           </a-row>
         </a-form>
@@ -44,8 +48,12 @@
             <!-- <div class="box-flex">文档目录</div> -->
             <div class="flex-unshrink" style="margin-right: 1vh" v-if="show || isSearch">
               <a-button-group>
-                <a-button :disabled="false && !!selectedNode.id" title="新增" type="primary" icon="plus"
-                          @click="handleAddFolder"></a-button>
+                <a-button
+                  :disabled="false && !!selectedNode.id"
+                  title="新增"
+                  type="primary"
+                  icon="plus"
+                  @click="handleAddFolder"></a-button>
                 <a-button title="编辑" icon="edit" @click="handleEditFolder"></a-button>
                 <a-button title="删除" icon="delete" @click="deleteFolder"></a-button>
                 <a-button title="刷新" icon="reload" @click="onSearchFolder"></a-button>
@@ -60,8 +68,12 @@
               <a-row :gutter="0">
                 <a-col :xl="24" :lg="24" :md="24" :sm="24">
                   <a-form-item label="">
-                    <a-input-search v-model="queryParam.folderName" allowClear placeholder="查找目录"
-                                    style="width: 100%" @search="onSearchFolder"/>
+                    <a-input-search
+                      v-model="queryParam.folderName"
+                      allowClear
+                      placeholder="查找目录"
+                      style="width: 100%"
+                      @search="onSearchFolder"/>
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -89,15 +101,17 @@
                   {{ props.name }}
                 </div>
                 <div class="flex-unshrink dis-boxflex justify-between" style="flex-basis: 7vh">
-                  <span :title="`子目录${props.childFolderSize}个`"
-                        style="flex-basis: 3vh"
-                        v-if="props.childFolderSize">
+                  <span
+                    :title="`子目录${props.childFolderSize}个`"
+                    style="flex-basis: 3vh"
+                    v-if="props.childFolderSize">
                     <a-icon type="folder-open"/> {{ props.childFolderSize }}
                   </span>
                   <span v-else style="display: inline-block;width: 1vh"></span>
-                  <span :title="`子文件${props.childFileSize}个`"
-                        style="flex-basis: 4vh"
-                        v-if="props.childFileSize">
+                  <span
+                    :title="`子文件${props.childFileSize}个`"
+                    style="flex-basis: 4vh"
+                    v-if="props.childFileSize">
                     <a-icon type="file-text"/> {{ props.childFileSize }}
                   </span>
                 </div>
@@ -124,14 +138,22 @@
             <template v-slot:nodeTitle="props">
               <div class="dis-boxflex" :title="props.name" :style="{ backgroundColor: searchResult.includes(props.id) ? 'rgba(186,231,255,.3)' : ''}">
                 <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '#01b683' : ''}">
-                  {{
-                    props.name
-                  }}
+                  {{ props.name }}
                 </div>
-                <div class="flex-unshrink">
-                  {{
-                    props.childFolderSize && props.childFolderSize > 0 ? '子目录 ' + props.childFolderSize : ''
-                  }}&nbsp;{{ props.childFileSize && props.childFileSize > 0 ? '子文件 ' + props.childFileSize : '' }}
+                <div class="flex-unshrink dis-boxflex justify-between" style="flex-basis: 7vh">
+                  <span
+                    :title="`子目录${props.childFolderSize}个`"
+                    style="flex-basis: 3vh"
+                    v-if="props.childFolderSize">
+                    <a-icon type="folder-open"/> {{ props.childFolderSize }}
+                  </span>
+                  <span v-else style="display: inline-block;width: 1vh"></span>
+                  <span
+                    :title="`子文件${props.childFileSize}个`"
+                    style="flex-basis: 4vh"
+                    v-if="props.childFileSize">
+                    <a-icon type="file-text"/> {{ props.childFileSize }}
+                  </span>
                 </div>
               </div>
             </template>
@@ -168,11 +190,12 @@
       </a-row>
     </a-card>
     <folder-modal ref="folderModal" @ok="folderModalFormOk(arguments)"></folder-modal>
+    <folder-user-permission-modal ref="userPermissionModal" @ok="folderModalFormOk(arguments)"></folder-user-permission-modal>
   </div>
 </template>
 
 <script>
-import { deleteAction, getAction, postAction, putAction } from '@/api/manage'
+import { deleteAction, getAction, postAction } from '@/api/manage'
 import { ACCESS_TOKEN, BUSINESS_ID } from '@/store/mutation-types'
 import { union } from 'lodash'
 import Vue from 'vue'
@@ -180,13 +203,15 @@ import folderConfig from './modules/folderConfig'
 import FolderModal from './modules/FolderModal'
 import HistoryList from './modules/HistoryList'
 import FileList from '@views/modules/knowledge/modules/FileList'
+import FolderUserPermissionModal from '@views/modules/knowledge/modules/FolderUserPermissionModal'
 
 export default {
   name: 'Knowledge',
   components: {
     FolderModal,
     HistoryList,
-    FileList
+    FileList,
+    FolderUserPermissionModal
   },
   data() {
     return {
@@ -229,11 +254,15 @@ export default {
     }
   },
   mounted() {
-    this.loadAllTree();
+    this.loadAllTree()
   },
   methods: {
     openAuthModel() {
-
+      if (!this.selectedNode.id) {
+        this.$message.warn('请选择目录！')
+        return
+      }
+      this.$refs.userPermissionModal.edit(this.selectedNode)
     },
     searchReset() {
       this.queryParam = {
@@ -268,48 +297,48 @@ export default {
      * 手动加载到指定树层级的数据
      */
     loadSearchFolderTree(folderTreeId) {
-      const that = this;
+      const that = this
       return new Promise(async resolve => {
-        let curNode = that.treeData;
+        let curNode = that.treeData
         for (let folderId of folderTreeId) {
-          const folder = curNode && curNode.filter(item => item.id === folderId)[0];
+          const folder = curNode && curNode.filter(item => item.id === folderId)[0]
           if (!folder) {
-            break;
+            break
           }
           if (!(folder.children && folder.children.length)) {
-            await that.onLoadChildrenData({ dataRef: folder }, false);
+            await that.onLoadChildrenData({ dataRef: folder }, false)
           }
-          curNode = folder.children;
+          curNode = folder.children
         }
-        resolve(that.treeData);
-      });
+        resolve(that.treeData)
+      })
     },
     loadAllTree(flag = true) {
-      this.selectedIds = [];
-      this.searchResult = [];
-      this.$refs.fileList.dataSource = [];
+      this.selectedIds = []
+      this.searchResult = []
+      this.$refs.fileList.dataSource = []
       if (!flag) {
-        this.show = false;
-        this.isSearch = false;
+        this.show = false
+        this.isSearch = false
       } else {
-        this.show = false;
-        this.isSearch = false;
-        this.getTreeRootData().then((treeNode) => this.show = true)
+        this.show = false
+        this.isSearch = false
+        this.getTreeRootData().then(() => (this.show = true))
       }
     },
     onSearchFolder(folderName, folderId) {
       if (!this[BUSINESS_ID]) {
-        this.$message.info('请选择项目！');
-        return;
+        this.$message.info('请选择项目！')
+        return
       }
       folderName = folderName || this.queryParam.folderName
       if (typeof folderId !== 'string') {
-        folderId = '';
+        folderId = ''
       }
       if (!folderId && (!folderName || typeof folderName !== 'string')) {
-        console.log('onSearchFolder clear', folderName);
-        this.loadAllTree();
-        return;
+        console.log('onSearchFolder clear', folderName)
+        this.loadAllTree()
+        return
       }
       getAction(`${this.url.searchFolder}`, {
         businessId: this[BUSINESS_ID],
@@ -317,36 +346,36 @@ export default {
         folderId
       }).then(res => {
         if (res.success) {
-          this.selectedIds = [];
+          this.selectedIds = []
           this.expandedKeys = res.result.reduce((pre, cur) => {
-            this.selectedIds.push(cur.folder.id);
+            this.selectedIds.push(cur.folder.id)
             return union(pre, cur.folderTreeId)
-          }, []);
+          }, [])
           this.searchResult = [...this.selectedIds]
-          console.log('onSearchFolder', folderName, res, this.selectedIds, this.expandedKeys);
-          this.isSearch = false;
-          this.isSearch = !!(folderName && folderName.trim());
-          this.show = !this.isSearch;
-          this.multiple = this.isSearch;
+          console.log('onSearchFolder', folderName, res, this.selectedIds, this.expandedKeys)
+          this.isSearch = false
+          this.isSearch = !!(folderName && folderName.trim())
+          this.show = !this.isSearch
+          this.multiple = this.isSearch
         } else {
           this.$notification.error({
             message: '出错提示',
             description: res.message
-          });
+          })
         }
-      });
+      })
     },
     onSearchFile() {
       if (!this[BUSINESS_ID]) {
-        this.$message.info('请选择项目！');
-        return;
+        this.$message.info('请选择项目！')
+        return
       }
       this.queryParam.folderName = ''
       const fileName = this.queryParam.fileName
       const tags = this.queryParam.tags
       if (!tags && (typeof fileName !== 'string' || !fileName)) {
-        this.loadAllTree();
-        return;
+        this.loadAllTree()
+        return
       }
       getAction(`${this.url.searchFile}`, {
         businessId: this[BUSINESS_ID],
@@ -354,24 +383,24 @@ export default {
         tags
       }).then(res => {
         if (res.success) {
-          this.selectedIds = [];
+          this.selectedIds = []
           this.expandedKeys = res.result.reduce((pre, cur) => {
-            this.selectedIds.push(cur.file.folderId);
+            this.selectedIds.push(cur.file.folderId)
             return union(pre, cur.folderTreeId)
-          }, []);
+          }, [])
           this.searchResult = [...this.selectedIds]
           console.log('onSearchFile', fileName, res, this.selectedIds, this.expandedKeys)
-          this.isSearch = false;
-          this.isSearch = !!(fileName && fileName.trim()) || !!(tags && tags.trim());
-          this.show = !this.isSearch;
-          this.multiple = this.isSearch;
+          this.isSearch = false
+          this.isSearch = !!(fileName && fileName.trim()) || !!(tags && tags.trim())
+          this.show = !this.isSearch
+          this.multiple = this.isSearch
         } else {
           this.$notification.error({
             message: '出错提示',
             description: res.message
-          });
+          })
         }
-      });
+      })
     },
     /**
      * 选中节点的操作
@@ -382,10 +411,10 @@ export default {
      * 5.搜索结果高亮了多个选中项时，加载指定选中项的数据
      */
     onSelectThis(selectedKeys, e) {
-      this.selectedIds = selectedKeys;
-      this.selectedNode = e.selectedNodes && e.selectedNodes.length > 0 ? e.node.dataRef : {};
-      this.debug && console.log(selectedKeys, e);
-      this.debug && console.log(this.selectedNode);
+      this.selectedIds = selectedKeys
+      this.selectedNode = e.selectedNodes && e.selectedNodes.length > 0 ? e.node.dataRef : {}
+      this.debug && console.log(selectedKeys, e)
+      this.debug && console.log(this.selectedNode)
       // this.debug && console.log('展开的id | 选中的id:', this.expandedKeys, this.selectedIds, this.$refs.tree);
       if (e.selected) {
         // e.node.dataRef &&
@@ -403,9 +432,9 @@ export default {
       !e.selected && e.node.expanded && e.node.dataRef && e.node.dataRef.childFolderSize && e.node.onExpand()
       // 处理搜索时，高亮了多个搜索结果，点击其中一个结果然后加载列表
       if (e.selectedNodes && e.selectedNodes.length > 1) {
-        console.log('加载选择的搜索项', selectedKeys, e);
-        this.multiple = false;
-        this.selectedIds = [e.node.dataRef.id];
+        console.log('加载选择的搜索项', selectedKeys, e)
+        this.multiple = false
+        this.selectedIds = [e.node.dataRef.id]
       }
       console.log('选中节点', selectedKeys, this.$refs.tree, this.selectedNode, this.selectedIds, this.expandedKeys)
     },
@@ -434,7 +463,7 @@ export default {
               this.selectedIds = [res.result[0].id]
               this.selectedNode = res.result[0]
             }
-            this.debug && console.log('展开的id | 选中的id:', this.expandedKeys, this.selectedIds);
+            this.debug && console.log('展开的id | 选中的id:', this.expandedKeys, this.selectedIds)
             // 展开到指定层级目录
             this.loadExpandedKeys(this.selectedIds[0])
             .then(paths => this.loadSearchFolderTree(paths))
@@ -458,22 +487,22 @@ export default {
     onLoadChildrenData(treeNode, cacheFlag = true) {
       return new Promise(resolve => {
         // 默认初始第一个节点
-        const { dataRef } = treeNode || { dataRef: this.treeData[0] };
+        const { dataRef } = treeNode || { dataRef: this.treeData[0] }
         // 修复展开根目录后，收起再展开会导致列表异常（dataRef指向相同，但是不知道为什么没有缓存结果，因此直接放行）
         if (cacheFlag && treeNode && dataRef.children && dataRef.children.length) {
-          resolve();
+          resolve()
           return
         }
         getAction('/technical/folder/findChild?parentId=' + dataRef.id).then(res => {
           if (res.success) {
-            this.debug && console.log('onLoadChildrenData', treeNode, dataRef, this.selectedIds);
+            this.debug && console.log('onLoadChildrenData', treeNode, dataRef, this.selectedIds)
             const result = res.result.map(item => {
               item.scopedSlots = { title: 'nodeTitle', icon: 'customIcon' }
               // 判断节点是否包含子目录，不包含时不去请求
               item.isLeaf = item.childFolderSize === 0
               return item
-            });
-            this.$set(dataRef, 'children', result);
+            })
+            this.$set(dataRef, 'children', result)
             resolve(result)
           } else {
             this.$notification.error({
@@ -569,12 +598,12 @@ export default {
       this.debug && console.log(e)
       // 上传进度显示
       if (e.event) {
-        let baifenbi = parseInt(e.event.loaded * 100 / e.event.total) + '%';
+        let baifenbi = parseInt(e.event.loaded * 100 / e.event.total) + '%'
         this.$message.loading({
           content: '上传进度：' + baifenbi,
           key: 'uploadProcess',
           duration: 2
-        });
+        })
       }
       let fileList = [...e.fileList]
       let responseArr = []
@@ -596,14 +625,14 @@ export default {
       }
       this.debug && console.log(errorArr)
       this.debug && console.log(responseArr)
-      if (errorArr.length > 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
+      if (errorArr.length > 0 && responseArr.length > 0 && responseArr.length === fileList.length) {
         this.$notification.error({
           message: '出错提示',
           description: errorArr.join(' \n '),
           duration: null
         })
         this.fileList = []
-      } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
+      } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length === fileList.length) {
         this.$message.success('文件上传成功')
         this.fileList = []
         this.loadAllTree()
@@ -634,12 +663,12 @@ export default {
       }
       this.debug && console.log(errorArr)
       this.debug && console.log(responseArr)
-      if (errorArr.length > 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
+      if (errorArr.length > 0 && responseArr.length > 0 && responseArr.length === fileList.length) {
         this.$notification.error({
           message: '出错提示',
           description: errorArr.join(' \n')
         })
-      } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length == fileList.length) {
+      } else if (errorArr.length <= 0 && responseArr.length > 0 && responseArr.length === fileList.length) {
         this.$message.success('文件上传成功')
         this.loadAllTree()
       }

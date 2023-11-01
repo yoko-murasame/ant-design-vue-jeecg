@@ -84,6 +84,8 @@
       "parser": "babel-eslint"
     },
     "rules": {
+      "no-unused-vars": "off",
+      "prefer-promise-reject-errors": "off",
       "generator-star-spacing": "off",
       "no-mixed-operators": 0,
       "vue/max-attributes-per-line": [
@@ -111,7 +113,7 @@
         "off",
         2
       ],
-      "no-console": 0,
+      "no-console": "warn",
       "space-before-function-paren": 0
     }
   },
