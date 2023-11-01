@@ -11,14 +11,17 @@
       @change="handleTableChange"
     >
       <template v-slot:nameSlot="text, record">
-        <a-button
-          type="link"
-          @click="handlePreview(record)"
-          :title="text"
-          class="button-ellipsis"
-          style="width: 100%; padding: 0;"
-        >{{ text }}
-        </a-button>
+        <!--<a-button-->
+        <!--  type="link"-->
+        <!--  @click="handlePreview(record)"-->
+        <!--  :title="text"-->
+        <!--  class="button-ellipsis"-->
+        <!--  style="width: 100%; padding: 0;"-->
+        <!--&gt;{{ text }}-->
+        <!--</a-button>-->
+        <div @click="handlePreview(record)" :title="text" class="button-ellipsis file-name">
+          {{ text }}
+        </div>
       </template>
 
       <template v-slot:tagsSlot="tags, row">
@@ -389,3 +392,13 @@ export default {
   }
 }
 </script>
+<style scoped lang="less">
+.file-name {
+  width: 100%;
+  padding: 0;
+  color: #1890FF;
+  &:hover {
+    cursor: pointer;
+  }
+}
+</style>
