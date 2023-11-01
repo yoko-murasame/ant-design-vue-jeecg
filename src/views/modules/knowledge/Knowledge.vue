@@ -49,6 +49,7 @@
                 <a-button title="编辑" icon="edit" @click="handleEditFolder"></a-button>
                 <a-button title="删除" icon="delete" @click="deleteFolder"></a-button>
                 <a-button title="刷新" icon="reload" @click="onSearchFolder"></a-button>
+                <a-button v-has="'KNOWLEDGE_FOLDER_USER_AUTH_BUTTON'" title="用户授权" icon="user-add" @click="openAuthModel"></a-button>
               </a-button-group>
               <a-button-group v-show="false" style="margin-left: 12px">
                 <a-button icon="arrow-up" @click="handleUp"></a-button>
@@ -84,14 +85,21 @@
             </template>
             <template v-slot:nodeTitle="props">
               <div class="dis-boxflex" :title="props.name">
-                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '#01b683' : ''}">{{
-                    props.name
-                  }}
+                <div class="box-flex ellipsis" :style="{color: props.childFileSize > 0 ? '#01b683' : ''}">
+                  {{ props.name }}
                 </div>
-                <div class="flex-unshrink">
-                  {{
-                    props.childFolderSize && props.childFolderSize > 0 ? '子目录 ' + props.childFolderSize : ''
-                  }}{{ props.childFileSize && props.childFileSize > 0 ? '&nbsp子文件 ' + props.childFileSize : '' }}
+                <div class="flex-unshrink dis-boxflex justify-between" style="flex-basis: 7vh">
+                  <span :title="`子目录${props.childFolderSize}个`"
+                        style="flex-basis: 3vh"
+                        v-if="props.childFolderSize">
+                    <a-icon type="folder-open"/> {{ props.childFolderSize }}
+                  </span>
+                  <span v-else style="display: inline-block;width: 1vh"></span>
+                  <span :title="`子文件${props.childFileSize}个`"
+                        style="flex-basis: 4vh"
+                        v-if="props.childFileSize">
+                    <a-icon type="file-text"/> {{ props.childFileSize }}
+                  </span>
                 </div>
               </div>
             </template>
@@ -224,6 +232,9 @@ export default {
     this.loadAllTree();
   },
   methods: {
+    openAuthModel() {
+
+    },
     searchReset() {
       this.queryParam = {
         folderName: null,
