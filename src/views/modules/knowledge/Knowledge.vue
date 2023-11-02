@@ -10,7 +10,7 @@
             <!--    <a-input-search allowClear placeholder="请输入目录名称" style="width: 300px" v-model="queryParam.folderName" @search="onSearchFolder"/>-->
             <!--  </a-form-item>-->
             <!--</a-col>-->
-            <a-col :xl="6" :lg="6" :md="6" :sm="12">
+            <a-col :xl="6" :lg="10" :md="10" :sm="24">
               <a-form-item label="查找文件">
                 <a-input-search
                   allowClear
@@ -20,7 +20,7 @@
                   @search="onSearchFile"/>
               </a-form-item>
             </a-col>
-            <a-col :xl="6" :lg="6" :md="6" :sm="12">
+            <a-col :xl="6" :lg="9" :md="9" :sm="24">
               <a-form-item label="文件标签">
                 <j-search-select-tag
                   keep-input
@@ -33,7 +33,7 @@
                 />
               </a-form-item>
             </a-col>
-            <a-col :xl="6" :lg="6" :md="6" :sm="24">
+            <a-col :xl="6" :lg="4" :md="4" :sm="24">
               <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
                 <a-button type="primary" @click="onSearchFile" icon="search">查询</a-button>
                 <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>

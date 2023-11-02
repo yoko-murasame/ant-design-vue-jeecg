@@ -15,6 +15,7 @@
           <a-form :form="form" slot="detail">
             <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="选中目录" hasFeedback>
               <j-search-select-tag
+                disabled
                 v-decorator="['folderId', validatorRules.folderId]"
                 placeholder="请选择目录"
                 dict="technical_folder,name,id"
@@ -22,10 +23,10 @@
                 :pageSize="1"
               />
             </a-form-item>
-            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="个人可见授权" hasFeedback>
+            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="个人可见授权">
               <j-select-user-by-dep :multi="true" v-decorator="['usernames']" />
             </a-form-item>
-            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="全部可见授权" hasFeedback>
+            <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="全部可见授权">
               <j-select-user-by-dep :multi="true" v-decorator="['superUsernames']" />
             </a-form-item>
           </a-form>
@@ -45,7 +46,7 @@ export default {
   data() {
     return {
       modalWidth: 1000,
-      title: '操作',
+      title: '目录授权',
       visible: false,
       disableSubmit: false,
       model: {},
@@ -84,8 +85,9 @@ export default {
       .then(res => {
         if (res.success) {
           const result = res.result || []
-          const usernames = result.map(e => e.username).join(',')
-          const superUsernames = result.filter(e => e.dataPermissionType === 'KNOWLEDGE_FOLDER_USER_FULL')
+          const usernames = result.filter(e => e.dataPermissionType === 'PERSONAL')
+                .map(e => e.username).join(',')
+          const superUsernames = result.filter(e => e.dataPermissionType === 'FULL')
                 .map(e => e.username).join(',')
           this.model = {
             folderId: record.id,

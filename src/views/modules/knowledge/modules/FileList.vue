@@ -26,11 +26,15 @@
 
       <template v-slot:tagsSlot="tags, row">
         <template v-if="tags">
-          <a-tag v-for="(tag, idx) in tags.split(',')"
-                 :title="tag" :key="tag + idx"
-                 style="margin-right: .2vh !important;"
-                 :color="getTagColor(tag)">{{ tag }}
-          </a-tag>
+          <div class="file-tags">
+            <a-tag
+              v-for="(tag, idx) in tags.split(',')"
+              :title="tag"
+              :key="tag + idx"
+              style="margin-right: .2vh !important;"
+              :color="getTagColor(tag)">{{ tag }}
+            </a-tag>
+          </div>
         </template>
         <span v-else>暂无标签</span>
       </template>
@@ -166,24 +170,34 @@ export default {
           // width: 380
           // width: 280,
         },
-        // {
-        //   title: '上传人',
-        //   align: 'center',
-        //   width: 100,
-        //   dataIndex: 'uploadBy'
-        // },
-        // {
-        //   title: '类型',
-        //   align: 'center',
-        //   dataIndex: 'suffix',
-        //   width: 100
-        // },
+        {
+          title: '版本',
+          align: 'center',
+          width: 100,
+          dataIndex: 'version',
+          customRender: function (t, r, index) {
+            return 'V' + (r.version + 1)
+          }
+        },
         {
           title: '文件大小',
           align: 'center',
           width: 100,
           dataIndex: 'size'
         },
+        {
+          title: '上传人',
+          align: 'center',
+          width: 100,
+          dataIndex: 'uploadBy'
+        },
+        // {
+        //   title: '类型',
+        //   align: 'center',
+        //   dataIndex: 'suffix',
+        //   width: 100
+        // },
+
         {
           title: '标签',
           align: 'center',
@@ -198,21 +212,12 @@ export default {
         //   dataIndex: 'createTime'
         // },
         {
-          title: '版本',
-          align: 'center',
-          width: 100,
-          dataIndex: 'version',
-          customRender: function (t, r, index) {
-            return 'V' + (r.version + 1)
-          }
-        },
-        {
           title: '操作',
           dataIndex: 'action',
           // fixed: 'right',
           scopedSlots: { customRender: 'action' },
           align: 'center',
-          width: 300,
+          width: '22vh'
           // fixed: 'right'
         }
       ],
@@ -278,7 +283,7 @@ export default {
         putAction(`${this.url.reTags}?fileId=${this.tagsFile.id}&tags=${this.tags}`)
         .then(res => {
           if (res.success) {
-            this.$message.success('操作成功');
+            this.$message.success('操作成功')
             this.loadFileData()
           } else {
             this.$message.error('操作失败：', res.message)
@@ -306,7 +311,7 @@ export default {
         putAction(`${this.url.rename}?fileId=${this.renameFile.id}&name=${this.rename}`)
         .then(res => {
           if (res.success) {
-            this.$message.success('操作成功');
+            this.$message.success('操作成功')
             this.loadFileData()
           } else {
             this.$message.error('操作失败：', res.message)
@@ -358,29 +363,29 @@ export default {
       window.open(this.downloadCompleteUrl + record.id)
     },
     handleDownload(record) {
-      const url = this.downloadCompleteUrl + record.id + "?forceDownload=true"; // 图片的URL
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = record.name; // 下载的文件名
-      link.target = '_blank'; // 在新窗口中打开下载链接（可选）
-      link.click();
-      link.remove();
+      const url = this.downloadCompleteUrl + record.id + '?forceDownload=true' // 图片的URL
+      const link = document.createElement('a')
+      link.href = url
+      link.download = record.name // 下载的文件名
+      link.target = '_blank' // 在新窗口中打开下载链接（可选）
+      link.click()
+      link.remove()
     },
     /**
      * 删除文件
      * @param id
      */
     deleteFile(id) {
-      let that = this;
+      let that = this
       deleteAction(that.url.deleteFileUrl + id).then((res) => {
         if (res.success) {
-          that.$message.success(res.message);
+          that.$message.success(res.message)
           that.loadFileData()
           that.$emit('reload')
         } else {
-          that.$message.warning(res.message);
+          that.$message.warning(res.message)
         }
-      });
+      })
     },
     getTagColor(tag) {
       if (!this.queryParam.tags) {
@@ -388,17 +393,23 @@ export default {
       }
       const tags = this.queryParam.tags.split(',')
       return tags.includes(tag) ? 'green' : ''
-    },
+    }
   }
 }
 </script>
 <style scoped lang="less">
 .file-name {
-  width: 100%;
+  width: auto;
+  max-width: 35vh;
   padding: 0;
   color: #1890FF;
+  overflow: hidden;
+  text-overflow: ellipsis;
   &:hover {
     cursor: pointer;
   }
+}
+.file-tags {
+  width: auto;
 }
 </style>
