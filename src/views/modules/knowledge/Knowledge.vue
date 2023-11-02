@@ -15,7 +15,7 @@
                 <a-input-search
                   allowClear
                   placeholder="请输入文件名称"
-                  style="width: 300px"
+                  style="width: 100%"
                   v-model="queryParam.fileName"
                   @search="onSearchFile"/>
               </a-form-item>

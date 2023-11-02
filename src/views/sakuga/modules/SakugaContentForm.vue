@@ -26,7 +26,7 @@
                 accept="*"
                 v-decorator="['picture', validatorRules.picture]"
                 :number="200"
-                knowledge-path="默认目录,测试1,ceshi3,ceshi3-1,ceshi3-1-1"
+                knowledge-path="测试-1,测试-1-1,测试-1-1-1"
                 :show-tags-dialog="true"
               ></j-upload-knowledge>
             </a-form-item>
@@ -212,17 +212,17 @@ export default {
   },
   created () {
     // 如果是流程中表单，则需要加载流程表单data
-    this.showFlowData();
+    this.showFlowData()
   },
   methods: {
     getFileAccessHttpUrl(avatar, subStr) {
       if (!subStr) subStr = 'http'
       try {
         if (avatar && avatar.startsWith(subStr)) {
-          return avatar;
+          return avatar
         } else {
           if (avatar &&　avatar.length > 0 && avatar.indexOf('[') == -1) {
-            return window._CONFIG['staticDomainURL'] + '/' + avatar;
+            return window._CONFIG['staticDomainURL'] + '/' + avatar
           }
         }
       } catch (err) {
@@ -239,12 +239,12 @@ export default {
       this.videoUrl && this.$nextTick(() => this.$refs.VueAliplayerV2.play())
     },
     add () {
-      this.edit({});
+      this.edit({})
     },
     edit (record) {
-      this.form.resetFields();
-      this.model = Object.assign({}, record);
-      this.visible = true;
+      this.form.resetFields()
+      this.model = Object.assign({}, record)
+      this.visible = true
       if (record.video) {
         this.videoUrl = this.getFileAccessHttpUrl(record.video.split(',')[0])
       }
@@ -255,40 +255,40 @@ export default {
     // 渲染流程表单数据
     showFlowData() {
       if (this.formBpm === true) {
-        let params = { id: this.formData.dataId };
+        let params = { id: this.formData.dataId }
         getAction(this.url.queryById, params).then((res) => {
           if (res.success) {
-            this.edit(res.result);
+            this.edit(res.result)
           }
-        });
+        })
       }
     },
     submitForm () {
-      const that = this;
+      const that = this
       // 触发表单验证
       this.form.validateFields((err, values) => {
         if (!err) {
-          that.confirmLoading = true;
-          let httpurl = '';
-          let method = '';
+          that.confirmLoading = true
+          let httpurl = ''
+          let method = ''
           if (!this.model.id) {
-            httpurl += this.url.add;
-            method = 'post';
+            httpurl += this.url.add
+            method = 'post'
           } else {
-            httpurl += this.url.edit;
-            method = 'put';
+            httpurl += this.url.edit
+            method = 'put'
           }
-          let formData = Object.assign(this.model, values);
+          let formData = Object.assign(this.model, values)
           console.log('表单提交数据', formData)
           httpAction(httpurl, formData, method).then((res) => {
             if (res.success) {
-              that.$message.success(res.message);
-              that.$emit('ok');
+              that.$message.success(res.message)
+              that.$emit('ok')
             } else {
-              that.$message.warning(res.message);
+              that.$message.warning(res.message)
             }
           }).finally(() => {
-            that.confirmLoading = false;
+            that.confirmLoading = false
           })
         }
       })
