@@ -74,7 +74,9 @@
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "browser": true,
+      "es6": true
     },
     "extends": [
       "plugin:vue/strongly-recommended",
