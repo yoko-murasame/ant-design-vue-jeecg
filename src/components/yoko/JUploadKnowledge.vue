@@ -11,16 +11,16 @@
     <!--  ---------------------------- end 图片左右换位置 ------------------------------------- -->
 
     <a-upload
-      name="file"
+      :name="knowledgePath ? 'multipartFiles' : 'file'"
       :multiple="multiple"
       :accept="acceptType"
-      :action="customUploadAction || uploadAction"
+      :action="knowledgePath ? knowledgeUploadAction : (customUploadAction || uploadAction)"
       :headers="headers"
-      :data="{'biz':bizPath}"
+      :data="{'biz':bizPath,'folderId': knowledgeFolder && knowledgeFolder.id}"
       :fileList="fileList"
       :beforeUpload="doBeforeUpload"
       @change="handleChange"
-      :disabled="disabled"
+      :disabled="knowledgePath ? (!knowledgeFolder || disabled) : disabled"
       :returnUrl="returnUrl"
       :listType="complistType"
       @preview="handlePreview"
@@ -28,12 +28,29 @@
       :class="{'uploadty-disabled':disabled}">
       <template>
         <div v-if="isImageComp">
-          <a-icon type="plus" />
-          <div class="ant-upload-text">{{ text }}</div>
+          <template>
+            <a-icon type="plus" />
+            <div class="ant-upload-text">{{ text }}</div>
+          </template>
+          <template v-if="knowledgePath && knowledgeFolder">
+            <div @click.prevent.stop="openTagsDialog()" class="ant-upload-text knowledge-pic"><a-icon type="read" style="margin-right: .2vh" />{{ '知识库' }}</div>
+          </template>
         </div>
-        <a-button v-else-if="buttonVisible">
-          <a-icon type="upload" />{{ text }}
-        </a-button>
+        <template v-else-if="buttonVisible">
+          <template v-if="knowledgePath && knowledgeFolder">
+            <a-dropdown-button placement="topRight">
+              <a-icon type="upload" />
+              {{ text }}
+              <a-menu slot="overlay" @click="openTagsDialog()">
+                <a-menu-item key="1"><a-icon type="read" />知识库</a-menu-item>
+              </a-menu>
+              <a-icon slot="icon" type="more" />
+            </a-dropdown-button>
+          </template>
+          <a-button v-else>
+            <a-icon type="upload" />{{ text }}
+          </a-button>
+        </template>
         <div v-if="!buttonVisible && !fileList.length" style="padding: 4px 11px">
           暂无数据
         </div>
@@ -42,6 +59,7 @@
     <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
       <img alt="example" style="width: 100%" :src="previewImage" />
     </a-modal>
+    <file-list-modal v-if="knowledgePath" ref="fileListModal"></file-list-modal>
   </div>
 </template>
 
@@ -49,12 +67,14 @@
 
   import Vue from 'vue'
   import { ACCESS_TOKEN } from '@/store/mutation-types'
-  import { getFileAccessHttpUrl } from '@/api/manage'
+  import { getFileAccessHttpUrl, postAction } from '@/api/manage'
   import ImageZipCompressMixin, {
     FILE_TYPE_ALL,
     FILE_TYPE_IMG,
     FILE_TYPE_VIDEO
   } from '@/components/yoko/mixins/ImageZipCompressMixin'
+  import FileListModal from '@views/modules/knowledge/modules/FileListModal'
+  import { debounce } from 'lodash'
 
   const uidGenerator = () => {
     return '-' + parseInt(Math.random() * 10000 + 1, 10)
@@ -67,11 +87,15 @@
     return path.substring(path.lastIndexOf('/') + 1)
   }
   export default {
-    name: 'JUpload',
+    name: 'JUploadKnowledge',
+    components: { FileListModal},
     mixins: [ImageZipCompressMixin],
     data() {
       return {
         uploadAction: window._CONFIG['domianURL'] + '/sys/common/upload',
+        knowledgeUploadAction: window._CONFIG['domianURL'] + '/technical/file/upload',
+        checkKnowledgePathUrl: window._CONFIG['domianURL'] + '/technical/folder/queryTreeLastNodeByFolderTreeNames',
+        knowledgeFolder: null,
         headers: {},
         fileList: [],
         newFileList: [],
@@ -90,6 +114,22 @@
       }
     },
     props: {
+      /**
+       * 知识库存储路径 例如：技术,技术文档,高科技
+       */
+      knowledgePath: {
+        type: String,
+        required: false,
+        default: ''
+      },
+      /**
+       * 是否打开标签管理弹窗
+       */
+      showTagsDialog: {
+        type: Boolean,
+        required: false,
+        default: true
+      },
       acceptType: {
         type: String,
         required: false,
@@ -180,8 +220,10 @@
         }
       }
     },
-    created() {
+    async created() {
       const token = Vue.ls.get(ACCESS_TOKEN)
+      await this.checkKnowledgePath()
+      this.openTagsDialog = debounce(this.openTagsDialog, 300)
       // ---------------------------- begin 图片左右换位置 -------------------------------------
       this.headers = { 'X-Access-Token': token }
       this.containerId = 'container-ty-' + new Date().getTime()
@@ -189,6 +231,64 @@
     },
 
     methods: {
+      openTagsDialog(ids = [], flag = true) {
+        if (!flag) {
+          return
+        }
+        if (!this.knowledgePath || !this.knowledgeFolder) {
+          return
+        }
+        if (this.fileList.filter(item => item.status !== 'done').length) {
+          console.log('openTagsDialog::等待多文件列表完成', this.fileList)
+          return
+        }
+        let param
+        // 直接打开关联知识库列表，根据当前包含的文件名筛选
+        if (!ids.length) {
+          param = {
+            folderId: this.knowledgeFolder.id,
+            name: this.returnUrl ? this.value : null,
+            names: this.returnUrl ? null : this.newFileList.map(e => e.fileName)
+          }
+          this.$refs.fileListModal.show(param)
+          return
+        }
+        // 新上传的文件
+        if (this.showTagsDialog) {
+          param = {
+            folderId: this.knowledgeFolder.id,
+            ids: ids
+          }
+          const that = this
+          this.$confirm({
+            title: '提示',
+            content: '文件已上传至知识库，是否前往标签管理？',
+            okText: '确定',
+            cancelText: '取消',
+            onOk: () => that.$refs.fileListModal.show(param)
+          })
+        }
+      },
+      /**
+       * 如果配置了知识库路径，则需要检查知识库路径是否存在
+       */
+      async checkKnowledgePath() {
+        if (this.knowledgePath) {
+          const { success, result, message }  = await postAction(this.checkKnowledgePathUrl, { folderTreeNames: this.knowledgePath })
+          const errMsg = '知识库路径不存在，请重新配置'
+          if (success) {
+            if (result && result.length > 0) {
+              this.knowledgeFolder = result[0]
+            } else {
+              this.$message.error(errMsg)
+              throw new Error(errMsg)
+            }
+          } else {
+            this.$message.error(message)
+            throw new Error(message)
+          }
+        }
+      },
       initFileListArr(val) {
         if (!val || val.length == 0) {
           this.fileList = []
@@ -235,18 +335,28 @@
         }
         this.fileList = fileList
       },
-      handlePathChange() {
+      handlePathChange(info) {
         let uploadFiles = this.fileList
         let path = ''
         if (!uploadFiles || uploadFiles.length == 0) {
           path = ''
         }
         let arr = []
+        let ids = []
+
 
         for (var a = 0; a < uploadFiles.length; a++) {
           // update-begin-author:lvdandan date:20200603 for:【TESTA-514】【开源issue】多个文件同时上传时，控制台报错
           if (uploadFiles[a].status === 'done') {
-            arr.push(uploadFiles[a].response.message)
+            let filePath
+            if (this.knowledgePath && this.knowledgeFolder && uploadFiles[a].response.result) {
+              const { id, ossFile } = uploadFiles[a].response.result[0]
+              filePath = ossFile.url
+              ids.push(id)
+            } else {
+              filePath = uploadFiles[a].response.message
+            }
+            arr.push(filePath)
           } else {
             return
           }
@@ -256,6 +366,8 @@
           path = arr.join(this.splitChar)
         }
         this.$emit('change', path)
+        this.openTagsDialog(ids, info.file.status === 'done')
+        console.log('handlePathChange', path, ids, uploadFiles)
       },
       doBeforeUpload(file) {
         this.uploadGoOn = true
@@ -283,14 +395,27 @@
           if (this.number > 0) {
             fileList = fileList.slice(-this.number)
           }
+          let newTarget
           if (info.file.response.success) {
             fileList = fileList.map((file) => {
               if (file.response) {
-                let reUrl = file.response.message
+                let reUrl
+                if (this.knowledgePath && this.knowledgeFolder && file.response.result) {
+                  reUrl = file.response.result[0].ossFile.url
+                } else {
+                  reUrl = file.response.message
+                }
                 file.url = getFileAccessHttpUrl(reUrl)
+              }
+              if (info.file.uid === file.uid) {
+                newTarget = file
               }
               return file
             })
+            // 去重，链接相同的都是一个文件，放到末尾
+            const filterArr = fileList.filter(item => item.url !== newTarget.url)
+            filterArr.push(newTarget)
+            info.fileList = fileList = filterArr
           }
           // this.$message.success(`${info.file.name} 上传成功!`);
         } else if (info.file.status === 'error') {
@@ -302,17 +427,29 @@
         if (info.file.status === 'done' || info.file.status === 'removed') {
           // returnUrl为true时仅返回文件路径
           if (this.returnUrl) {
-            this.handlePathChange()
+            this.handlePathChange(info)
           } else {
             // returnUrl为false时返回文件名称、文件路径及文件大小
             this.newFileList = []
+            let ids = []
             for (var a = 0; a < fileList.length; a++) {
               // update-begin-author:lvdandan date:20200603 for:【TESTA-514】【开源issue】多个文件同时上传时，控制台报错
               if (fileList[a].status === 'done') {
-                var fileJson = {
-                  fileName: fileList[a].name,
-                  filePath: fileList[a].response.message,
-                  fileSize: fileList[a].size
+                let fileJson
+                if (this.knowledgePath && this.knowledgeFolder && fileList[a].response.result) {
+                  const { id, name, ossFile } = fileList[a].response.result[0]
+                  fileJson = {
+                    fileName: name,
+                    filePath: ossFile.url,
+                    fileSize: fileList[a].size
+                  }
+                  ids.push(id)
+                } else {
+                  fileJson = {
+                    fileName: fileList[a].name,
+                    filePath: fileList[a].response.message,
+                    fileSize: fileList[a].size
+                  }
                 }
                 this.newFileList.push(fileJson)
               } else {
@@ -321,6 +458,7 @@
               // update-end-author:lvdandan date:20200603 for:【TESTA-514】【开源issue】多个文件同时上传时，控制台报错
             }
             this.$emit('change', this.newFileList)
+            this.openTagsDialog(ids, info.file.status === 'done')
           }
         }
       },
@@ -443,6 +581,14 @@
     }
   }
 </script>
+<style lang="less" scoped>
+.knowledge-pic {
+  display: inline-block;
+  margin: 1vh auto 0;
+  font-size: 1.1vh;
+  color: #40a9ff;
+}
+</style>
 
 <style lang="less">
 .uploadty-disabled{

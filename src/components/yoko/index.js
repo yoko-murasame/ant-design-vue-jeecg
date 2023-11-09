@@ -1,6 +1,7 @@
 // Yoko组件全局注册
 import CancelButton from '@/components/yoko/CancelButton'
 import DisableBlock from '@/components/yoko/DisableBlock'
+import JUploadKnowledge from '@/components/yoko/JUploadKnowledge'
 
 // 注册动态表单组件（要不流程中不会显示）
 import DynamicForm from '@/components/online/autoform/index'
@@ -23,6 +24,7 @@ export default {
     // 自定义组件
     Vue.component('CancelButton', CancelButton)
     Vue.component('DisableBlock', DisableBlock)
+    Vue.component('JUploadKnowledge', JUploadKnowledge)
     // 动态表单
     Vue.use(DynamicForm)
     // 表单验证

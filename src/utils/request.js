@@ -4,6 +4,7 @@ import store from '@/store'
 import { VueAxios } from './axios'
 import router from '@/router/index'
 import { ACCESS_TOKEN, TENANT_ID } from '@/store/mutation-types'
+import { Modal } from 'ant-design-vue'
 
 /**
  * 【指定 axios的 baseURL】
@@ -55,7 +56,7 @@ const err = (error) => {
                   try {
                     let path = window.document.location.pathname
                     console.log('location pathname -> ' + path)
-                    if (path != '/' && path.indexOf('/user/login') == -1) {
+                    if (path !== '/' && path.indexOf('/user/login') === -1) {
                       window.location.reload()
                     }
                   } catch (e) {
@@ -78,9 +79,11 @@ const err = (error) => {
         Vue.prototype.$Jnotification.error({ message: '系统提示', description: '很抱歉，登录已过期，请重新登录', duration: 4 })
         if (token) {
           store.dispatch('Logout').then(() => {
-            setTimeout(() => {
-              window.location.reload()
-            }, 1500)
+            window.location.reload()
+            // 不知道为什么源码要加这个定时器，加了导致跳转登录页后会重复刷新页面
+            // setTimeout(() => {
+            //   window.location.reload()
+            // }, 1500)
           })
         }
         break
@@ -135,7 +138,7 @@ service.interceptors.request.use(config => {
   }
   config.headers[ 'tenant-id' ] = tenantid
   // update-end-author:taoyan date:2020707 for:多租户
-  if (config.method == 'get') {
+  if (config.method === 'get') {
     if (config.url.indexOf('sys/dict/getDictItems') < 0) {
       config.params = {
         _t: Date.parse(new Date()) / 1000,

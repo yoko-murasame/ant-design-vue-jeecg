@@ -74,7 +74,9 @@
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "browser": true,
+      "es6": true
     },
     "extends": [
       "plugin:vue/strongly-recommended",
@@ -84,6 +86,9 @@
       "parser": "babel-eslint"
     },
     "rules": {
+      "no-new": "off",
+      "no-unused-vars": "off",
+      "prefer-promise-reject-errors": "off",
       "generator-star-spacing": "off",
       "no-mixed-operators": 0,
       "vue/max-attributes-per-line": [
@@ -111,7 +116,7 @@
         "off",
         2
       ],
-      "no-console": 0,
+      "no-console": "off",
       "space-before-function-paren": 0
     }
   },
