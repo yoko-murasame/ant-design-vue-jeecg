@@ -166,7 +166,19 @@ export default {
           ellipsis: true,
           dataIndex: 'name',
           fixed: 'left',
-          scopedSlots: { customRender: 'nameSlot' }
+          scopedSlots: { customRender: 'nameSlot' },
+          sorter: (a, b) => {
+            const va = a.name
+            const vb = b.name
+            if (!va || !vb) {
+              return -1
+            }
+            try { return va.localeCompare(vb)} catch (e) {
+              return -1
+            }
+          },
+          sortDirections: ['descend', 'ascend'],
+          defaultSortOrder:'descend'
           // width: 380
           // width: 280,
         },
@@ -239,6 +251,17 @@ export default {
     }
   },
   methods: {
+    handleTableChange(pagination, filters, sorter) {
+      // 分页、排序、筛选变化时触发
+      // TODO 筛选
+      console.log(pagination)
+      if (Object.keys(sorter).length > 0) {
+        this.isorter.column = sorter.field
+        this.isorter.order = sorter.order == 'ascend' ? 'asc' : 'desc'
+      }
+      this.ipagination = pagination
+      // this.loadData()
+    },
     onHistoryOk() {
       this.loadFileData()
       // this.$emit('reload')
