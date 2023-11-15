@@ -193,12 +193,18 @@ export default {
         {
           title: '开始日期',
           align: 'center',
-          dataIndex: 'startTime'
+          dataIndex: 'startTime',
+          customRender: function (text) {
+            return !text ? '' : (text.length > 19 ? text.substr(0, 19) : text)
+          }
         },
         {
           title: '结束时间',
           align: 'center',
-          dataIndex: 'endTime'
+          dataIndex: 'endTime',
+          customRender: function (text) {
+            return !text ? '' : (text.length > 19 ? text.substr(0, 19) : text)
+          }
         },
         {
           title: '耗时',

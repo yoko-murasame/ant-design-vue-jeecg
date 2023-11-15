@@ -144,7 +144,10 @@
             title: '耗时',
             align: 'center',
             width: 100,
-            dataIndex: 'durationStr'
+            dataIndex: 'durationStr',
+            customRender: function (text) {
+              return text || '0秒'
+            }
           },
           // {
           //   title: '流程编号',
