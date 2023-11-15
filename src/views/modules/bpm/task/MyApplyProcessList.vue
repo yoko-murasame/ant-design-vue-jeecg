@@ -145,7 +145,7 @@ export default {
       loading: false,
       columns: [
         {
-          title: '#',
+          title: '序号',
           dataIndex: '',
           width: 60,
           key: 'rowIndex',
@@ -235,6 +235,7 @@ export default {
 
       ],
       url: {
+        // todo 以后有空需要把这个接口重写了，去支持业务标题等查询
         list: '/act/task/myApplyProcessList',
         invalidProcess: '/act/task/invalidProcess',
         callBackProcess: '/act/task/callBackProcess'

@@ -3,12 +3,17 @@
 
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
+      <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
 
+          <!--<a-col :md="8" :sm="12">-->
+          <!--  <a-form-item label="流程编号">-->
+          <!--    <a-input placeholder="请输入流程编号" v-model="queryParam.processDefinitionId"></a-input>-->
+          <!--  </a-form-item>-->
+          <!--</a-col>-->
           <a-col :md="8" :sm="12">
-            <a-form-item label="流程编号">
-              <a-input placeholder="请输入流程编号" v-model="queryParam.processDefinitionId"></a-input>
+            <a-form-item label="业务标题">
+              <a-input placeholder="请输入业务标题" v-model="queryParam.bpmBizTitle"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="12">
@@ -94,7 +99,7 @@
         // 表头
         columns: [
           {
-            title: '#',
+            title: '序号',
             width: 60,
             dataIndex: '',
             key: 'rowIndex',
@@ -167,8 +172,9 @@
         ],
         path: 'modules/bpm/task/form/FormLoading',
         formData: {},
-		    url: {
-          list: '/act/task/taskHistoryList'
+        url: {
+          // list: '/act/task/taskHistoryList'
+          list: '/workflow/common/taskHistoryList/v2'
         }
 
       }
