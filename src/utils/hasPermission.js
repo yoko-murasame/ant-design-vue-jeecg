@@ -1,20 +1,21 @@
 import { USER_AUTH, SYS_BUTTON_AUTH } from '@/store/mutation-types'
+import { intersectionWith } from 'lodash'
 
 const hasPermission = {
-    install (Vue, options) {
-          // console.log(options);
-          Vue.directive('has', {
-            inserted: (el, binding, vnode) => {
-                // console.log("页面权限控制----");
-                // console.time()
-                // 节点权限处理，如果命中则不进行全局权限处理
-                if (!filterNodePermission(el, binding, vnode)) {
-                  filterGlobalPermission(el, binding, vnode)
-                }
-                // console.timeEnd() //计时结束并输出时长
-            }
-          })
-    }
+  install(Vue, options) {
+    // console.log(options);
+    Vue.directive('has', {
+      inserted: (el, binding, vnode) => {
+        // console.log("页面权限控制----");
+        // console.time()
+        // 节点权限处理，如果命中则不进行全局权限处理
+        if (!filterNodePermission(el, binding, vnode)) {
+          filterGlobalPermission(el, binding, vnode)
+        }
+        // console.timeEnd() //计时结束并输出时长
+      }
+    })
+  }
 }
 
 /**
@@ -91,12 +92,20 @@ export function filterGlobalPermission(el, binding, vnode) {
   let invalidFlag = false// 无效命中
   if (allPermissionList != null && allPermissionList != '' && allPermissionList != undefined && allPermissionList.length > 0) {
     for (let itemG of allPermissionList) {
-      if (binding.value === itemG.action) {
+      // 将权限配置为多个可包含命中
+      if (~binding.value.indexOf(itemG.action)) {
+        // console.log('binding.value', binding.value)
         if (itemG.status == '0') {
           invalidFlag = true
           break
         }
       }
+      // if (binding.value === itemG.action) {
+      //   if (itemG.status == '0') {
+      //     invalidFlag = true
+      //     break
+      //   }
+      // }
     }
   }
   if (invalidFlag) {
@@ -114,11 +123,11 @@ export function filterGlobalPermission(el, binding, vnode) {
       if (item.action) {
         if (item.action.includes(',')) {
           let split = item.action.split(',')
-            for (let i = 0; i < split.length; i++) {
-              if (!split[i] || split[i].length == 0) {
-                continue
-              }
-              permissions.push(split[i])
+          for (let i = 0; i < split.length; i++) {
+            if (!split[i] || split[i].length == 0) {
+              continue
+            }
+            permissions.push(split[i])
           }
         } else {
           permissions.push(item.action)
@@ -127,9 +136,13 @@ export function filterGlobalPermission(el, binding, vnode) {
       // update--end--autor:wangshuai-----date:20200729------for：按钮权限，授权标识的提示信息是多个用逗号分隔逻辑处理 gitee#I1OUGU------
     }
   }
-  if (!permissions.includes(binding.value)) {
+  // 修改成多项匹配
+  if (intersectionWith(permissions, (binding.value || '').split(',')).length === 0) {
     el.parentNode.removeChild(el)
   }
+  // if (!permissions.includes(binding.value)) {
+  //   el.parentNode.removeChild(el)
+  // }
 }
 
 export default hasPermission
