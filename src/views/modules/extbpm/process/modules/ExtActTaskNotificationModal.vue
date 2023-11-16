@@ -56,7 +56,9 @@
         validatorRules: {
         },
         url: {
-          taskNotification: '/act/process/extActTaskNotification/taskNotification'
+          // taskNotification: '/act/process/extActTaskNotification/taskNotification'
+          // 新催办接口
+          taskNotification: '/workflow/common/taskNotification'
         }
       }
     },

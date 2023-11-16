@@ -3,17 +3,21 @@
 
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
+      <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
-
-          <a-col :md="6" :sm="12">
-            <a-form-item label="流程编号">
-              <a-input placeholder="请输入流程编号查询" v-model="queryParam.processDefinitionId"></a-input>
+          <!--<a-col :md="6" :sm="12">-->
+          <!--  <a-form-item label="流程编号">-->
+          <!--    <a-input placeholder="请输入流程编号查询" v-model="queryParam.processDefinitionId"></a-input>-->
+          <!--  </a-form-item>-->
+          <!--</a-col>-->
+          <a-col :md="8" :sm="12">
+            <a-form-item label="业务标题">
+              <a-input placeholder="请输入业务标题" v-model="queryParam.bpmBizTitle"></a-input>
             </a-form-item>
           </a-col>
-          <a-col :md="6" :sm="12">
+          <a-col :md="8" :sm="12">
             <a-form-item label="流程名称">
-              <a-input placeholder="请输入流程名称查询" v-model="queryParam.processDefinitionName"></a-input>
+              <a-input placeholder="请输入流程名称" v-model="queryParam.processDefinitionName"></a-input>
             </a-form-item>
           </a-col>
 
@@ -23,7 +27,6 @@
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
             </span>
           </a-col>
-
         </a-row>
       </a-form>
     </div>
@@ -64,148 +67,147 @@
 </template>
 
 <script>
-  import { filterObj } from '@/utils/util'
-  import { getAction, postAction } from '@/api/manage'
-  import HisTaskDealModal from './HisTaskDealModal';
-  import JEllipsis from '@/components/jeecg/JEllipsis'
-  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { BpmNodeInfoMixin } from '@/views/modules/bpm/mixins/BpmNodeInfoMixin'
+import HisTaskDealModal from './HisTaskDealModal';
+import JEllipsis from '@/components/jeecg/JEllipsis'
+import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import { BpmNodeInfoMixin } from '@/views/modules/bpm/mixins/BpmNodeInfoMixin'
 
-  export default {
-    name: 'MyCcHisProcessList',
-    mixins: [JeecgListMixin, BpmNodeInfoMixin],
-    components: {
-      HisTaskDealModal,
-      JEllipsis
-    },
-    data() {
-      return {
-        description: '这是用户管理页面',
-        queryParam: {},
-        dataSource: [],
-        loading: false,
-        columns: [
-          {
-            title: '#',
-            dataIndex: '',
-            width: 60,
-            key: 'rowIndex',
-            align: 'center',
-            customRender: function(t, r, index) {
-              return parseInt(index) + 1
-            }
-          },
-          {
-            title: '业务标题',
-            align: 'center',
-            dataIndex: 'bpmBizTitle',
-            scopedSlots: { customRender: 'bpmBizTitle' }
-          },
-          // {
-          //   title: '流程编号',
-          //   align: 'center',
-          //   dataIndex: 'processDefinitionId'
-          // },
-          {
-            title: '流程名称',
-            align: 'center',
-            dataIndex: 'processDefinitionName'
-          },
-          // {
-          //   title: '流程实例',
-          //   align: 'center',
-          //   dataIndex: 'processInstanceId'
-          // },
-          {
-            title: '任务名称',
-            align: 'center',
-            dataIndex: 'taskName'
-          }, {
-            title: '发起人',
-            align: 'center',
-            dataIndex: 'processApplyUserName'
-          }, {
-            title: '办理人',
-            align: 'center',
-            dataIndex: 'taskAssigneeName'
-          }, {
-            title: '开始时间',
-            align: 'center',
-            dataIndex: 'taskBeginTime'
-          }, {
-            title: '结束时间',
-            align: 'center',
-            dataIndex: 'taskEndTime'
-          }, {
-            title: '耗时',
-            align: 'center',
-            dataIndex: 'durationStr'
-          },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            fixed: 'right',
-            scopedSlots: { customRender: 'action' },
-            align: 'center',
-            width: 100
+export default {
+  name: 'MyCcHisProcessList',
+  mixins: [JeecgListMixin, BpmNodeInfoMixin],
+  components: {
+    HisTaskDealModal,
+    JEllipsis
+  },
+  data() {
+    return {
+      description: '这是用户管理页面',
+      queryParam: {},
+      dataSource: [],
+      loading: false,
+      columns: [
+        {
+          title: '序号',
+          dataIndex: '',
+          width: 60,
+          key: 'rowIndex',
+          align: 'center',
+          customRender: function(t, r, index) {
+            return parseInt(index) + 1
           }
-
-        ],
-        url: {
-          list: '/act/task/taskAllCcHistoryList'
         },
-        path: 'modules/bpm/task/form/FormLoading',
-        formData: {}
+        {
+          title: '业务标题',
+          align: 'center',
+          dataIndex: 'bpmBizTitle',
+          scopedSlots: { customRender: 'bpmBizTitle' }
+        },
+        // {
+        //   title: '流程编号',
+        //   align: 'center',
+        //   dataIndex: 'processDefinitionId'
+        // },
+        {
+          title: '流程名称',
+          align: 'center',
+          dataIndex: 'processDefinitionName'
+        },
+        // {
+        //   title: '流程实例',
+        //   align: 'center',
+        //   dataIndex: 'processInstanceId'
+        // },
+        {
+          title: '任务名称',
+          align: 'center',
+          dataIndex: 'taskName'
+        }, {
+          title: '发起人',
+          align: 'center',
+          dataIndex: 'processApplyUserName'
+        }, {
+          title: '办理人',
+          align: 'center',
+          dataIndex: 'taskAssigneeName'
+        }, {
+          title: '开始时间',
+          align: 'center',
+          dataIndex: 'taskBeginTime'
+        }, {
+          title: '结束时间',
+          align: 'center',
+          dataIndex: 'taskEndTime'
+        }, {
+          title: '耗时',
+          align: 'center',
+          dataIndex: 'durationStr'
+        },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          fixed: 'right',
+          scopedSlots: { customRender: 'action' },
+          align: 'center',
+          width: 100
+        }
 
-      }
-    },
-    methods: {
-      // 历史
-      showHistory(record) {
-        this.getHisProcessNodeInfo(record);
-      }
+      ],
+      url: {
+        // list: '/act/task/taskAllCcHistoryList'
+        list: '/workflow/common/taskAllCcHistoryList/v2'
+      },
+      path: 'modules/bpm/task/form/FormLoading',
+      formData: {}
+
     }
-
+  },
+  methods: {
+    // 历史
+    showHistory(record) {
+      this.getHisProcessNodeInfo(record);
+    }
   }
+
+}
 </script>
 <style scoped>
-  .ant-card-body {
-    margin-bottom: 18px;
-  }
+.ant-card-body {
+  margin-bottom: 18px;
+}
 
-  .table-operator button {
-    margin-bottom: 18px;
-    margin-right: 5px;
-  }
+.table-operator button {
+  margin-bottom: 18px;
+  margin-right: 5px;
+}
 
-  .anty-row-operator button {
-    margin: 0 5px
-  }
+.anty-row-operator button {
+  margin: 0 5px
+}
 
-  .ant-btn-danger {
-    background-color: #ffffff
-  }
+.ant-btn-danger {
+  background-color: #ffffff
+}
 
-  .ant-modal-cust-warp {
-    height: 100%
-  }
+.ant-modal-cust-warp {
+  height: 100%
+}
 
-  .ant-modal-cust-warp .ant-modal-body {
-    height: calc(100% - 110px) !important;
-    overflow-y: auto
-  }
+.ant-modal-cust-warp .ant-modal-body {
+  height: calc(100% - 110px) !important;
+  overflow-y: auto
+}
 
-  .ant-modal-cust-warp .ant-modal-content {
-    height: 90% !important;
-    overflow-y: hidden
-  }
+.ant-modal-cust-warp .ant-modal-content {
+  height: 90% !important;
+  overflow-y: hidden
+}
 
-  .anty-img-wrap {
-    height: 25px;
-    position: relative;
-  }
+.anty-img-wrap {
+  height: 25px;
+  position: relative;
+}
 
-  .anty-img-wrap > img {
-    max-height: 100%;
-  }
+.anty-img-wrap > img {
+  max-height: 100%;
+}
 </style>

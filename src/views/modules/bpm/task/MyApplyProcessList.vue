@@ -4,16 +4,21 @@
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
-        <a-row :gutter="24">
+        <a-row :gutter="24" @keyup.enter.native="searchQuery">
 
+          <!--<a-col :md="8" :sm="12">-->
+          <!--  <a-form-item label="流程编号">-->
+          <!--    <a-input placeholder="请输入流程编号" v-model="queryParam.processDefinitionId"></a-input>-->
+          <!--  </a-form-item>-->
+          <!--</a-col>-->
           <a-col :md="8" :sm="12">
-            <a-form-item label="流程编号">
-              <a-input placeholder="请输入流程编号" v-model="queryParam.processDefinitionId"></a-input>
+            <a-form-item label="业务标题">
+              <a-input placeholder="请输入业务标题" v-model="queryParam.bpmBizTitle"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="12">
             <a-form-item label="流程名称">
-              <a-input placeholder="请输入流程名称" v-model="queryParam.processName"></a-input>
+              <a-input placeholder="请输入流程名称" v-model="queryParam.processDefinitionName"></a-input>
             </a-form-item>
           </a-col>
 
@@ -105,7 +110,7 @@
         <span slot="bpmBizTitle" slot-scope="text, record">
           <j-ellipsis :value="text" :length="15"/>
         </span>
-        <span slot="prcocessDefinitionName" slot-scope="text, record">
+        <span slot="processDefinitionName" slot-scope="text, record">
           <j-ellipsis :value="text" :length="15"/>
         </span>
         <span slot="processDefinitionId" slot-scope="text, record">
@@ -145,7 +150,7 @@ export default {
       loading: false,
       columns: [
         {
-          title: '#',
+          title: '序号',
           dataIndex: '',
           width: 60,
           key: 'rowIndex',
@@ -163,8 +168,8 @@ export default {
         {
           title: '流程名称',
           align: 'center',
-          dataIndex: 'prcocessDefinitionName',
-          scopedSlots: { customRender: 'prcocessDefinitionName' }
+          dataIndex: 'processDefinitionName',
+          scopedSlots: { customRender: 'processDefinitionName' }
         },
         // {
         //   title: '流程编号',
@@ -188,12 +193,18 @@ export default {
         {
           title: '开始日期',
           align: 'center',
-          dataIndex: 'startTime'
+          dataIndex: 'startTime',
+          customRender: function (text) {
+            return !text ? '' : (text.length > 19 ? text.substr(0, 19) : text)
+          }
         },
         {
           title: '结束时间',
           align: 'center',
-          dataIndex: 'endTime'
+          dataIndex: 'endTime',
+          customRender: function (text) {
+            return !text ? '' : (text.length > 19 ? text.substr(0, 19) : text)
+          }
         },
         {
           title: '耗时',
@@ -208,18 +219,20 @@ export default {
           width: 120,
           customRender: (text) => {
             switch (text) {
-            case '1':
-              return '待提交';
-            case '2':
-              return '处理中';
-            case '3':
-              return '已完成';
-            case 'rejectProcess':
-              return '已驳回';
-            case 'callBackProcess':
-              return '已取回';
-            case 'invalidProcess':
-              return '已作废';
+              case '1':
+                return '待提交';
+              case '2':
+                return '处理中';
+              case '3':
+                return '已完成';
+              case 'rejectProcess':
+                return '已驳回';
+              case 'callBackProcess':
+                return '已取回';
+              case 'invalidProcess':
+                return '已作废';
+              case '4':
+                return '已作废';
             }
             return text;
           }
@@ -235,7 +248,8 @@ export default {
 
       ],
       url: {
-        list: '/act/task/myApplyProcessList',
+        // list: '/act/task/myApplyProcessList',
+        list: '/workflow/common/myApplyProcessList/v2',
         invalidProcess: '/act/task/invalidProcess',
         callBackProcess: '/act/task/callBackProcess'
       },
@@ -293,48 +307,48 @@ export default {
 }
 </script>
 <style scoped>
-  .ant-card-body {
-    margin-bottom: 18px;
-  }
+.ant-card-body {
+  margin-bottom: 18px;
+}
 
-  .table-operator button {
-    margin-bottom: 18px;
-    margin-right: 5px;
-  }
+.table-operator button {
+  margin-bottom: 18px;
+  margin-right: 5px;
+}
 
-  .anty-row-operator button {
-    margin: 0 5px
-  }
+.anty-row-operator button {
+  margin: 0 5px
+}
 
-  .ant-btn-danger {
-    background-color: #ffffff
-  }
+.ant-btn-danger {
+  background-color: #ffffff
+}
 
-  .ant-modal-cust-warp {
-    height: 100%
-  }
+.ant-modal-cust-warp {
+  height: 100%
+}
 
-  .ant-modal-cust-warp .ant-modal-body {
-    height: calc(100% - 110px) !important;
-    overflow-y: auto
-  }
+.ant-modal-cust-warp .ant-modal-body {
+  height: calc(100% - 110px) !important;
+  overflow-y: auto
+}
 
-  .ant-modal-cust-warp .ant-modal-content {
-    height: 90% !important;
-    overflow-y: hidden
-  }
+.ant-modal-cust-warp .ant-modal-content {
+  height: 90% !important;
+  overflow-y: hidden
+}
 
-  .anty-img-wrap {
-    height: 25px;
-    position: relative;
-  }
+.anty-img-wrap {
+  height: 25px;
+  position: relative;
+}
 
-  .anty-img-wrap > img {
-    max-height: 100%;
-  }
+.anty-img-wrap > img {
+  max-height: 100%;
+}
 
-  /** Button按钮间距 */
-  .ant-btn {
-    margin-left: 3px
-  }
+/** Button按钮间距 */
+.ant-btn {
+  margin-left: 3px
+}
 </style>
