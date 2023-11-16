@@ -18,7 +18,7 @@
           <!--    <j-multi-select-tag type="list_multi" v-decorator="['tags']" :trigger-change="true" dictCode="sakuga_content_tags" placeholder="请选择标签" />-->
           <!--  </a-form-item>-->
           <!--</a-col>-->
-          <a-col :span="24">
+          <a-col :span="24" v-if='isDev'>
             <a-form-item label="知识库测试" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <!--<j-image-upload isMultiple biz-path="picture" v-decorator="['picture']" ></j-image-upload>-->
               <j-upload-knowledge
@@ -192,6 +192,9 @@ export default {
     }
   },
   computed: {
+    isDev() {
+      return process.env.NODE_ENV !== 'production'
+    },
     formDisabled() {
       if (this.formBpm === true) {
         if (this.formData.disabled === false) {
