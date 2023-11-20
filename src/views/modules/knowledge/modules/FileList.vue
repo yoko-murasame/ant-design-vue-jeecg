@@ -103,6 +103,7 @@ import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 import HistoryList from '@views/modules/knowledge/modules/HistoryList.vue'
 import QRCode from 'qrcodejs2'
 import { deleteAction, postAction, putAction } from '@api/manage'
+import { generateSorterOptions } from '@comp/yoko/utils/AntdTableUtils'
 
 export default {
   name: 'FileList',
@@ -167,16 +168,17 @@ export default {
           dataIndex: 'name',
           fixed: 'left',
           scopedSlots: { customRender: 'nameSlot' },
-          sorter: (a, b) => {
-            const va = a.name
-            const vb = b.name
-            if (!va || !vb) {
-              return -1
-            }
-            try { return va.localeCompare(vb)} catch (e) {
-              return -1
-            }
-          },
+          ...generateSorterOptions('name', 'descend', true),
+          // sorter: (a, b) => {
+          //   const va = a.name
+          //   const vb = b.name
+          //   if (!va || !vb) {
+          //     return -1
+          //   }
+          //   try { return va.localeCompare(vb)} catch (e) {
+          //     return -1
+          //   }
+          // },
           sortDirections: ['descend', 'ascend'],
           defaultSortOrder:'descend'
           // width: 380
