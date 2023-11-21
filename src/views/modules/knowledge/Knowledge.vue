@@ -213,8 +213,48 @@ export default {
     FileList,
     FolderUserPermissionModal
   },
+  /**
+   * 业务id绑定模式
+   * 1、添加业务id属性
+   */
+  props: {
+    // [PROJECT_ID]: {
+    //   type: String,
+    //   default: ''
+    // },
+    // [BUSINESS_ID]: {
+    //   type: String,
+    //   default: ''
+    // }
+  },
+  /**
+   * 业务id绑定模式
+   * 2、监听业务id改变
+   */
+  watch: {
+    // [PROJECT_ID]: {
+    //   immediate: true,
+    //   deep: false,
+    //   handler(val) {
+    //     this.debug && console.log(PROJECT_ID + '改变了::', val)
+    //     this.loadAllTree(val);
+    //   }
+    // },
+    // [BUSINESS_ID]: {
+    //   immediate: true,
+    //   deep: false,
+    //   handler(val) {
+    //     this.debug && console.log(BUSINESS_ID + '改变了::', val)
+    //     this.loadAllTree(val);
+    //   }
+    // }
+  },
   data() {
     return {
+      /**
+       * 业务id绑定模式
+       * 3、需要注释常量
+       */
       businessId: 'KNOWLEDGE_BASE',
       businessName: '知识库',
       queryParam: {
