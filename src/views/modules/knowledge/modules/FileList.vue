@@ -179,8 +179,8 @@ export default {
           //     return -1
           //   }
           // },
-          sortDirections: ['descend', 'ascend'],
-          defaultSortOrder:'descend'
+          // sortDirections: ['descend', 'ascend'],
+          // defaultSortOrder:'descend'
           // width: 380
           // width: 280,
         },
