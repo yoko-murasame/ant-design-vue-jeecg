@@ -100,7 +100,7 @@
 </template>
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-import HistoryList from '@views/modules/knowledge/modules/HistoryList.vue'
+import HistoryList from './HistoryList.vue'
 import QRCode from 'qrcodejs2'
 import { deleteAction, postAction, putAction } from '@api/manage'
 import { generateSorterOptions } from '@comp/yoko/utils/AntdTableUtils'

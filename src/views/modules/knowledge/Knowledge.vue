@@ -202,8 +202,8 @@ import Vue from 'vue'
 import folderConfig from './modules/folderConfig'
 import FolderModal from './modules/FolderModal'
 import HistoryList from './modules/HistoryList'
-import FileList from '@views/modules/knowledge/modules/FileList'
-import FolderUserPermissionModal from '@views/modules/knowledge/modules/FolderUserPermissionModal'
+import FileList from './modules/FileList'
+import FolderUserPermissionModal from './modules/FolderUserPermissionModal'
 
 export default {
   name: 'Knowledge',
