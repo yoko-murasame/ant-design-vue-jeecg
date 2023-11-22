@@ -96,18 +96,43 @@
         mode="tags"
       />
     </a-modal>
+    <!--视频预览-->
     <a-modal
+      :maskClosable="false"
       v-model="videoVisible"
       title="视频预览"
-      ok-text="关闭"
-      cancel-text=""
+      ok-text=""
+      cancel-text="关闭"
       width="80vh"
       @ok="videoUrl = null"
       @cancel="videoUrl = null">
+      <template slot="footer">
+        <cancel-button :disableSubmit="true" key="back" @click="videoUrl = null;videoVisible=false;" />
+      </template>
       <vue-aliplayer-v2
         v-if="videoUrl"
         :source="videoUrl"
         :options="{ autoplay: true, height: '50vh' }"/>
+    </a-modal>
+    <!--PDF预览-->
+    <a-modal
+      :maskClosable="false"
+      v-model="pdfVisible"
+      title="PDF预览"
+      ok-text=""
+      cancel-text="关闭"
+      width="60vw">
+      <template slot="footer">
+        <cancel-button :disableSubmit="true" key="back" @click="onPdfClose" />
+      </template>
+      <!--<pdf v-if='pdfUrl' :src="pdfUrl"></pdf>-->
+      <pdf
+        v-for="i in pdfPages"
+        :key="i"
+        :src="pdfSrc"
+        :page="i"
+        style="display: inline-block; width: 100%"
+      ></pdf>
     </a-modal>
   </div>
 </template>
@@ -118,10 +143,11 @@ import QRCode from 'qrcodejs2'
 import { deleteAction, postAction, putAction } from '@api/manage'
 import { generateSorterOptions } from '@comp/yoko/utils/AntdTableUtils'
 import { isImage, isVideo } from '@comp/yoko/utils/FileUtil'
+import pdf from '@teckel/vue-pdf'
 
 export default {
   name: 'FileList',
-  components: { HistoryList },
+  components: { HistoryList, pdf },
   mixins: [JeecgListMixin],
   props: {
     selectedIds: {
@@ -266,10 +292,21 @@ export default {
       tagsVisible: false,
       // 视频播放
       videoUrl: '',
-      videoVisible: false
+      videoVisible: false,
+      // pdf预览
+      pdfUrl: '',
+      pdfVisible: false,
+      pdfPages: 0,
+      pdfSrc: null,
     }
   },
   methods: {
+    onPdfClose() {
+      this.pdfUrl = null
+      this.pdfVisible = false
+      this.pdfPages = 0
+      this.pdfSrc = null
+    },
     handleTableChange(pagination, filters, sorter) {
       // 分页、排序、筛选变化时触发
       // TODO 筛选
@@ -418,10 +455,14 @@ export default {
         return
       }
       if (/pdf/.test(dotName)) {
-        // this.$pdfApi({
-        //   url: this.downloadCompleteUrl + record.id
-        // })
-        // return
+        this.pdfUrl = fileUrl
+        const pdfSrc = pdf.createLoadingTask(this.pdfUrl)
+        pdfSrc.promise.then(pdf => {
+          this.pdfPages = pdf.numPages
+          this.pdfSrc = pdfSrc
+          this.pdfVisible = true
+        })
+        return
       }
       this.$message.info('暂不支持该文件类型预览！')
     },
