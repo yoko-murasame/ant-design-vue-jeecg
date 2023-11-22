@@ -156,21 +156,23 @@ export default {
         }, {
           title: '流程名称',
           align: 'center',
+          width: 300,
           dataIndex: 'processDefinitionName',
           scopedSlots: { customRender: 'processDefinitionName' }
         }, {
           title: '发起人',
-          width: 110,
+          width: 120,
           align: 'center',
           dataIndex: 'processApplyUserName'
         }, {
           title: '开始时间',
           align: 'center',
+          width: 150,
           dataIndex: 'taskBeginTime'
         }, {
           title: '当前环节',
           align: 'center',
-          width: 130,
+          width: 150,
           dataIndex: 'taskName'
         },
         // {
