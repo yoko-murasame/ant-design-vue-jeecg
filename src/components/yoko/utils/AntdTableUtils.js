@@ -23,8 +23,13 @@ export const generateSorterOptions = (field, order = 'descend', forceNumber, opt
       if (forceNumber) {
         c = true;
         d = true;
-        a = parseInt(a.match(/\d+/g).pop() || '0')
-        b = parseInt(b.match(/\d+/g).pop() || '0')
+        try {
+          a = parseInt(a.match(/\d+/g).pop() || '0')
+          b = parseInt(b.match(/\d+/g).pop() || '0')
+        } catch (e) {
+          a = 0
+          b = 0
+        }
       }
       return (c != d && d - c) || (c && d ? a - b : a.localeCompare(b));
     },

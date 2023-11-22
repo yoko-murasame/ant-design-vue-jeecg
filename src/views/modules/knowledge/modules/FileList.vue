@@ -96,6 +96,19 @@
         mode="tags"
       />
     </a-modal>
+    <a-modal
+      v-model="videoVisible"
+      title="视频预览"
+      ok-text="关闭"
+      cancel-text=""
+      width="80vh"
+      @ok="videoUrl = null"
+      @cancel="videoUrl = null">
+      <vue-aliplayer-v2
+        v-if="videoUrl"
+        :source="videoUrl"
+        :options="{ autoplay: true, height: '50vh' }"/>
+    </a-modal>
   </div>
 </template>
 <script>
@@ -104,6 +117,7 @@ import HistoryList from './HistoryList.vue'
 import QRCode from 'qrcodejs2'
 import { deleteAction, postAction, putAction } from '@api/manage'
 import { generateSorterOptions } from '@comp/yoko/utils/AntdTableUtils'
+import { isImage, isVideo } from '@comp/yoko/utils/FileUtil'
 
 export default {
   name: 'FileList',
@@ -249,7 +263,10 @@ export default {
       // 打标签功能
       tags: '',
       tagsFile: null,
-      tagsVisible: false
+      tagsVisible: false,
+      // 视频播放
+      videoUrl: '',
+      videoVisible: false
     }
   },
   methods: {
@@ -385,7 +402,28 @@ export default {
       })
     },
     handlePreview(record) {
-      window.open(this.downloadCompleteUrl + record.id)
+      // window.open(this.downloadCompleteUrl + record.id)
+      console.log('handlePreview', record)
+      const dotName = `.${record.suffix.toLowerCase()}`
+      const fileUrl = this.downloadCompleteUrl + record.id
+      if (isImage(dotName)) {
+        this.$viewerApi({
+          images: [fileUrl]
+        })
+        return
+      }
+      if (isVideo(dotName)) {
+        this.videoUrl = fileUrl
+        this.videoVisible = true
+        return
+      }
+      if (/pdf/.test(dotName)) {
+        // this.$pdfApi({
+        //   url: this.downloadCompleteUrl + record.id
+        // })
+        // return
+      }
+      this.$message.info('暂不支持该文件类型预览！')
     },
     handleDownload(record) {
       const url = this.downloadCompleteUrl + record.id + '?forceDownload=true' // 图片的URL
