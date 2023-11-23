@@ -40,29 +40,56 @@
       </template>
 
       <template slot="action" slot-scope="text, record">
-        <a href="javascript:;" @click="handleDownload(record)">下载</a>
-        <a-divider type="vertical"/>
+        <!--仅当系统已配置此按钮权限时，才生效-->
+        <template v-if="KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG">
+          <a v-has="KNOWLEDGE_FILE_DOWNLOAD_BUTTON" href="javascript:;" @click="handleDownload(record)">下载</a>
+          <a-divider v-has="KNOWLEDGE_FILE_DOWNLOAD_BUTTON" type="vertical"/>
+        </template>
+        <template v-else>
+          <a href="javascript:;" @click="handleDownload(record)">下载</a>
+          <a-divider type="vertical"/>
+        </template>
         <a href="javascript:;" @click="changeTags(record)">打标签</a>
         <a-divider type="vertical"/>
         <a href="javascript:;" @click="changeFileName(record)">重命名</a>
-        <a-divider type="vertical"/>
-        <a href="javascript:;" v-show="false" @click="e => showQrCode(record, e)">二维码</a>
         <a-divider v-show="false" type="vertical"/>
-        <a-dropdown>
-          <a class="ant-dropdown-link">更多
-            <a-icon type="down"/>
-          </a>
-          <a-menu slot="overlay">
-            <a-menu-item>
-              <a href="javascript:;" @click="$refs.historyList.show(record.id)">版本管理</a>
-            </a-menu-item>
-            <a-menu-item>
-              <a-popconfirm title="确定删除吗?" @confirm="() => deleteFile(record.id)">
-                <a>删除</a>
-              </a-popconfirm>
-            </a-menu-item>
-          </a-menu>
-        </a-dropdown>
+        <a href="javascript:;" v-show="false" @click="e => showQrCode(record, e)">二维码</a>
+        <template v-if="KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG">
+          <a-divider v-has="KNOWLEDGE_FILE_DOWNLOAD_BUTTON" type="vertical"/>
+          <a-dropdown v-has="KNOWLEDGE_FILE_DOWNLOAD_BUTTON">
+            <a class="ant-dropdown-link">更多
+              <a-icon type="down"/>
+            </a>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <a href="javascript:;" @click="$refs.historyList.show(record.id)">版本管理</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="确定删除吗?" @confirm="() => deleteFile(record.id)">
+                  <a>删除</a>
+                </a-popconfirm>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+        </template>
+        <template v-else>
+          <a-divider type="vertical"/>
+          <a-dropdown>
+            <a class="ant-dropdown-link">更多
+              <a-icon type="down"/>
+            </a>
+            <a-menu slot="overlay">
+              <a-menu-item>
+                <a href="javascript:;" @click="$refs.historyList.show(record.id)">版本管理</a>
+              </a-menu-item>
+              <a-menu-item>
+                <a-popconfirm title="确定删除吗?" @confirm="() => deleteFile(record.id)">
+                  <a>删除</a>
+                </a-popconfirm>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+        </template>
       </template>
     </a-table>
 
@@ -144,6 +171,7 @@ import { deleteAction, postAction, putAction } from '@api/manage'
 import { generateSorterOptions } from '@comp/yoko/utils/AntdTableUtils'
 import { isImage, isVideo } from '@comp/yoko/utils/FileUtil'
 import pdf from '@teckel/vue-pdf'
+import { mapState } from 'vuex'
 
 export default {
   name: 'FileList',
@@ -178,6 +206,10 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      KNOWLEDGE_FILE_DOWNLOAD_BUTTON: state => state.permission.KNOWLEDGE_FILE_DOWNLOAD_BUTTON,
+      KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG
+    }),
     downloadCompleteUrl: function () {
       return window._CONFIG['domianURL'] + this.url.downLoadUrl
     }
@@ -444,8 +476,28 @@ export default {
       const dotName = `.${record.suffix.toLowerCase()}`
       const fileUrl = this.downloadCompleteUrl + record.id
       if (isImage(dotName)) {
-        this.$viewerApi({
-          images: [fileUrl]
+        const centextMenuListener = (event) => {
+          event.preventDefault(); // 阻止右键菜单的默认行为
+        }
+        const viewer = this.$viewerApi({
+          images: [fileUrl],
+          options: {
+            button: false, // 右上方的关闭按钮
+            navbar: false, // 底部工具栏
+            toolbar: false, // 底部工具配置
+            // url: 'data-source',
+            initialViewIndex: 0,
+            backdrop: true, // 遮罩关闭
+            className: 'v-viewer-image-hide',
+            viewed: function () {
+              console.log('viewed', viewer)
+              viewer.body.addEventListener('contextmenu', centextMenuListener);
+            },
+            hidden: function () {
+              console.log('hidden', viewer)
+              viewer.body.removeEventListener('contextmenu', centextMenuListener);
+            }
+          }
         })
         return
       }
@@ -515,5 +567,14 @@ export default {
 }
 .file-tags {
   width: auto;
+}
+</style>
+<style lang="less">
+// v-viewer的禁用右键菜单
+.v-viewer-image-hide {
+  img {
+    user-select: none;
+    //pointer-events: none;
+  }
 }
 </style>
