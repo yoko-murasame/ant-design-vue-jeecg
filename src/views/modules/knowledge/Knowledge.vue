@@ -57,7 +57,7 @@
                 <a-button title="编辑" icon="edit" @click="handleEditFolder"></a-button>
                 <a-button title="删除" icon="delete" @click="deleteFolder"></a-button>
                 <a-button title="刷新" icon="reload" @click="onSearchFolder"></a-button>
-                <a-button v-has="'KNOWLEDGE_FOLDER_USER_AUTH_BUTTON'" title="用户授权" icon="user-add" @click="openAuthModel"></a-button>
+                <a-button v-has="KNOWLEDGE_FOLDER_USER_AUTH_BUTTON" title="用户授权" icon="user-add" @click="openAuthModel"></a-button>
               </a-button-group>
               <a-button-group v-show="false" style="margin-left: 12px">
                 <a-button icon="arrow-up" @click="handleUp"></a-button>
@@ -204,6 +204,7 @@ import FolderModal from './modules/FolderModal'
 import HistoryList from './modules/HistoryList'
 import FileList from './modules/FileList'
 import FolderUserPermissionModal from './modules/FolderUserPermissionModal'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Knowledge',
@@ -289,6 +290,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      KNOWLEDGE_FOLDER_USER_AUTH_BUTTON: state => state.permission.KNOWLEDGE_FOLDER_USER_AUTH_BUTTON
+    }),
     uploadCompleteUrl: function () {
       return window._CONFIG['domianURL'] + this.uploadConfig.action
     }

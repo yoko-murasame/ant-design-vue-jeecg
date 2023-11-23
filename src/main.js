@@ -79,6 +79,8 @@ function main() {
       store.commit('TOGGLE_COLOR', Vue.ls.get(DEFAULT_COLOR, config.primaryColor))
       store.commit('SET_TOKEN', Vue.ls.get(ACCESS_TOKEN))
       store.commit('SET_MULTI_PAGE', Vue.ls.get(DEFAULT_MULTI_PAGE, config.multipage))
+      // 检查知识库菜单、权限
+      store.dispatch('CheckKnowledgeFlag').then(() => {})
     },
     render: h => h(App)
   }).$mount('#app')
