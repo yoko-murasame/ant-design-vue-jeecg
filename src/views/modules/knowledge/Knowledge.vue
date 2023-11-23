@@ -49,13 +49,24 @@
             <div class="flex-unshrink" style="margin-right: 1vh" v-if="show || isSearch">
               <a-button-group>
                 <a-button
+                  v-if="KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG"
+                  v-has="KNOWLEDGE_FOLDER_ADD_BUTTON"
                   :disabled="false && !!selectedNode.id"
                   title="新增"
                   type="primary"
                   icon="plus"
                   @click="handleAddFolder"></a-button>
-                <a-button title="编辑" icon="edit" @click="handleEditFolder"></a-button>
-                <a-button title="删除" icon="delete" @click="deleteFolder"></a-button>
+                <a-button
+                  v-else
+                  :disabled="false && !!selectedNode.id"
+                  title="新增"
+                  type="primary"
+                  icon="plus"
+                  @click="handleAddFolder"></a-button>
+                <a-button v-if="KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG" v-has="KNOWLEDGE_FOLDER_EDIT_BUTTON" title="编辑" icon="edit" @click="handleEditFolder"></a-button>
+                <a-button v-else title="编辑" icon="edit" @click="handleEditFolder"></a-button>
+                <a-button v-if="KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG" v-has="KNOWLEDGE_FOLDER_DELETE_BUTTON" title="删除" icon="delete" @click="deleteFolder"></a-button>
+                <a-button v-else title="删除" icon="delete" @click="deleteFolder"></a-button>
                 <a-button title="刷新" icon="reload" @click="onSearchFolder"></a-button>
                 <a-button v-has="KNOWLEDGE_FOLDER_USER_AUTH_BUTTON" title="用户授权" icon="user-add" @click="openAuthModel"></a-button>
               </a-button-group>
@@ -291,6 +302,12 @@ export default {
   },
   computed: {
     ...mapState({
+      KNOWLEDGE_FOLDER_ADD_BUTTON: state => state.permission.KNOWLEDGE_FOLDER_ADD_BUTTON,
+      KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG,
+      KNOWLEDGE_FOLDER_EDIT_BUTTON: state => state.permission.KNOWLEDGE_FOLDER_EDIT_BUTTON,
+      KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG,
+      KNOWLEDGE_FOLDER_DELETE_BUTTON: state => state.permission.KNOWLEDGE_FOLDER_DELETE_BUTTON,
+      KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG,
       KNOWLEDGE_FOLDER_USER_AUTH_BUTTON: state => state.permission.KNOWLEDGE_FOLDER_USER_AUTH_BUTTON
     }),
     uploadCompleteUrl: function () {

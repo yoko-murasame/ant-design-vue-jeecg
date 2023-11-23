@@ -55,19 +55,39 @@ const permission = {
   state: {
     routers: constantRouterMap,
     addRouters: [],
-    // 知识库路径
+    // 知识库模块路径，每个flag表示系统内是否已配置按钮权限
     KNOWLEDGE_MODULE: 'modules/knowledge/Knowledge',
-    // 知识库是否已配置
     KNOWLEDGE_FLAG: null,
-    // 按钮权限-目录授权按钮
+    // 数据权限-全目录-全文件-查看权限
+    KNOWLEDGE_FOLDER_USER_FULL: 'KNOWLEDGE_FOLDER_USER_FULL',
+    KNOWLEDGE_FOLDER_USER_FULL_FLAG: false,
+    // 按钮权限-目录-新增按钮
+    KNOWLEDGE_FOLDER_ADD_BUTTON: 'KNOWLEDGE_FOLDER_ADD_BUTTON',
+    KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG: false,
+    // 按钮权限-目录-编辑按钮
+    KNOWLEDGE_FOLDER_EDIT_BUTTON: 'KNOWLEDGE_FOLDER_EDIT_BUTTON',
+    KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG: false,
+    // 按钮权限-目录-删除按钮
+    KNOWLEDGE_FOLDER_DELETE_BUTTON: 'KNOWLEDGE_FOLDER_DELETE_BUTTON',
+    KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG: false,
+    // 按钮权限-目录-授权按钮
     KNOWLEDGE_FOLDER_USER_AUTH_BUTTON: 'KNOWLEDGE_FOLDER_USER_AUTH_BUTTON',
     KNOWLEDGE_FOLDER_USER_AUTH_BUTTON_FLAG: false,
-    // 按钮权限-文件下载按钮
+    // 按钮权限-文件-下载按钮
     KNOWLEDGE_FILE_DOWNLOAD_BUTTON: 'KNOWLEDGE_FILE_DOWNLOAD_BUTTON',
     KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG: false,
-    // 管理员权限-强制开放全部目录查看权
-    KNOWLEDGE_FOLDER_USER_FULL: 'KNOWLEDGE_FOLDER_USER_FULL',
-    KNOWLEDGE_FOLDER_USER_FULL_FLAG: false
+    // 按钮权限-文件-打标签按钮
+    KNOWLEDGE_FILE_TAG_BUTTON: 'KNOWLEDGE_FILE_TAG_BUTTON',
+    KNOWLEDGE_FILE_TAG_BUTTON_FLAG: false,
+    // 按钮权限-文件-重命名按钮
+    KNOWLEDGE_FILE_RENAME_BUTTON: 'KNOWLEDGE_FILE_RENAME_BUTTON',
+    KNOWLEDGE_FILE_RENAME_BUTTON_FLAG: false,
+    // 按钮权限-文件-版本管理按钮
+    KNOWLEDGE_FILE_VERSION_BUTTON: 'KNOWLEDGE_FILE_VERSION_BUTTON',
+    KNOWLEDGE_FILE_VERSION_BUTTON_FLAG: false,
+    // 按钮权限-文件-删除按钮
+    KNOWLEDGE_FILE_DELETE_BUTTON: 'KNOWLEDGE_FILE_DELETE_BUTTON',
+    KNOWLEDGE_FILE_DELETE_BUTTON_FLAG: false
   },
   mutations: {
     SET_ROUTERS: (state, data) => {
@@ -77,9 +97,16 @@ const permission = {
     },
     SET_KNOWLEDGE_FLAG(state, data) {
       state.KNOWLEDGE_FLAG = data.KNOWLEDGE_FLAG
+      state.KNOWLEDGE_FOLDER_USER_FULL_FLAG = data.KNOWLEDGE_FOLDER_USER_FULL_FLAG
+      state.KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG = data.KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG
+      state.KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG = data.KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG
+      state.KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG = data.KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG
       state.KNOWLEDGE_FOLDER_USER_AUTH_BUTTON_FLAG = data.KNOWLEDGE_FOLDER_USER_AUTH_BUTTON_FLAG
       state.KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG = data.KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG
-      state.KNOWLEDGE_FOLDER_USER_FULL_FLAG = data.KNOWLEDGE_FOLDER_USER_FULL_FLAG
+      state.KNOWLEDGE_FILE_TAG_BUTTON_FLAG = data.KNOWLEDGE_FILE_TAG_BUTTON_FLAG
+      state.KNOWLEDGE_FILE_RENAME_BUTTON_FLAG = data.KNOWLEDGE_FILE_RENAME_BUTTON_FLAG
+      state.KNOWLEDGE_FILE_VERSION_BUTTON_FLAG = data.KNOWLEDGE_FILE_VERSION_BUTTON_FLAG
+      state.KNOWLEDGE_FILE_DELETE_BUTTON_FLAG = data.KNOWLEDGE_FILE_DELETE_BUTTON_FLAG
     }
   },
   actions: {
@@ -88,43 +115,57 @@ const permission = {
      */
     CheckKnowledgeFlag({ commit, state }) {
       const flags = {
-        KNOWLEDGE_FLAG: false,
+        KNOWLEDGE_FLAG: null,
+        KNOWLEDGE_FOLDER_USER_FULL_FLAG: false,
+        KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG: false,
+        KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG: false,
+        KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG: false,
         KNOWLEDGE_FOLDER_USER_AUTH_BUTTON_FLAG: false,
         KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG: false,
-        KNOWLEDGE_FOLDER_USER_FULL_FLAG: false
+        KNOWLEDGE_FILE_TAG_BUTTON_FLAG: false,
+        KNOWLEDGE_FILE_RENAME_BUTTON_FLAG: false,
+        KNOWLEDGE_FILE_VERSION_BUTTON_FLAG: false,
+        KNOWLEDGE_FILE_DELETE_BUTTON_FLAG: false
       }
+      const msgs = {
+        KNOWLEDGE_FOLDER_USER_FULL_FLAG: '检测到系统未配置知识库-数据权限-全目录-全文件-查看权限，默认不开放！如需控制，请根据文档配置管理员权限！',
+        KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG: '检测到系统未配置知识库-按钮权限-目录-新增按钮，默认显示！如需控制，请根据文档配置按钮权限！',
+        KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG: '检测到系统未配置知识库-按钮权限-目录-编辑按钮，默认显示！如需控制，请根据文档配置按钮权限！',
+        KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG: '检测到系统未配置知识库-按钮权限-目录-删除按钮，默认显示！如需控制，请根据文档配置按钮权限！',
+        KNOWLEDGE_FOLDER_USER_AUTH_BUTTON_FLAG: '检测到系统未配置知识库-按钮权限-目录-授权按钮，默认隐藏！如需控制，请根据文档配置按钮权限！',
+        KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG: '检测到系统未配置知识库-按钮权限-文件-下载按钮，默认隐藏！如需控制，请根据文档配置按钮权限！',
+        KNOWLEDGE_FILE_TAG_BUTTON_FLAG: '检测到系统未配置知识库-按钮权限-文件-打标签按钮，默认显示！如需控制，请根据文档配置按钮权限！',
+        KNOWLEDGE_FILE_RENAME_BUTTON_FLAG: '检测到系统未配置知识库-按钮权限-文件-重命名按钮，默认显示！如需控制，请根据文档配置按钮权限！',
+        KNOWLEDGE_FILE_VERSION_BUTTON_FLAG: '检测到系统未配置知识库-按钮权限-文件-版本管理按钮，默认显示！如需控制，请根据文档配置按钮权限！',
+        KNOWLEDGE_FILE_DELETE_BUTTON_FLAG: '检测到系统未配置知识库-按钮权限-文件-删除按钮，默认显示！如需控制，请根据文档配置按钮权限！'
+      }
+      const component = state.KNOWLEDGE_MODULE
+      const perms = [state.KNOWLEDGE_FOLDER_USER_FULL, state.KNOWLEDGE_FOLDER_ADD_BUTTON,
+        state.KNOWLEDGE_FOLDER_EDIT_BUTTON, state.KNOWLEDGE_FOLDER_DELETE_BUTTON, state.KNOWLEDGE_FOLDER_USER_AUTH_BUTTON,
+        state.KNOWLEDGE_FILE_DOWNLOAD_BUTTON, state.KNOWLEDGE_FILE_TAG_BUTTON,
+        state.KNOWLEDGE_FILE_RENAME_BUTTON, state.KNOWLEDGE_FILE_VERSION_BUTTON, state.KNOWLEDGE_FILE_DELETE_BUTTON]
       const checkApi = '/sys/permission/checkPermissionExist'
       return new Promise(async resolve => {
         // 检测菜单路由是否已配置
-        if (state.KNOWLEDGE_FLAG === null) {
-          const { result } = await getAction(checkApi, { component: state.KNOWLEDGE_MODULE })
-          // 不存在就不检查按钮权限了
-          if (!result) {
-            commit('SET_KNOWLEDGE_FLAG', flags)
-            console.info('检测到系统未配置知识库模块，如需使用，请根据文档配置菜单路由！')
-            resolve()
-            return
-          }
-          flags.KNOWLEDGE_FLAG = result
+        if (state.KNOWLEDGE_FLAG !== null) {
+          resolve()
+          return
         }
-        // 检查按钮权限-目录授权按钮
-        const { result: flag1 } = await getAction(checkApi, { perms: state.KNOWLEDGE_FOLDER_USER_AUTH_BUTTON, status: '1' })
-        flags.KNOWLEDGE_FOLDER_USER_AUTH_BUTTON_FLAG = flag1
-        if (!flag1) {
-          console.warn('检测到系统未配置知识库目录授权按钮权限，默认将隐藏授权按钮！如需控制，请根据文档配置按钮权限！')
+        const { result } = await getAction(checkApi, { component })
+        // 不存在就不检查按钮权限了
+        if (!result[state.KNOWLEDGE_MODULE]) {
+          commit('SET_KNOWLEDGE_FLAG', flags)
+          console.warn('检测到系统未配置知识库模块，如需使用，请根据文档配置菜单路由！')
+          resolve()
+          return
         }
-        // 检查按钮权限-文件下载按钮
-        const { result: flag2 } = await getAction(checkApi, { perms: state.KNOWLEDGE_FILE_DOWNLOAD_BUTTON, status: '1' })
-        flags.KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG = flag2
-        if (!flag2) {
-          console.warn('检测到系统未配置知识库文件下载按钮权限，默认将显示下载按钮！如需控制，请根据文档配置按钮权限！')
-        }
-        // 检查管理员权限-强制开放全部目录查看权
-        const { result: flag3 } = await getAction(checkApi, { perms: state.KNOWLEDGE_FOLDER_USER_FULL, status: '1' })
-        flags.KNOWLEDGE_FOLDER_USER_FULL_FLAG = flag3
-        if (!flag3) {
-          console.warn('检测到系统未配置知识库管理员权限，默认将不开放全部目录查看权！如需控制，请根据文档配置管理员权限！')
-        }
+        flags.KNOWLEDGE_FLAG = result
+        // 检查按钮权限
+        const { result: permMap } = await getAction(checkApi, { perms: perms.join(','), status: '1' })
+        Object.keys(permMap).forEach(key => {
+          flags[key + '_FLAG'] = permMap[key]
+          !permMap[key] && console.warn(msgs[key + '_FLAG'])
+        })
         commit('SET_KNOWLEDGE_FLAG', flags)
         resolve()
       })
