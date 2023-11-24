@@ -133,25 +133,7 @@
         :options="{ autoplay: true, height: '50vh' }" />
     </a-modal>
     <!--PDF预览-->
-    <a-modal
-      :maskClosable="false"
-      v-model="pdfVisible"
-      title="PDF预览"
-      ok-text=""
-      cancel-text="关闭"
-      width="60vw">
-      <template slot="footer">
-        <cancel-button :disableSubmit="true" key="back" @click="onPdfClose" />
-      </template>
-      <!--<pdf v-if='pdfUrl' :src="pdfUrl"></pdf>-->
-      <pdf
-        v-for="i in pdfPages"
-        :key="i"
-        :src="pdfSrc"
-        :page="i"
-        style="display: inline-block; width: 100%"
-      ></pdf>
-    </a-modal>
+    <vue-pdf-app-modal :pdf.sync="pdfUrl" :title.sync="pdfTitle" :download-permission="KNOWLEDGE_FILE_DOWNLOAD_BUTTON" />
   </div>
 </template>
 <script>
@@ -161,13 +143,12 @@ import QRCode from 'qrcodejs2'
 import { deleteAction, postAction, putAction } from '@api/manage'
 import { generateSorterOptions } from '@comp/yoko/utils/AntdTableUtils'
 import { isImage, isVideo } from '@comp/yoko/utils/FileUtil'
-import pdf from '@teckel/vue-pdf'
 import { mapState } from 'vuex'
 import { DisabledAuthFilterMixin } from '@/mixins/DisabledAuthFilterMixin'
 
 export default {
   name: 'FileList',
-  components: { HistoryList, pdf },
+  components: { HistoryList },
   mixins: [JeecgListMixin, DisabledAuthFilterMixin],
   props: {
     selectedIds: {
@@ -327,18 +308,10 @@ export default {
       videoVisible: false,
       // pdf预览
       pdfUrl: '',
-      pdfVisible: false,
-      pdfPages: 0,
-      pdfSrc: null
+      pdfTitle: ''
     }
   },
   methods: {
-    onPdfClose() {
-      this.pdfUrl = null
-      this.pdfVisible = false
-      this.pdfPages = 0
-      this.pdfSrc = null
-    },
     handleTableChange(pagination, filters, sorter) {
       // 分页、排序、筛选变化时触发
       // TODO 筛选
@@ -508,12 +481,7 @@ export default {
       }
       if (/pdf/.test(dotName)) {
         this.pdfUrl = fileUrl
-        const pdfSrc = pdf.createLoadingTask(this.pdfUrl)
-        pdfSrc.promise.then(pdf => {
-          this.pdfPages = pdf.numPages
-          this.pdfSrc = pdfSrc
-          this.pdfVisible = true
-        })
+        this.pdfTitle = record.name
         return
       }
       this.$message.info('暂不支持该文件类型预览！')
