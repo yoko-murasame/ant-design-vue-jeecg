@@ -9,18 +9,22 @@
     :cancel-text="closeText"
     @cancel="onPdfClose"
     @ok="onPdfClose"
-    width="70vw">
+    :transitionName="''"
+    :width="width">
     <template slot="footer">
       <cancel-button :disableSubmit="true" key="back" @click="onPdfClose" />
     </template>
-    <vue-pdf-app v-if="pdf" style="height: 80vh" :config="config" :pdf="pdf"></vue-pdf-app>
+    <a-spin v-if="loadingMode && pdf" :spinning="confirmLoading">
+      <vue-pdf-app :style="{ height }" :config="config" :pdf="pdf" @pages-rendered="onPagesRendered"></vue-pdf-app>
+    </a-spin>
+    <vue-pdf-app v-if="!loadingMode && pdf" :style="{ height }" :config="config" :pdf="pdf"></vue-pdf-app>
   </j-modal>
 </template>
 
 <script>
 import { USER_AUTH } from '@/store/mutation-types'
-import VuePdfApp from "vue-pdf-app"
-import 'vue-pdf-app/dist/icons/main.css';
+import VuePdfApp from 'vue-pdf-app'
+import 'vue-pdf-app/dist/icons/main.css'
 
 /**
  * VUE PDF 预览组件
@@ -49,17 +53,34 @@ export default {
       type: String,
       require: false,
       default: 'PDF预览'
+    },
+    width: {
+      type: String,
+      require: false,
+      default: '70vw'
+    },
+    height: {
+      type: String,
+      require: false,
+      default: '80vh'
+    },
+    // 是否显示加载中（原组件使用这个模式控制台会有异常，暂时无法解决）
+    loadingMode: {
+      type: Boolean,
+      require: false,
+      default: false
     }
   },
-  data () {
+  data() {
     return {
+      confirmLoading: false,
       pdfVisible: false,
       // 配置参数
       config: {
         sidebar: {
           viewThumbnail: true,
           viewOutline: true,
-          viewAttachments: true,
+          viewAttachments: true
         },
         secondaryToolbar: {
           secondaryPresentationMode: false,
@@ -79,47 +100,53 @@ export default {
           spreadNone: false,
           spreadOdd: false,
           spreadEven: false,
-          documentProperties: false,
+          documentProperties: false
         },
         toolbar: {
           toolbarViewerLeft: {
             findbar: false,
             previous: true,
             next: true,
-            pageNumber: true,
+            pageNumber: true
           },
           toolbarViewerRight: {
             presentationMode: true,
             openFile: false,
             print: false,
             download: true,
-            viewBookmark: false,
+            viewBookmark: false
           },
           toolbarViewerMiddle: {
             zoomOut: true,
             zoomIn: true,
-            scaleSelectContainer: true,
-          },
+            scaleSelectContainer: true
+          }
         },
-        errorWrapper: true,
+        errorWrapper: true
       }
     }
   },
   watch: {
     pdf: {
-      handler (val) {
+      handler(val) {
         if (!val) {
           return
         }
         this.checkPermissions()
         // this.config.secondaryToolbar = false
+        this.confirmLoading = true
         this.pdfVisible = true
       },
       immediate: true
     }
   },
   methods: {
+    onPagesRendered(e) {
+      this.confirmLoading = false
+      console.log('--------VuePdfAppModal--onPagesRendered--------')
+    },
     onPdfClose() {
+      this.confirmLoading = false
       this.pdfVisible = false
       this.$emit('update:pdf', '')
       this.$emit('update:title', '')
@@ -149,14 +176,26 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: none !important;
 }
+
 /deep/ .ant-modal-body {
   padding: 0;
-  /* 这将改变整个页面滚动条的宽度 */
+
   ::-webkit-scrollbar {
-    width: 1.5vh;  /* 对于垂直滚动条来说，你可以设置更大的值 */
+    width: 1.5vh;
     height: 1.5vh;
+  }
+
+  .ant-spin-nested-loading > div > .ant-spin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 4;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: 400px;
+    transform: translate(-50%, -50%);
   }
 }
 

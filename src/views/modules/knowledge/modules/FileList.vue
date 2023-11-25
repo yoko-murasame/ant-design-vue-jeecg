@@ -133,7 +133,14 @@
         :options="{ autoplay: true, height: '50vh' }" />
     </a-modal>
     <!--PDF预览-->
-    <vue-pdf-app-modal :pdf.sync="pdfUrl" :title.sync="pdfTitle" :download-permission="KNOWLEDGE_FILE_DOWNLOAD_BUTTON" />
+    <vue-pdf-app-modal
+      :pdf.sync="pdfUrl"
+      :title.sync="pdfTitle"
+      :download-permission="KNOWLEDGE_FILE_DOWNLOAD_BUTTON"
+      :width="'70vw'"
+      :height="'80vh'"
+      :loading-mode="false"
+    />
   </div>
 </template>
 <script>
