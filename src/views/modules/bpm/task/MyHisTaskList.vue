@@ -58,7 +58,7 @@
 
         <!-- 字符串超长截取省略号显示-->
         <span slot="bpmBizTitle" slot-scope="text, record">
-          <j-ellipsis :value="text" :length="15"/>
+          <j-ellipsis :value="text" :length="50"/>
         </span>
         <span slot="processDefinitionId" slot-scope="text, record">
           <j-ellipsis :value="text" :length="18"/>

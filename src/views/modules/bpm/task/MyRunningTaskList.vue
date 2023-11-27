@@ -89,7 +89,7 @@
             twoToneColor="#eb2f96"
             @click="taskNotify(record)"
             type="notification"/>
-          <j-ellipsis :value="text" :length="15"/>
+          <j-ellipsis :value="text" :length="100"/>
         </span>
         <span slot="processDefinitionId" slot-scope="text, record">
           <j-ellipsis :value="text" :length="18"/>
