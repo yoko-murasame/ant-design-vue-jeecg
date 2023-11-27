@@ -6,6 +6,7 @@
  * 4.默认支持asc、desc
  * @author yoko
  * @param field
+ * @param order
  * @param forceNumber 强制提取数字排序
  * @param options
  * @returns {{sortDirections: string[], defaultSortOrder: string, sorter: (function(*, *))}}
