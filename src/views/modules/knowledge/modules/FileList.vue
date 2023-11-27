@@ -8,6 +8,7 @@
       :dataSource="dataSource"
       :pagination="false"
       :loading="loading"
+      :scroll="{x:true}"
       @change="handleTableChange"
     >
       <template v-slot:nameSlot="text, record">
@@ -139,7 +140,7 @@
       :download-permission="KNOWLEDGE_FILE_DOWNLOAD_BUTTON"
       :width="'70vw'"
       :height="'80vh'"
-      :loading-mode="false"
+      :loading-mode="true"
     />
   </div>
 </template>
@@ -224,9 +225,9 @@ export default {
         {
           title: '文件名称',
           align: 'left',
-          ellipsis: true,
+          // ellipsis: true,
           dataIndex: 'name',
-          fixed: 'left',
+          // fixed: 'left',
           scopedSlots: { customRender: 'nameSlot' },
           ...generateSorterOptions('name', 'descend', true)
           // sorter: (a, b) => {
@@ -247,7 +248,8 @@ export default {
         {
           title: '版本',
           align: 'center',
-          width: 100,
+          width: 50,
+          fixed: 'right',
           dataIndex: 'version',
           customRender: function(t, r, index) {
             return 'V' + (r.version + 1)
@@ -256,13 +258,15 @@ export default {
         {
           title: '文件大小',
           align: 'center',
-          width: 100,
+          // width: 80,
+          fixed: 'right',
           dataIndex: 'size'
         },
         {
           title: '上传人',
           align: 'center',
-          width: 100,
+          // width: 80,
+          fixed: 'right',
           dataIndex: 'uploadBy'
         },
         // {
@@ -275,7 +279,8 @@ export default {
         {
           title: '标签',
           align: 'center',
-          width: 200,
+          // width: 120,
+          fixed: 'right',
           dataIndex: 'tags',
           scopedSlots: { customRender: 'tagsSlot' }
         },
@@ -288,7 +293,7 @@ export default {
         {
           title: '操作',
           dataIndex: 'action',
-          // fixed: 'right',
+          fixed: 'right',
           scopedSlots: { customRender: 'action' },
           align: 'center',
           width: '22vh'
@@ -530,12 +535,12 @@ export default {
 </script>
 <style scoped lang="less">
 .file-name {
-  width: auto;
-  max-width: 35vh;
+  //width: auto;
+  //max-width: 42vh;
   padding: 0;
   color: #1890FF;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  //overflow: hidden;
+  //text-overflow: ellipsis;
 
   &:hover {
     cursor: pointer;
