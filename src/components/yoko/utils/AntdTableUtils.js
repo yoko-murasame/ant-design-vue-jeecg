@@ -11,7 +11,7 @@
  * @param options
  * @returns {{sortDirections: string[], defaultSortOrder: string, sorter: (function(*, *))}}
  */
-export const generateSorterOptions = (field, order = 'descend', forceNumber, options = {}) => {
+export const generateSorterOptions = (field, order = 'descend', forceNumber = true, options = {}) => {
   return {
     // 自动处理数字/中文排序
     sorter: (a, b) => {
@@ -56,7 +56,7 @@ export const generateSorterOptions = (field, order = 'descend', forceNumber, opt
       // 最终解决方案
       // https://datatracker.ietf.org/doc/html/rfc4647#section-3.4
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare
-      return a.localeCompare(b, 'zh-CN', { numeric: true })
+      return a.localeCompare(b, 'zh-CN', { numeric: forceNumber })
     },
     sortDirections: ['descend', 'ascend'],
     defaultSortOrder: order === 'asc' ? 'ascend' : order === 'desc' ? 'descend' : order,

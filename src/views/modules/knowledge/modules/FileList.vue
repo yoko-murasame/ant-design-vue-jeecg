@@ -229,7 +229,7 @@ export default {
           dataIndex: 'name',
           // fixed: 'left',
           scopedSlots: { customRender: 'nameSlot' },
-          ...generateSorterOptions('name', 'descend', true)
+          ...generateSorterOptions('name', 'asc')
           // sorter: (a, b) => {
           //   const va = a.name
           //   const vb = b.name
