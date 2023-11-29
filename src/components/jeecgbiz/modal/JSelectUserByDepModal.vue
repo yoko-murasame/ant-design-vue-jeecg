@@ -29,21 +29,48 @@
       <a-col :md="18" :sm="24">
         <a-card :bordered="false">
           <a-form-model>
-            <a-form-model-item label="用户账号" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-row type="flex" :gutter="8">
-                <a-col :span="18">
+            <a-row>
+              <a-col span="9">
+                <a-form-model-item label="姓名" :labelCol="labelCol" :wrapperCol="wrapperCol">
+                      <a-input-search
+                        :style="{width:'25vh'}"
+                        placeholder="请输入姓名"
+                        v-model="queryParam.realname"
+                        @search="onSearch"
+                      ></a-input-search>
+                </a-form-model-item>
+              </a-col>
+              <a-col span="9">
+                <a-form-model-item label="账号" :labelCol="labelCol" :wrapperCol="wrapperCol">
                   <a-input-search
-                    :style="{width:'100%'}"
+                    :style="{width:'25vh'}"
                     placeholder="请输入账号"
                     v-model="queryParam.username"
                     @search="onSearch"
                   ></a-input-search>
-                </a-col>
-                <a-col :span="6">
+                </a-form-model-item>
+              </a-col>
+              <a-col span="6">
+                <a-form-model-item label="" :labelCol="labelCol" :wrapperCol="wrapperCol">
                   <a-button @click="searchReset(1)" icon="redo">重置</a-button>
-                </a-col>
-              </a-row>
-            </a-form-model-item>
+                </a-form-model-item>
+              </a-col>
+            </a-row>
+            <!--<a-form-model-item label="账号" :labelCol="labelCol" :wrapperCol="wrapperCol">-->
+            <!--  <a-row type="flex" :gutter="8">-->
+            <!--    <a-col :span="18">-->
+            <!--      <a-input-search-->
+            <!--        :style="{width:'100%'}"-->
+            <!--        placeholder="请输入账号"-->
+            <!--        v-model="queryParam.username"-->
+            <!--        @search="onSearch"-->
+            <!--      ></a-input-search>-->
+            <!--    </a-col>-->
+            <!--    <a-col :span="6">-->
+            <!--      <a-button @click="searchReset(1)" icon="redo">重置</a-button>-->
+            <!--    </a-col>-->
+            <!--  </a-row>-->
+            <!--</a-form-model-item>-->
           </a-form-model>
           <!--用户列表-->
           <a-table
@@ -56,6 +83,7 @@
             :pagination="ipagination"
             :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange,type: getType}"
             :loading="loading"
+            :customRow="clickThenCheck"
             @change="handleTableChange">
           </a-table>
         </a-card>
@@ -76,18 +104,19 @@
     data() {
       return {
         queryParam: {
-          username: ''
+          username: '',
+          realname: ''
         },
         columns: [
-          {
-            title: '用户账号',
-            align: 'center',
-            dataIndex: 'username'
-          },
           {
             title: '用户姓名',
             align: 'center',
             dataIndex: 'realname'
+          },
+          {
+            title: '用户账号',
+            align: 'center',
+            dataIndex: 'username'
           },
           {
             title: '性别',
@@ -172,6 +201,21 @@
       this.loadData()
     },
     methods: {
+      clickThenCheck(record) {
+        return {
+          on: {
+            click: () => {
+              if (this.selectedRowKeys.includes(record.id)) {
+                this.selectedRowKeys = this.selectedRowKeys.filter(item => item !== record.id)
+                this.selectionRows = this.selectionRows.filter(item => item.id !== record.id)
+              } else {
+                this.selectedRowKeys.push(record.id)
+                this.selectionRows.push(record)
+              }
+            }
+          }
+        };
+      },
       initUserNames() {
         if (this.userIds) {
           // 这里最后加一个 , 的原因是因为无论如何都要使用 in 查询，防止后台进行了模糊匹配，导致查询结果不准确

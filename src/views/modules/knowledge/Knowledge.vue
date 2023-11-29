@@ -49,15 +49,26 @@
             <div class="flex-unshrink" style="margin-right: 1vh" v-if="show || isSearch">
               <a-button-group>
                 <a-button
+                  v-if="KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG"
+                  v-has="KNOWLEDGE_FOLDER_ADD_BUTTON"
                   :disabled="false && !!selectedNode.id"
                   title="新增"
                   type="primary"
                   icon="plus"
                   @click="handleAddFolder"></a-button>
-                <a-button title="编辑" icon="edit" @click="handleEditFolder"></a-button>
-                <a-button title="删除" icon="delete" @click="deleteFolder"></a-button>
+                <a-button
+                  v-else
+                  :disabled="false && !!selectedNode.id"
+                  title="新增"
+                  type="primary"
+                  icon="plus"
+                  @click="handleAddFolder"></a-button>
+                <a-button v-if="KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG" v-has="KNOWLEDGE_FOLDER_EDIT_BUTTON" title="编辑" icon="edit" @click="handleEditFolder"></a-button>
+                <a-button v-else title="编辑" icon="edit" @click="handleEditFolder"></a-button>
+                <a-button v-if="KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG" v-has="KNOWLEDGE_FOLDER_DELETE_BUTTON" title="删除" icon="delete" @click="deleteFolder"></a-button>
+                <a-button v-else title="删除" icon="delete" @click="deleteFolder"></a-button>
                 <a-button title="刷新" icon="reload" @click="onSearchFolder"></a-button>
-                <a-button v-has="'KNOWLEDGE_FOLDER_USER_AUTH_BUTTON'" title="用户授权" icon="user-add" @click="openAuthModel"></a-button>
+                <a-button v-has="KNOWLEDGE_FOLDER_USER_AUTH_BUTTON" title="用户授权" icon="user-add" @click="openAuthModel"></a-button>
               </a-button-group>
               <a-button-group v-show="false" style="margin-left: 12px">
                 <a-button icon="arrow-up" @click="handleUp"></a-button>
@@ -202,8 +213,9 @@ import Vue from 'vue'
 import folderConfig from './modules/folderConfig'
 import FolderModal from './modules/FolderModal'
 import HistoryList from './modules/HistoryList'
-import FileList from '@views/modules/knowledge/modules/FileList'
-import FolderUserPermissionModal from '@views/modules/knowledge/modules/FolderUserPermissionModal'
+import FileList from './modules/FileList'
+import FolderUserPermissionModal from './modules/FolderUserPermissionModal'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Knowledge',
@@ -213,8 +225,48 @@ export default {
     FileList,
     FolderUserPermissionModal
   },
+  /**
+   * 业务id绑定模式
+   * 1、添加业务id属性
+   */
+  props: {
+    // [PROJECT_ID]: {
+    //   type: String,
+    //   default: ''
+    // },
+    // [BUSINESS_ID]: {
+    //   type: String,
+    //   default: ''
+    // }
+  },
+  /**
+   * 业务id绑定模式
+   * 2、监听业务id改变
+   */
+  watch: {
+    // [PROJECT_ID]: {
+    //   immediate: true,
+    //   deep: false,
+    //   handler(val) {
+    //     this.debug && console.log(PROJECT_ID + '改变了::', val)
+    //     this.loadAllTree(val);
+    //   }
+    // },
+    // [BUSINESS_ID]: {
+    //   immediate: true,
+    //   deep: false,
+    //   handler(val) {
+    //     this.debug && console.log(BUSINESS_ID + '改变了::', val)
+    //     this.loadAllTree(val);
+    //   }
+    // }
+  },
   data() {
     return {
+      /**
+       * 业务id绑定模式
+       * 3、需要注释常量
+       */
       businessId: 'KNOWLEDGE_BASE',
       businessName: '知识库',
       queryParam: {
@@ -249,6 +301,15 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      KNOWLEDGE_FOLDER_ADD_BUTTON: state => state.permission.KNOWLEDGE_FOLDER_ADD_BUTTON,
+      KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FOLDER_ADD_BUTTON_FLAG,
+      KNOWLEDGE_FOLDER_EDIT_BUTTON: state => state.permission.KNOWLEDGE_FOLDER_EDIT_BUTTON,
+      KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FOLDER_EDIT_BUTTON_FLAG,
+      KNOWLEDGE_FOLDER_DELETE_BUTTON: state => state.permission.KNOWLEDGE_FOLDER_DELETE_BUTTON,
+      KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FOLDER_DELETE_BUTTON_FLAG,
+      KNOWLEDGE_FOLDER_USER_AUTH_BUTTON: state => state.permission.KNOWLEDGE_FOLDER_USER_AUTH_BUTTON
+    }),
     uploadCompleteUrl: function () {
       return window._CONFIG['domianURL'] + this.uploadConfig.action
     }

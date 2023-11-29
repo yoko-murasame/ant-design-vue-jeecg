@@ -2,7 +2,8 @@
   <a-dropdown v-if="syncToApp && syncToLocal">
     <a-button type="primary" icon="sync">同步{{ name }}</a-button>
     <a-menu slot="overlay" @click="handleMenuClick">
-      <a-menu-item v-if="syncToApp" key="to-app">同步到{{ name }}</a-menu-item>
+      <!--FIXME 这个反向同步操作很危险，暂时隐藏-->
+      <!--<a-menu-item v-if="syncToApp" key="to-app">同步到{{ name }}</a-menu-item>-->
       <a-menu-item v-if="syncToLocal" key="to-local">同步到本地</a-menu-item>
     </a-menu>
   </a-dropdown>

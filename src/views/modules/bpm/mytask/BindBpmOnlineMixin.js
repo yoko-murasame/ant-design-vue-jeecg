@@ -52,9 +52,9 @@ export default {
     }
   },
   created() {
-    this.loadData = throttle(this.loadData, 3000, { 'trailing': false })
-    this.combineBpmDataList = throttle(this.combineBpmDataList, 3000, { 'trailing': false })
-    this.getProcessDefinitionId = throttle(this.getProcessDefinitionId, 3000, { 'trailing': false })
+    this.loadData = throttle(this.loadData, 100, { 'trailing': false })
+    this.combineBpmDataList = throttle(this.combineBpmDataList, 100, { 'trailing': false })
+    this.getProcessDefinitionId = throttle(this.getProcessDefinitionId, 100, { 'trailing': false })
     console.log('BindBpmOnlineMixin', this.path, this.formUrl);
   },
   watch: {

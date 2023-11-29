@@ -8,6 +8,7 @@
       :dataSource="dataSource"
       :pagination="false"
       :loading="loading"
+      :scroll="{x:true}"
       @change="handleTableChange"
     >
       <template v-slot:nameSlot="text, record">
@@ -40,25 +41,43 @@
       </template>
 
       <template slot="action" slot-scope="text, record">
-        <a href="javascript:;" @click="handleDownload(record)">下载</a>
-        <a-divider type="vertical"/>
-        <a href="javascript:;" @click="changeTags(record)">打标签</a>
-        <a-divider type="vertical"/>
-        <a href="javascript:;" @click="changeFileName(record)">重命名</a>
-        <a-divider type="vertical"/>
+        <!--仅当系统已配置此按钮权限时，才生效-->
+        <a
+          :disabled="KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG && isDisabledAuth(KNOWLEDGE_FILE_DOWNLOAD_BUTTON)"
+          href="javascript:;"
+          @click="handleDownload(record)">下载</a>
+        <a-divider type="vertical" />
+        <a
+          :disabled="KNOWLEDGE_FILE_TAG_BUTTON_FLAG && isDisabledAuth(KNOWLEDGE_FILE_TAG_BUTTON)"
+          href="javascript:;"
+          @click="changeTags(record)">打标签</a>
+        <a-divider type="vertical" />
+        <a
+          :disabled="KNOWLEDGE_FILE_RENAME_BUTTON_FLAG && isDisabledAuth(KNOWLEDGE_FILE_RENAME_BUTTON)"
+          href="javascript:;"
+          @click="changeFileName(record)">重命名</a>
+        <a-divider type="vertical" />
+        <a-divider v-show="false" type="vertical" />
         <a href="javascript:;" v-show="false" @click="e => showQrCode(record, e)">二维码</a>
-        <a-divider v-show="false" type="vertical"/>
         <a-dropdown>
           <a class="ant-dropdown-link">更多
-            <a-icon type="down"/>
+            <a-icon type="down" />
           </a>
           <a-menu slot="overlay">
-            <a-menu-item>
-              <a href="javascript:;" @click="$refs.historyList.show(record.id)">版本管理</a>
+            <a-menu-item
+              :disabled="KNOWLEDGE_FILE_VERSION_BUTTON_FLAG && isDisabledAuth(KNOWLEDGE_FILE_VERSION_BUTTON)">
+              <a
+                :disabled="KNOWLEDGE_FILE_VERSION_BUTTON_FLAG && isDisabledAuth(KNOWLEDGE_FILE_VERSION_BUTTON)"
+                href="javascript:;"
+                @click="$refs.historyList.show(record.id)">版本管理</a>
             </a-menu-item>
-            <a-menu-item>
-              <a-popconfirm title="确定删除吗?" @confirm="() => deleteFile(record.id)">
-                <a>删除</a>
+            <a-menu-item
+              :disabled="KNOWLEDGE_FILE_DELETE_BUTTON_FLAG && isDisabledAuth(KNOWLEDGE_FILE_DELETE_BUTTON)">
+              <a-popconfirm
+                :disabled="KNOWLEDGE_FILE_DELETE_BUTTON_FLAG && isDisabledAuth(KNOWLEDGE_FILE_DELETE_BUTTON)"
+                title="确定删除吗?"
+                @confirm="() => deleteFile(record.id)">
+                <a :disabled="KNOWLEDGE_FILE_DELETE_BUTTON_FLAG && isDisabledAuth(KNOWLEDGE_FILE_DELETE_BUTTON)">删除</a>
               </a-popconfirm>
             </a-menu-item>
           </a-menu>
@@ -96,18 +115,49 @@
         mode="tags"
       />
     </a-modal>
+    <!--视频预览-->
+    <a-modal
+      :maskClosable="false"
+      v-model="videoVisible"
+      title="视频预览"
+      ok-text=""
+      cancel-text="关闭"
+      width="80vh"
+      @ok="videoUrl = null"
+      @cancel="videoUrl = null">
+      <template slot="footer">
+        <cancel-button :disableSubmit="true" key="back" @click="videoUrl = null;videoVisible=false;" />
+      </template>
+      <vue-aliplayer-v2
+        v-if="videoUrl"
+        :source="videoUrl"
+        :options="{ autoplay: true, height: '50vh' }" />
+    </a-modal>
+    <!--PDF预览-->
+    <vue-pdf-app-modal
+      :pdf.sync="pdfUrl"
+      :title.sync="pdfTitle"
+      :download-permission="KNOWLEDGE_FILE_DOWNLOAD_BUTTON"
+      :width="'70vw'"
+      :height="'80vh'"
+      :loading-mode="true"
+    />
   </div>
 </template>
 <script>
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-import HistoryList from '@views/modules/knowledge/modules/HistoryList.vue'
+import HistoryList from './HistoryList.vue'
 import QRCode from 'qrcodejs2'
 import { deleteAction, postAction, putAction } from '@api/manage'
+import { generateSorterOptions } from '@comp/yoko/utils/AntdTableUtils'
+import { isImage, isVideo } from '@comp/yoko/utils/FileUtil'
+import { mapState } from 'vuex'
+import { DisabledAuthFilterMixin } from '@/mixins/DisabledAuthFilterMixin'
 
 export default {
   name: 'FileList',
   components: { HistoryList },
-  mixins: [JeecgListMixin],
+  mixins: [JeecgListMixin, DisabledAuthFilterMixin],
   props: {
     selectedIds: {
       type: Array,
@@ -120,7 +170,7 @@ export default {
   },
   watch: {
     searchParams: {
-      handler: function (val) {
+      handler: function(val) {
         // Object.assign(this.queryParam, val)
         // 必须重置值才会触发监听
         this.queryParam = { ...val }
@@ -129,7 +179,7 @@ export default {
       deep: true
     },
     selectedIds: {
-      handler: function (val) {
+      handler: function(val) {
         val && val.length && this.loadFileData()
       },
       immediate: true,
@@ -137,7 +187,19 @@ export default {
     }
   },
   computed: {
-    downloadCompleteUrl: function () {
+    ...mapState({
+      KNOWLEDGE_FILE_DOWNLOAD_BUTTON: state => state.permission.KNOWLEDGE_FILE_DOWNLOAD_BUTTON,
+      KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FILE_DOWNLOAD_BUTTON_FLAG,
+      KNOWLEDGE_FILE_TAG_BUTTON: state => state.permission.KNOWLEDGE_FILE_TAG_BUTTON,
+      KNOWLEDGE_FILE_TAG_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FILE_TAG_BUTTON_FLAG,
+      KNOWLEDGE_FILE_RENAME_BUTTON: state => state.permission.KNOWLEDGE_FILE_RENAME_BUTTON,
+      KNOWLEDGE_FILE_RENAME_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FILE_RENAME_BUTTON_FLAG,
+      KNOWLEDGE_FILE_VERSION_BUTTON: state => state.permission.KNOWLEDGE_FILE_VERSION_BUTTON,
+      KNOWLEDGE_FILE_VERSION_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FILE_VERSION_BUTTON_FLAG,
+      KNOWLEDGE_FILE_DELETE_BUTTON: state => state.permission.KNOWLEDGE_FILE_DELETE_BUTTON,
+      KNOWLEDGE_FILE_DELETE_BUTTON_FLAG: state => state.permission.KNOWLEDGE_FILE_DELETE_BUTTON_FLAG
+    }),
+    downloadCompleteUrl: function() {
       return window._CONFIG['domianURL'] + this.url.downLoadUrl
     }
   },
@@ -163,44 +225,48 @@ export default {
         {
           title: '文件名称',
           align: 'left',
-          ellipsis: true,
+          // ellipsis: true,
           dataIndex: 'name',
-          fixed: 'left',
+          // fixed: 'left',
           scopedSlots: { customRender: 'nameSlot' },
-          sorter: (a, b) => {
-            const va = a.name
-            const vb = b.name
-            if (!va || !vb) {
-              return -1
-            }
-            try { return va.localeCompare(vb)} catch (e) {
-              return -1
-            }
-          },
-          sortDirections: ['descend', 'ascend'],
-          defaultSortOrder:'descend'
+          ...generateSorterOptions('name', 'asc')
+          // sorter: (a, b) => {
+          //   const va = a.name
+          //   const vb = b.name
+          //   if (!va || !vb) {
+          //     return -1
+          //   }
+          //   try { return va.localeCompare(vb)} catch (e) {
+          //     return -1
+          //   }
+          // },
+          // sortDirections: ['descend', 'ascend'],
+          // defaultSortOrder:'descend'
           // width: 380
           // width: 280,
         },
         {
           title: '版本',
           align: 'center',
-          width: 100,
+          width: 50,
+          fixed: 'right',
           dataIndex: 'version',
-          customRender: function (t, r, index) {
+          customRender: function(t, r, index) {
             return 'V' + (r.version + 1)
           }
         },
         {
           title: '文件大小',
           align: 'center',
-          width: 100,
+          // width: 80,
+          fixed: 'right',
           dataIndex: 'size'
         },
         {
           title: '上传人',
           align: 'center',
-          width: 100,
+          // width: 80,
+          fixed: 'right',
           dataIndex: 'uploadBy'
         },
         // {
@@ -213,7 +279,8 @@ export default {
         {
           title: '标签',
           align: 'center',
-          width: 200,
+          // width: 120,
+          fixed: 'right',
           dataIndex: 'tags',
           scopedSlots: { customRender: 'tagsSlot' }
         },
@@ -226,7 +293,7 @@ export default {
         {
           title: '操作',
           dataIndex: 'action',
-          // fixed: 'right',
+          fixed: 'right',
           scopedSlots: { customRender: 'action' },
           align: 'center',
           width: '22vh'
@@ -247,7 +314,13 @@ export default {
       // 打标签功能
       tags: '',
       tagsFile: null,
-      tagsVisible: false
+      tagsVisible: false,
+      // 视频播放
+      videoUrl: '',
+      videoVisible: false,
+      // pdf预览
+      pdfUrl: '',
+      pdfTitle: ''
     }
   },
   methods: {
@@ -383,7 +456,47 @@ export default {
       })
     },
     handlePreview(record) {
-      window.open(this.downloadCompleteUrl + record.id)
+      // window.open(this.downloadCompleteUrl + record.id)
+      console.log('handlePreview', record)
+      const dotName = `.${record.suffix.toLowerCase()}`
+      const fileUrl = this.downloadCompleteUrl + record.id
+      if (isImage(dotName)) {
+        const centextMenuListener = (event) => {
+          event.preventDefault() // 阻止右键菜单的默认行为
+        }
+        const viewer = this.$viewerApi({
+          images: [fileUrl],
+          options: {
+            button: false, // 右上方的关闭按钮
+            navbar: false, // 底部工具栏
+            toolbar: false, // 底部工具配置
+            // url: 'data-source',
+            initialViewIndex: 0,
+            backdrop: true, // 遮罩关闭
+            className: 'v-viewer-image-hide',
+            viewed: function() {
+              console.log('viewed', viewer)
+              viewer.body.addEventListener('contextmenu', centextMenuListener)
+            },
+            hidden: function() {
+              console.log('hidden', viewer)
+              viewer.body.removeEventListener('contextmenu', centextMenuListener)
+            }
+          }
+        })
+        return
+      }
+      if (isVideo(dotName)) {
+        this.videoUrl = fileUrl
+        this.videoVisible = true
+        return
+      }
+      if (/pdf/.test(dotName)) {
+        this.pdfUrl = fileUrl
+        this.pdfTitle = record.name
+        return
+      }
+      this.$message.info('暂不支持该文件类型预览！')
     },
     handleDownload(record) {
       const url = this.downloadCompleteUrl + record.id + '?forceDownload=true' // 图片的URL
@@ -422,17 +535,28 @@ export default {
 </script>
 <style scoped lang="less">
 .file-name {
-  width: auto;
-  max-width: 35vh;
+  //width: auto;
+  //max-width: 42vh;
   padding: 0;
   color: #1890FF;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  //overflow: hidden;
+  //text-overflow: ellipsis;
+
   &:hover {
     cursor: pointer;
   }
 }
+
 .file-tags {
   width: auto;
+}
+</style>
+<style lang="less">
+// v-viewer的禁用右键菜单
+.v-viewer-image-hide {
+  img {
+    user-select: none;
+    //pointer-events: none;
+  }
 }
 </style>

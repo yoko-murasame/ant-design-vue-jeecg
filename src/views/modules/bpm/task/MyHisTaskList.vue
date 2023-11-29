@@ -58,7 +58,7 @@
 
         <!-- 字符串超长截取省略号显示-->
         <span slot="bpmBizTitle" slot-scope="text, record">
-          <j-ellipsis :value="text" :length="15"/>
+          <j-ellipsis :value="text" :length="50"/>
         </span>
         <span slot="processDefinitionId" slot-scope="text, record">
           <j-ellipsis :value="text" :length="18"/>
@@ -115,12 +115,13 @@
           }, {
             title: '流程名称',
             align: 'center',
+            width: 200,
             dataIndex: 'processDefinitionName',
             scopedSlots: { customRender: 'processDefinitionName' }
           }, {
             title: '当前环节',
             align: 'center',
-            width: 120,
+            width: 200,
             dataIndex: 'taskName'
           }, {
             title: '发起人',
@@ -135,15 +136,17 @@
           }, {
             title: '开始时间',
             align: 'center',
+            width: 150,
             dataIndex: 'taskBeginTime'
           }, {
             title: '结束时间',
             align: 'center',
+            width: 150,
             dataIndex: 'taskEndTime'
           }, {
             title: '耗时',
             align: 'center',
-            width: 100,
+            width: 180,
             dataIndex: 'durationStr',
             customRender: function (text) {
               return text || '0秒'

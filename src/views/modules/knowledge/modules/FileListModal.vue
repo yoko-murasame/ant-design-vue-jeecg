@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import FileList from '@views/modules/knowledge/modules/FileList.vue'
+import FileList from './FileList.vue'
 
 export default {
   name: 'FileModal',

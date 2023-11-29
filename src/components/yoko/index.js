@@ -2,6 +2,8 @@
 import CancelButton from '@/components/yoko/CancelButton'
 import DisableBlock from '@/components/yoko/DisableBlock'
 import JUploadKnowledge from '@/components/yoko/JUploadKnowledge'
+import StepsTab from '@/components/yoko/StepsTab'
+import VuePdfAppModal from '@/components/yoko/VuePdfAppModal'
 
 // 注册动态表单组件（要不流程中不会显示）
 import DynamicForm from '@/components/online/autoform/index'
@@ -25,6 +27,8 @@ export default {
     Vue.component('CancelButton', CancelButton)
     Vue.component('DisableBlock', DisableBlock)
     Vue.component('JUploadKnowledge', JUploadKnowledge)
+    Vue.component('StepsTab', StepsTab)
+    Vue.component('VuePdfAppModal', VuePdfAppModal)
     // 动态表单
     Vue.use(DynamicForm)
     // 表单验证

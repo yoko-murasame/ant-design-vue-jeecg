@@ -39,7 +39,8 @@
           width: 1200,
           displayKey: 'realname',
           returnKeys: ['id', 'username'],
-          queryParamText: '账号'
+          queryParamText: '姓名',
+          queryParamCode: 'realname'
         },
         // 多条件查询配置
         queryConfigDefault: [

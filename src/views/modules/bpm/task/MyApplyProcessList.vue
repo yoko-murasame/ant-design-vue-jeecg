@@ -168,6 +168,7 @@ export default {
         {
           title: '流程名称',
           align: 'center',
+          width: 300,
           dataIndex: 'processDefinitionName',
           scopedSlots: { customRender: 'processDefinitionName' }
         },
@@ -194,6 +195,7 @@ export default {
           title: '开始日期',
           align: 'center',
           dataIndex: 'startTime',
+          width: 150,
           customRender: function (text) {
             return !text ? '' : (text.length > 19 ? text.substr(0, 19) : text)
           }
@@ -202,6 +204,7 @@ export default {
           title: '结束时间',
           align: 'center',
           dataIndex: 'endTime',
+          width: 150,
           customRender: function (text) {
             return !text ? '' : (text.length > 19 ? text.substr(0, 19) : text)
           }
@@ -209,7 +212,7 @@ export default {
         {
           title: '耗时',
           align: 'center',
-          width: 150,
+          width: 180,
           dataIndex: 'spendTimes'
         },
         {
@@ -217,12 +220,12 @@ export default {
           align: 'center',
           dataIndex: 'bpmStatus',
           width: 120,
-          customRender: (text) => {
+          customRender: (text, row) => {
             switch (text) {
               case '1':
                 return '待提交';
               case '2':
-                return '处理中';
+                return row.endTime ? '已完成(异常)' : '处理中';
               case '3':
                 return '已完成';
               case 'rejectProcess':
@@ -234,7 +237,7 @@ export default {
               case '4':
                 return '已作废';
             }
-            return text;
+            return row.endTime ? '已完成' : text;
           }
         },
         {
