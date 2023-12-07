@@ -16,3 +16,4 @@ dist
 ## front
 /yarn-error.log
 /.fastRequest/
+*.local
