@@ -12,38 +12,32 @@
   <!--  style="top: 0px;"-->
   <!--  :footer="null"-->
   <!--  @cancel="handleModalCancel">-->
-  <j-modal
-    :title="title"
-    :visible="visible"
-    width="80%"
-    destroyOnClose
-    :class="'jeecg-online-modal'"
-    :bodyStyle="bodyStyle"
-    :maskClosable="false"
-    :footer="null"
-    @cancel="handleModalCancel"
-    switchFullscreen
-  >
+  <j-modal :title="title" :visible="visible" width="80%" destroyOnClose :class="'jeecg-online-modal'"
+    :bodyStyle="bodyStyle" :maskClosable="false" :footer="null" @cancel="handleModalCancel" switchFullscreen>
     <a-tabs v-model="activeKey" tabPosition="left">
 
       <a-tab-pane key="1">
         <span slot="tab">
-          <a-icon type="file-text"/>
+          <a-icon type="file-text" />
           <span>业务信息</span>
         </span>
         <div class="component_div">
-          <template v-if="isComp">
+          <!-- <template v-if="isComp">
             <dynamic-link ref="formModal" :path="path" :formData="formData"></dynamic-link>
           </template>
           <template v-else>
-            <iframe :src="iframeUrl" frameborder="0" width="100%" :height="height" scrolling="auto"></iframe>
-          </template>
+            <iframe :src="iframeUrl" frameborder="0" width="100%" :height="height" scrolling="auto"></iframe> -->
+
+            <desform-view class="desform-view" :mode="mode" :desformCode="formData.tableName" :dataId="formData.dataId"
+              :onlineTableId="formData.tableName" height="100vh" :innerDialog="true" @reload="handleReload" :isOnline="isOnline"
+              ref="desform" />
+          <!-- </template> -->
         </div>
       </a-tab-pane>
 
       <a-tab-pane key="2">
         <span slot="tab">
-          <a-icon type="user"/>
+          <a-icon type="user" />
           <span>任务处理</span>
         </span>
         <task-module :save-form="preSaveForm" :formData="formData" @complete="completeProcess"></task-module>
@@ -51,7 +45,7 @@
 
       <a-tab-pane key="3">
         <span slot="tab">
-          <a-icon type="sliders"/>
+          <a-icon type="sliders" />
           <span>流程图</span>
         </span>
         <process-module :formData="formData"></process-module>
@@ -71,13 +65,16 @@ import Vue from 'vue'
 import DynamicLink from './form/DynamicLink.vue'
 import ProcessModule from './form/ProcessModule'
 import TaskModule from './form/TaskModule'
+import DesformView from '@/components/online/desform/DesformView.vue'
+import { httpAction, getAction } from '@/api/manage'
 
 export default {
   name: 'TaskDealModal',
   components: {
     DynamicLink,
     TaskModule,
-    ProcessModule
+    ProcessModule,
+    DesformView
   },
   props: ['path', 'formData'],
   computed: {
@@ -109,11 +106,21 @@ export default {
       },
       height: (window.innerHeight - 120) + 'px',
       iframeUrl: '',
-      preSaveFormDebounce: null
+      preSaveFormDebounce: null,
+        mode: 'detail',
+        title: '操作',
+        visible: false,
+        bodyOverflow: null,
+        bgColor: 'rgba(0,0,0,0.6)',
+        isOnline: false,
+      url: {
+        json: '/desform/queryByCode',
+      }
     }
   },
   created() {
     // this.preSaveFormDebounce = debounce(this.preSaveForm, 500)
+    this.init();
   },
   beforeUpdate() {
     // this.preSaveFormDebounce()
@@ -200,11 +207,11 @@ export default {
             const result = showFlowSubmitButton && methodProxy && methodProxy(true);
             console.log('页面变化->任务处理->预先检验和提交表单数据', result, showFlowSubmitButton)
             showFlowSubmitButton && result && result.then(record => resolve(record))
-            .catch(err => {
-              that.$message.error('表单未完成！')
-              that.activeKey = '1'
-              reject(err)
-            })
+              .catch(err => {
+                that.$message.error('表单未完成！')
+                that.activeKey = '1'
+                reject(err)
+              })
             !showFlowSubmitButton && resolve()
           }
         }
@@ -224,7 +231,7 @@ export default {
     // 获取指定方法
     getFirstMethodByName(comp, funcName) {
       if (comp[funcName] && typeof comp[funcName] === 'function') {
-      // if (comp[funcName]) {
+        // if (comp[funcName]) {
         // console.log('找到的属性', comp[funcName], comp)
         // 如果当前组件存在名称为funcName的方法，则返回该方法
         return comp[funcName];
@@ -239,7 +246,51 @@ export default {
       }
       // 如果没有找到符合条件的方法，则返回null或者自定义的默认值
       return null;
-    }
+    },
+
+    handleReload(data) {
+      this.$emit('reload', { target: this })
+    },
+    async init() {
+      await this.loadFormJson()
+      await this.loadFormData()
+
+    },
+    loadFormJson() {
+      return new Promise((resolve, reject) => {
+        if (!this.formData || !this.formData.tableName) {
+          this.pageLoading = false
+          console.warn('--TaskDealModal--loadFormJson--表单数据为空！')
+          resolve()
+          return
+        }
+        // 获取json
+        var params = { desformCode: this.formData.tableName };// 查询条件
+        getAction(this.url.json, params)
+          .then(res => {
+            this.pageLoading = false
+            this.formDataJson = JSON.parse(res.result.desformDesignJson)
+            resolve()
+          })
+      })
+    },
+    loadFormData(){
+      return new Promise((resolve,reject)=>{
+        if (!this.formData || !this.formData.tableName) {
+          this.pageLoading = false
+          console.warn('--TaskDealModal--loadFormData--表单数据为空！')
+          resolve()
+          return
+        }
+      // 获取表单数据
+        getAction(`${this.url.getFormData}/${this.formData.tableName}/${this.formData.tableName.dataId}`).then(res => {
+          console.log("获取表单数据", res.result)
+          this.$refs.kfb.setData(res.result)
+            resolve()
+        })
+
+      })
+    },
 
   }
 
@@ -266,12 +317,14 @@ export default {
   top: 1vh;
   padding: 0;
 }
+
 /**
  * 固定左侧办理按钮，右侧内容框滚动
  * 1.bodyStyle -> 'overflow-y': 'hidden' todo oa的内置窗口会有高度固定成窗口问题，导致无法滚动，属性改为 'auto' 后正常
  * 2.配置下面样式
  */
-/deep/ .ant-tabs .ant-tabs-left-content, .ant-tabs .ant-tabs-right-content {
+/deep/ .ant-tabs .ant-tabs-left-content,
+.ant-tabs .ant-tabs-right-content {
   height: 90vh;
   overflow-y: auto;
 }

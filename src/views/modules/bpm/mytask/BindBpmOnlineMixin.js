@@ -182,6 +182,9 @@ export default {
         submitFunc()
       } else {
         that.$confirm({
+          okText: '确定',
+          okType: '',
+          cancelText: '取消',
           title: '提示',
           content: '确认提交流程吗?',
           onOk: submitFunc

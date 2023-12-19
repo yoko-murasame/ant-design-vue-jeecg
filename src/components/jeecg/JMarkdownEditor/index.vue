@@ -71,6 +71,11 @@ export default {
       type: String,
       required: false,
       default: 'zh-CN'
+    },
+    showPic: {
+      type: [Boolean, String],
+      required: false,
+      default: true
     }
   },
   data() {
@@ -132,6 +137,9 @@ export default {
         this.$emit('change', this.editor.getMarkdown())
       })
       // --begin 添加自定义上传按钮
+      if (!this.showPic) {
+        return
+      }
       /*
        * 添加自定义按钮
        */

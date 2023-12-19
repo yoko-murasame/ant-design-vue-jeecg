@@ -64,7 +64,7 @@
               :options="cgformOptions"
               placeholder="请选择Online表单"
               :getPopupContainer="node => node.parentNode"
-              v-decorator="[ 'cgformCode', rules.cgformCode]"/>
+              v-decorator="[ 'onlineForm', rules.onlineForm]"/>
           </a-form-item>
 
           <a-form-item label="表单模板" :labelCol="labelCol" :wrapperCol="wrapperCol">
@@ -139,7 +139,7 @@
         // 复制方式：1 完全复制；2 选择模板重新生成
         copyMethod: 1,
         rules: {
-          cgformCode: { rules: [{ required: true, message: '请选择Online表单!' }] },
+          onlineForm: { rules: [{ required: true, message: '请选择表单!' }] },
           desformName: { rules: [{ required: true, message: '请输入表单名称!' }] },
           desformCode: {
             rules: [
@@ -203,7 +203,7 @@
       },
       // 是否对接了Online表单
       isDockingCgform() {
-        return !!this.model.cgformCode
+        return !!this.model.onlineForm
       },
       copyTypeTooltipProps() {
         let props = {
@@ -289,7 +289,7 @@
               // 复制表单去除 Online对接
               if (this.isDockingCgform) {
                 let desformJSON = JSON.parse(this.model['desformDesignJson'])
-                delete params['cgformCode']
+                delete params['onlineForm']
                 delete desformJSON.config.onlineForm
                 params['desformDesignJson'] = JSON.stringify(desformJSON)
               } else {
@@ -310,7 +310,7 @@
                 params['desformDesignJson'] = JSON.stringify(desformJSON)
                 // update--end--autor:scott-----date:20200109------for：LOWCOD-1165 表单设计器勾选设为移动视图后，设计的时候没有默认勾选上------
               } else if (this.isDockingCgform) {
-                params['cgformCode'] = this.model.cgformCode
+                params['onlineForm'] = this.model.onlineForm
               } else {
                 this.$message.warn('没有对接Online表单，拒绝执行该操作')
                 return
@@ -321,8 +321,8 @@
             }
 
             // 查询cgform的field
-            let cgformCode = params['cgformCode']
-            this.generateDesformJSONByCgform(cgformCode).then(desformJSON => {
+            let onlineForm = params['onlineForm']
+            this.generateDesformJSONByCgform(onlineForm).then(desformJSON => {
               if (desformJSON != null) {
                 // update--begin--autor:scott-----date:20201230------for：LOWCOD-1165 表单设计器勾选设为移动视图后，设计的时候没有默认勾选上------
                 // JT-263复制移动视图，默认不是移动效果

@@ -21,8 +21,13 @@ import VueAliplayerV2 from 'vue-aliplayer-v2'
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
 
+// kform设计器js增强默认工具方法
+import { CustomMethods } from '@/components/yoko/kform/CustomMethods'
+
 export default {
   install(Vue) {
+    // kform设计器js增强默认工具方法
+    Vue.use(CustomMethods)
     // 自定义组件
     Vue.component('CancelButton', CancelButton)
     Vue.component('DisableBlock', DisableBlock)

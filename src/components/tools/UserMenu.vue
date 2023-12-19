@@ -233,7 +233,9 @@
       searchMethods(value) {
         let route = this.searchMenuOptions.filter(item => item.id === value)[0]
         // update-begin-author:sunjianlei date:20220111 for: 【JTC-702】【菜单搜索】菜单搜索里点击跳转的菜单，无法将Token信息传递过去
-        if (route.component.includes('layouts/IframePageView')) {
+        if (route.meta.internalOrExternal === true || route.component.includes('layouts/IframePageView')) {
+          window.open(route.meta.url, '_blank')
+        }else if (route.component.includes('layouts/IframePageView')) {
           this.$router.push(route)
         } else {
           this.$router.push({ path: route.path })

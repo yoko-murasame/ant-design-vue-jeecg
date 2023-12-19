@@ -1,0 +1,257 @@
+import store from '@/store'
+import axios from 'axios'
+import Vue from 'vue'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import moment from 'moment'
+import { getAction, postAction, putAction, httpAction } from '@api/manage'
+let apiBaseUrl = window._CONFIG['domianURL'] || '/jeecg-boot';
+
+/**
+ * 自定义请求
+ * @type {AxiosInstance}
+ */
+const myRequest = axios.create({
+  baseURL: apiBaseUrl
+})
+
+myRequest.interceptors.request.use(config => {
+  const token = Vue.ls.get(ACCESS_TOKEN)
+  if (token) {
+    config.headers['X-Access-Token'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
+  }
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+
+myRequest.interceptors.response.use((response) => {
+  const { data } = response
+  switch (data.code) {
+    case 500:
+      return Promise.reject(data.message)
+  }
+  return data
+}, () => {})
+
+/**
+ * 获取当前用户真实姓名
+ * @returns {any}
+ */
+export const getCurrentRealname = () => {
+  return Promise.resolve(store.getters.nickname)
+}
+
+/**
+ * 根据orgCode获取部门信息
+ * @param orgCodes
+ * @returns {Promise<*>}
+ */
+export const getDepartmentByOrgCode = async (orgCodes) => {
+  const depart = await myRequest({
+    url: '/sys/api/queryDepartsByOrgcodes',
+    method: 'get',
+    params: { orgCodes }
+  })
+  console.log('获取当前部门', depart)
+  return depart
+}
+
+/**
+ * 获取当前登陆用户的部门对象
+ * @returns {Promise<*>}
+ */
+export const getCurrentDepartment = async () => {
+  console.log('getCurrentDepartment', store.getters.userInfo, store.getters.userInfo.orgCode)
+  const depart = await getDepartmentByOrgCode(store.getters.userInfo.orgCode)
+  return depart[0]
+}
+
+/**
+ * 获取当前日期
+ * @param format 格式化字符串 默认 YYYY-MM-DD
+ * @returns {string}
+ */
+export const getCurrentDate = (format = 'YYYY-MM-DD') => {
+  return Promise.resolve(moment().format(format))
+}
+
+/**
+ * 获取表单数据
+ * @param id 主键
+ * @param tableName 表名
+ * @returns {Promise<*>}
+ */
+export const getFullFormData = async (id, tableName) => {
+  if (!id) {
+    throw new Error('id不能为空')
+  }
+  if (!tableName) {
+    throw new Error('tableName不能为空！')
+  }
+  const { result, success, message } = await getAction(`/online/cgform/api/form/table_name/${tableName}/${id}`)
+  !success && Vue.prototype.$message.error(message)
+  return result
+}
+
+/**
+ * 更新表单数据
+ * @param code online表单的配置地址中的code
+ * @param data 表单数据
+ * @returns {Promise<*>}
+ */
+export const updateFormData = async (code, data) => {
+  if (!data.id) {
+    return
+  }
+  // 需要剔除空字符串的值，防止日期字段报错
+  const convert = (obj) => {
+    for (let key in obj) {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        convert(obj[key]); // 递归处理嵌套对象
+      } else if (obj[key] === '') {
+        obj[key] = null; // 将空字符串转换为 null
+      }
+    }
+  }
+  convert(data)
+  const { success, message, result } = await putAction('/online/cgform/api/form/' + code, data)
+  !success && Vue.prototype.$message.error(message)
+  return result
+}
+
+/**
+ * 通过模板发送消息
+ * @param fromUser 发送人，留空自动获取当前用户名
+ * @param toUser 接收人，多个用户名使用逗号分隔
+ * @param title 消息标题
+ * @param templateCode 模板编码
+ * @param formData 模板参数，表单数据
+ * @param THIRD_APP_TYPE 第三方消息推送类型，可选值： DINGTALK、WECHAT_ENTERPRISE、ALL，不传都不推送
+ * @param THIRD_APP_TYPE 第三方消息推送类型，可选值： DINGTALK、WECHAT_ENTERPRISE、ALL，不传都不推送
+ * @param msgAbstract 消息摘要，可选
+ * @returns {Promise<*>}
+ */
+export const sendTemplateAnnouncement = async (fromUser, toUser, title, templateCode, formData, THIRD_APP_TYPE, msgAbstract) => {
+  fromUser = fromUser || store.getters.username
+  if (!toUser) {
+    throw new Error('toUser不能为空，多个用户名使用逗号分隔！')
+  }
+  if (!title) {
+    throw new Error('title不能为空')
+  }
+  if (!templateCode) {
+    throw new Error('templateCode不能为空')
+  }
+  if (!formData) {
+    throw new Error('formData不能为空')
+  }
+  // 消息接口无返回值
+  try {
+    await postAction(`/sys/api/sendTemplateAnnouncement?THIRD_APP_TYPE=${THIRD_APP_TYPE}`, {
+      fromUser,
+      toUser,
+      title,
+      templateCode,
+      templateParam: formData,
+      msgAbstract
+    })
+    Vue.prototype.$message.success('发送成功')
+  } catch (e) {
+    Vue.prototype.$message.error(err)
+  }
+}
+
+/**
+ * 自定义方法名称
+ * @type {string[]}
+ */
+export const methodsFunc = [getCurrentRealname, getDepartmentByOrgCode, getCurrentDepartment, getCurrentDate, myRequest, getFullFormData, updateFormData, sendTemplateAnnouncement]
+export const methodsNames = ['getCurrentRealname', 'getDepartmentByOrgCode', 'getCurrentDepartment', 'getCurrentDate', 'myRequest', 'getFullFormData', 'updateFormData', 'sendTemplateAnnouncement']
+
+/**
+ * 创建异步函数
+ * @param ref 目标vue对象
+ * @param funStr 函数字符串
+ * @param customArgsName 自定义上下文方法名称（可选）
+ * @param customArgsObj 自定义上下文方法对象（可选）
+ * @returns {*}
+ */
+export const createAsyncJsEnhanceFunction = (ref, funStr, customArgsName = [], customArgsObj = []) => {
+  const that = ref
+  // console.log('createAsyncJsEnhanceFunction', methodsFunc, methodsNames, customArgsObj, customArgsName)
+  // const funStr = 'await testAsync();console.log("testEnhance", this, getAction, that);'
+  // 实现异步函数包裹，唯一解决方案
+  // const asyncFunStr = `(async myFunc() {try{${funStr}}catch(e){Vue.prototype.$message.error('JS增强代码执行失败'+e);throw e;}})()`
+  // const argsText = ['that', 'getAction', 'postAction', 'putAction', 'httpAction', ...methodsNames, ...customArgsName, asyncFunStr]
+  // const argsBind = [ref, that, getAction, postAction, putAction, httpAction, ...methodsFunc, ...customArgsObj]
+  // const fun = new Function(...argsText)
+  // console.log("fun", fun.toString())
+  // return fun.bind(...argsBind)
+  // 新版本异步执行解决方案，支持抛出异常，支持Promise返回值
+  const argsText = ['that', 'getAction', 'postAction', 'putAction', 'httpAction', ...methodsNames, ...customArgsName]
+  const argsBind = [that, getAction, postAction, putAction, httpAction, ...methodsFunc, ...customArgsObj]
+  const myFunc = async function (){
+    try {
+      const _arguments = arguments
+      const paramStr = argsText.reduce((str, arg, index) => {
+        return `${str}const ${arg} = _arguments[${index}];\n`;
+      }, '');
+      return eval(`(async (_arguments) => {${paramStr}${funStr}})(_arguments)`);
+    } catch (e) {
+      Vue.prototype.$message.error('JS增强代码执行失败 ' + e)
+      throw e
+    }
+  }
+  return myFunc.bind(ref, ...argsBind)
+}
+
+/**
+ * 扩展表单设计器自定义方法
+ */
+const installer = {
+  vm: {},
+  install(Vue, router = {}) {
+    for (let methodsName of methodsNames) {
+      Object.defineProperty(Vue.prototype, `$${methodsName}`, {
+        get() {
+          return methodsFunc[methodsNames.indexOf(methodsName)]
+        }
+      })
+    }
+    Vue.prototype.$createAsyncJsEnhanceFunction = createAsyncJsEnhanceFunction
+    // Vue.prototype.$getCurrentDepartment = getCurrentDepartment
+    // Vue.prototype.$getCurrentRealname = getCurrentRealname
+    // Vue.prototype.$getDepartmentByOrgCode = getDepartmentByOrgCode
+    // Vue.prototype.$getCurrentDate = getCurrentDate
+    // Vue.prototype.$myRequest = myRequest
+  }
+}
+
+export {
+  installer as CustomMethods
+}
+
+
+// testAsync() {
+//   return new Promise(resolve => {
+//     setTimeout(() => {
+//       console.log("testAsync")
+//       resolve('ok')
+//     }, 4000)
+//   })
+// },
+/**
+ * 测试JS增强传入自定义上下文和参数
+ * 支持异步语法 async await
+ */
+// testEnhance() {
+//   const that = this
+//   const funStr = 'await testAsync();console.log("testEnhance", this, getAction, that);'
+//   // 实现异步函数包裹，唯一解决方案
+//   const asyncFunStr = `(async () => {${funStr}})()`
+//   const argsText = ['that', 'getAction', 'testAsync', asyncFunStr]
+//   const argsBind = [this, that, getAction, this.testAsync]
+//   const fun = new Function(...argsText)
+//   console.log("fun", fun.toString())
+//   fun.bind(...argsBind).call()
+// }
