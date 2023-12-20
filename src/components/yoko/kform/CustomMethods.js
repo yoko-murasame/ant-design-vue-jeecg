@@ -162,11 +162,24 @@ export const sendTemplateAnnouncement = async (fromUser, toUser, title, template
 }
 
 /**
+ * 根据规则编码生成编码
+ * @param ruleCode 规则编码
+ * @param formData 表单数据，可选
+ * @returns {Promise<*>}
+ */
+export const generateCodeByRule = async (ruleCode, formData = {}) => {
+  const { result } = await putAction(`/sys/fillRule/executeRuleByCode/${ruleCode}`, formData)
+  return result
+}
+
+/**
  * 自定义方法名称
  * @type {string[]}
  */
-export const methodsFunc = [getCurrentRealname, getDepartmentByOrgCode, getCurrentDepartment, getCurrentDate, myRequest, getFullFormData, updateFormData, sendTemplateAnnouncement]
-export const methodsNames = ['getCurrentRealname', 'getDepartmentByOrgCode', 'getCurrentDepartment', 'getCurrentDate', 'myRequest', 'getFullFormData', 'updateFormData', 'sendTemplateAnnouncement']
+export const methodsFunc = [getCurrentRealname, getDepartmentByOrgCode, getCurrentDepartment,
+  getCurrentDate, myRequest, getFullFormData, updateFormData, sendTemplateAnnouncement, generateCodeByRule]
+export const methodsNames = ['getCurrentRealname', 'getDepartmentByOrgCode', 'getCurrentDepartment',
+  'getCurrentDate', 'myRequest', 'getFullFormData', 'updateFormData', 'sendTemplateAnnouncement', 'generateCodeByRule']
 
 /**
  * 创建异步函数

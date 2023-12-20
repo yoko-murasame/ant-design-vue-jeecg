@@ -70,6 +70,7 @@ const myRequest = await myRequest({
   * formData 模板参数
   * THIRD_APP_TYPE 第三方消息推送类型，可选值： DINGTALK、WECHAT_ENTERPRISE、ALL，不传都不推送
   * msgAbstract 消息摘要，可选
+* `generateCodeByRule`：根据规则生成编码，参数为：ruleCode 规则编码（系统配置），formData 表单数据（可选）
 
 ```js
 const realname = await getCurrentRealname()
@@ -77,10 +78,11 @@ const depts = await getDepartmentByOrgCode('A01,A01A01')
 const dept = await getCurrentDepartment()
 const dateStr = await getCurrentDate()
 const timeStr = await getCurrentDate('YYYY-MM-DD HH:mm:ss')
-const fullData = await this.getFullFormData('id', 'table_name')
-const updateId = await this.updateFormData('code', { id: '1', name: 'yoko' })
-await this.sendTemplateAnnouncement('yoko', 'yoko,admin', '模板消息标题', 'template_code', { name: 'yoko', text: '随便写点什么' }, 'DINGTALK', '请查收消息！')
-console.log('默认工具', realname, depts, dept, dateStr, timeStr, fullData, updateId)
+const fullData = await getFullFormData('id', 'table_name')
+const updateId = await updateFormData('code', { id: '1', name: 'yoko' })
+await sendTemplateAnnouncement('yoko', 'yoko,admin', '模板消息标题', 'template_code', { name: 'yoko', text: '随便写点什么' }, 'DINGTALK', '请查收消息！')
+const code = await generateCodeByRule('rule_code', {})
+console.log('默认工具', realname, depts, dept, dateStr, timeStr, fullData, updateId, code)
 ```
 
 
@@ -187,3 +189,30 @@ caseInfo.case_close_id = id
 await updateFormData('eaf401c32b16492fae05812a430026d9', caseInfo)
 console.log('更新主表成功', formData, caseInfo)
 ```
+
+# 使用示例二：表单填写后自动生成编码
+
+1）去系统 `在线开发 -> 系统编码规则` 模块里新增一条规则：
+
+* 规则名称(随便写)：`模块XX编码规则`
+* 规则Code(随便写)：`module_xx_code`
+* 规则实现类(这个是固定的)：`org.jeecg.modules.system.rule.ModuleCodeRule`
+* 规则参数(需完整填写)：`{"tableName":"表名","fieldName":"编号字段名","prefix":"前缀"}`
+
+以上配置生成的code规则为：传入前缀+YYMMdd+三位数顺序号，如：`XX2312200001`
+
+2）在表单设计器的`数据提交前调用`钩子中加入下面参考代码：
+
+```js
+// 假设表单的code字段是编码字段
+const { code } = data
+// 如果code字段没有值就生成（一般新增操作时调用）
+if (!code) {
+  // 生成编码
+  const code = await generateCodeByRule('module_xx_code', data)
+  // 设置编码
+  that.setData({ code })
+}
+```
+
+3）现在每次新增表单时，都会自动生成编码了
