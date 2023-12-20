@@ -1,8 +1,14 @@
 <template>
   <a-spin :spinning="loading">
     <!-- <iframe v-if="show" v-bind="iframeProps" :height="height"></iframe> -->
-    <k-form-build ref="kfb" v-if="!loading" :value="formDataJson" :disabled="formDisabled" :default-value="defaultValue"
-      :output-string="false"  @change="handleChange"/>
+    <k-form-build
+      ref="kfb"
+      v-if="!loading"
+      :value="formDataJson"
+      :disabled="formDisabled"
+      :default-value="defaultValue"
+      :output-string="false"
+      @change="handleChange" />
   </a-spin>
 </template>
 
@@ -69,22 +75,22 @@ export default {
       otherParams: '',
       url: {
         // add: '/desform/data/add',
-        add: "/online/cgform/api/form",
+        add: '/online/cgform/api/form',
         // edit: '/desform/data/edit',
-        edit: "/online/cgform/api/form",
+        edit: '/online/cgform/api/form',
         online: '/online/cgform/api/crazyForm',
         json: '/desform/queryByCode',
         startProcess: '/workflow/common/startMutilProcess',
-        getFormData: "/online/cgform/api/form/table_name"
+        getFormData: '/online/cgform/api/form/table_name'
       },
       formDataJson: {},
       defaultValue: {},
-      flowCodePre: 'onl_',
+      flowCodePre: 'onl_'
     }
   },
   computed: {
     formDisabled() {
-      if (this.mode === "add" || this.mode === "edit") {
+      if (this.mode === 'add' || this.mode === 'edit') {
         return false
       } else {
         return true
@@ -139,39 +145,39 @@ export default {
     }
   },
   async created() {
-    const _this = this
-    window.addEventListener('message', function (event) {
-      let { messageId, type, data } = event.data
-      if (`${_this.messageId}` !== messageId) {
-        return
-      }
-      switch (type) {
-        case 'close':
-          _this.handleClose()
-          break
-        case 'success':
-          _this.$emit('success', { target: _this })
-          break
-        case 'reload':
-          _this.handleReload()
-          break
-        case 'route-jump':
-          _this.handleRouteJump(data)
-          break
-        case 'save':
-          _this.saveAllData(data)
-          break
-        case 'height-change':
-          _this.iframeHeight = data + 10
-          break
-        case 'dialog-change':
-          _this.$emit('dialogChange', data)
-          break
-        case 'show-message':
-          _this.$message[data.type](data.message)
-          break
-      }
-    }, false)
+    // const _this = this
+    // window.addEventListener('message', function(event) {
+    //   let { messageId, type, data } = event.data
+    //   if (`${_this.messageId}` !== messageId) {
+    //     return
+    //   }
+    //   switch (type) {
+    //     case 'close':
+    //       _this.handleClose()
+    //       break
+    //     case 'success':
+    //       _this.$emit('success', { target: _this })
+    //       break
+    //     case 'reload':
+    //       _this.handleReload()
+    //       break
+    //     case 'route-jump':
+    //       _this.handleRouteJump(data)
+    //       break
+    //     case 'save':
+    //       _this.saveAllData(data)
+    //       break
+    //     case 'height-change':
+    //       _this.iframeHeight = data + 10
+    //       break
+    //     case 'dialog-change':
+    //       _this.$emit('dialogChange', data)
+    //       break
+    //     case 'show-message':
+    //       _this.$message[data.type](data.message)
+    //       break
+    //   }
+    // }, false)
 
     this.loading = true
     try {
@@ -190,7 +196,7 @@ export default {
      * @returns {Promise<void>}
      */
     async loadFormJson() {
-      const params = { desformCode: this.innerDesformCode };// 查询条件
+      const params = { desformCode: this.innerDesformCode }// 查询条件
       const res = await getAction(this.url.json, params)
       this.formDataJson = JSON.parse(res.result.desformDesignJson)
       console.log('loadFormJson', this.formDataJson)
@@ -223,7 +229,7 @@ export default {
 
           // let formData = await this.handleGetData()
 
-          let url = _this.url.add + "/" + this.innerTableId;
+          let url = _this.url.add + '/' + this.innerTableId
           let method = 'POST'
           // let formData = {
           //   desformCode: _this.desformCode,
@@ -233,7 +239,7 @@ export default {
 
           formData['desformCode'] = this.desformCode
           if (_this.dataId) {
-            url = _this.url.edit + "/" + this.innerTableId;
+            url = _this.url.edit + '/' + this.innerTableId
             method = 'PUT'
             formData['id'] = _this.dataId
           }
@@ -316,8 +322,6 @@ export default {
       let data = await this.$refs.kfb.getData()
       return data
       // console.log('验证通过', data)
-
-
       // .then(values => {
       //   // console.log('验证通过', values)
       //   return values
@@ -355,7 +359,6 @@ export default {
     },
     // 保存并发起流程
     async saveAndSubmitBPM() {
-
       const data = await this.saveAllData()
       let { res } = await postAction(this.url.startProcess, {
         id: data.dataId,
@@ -363,7 +366,6 @@ export default {
         formUrl: 'modules/bpm/task/form/OnlineFormDetail',
         formUrlMobile: 'check/onlineForm/detail'
       })
-
       return res
     },
     /**
@@ -371,12 +373,12 @@ export default {
      * @param {*} value
      * @param {*} key
      */
-     handleChange(value, key) {
-      console.log(value, key);
-      const formData = this.$refs.kfb.getData()
-      formData[key]=value
-      this.$refs.kfb.setData(formData)
-
+    handleChange(value, key) {
+      // console.log(value, key)
+      // const formData = this.$refs.kfb.getData()
+      // formData[key] = value
+      // this.$refs.kfb.setData(formData)
+      const that = this.$refs.kfb
       // 判断是否有配置js
       const { config } = this.formDataJson
       if (config.hasOwnProperty('afterDataChange')) {
@@ -386,18 +388,15 @@ export default {
           return createAsyncJsEnhanceFunction(
             this,
             funcStr,
-            ['data', 'getData', 'setData', 'setOptions',
+            ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
               'hide', 'show', 'disable', 'enable', 'reset'],
-            [this.$refs.kfb.data, this.$refs.kfb.getData, this.$refs.kfb.setData, this.$refs.kfb.setOptions,
-            this.$refs.kfb.hide, this.$refs.kfb.show, this.$refs.kfb.disable, this.$refs.kfb.enable, this.$refs.kfb.reset])
-            .call()
-
+            [value, key, that.data, that.getData, that.setData, that.setOptions,
+              that.hide, that.show, that.disable, that.enable, that.reset])
+          .call()
         }
-
       }
-
+    }
   }
-}
 }
 </script>
 

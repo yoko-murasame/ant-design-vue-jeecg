@@ -18,7 +18,7 @@
 
 **默认属性**
 
-* `this`：指向当前表单vue实例
+* `this`：指向为null，请使用that
 * `that`：指向当前表单vue实例
 * `data`：当前编辑的数据对象
 * `formConfig`：当前设计器表单的配置对象
@@ -106,11 +106,11 @@ const nowData = await getData()
 console.log('nowData', flag, nowData)
 
 // 操作表单字段的方法是非异步的
-this.hide(['fieldA', 'fieldB'])
-this.show(['fieldA', 'fieldB'])
-this.disable(['fieldA', 'fieldB'])
-this.enable(['fieldA', 'fieldB'])
-this.reset()
+that.hide(['fieldA', 'fieldB'])
+that.show(['fieldA', 'fieldB'])
+that.disable(['fieldA', 'fieldB'])
+that.enable(['fieldA', 'fieldB'])
+that.reset()
 ```
 
 
@@ -133,25 +133,25 @@ this.reset()
 **其他代码参考**
 
 ```js
-console.log('data', this.data)
-const { createBy, sysOrgCode, createUnit, createTime } = this.data
+console.log('data', that.data)
+const { createBy, sysOrgCode, createUnit, createTime } = that.data
 // 获取当前用户名
-this.setData({ createBy: this.data.createBy || this.$store.getters.userInfo.username })
+that.setData({ createBy: that.data.createBy || that.$store.getters.userInfo.username })
 // 获取当前用户真实姓名
-this.$getCurrentRealname().then((realname) => { this.setData({ createBy: this.data.createBy || realname }) })
+that.$getCurrentRealname().then((realname) => { that.setData({ createBy: that.data.createBy || realname }) })
 // 获取当前用户部门code
-this.$getCurrentDepartment().then((dept) => { this.setData({ sysOrgCode: this.data.sysOrgCode || dept.orgCode }) })
+that.$getCurrentDepartment().then((dept) => { that.setData({ sysOrgCode: that.data.sysOrgCode || dept.orgCode }) })
 // 获取当前用户部门名称
-this.$getCurrentDepartment().then((dept) => { this.setData({ departName: this.data.departName || dept.departName }) })
+that.$getCurrentDepartment().then((dept) => { that.setData({ departName: that.data.departName || dept.departName }) })
 // 创建单位code（字典形式）
-this.setData({ createUnit: this.data.createUnit || this.$store.getters.userInfo.orgCode.substring(0, 1) })
+that.setData({ createUnit: that.data.createUnit || that.$store.getters.userInfo.orgCode.substring(0, 1) })
 // 创建单位名称（文本形式）
-const topCode = this.$store.getters.userInfo.orgCode.substring(0, 1)
-this.$getDepartmentByOrgCode(topCode).then((dept) => { this.setData({ createUnit: this.data.createUnit || dept[0].departName }) })
+const topCode = that.$store.getters.userInfo.orgCode.substring(0, 1)
+that.$getDepartmentByOrgCode(topCode).then((dept) => { that.setData({ createUnit: that.data.createUnit || dept[0].departName }) })
 // 获取当前日期
-this.setData({ createTime: this.data.createTime || this.$getCurrentDate() })
+that.setData({ createTime: that.data.createTime || that.$getCurrentDate() })
 // 获取当前日期+时间
-this.setData({ currentTime: this.data.currentTime || this.$getCurrentDate('YYYY-MM-DD HH:mm:ss') })
+that.setData({ currentTime: that.data.currentTime || that.$getCurrentDate('YYYY-MM-DD HH:mm:ss') })
 ```
 
 # 使用示例一：一对一关联表单填写
