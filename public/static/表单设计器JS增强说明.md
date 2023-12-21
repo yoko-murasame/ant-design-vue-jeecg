@@ -18,8 +18,8 @@
 
 **默认属性**
 
-* `this`：指向为null，请使用that
-* `that`：指向当前表单vue实例
+* `this`：指向当前表单vue实例，建议使用that
+* `that`：指向当前表单vue实例，一般和this指向相同（视调用高阶函数位置的传入参数而定）
 * `data`：当前编辑的数据对象
 * `formConfig`：当前设计器表单的配置对象
 * `formData`：表单保存后的完整数据对象，**仅在afterSubmit钩子中生效**

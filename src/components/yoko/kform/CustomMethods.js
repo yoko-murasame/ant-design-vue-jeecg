@@ -207,9 +207,9 @@ export const createAsyncJsEnhanceFunction = (ref, funStr, customArgsName = [], c
     try {
       const _arguments = arguments
       const paramStr = argsText.reduce((str, arg, index) => {
-        return `${str}const ${arg} = _arguments[${index}];\n`;
-      }, '');
-      return eval(`(async (_arguments) => {${paramStr}${funStr}})(_arguments)`);
+        return `${str}let ${arg} = _arguments[${index}];\n`;
+      }, '\n');
+      return eval(`(async function(_arguments) {${paramStr}${funStr}\n}).call(ref, _arguments)`);
     } catch (e) {
       Vue.prototype.$message.error('JS增强代码执行失败 ' + e)
       throw e

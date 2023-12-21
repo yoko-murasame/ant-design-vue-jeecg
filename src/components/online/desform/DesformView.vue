@@ -13,12 +13,11 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { httpAction, getAction, postAction } from '@/api/manage'
 import { randomString, cloneObject } from '@/utils/util'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { DESFORM_ROUTE_TYPE, DESFORM_ROUTE_DATA_ID } from '@/utils/desform/DesformRouteUtils'
 import { createAsyncJsEnhanceFunction } from '@/components/yoko/kform/CustomMethods'
+import { debounce } from 'lodash'
 
 /* desform 动态表单页面 */
 export default {
@@ -188,6 +187,7 @@ export default {
       this.$message.error('设计器加载异常' + e)
     } finally {
       this.loading = false
+      this.handleChange = debounce(this.handleChange, 500)
     }
   },
   methods: {
@@ -381,12 +381,12 @@ export default {
       const that = this.$refs.kfb
       // 判断是否有配置js
       const { config } = this.formDataJson
-      if (config.hasOwnProperty('afterDataChange')) {
+      if (that && config.hasOwnProperty('afterDataChange')) {
         let afterDataChange = config.afterDataChange
         if (afterDataChange.hasOwnProperty(key)) {
           let funcStr = afterDataChange[key]
           return createAsyncJsEnhanceFunction(
-            this,
+            that,
             funcStr,
             ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
               'hide', 'show', 'disable', 'enable', 'reset'],
