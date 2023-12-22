@@ -23,7 +23,7 @@ export default {
   },
   props: {
     /**
-     * 当前节点
+     * 当前节点(.sync同步|@update:currentState)
      */
     currentState: {
       type: String,
@@ -34,14 +34,14 @@ export default {
       default: false
     },
     /**
-     * 当前选中tab
+     * 当前选中tab(v-model)
      */
     currentTabDictValue: {
       type: String,
       default: '测试2'
     },
     /**
-     * 当前选中tab的字典翻译(.sync同步)
+     * 当前选中tab的字典翻译(.sync同步|@update:currentTabDictText)
      */
     currentTabDictText: {
       type: String,
@@ -80,6 +80,20 @@ export default {
     debug: {
       type: [Boolean, String],
       default: false
+    },
+    /**
+     * 是否显示下一步(.sync同步|@update:hasNext)
+     */
+    hasNext: {
+      type: [Boolean, String],
+      default: true
+    },
+    /**
+     * 是否显示上一步(.sync同步|@update:hasPrev)
+     */
+    hasPrev: {
+      type: [Boolean, String],
+      default: true
     }
   },
   data() {
@@ -163,6 +177,7 @@ export default {
         this.$emit('change', this.dict ? this.dictValueInner[idx] : this.dictTextInner[idx]);
         this.$emit('update:currentTabDictText', this.dictTextInner[idx])
         console.log('currentTabDictValueInner change', this.dictTextInner[idx], this.dictValueInner[idx])
+        this.updateHasNextPrev()
       };
       this.beforeChange(this.dictValueInner[old], this.dictValueInner[idx], cb)
     },
@@ -182,14 +197,43 @@ export default {
         value: this.currentState || this.dictValueInner[0],
         index: this.dictValueInner.indexOf(this.currentState || this.dictValueInner[0])
       };
-      this.$emit('stateChange', args)
       console.log('transferCurrentState change', val, args)
+      this.$emit('stateChange', args)
     }
   },
   async created() {
     await this.initialDict()
   },
   methods: {
+    updateHasNextPrev() {
+      console.log('updateHasNextPrev', this.currentTabDictValueInner + 1 < this.dictValueInner.length, this.currentTabDictValueInner > 0)
+      this.$emit('update:hasNext', this.currentTabDictValueInner + 1 < this.dictValueInner.length)
+      this.$emit('update:hasPrev', this.currentTabDictValueInner > 0)
+    },
+    /**
+     * 上一步
+     */
+    prev() {
+      if (!this.hasPrev) {
+        return
+      }
+      this.currentTabDictValueInner--
+      this.$emit('update:currentState', this.dictValueInner[this.currentTabDictValueInner])
+    },
+    /**
+     * 下一步
+     */
+    next() {
+      if (!this.hasNext) {
+        return
+      }
+      this.currentTabDictValueInner++
+      this.$emit('update:currentState', this.dictValueInner[this.currentTabDictValueInner])
+    },
+    /**
+     * 初始化字典
+     * @returns {Promise<void>}
+     */
     async initialDict() {
       if (typeof this.dict === 'string') {
         const { result } = await initDictOptions(this.dict)
