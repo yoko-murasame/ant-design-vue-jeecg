@@ -105,7 +105,7 @@ export default {
   data() {
     return {
       // 内部的是实际dict字典值对应的数组index
-      currentTabDictValueIndex: 0,
+      currentTabDictValueIndex: null,
       dictOptions: null,
       dictValueInner: [],
       dictTextInner: [],
@@ -146,6 +146,15 @@ export default {
       console.log('字典改变了', v, this.currentTabDictValue, this.currentTabDictValueIndex)
       this.dictLoad = false
       this.$nextTick(() => this.initialDict())
+    },
+    /**
+     * 首次加载触发默认下标改变，防止sync状态异常
+     * @param v
+     */
+    dictLoad(v) {
+      if (v && this.currentTabDictValueIndex === null) {
+        this.currentTabDictValueIndex = 0
+      }
     },
     /**
      * 需要监听转换后的字典值（当前默认tab）
