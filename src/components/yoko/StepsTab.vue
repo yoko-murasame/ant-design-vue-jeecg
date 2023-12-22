@@ -18,25 +18,25 @@ import { initDictOptions } from '@comp/dict/JDictSelectUtil';
 export default {
   name: 'StepsTab',
   model: {
-    prop: 'currentTabDictValue',
+    prop: 'value',
     event: 'change'
   },
   props: {
     /**
-     * 当前节点(.sync同步|@update:currentState)
+     * 当前节点(v-model)，原命名：currentState
      * 这个值的类型和currentTabDictValue相同，即需要传入dict字典的value值
      * 作用：在非debug模式下，用户无法点击这个节点后的步骤
      */
-    currentState: {
-      type: String,
-      default: '测试2'
+    value: {
+      type: String
+      // default: '测试2'
     },
     currentFinish: {
       type: [Boolean, String],
       default: false
     },
     /**
-     * 当前选中tab(v-model)
+     * 当前选中tab(.sync同步|@update:currentTabDictValue)
      * 这里的值是传入dict字典的value值
      */
     currentTabDictValue: {
@@ -109,7 +109,9 @@ export default {
       dictOptions: null,
       dictValueInner: [],
       dictTextInner: [],
-      dictLoad: false
+      dictLoad: false,
+      hasPrevInner: false,
+      hasNextInner: true
     }
   },
   computed: {
@@ -123,7 +125,7 @@ export default {
       if (!this.dictLoad) {
         return ''
       }
-      return this.dict ? this.dictTextInner[this.dictValueInner.indexOf(this.currentState)] : this.currentState
+      return this.dict ? this.dictTextInner[this.dictValueInner.indexOf(this.value)] : this.value
     },
     stepItems() {
       if (!this.dictLoad) {
@@ -181,7 +183,7 @@ export default {
           console.error('错误触发了 ', err)
           return
         }
-        this.$emit('change', this.dict ? this.dictValueInner[idx] : this.dictTextInner[idx]);
+        this.$emit('update:currentTabDictValue', this.dict ? this.dictValueInner[idx] : this.dictTextInner[idx]);
         this.$emit('update:currentTabDictText', this.dictTextInner[idx])
         console.log('currentTabDictValueIndex change', this.dictTextInner[idx], this.dictValueInner[idx])
         this.updateHasNextPrev()
@@ -201,8 +203,8 @@ export default {
         dictValue: this.dictValueInner,
         dictText: this.dictTextInner,
         text: this.transferCurrentState || this.dictTextInner[0],
-        value: this.currentState || this.dictValueInner[0],
-        index: this.dictValueInner.indexOf(this.currentState || this.dictValueInner[0])
+        value: this.value || this.dictValueInner[0],
+        index: this.dictValueInner.indexOf(this.value || this.dictValueInner[0])
       };
       console.log('transferCurrentState change', val, args)
       this.$emit('stateChange', args)
@@ -213,29 +215,31 @@ export default {
   },
   methods: {
     updateHasNextPrev() {
-      console.log('updateHasNextPrev', this.currentTabDictValueIndex + 1 < this.dictValueInner.length, this.currentTabDictValueIndex > 0)
-      this.$emit('update:hasNext', this.currentTabDictValueIndex + 1 < this.dictValueInner.length)
-      this.$emit('update:hasPrev', this.currentTabDictValueIndex > 0)
+      this.hasPrevInner = this.currentTabDictValueIndex > 0
+      this.hasNextInner = this.currentTabDictValueIndex + 1 < this.dictValueInner.length
+      console.log('updateHasPrevNext', this.hasPrevInner, this.hasNextInner)
+      this.$emit('update:hasPrev', this.hasPrevInner)
+      this.$emit('update:hasNext', this.hasNextInner)
     },
     /**
      * 上一步
      */
     prev() {
-      if (!this.hasPrev) {
+      if (!this.hasPrevInner) {
         return
       }
       this.currentTabDictValueIndex--
-      this.$emit('update:currentState', this.dictValueInner[this.currentTabDictValueIndex])
+      this.$emit('change', this.dictValueInner[this.currentTabDictValueIndex])
     },
     /**
      * 下一步
      */
     next() {
-      if (!this.hasNext) {
+      if (!this.hasNextInner) {
         return
       }
       this.currentTabDictValueIndex++
-      this.$emit('update:currentState', this.dictValueInner[this.currentTabDictValueIndex])
+      this.$emit('change', this.dictValueInner[this.currentTabDictValueIndex])
     },
     /**
      * 初始化字典
