@@ -1,5 +1,5 @@
 <template>
-  <a-steps v-if="dictLoad" v-model="currentTabDictValueInner" type="navigation" size="small">
+  <a-steps v-if="dictLoad" v-model="currentTabDictValueIndex" type="navigation" size="small">
     <a-step v-for="step in stepItems" :key="step.title" :status="step.status" :title="step.title" :disabled="step.disabled" />
   </a-steps>
 </template>
@@ -24,6 +24,8 @@ export default {
   props: {
     /**
      * 当前节点(.sync同步|@update:currentState)
+     * 这个值的类型和currentTabDictValue相同，即需要传入dict字典的value值
+     * 作用：在非debug模式下，用户无法点击这个节点后的步骤
      */
     currentState: {
       type: String,
@@ -35,6 +37,7 @@ export default {
     },
     /**
      * 当前选中tab(v-model)
+     * 这里的值是传入dict字典的value值
      */
     currentTabDictValue: {
       type: String,
@@ -48,14 +51,14 @@ export default {
       default: ''
     },
     /**
-     * 字典文本，同tab的title
+     * 静态字典文本数组，同tab的title
      */
     dictText: {
       type: Array,
       default: () => ['测试1', '测试2', '测试3']
     },
     /**
-     * 字典值
+     * 静态字典值数组
      */
     dictValue: {
       type: Array,
@@ -63,8 +66,8 @@ export default {
     },
     /**
      * 字典模式
-     * Boolean时需传入 dictText dictValue
-     * String时默认去加载系统字典
+     * Boolean - false 时需传入 dictText dictValue
+     * String - '字典code' 时默认去加载系统字典
      */
     dict: {
       type: [Boolean, String],
@@ -77,19 +80,22 @@ export default {
       type: Function,
       default: (before, after, cb) => cb()
     },
+    /**
+     * 调试模式(控制是否可以点击非当前步骤的后续step)
+     */
     debug: {
       type: [Boolean, String],
       default: false
     },
     /**
-     * 是否显示下一步(.sync同步|@update:hasNext)
+     * 是否有下一步(.sync同步|@update:hasNext)
      */
     hasNext: {
       type: [Boolean, String],
       default: true
     },
     /**
-     * 是否显示上一步(.sync同步|@update:hasPrev)
+     * 是否有上一步(.sync同步|@update:hasPrev)
      */
     hasPrev: {
       type: [Boolean, String],
@@ -98,7 +104,8 @@ export default {
   },
   data() {
     return {
-      currentTabDictValueInner: 0,
+      // 内部的是实际dict字典值对应的数组index
+      currentTabDictValueIndex: 0,
       dictOptions: null,
       dictValueInner: [],
       dictTextInner: [],
@@ -134,7 +141,7 @@ export default {
   },
   watch: {
     dict(v) {
-      console.log('字典改变了', v, this.currentTabDictValue, this.currentTabDictValueInner)
+      console.log('字典改变了', v, this.currentTabDictValue, this.currentTabDictValueIndex)
       this.dictLoad = false
       this.$nextTick(() => this.initialDict())
     },
@@ -148,7 +155,7 @@ export default {
         if (!val) {
           return
         }
-        this.currentTabDictValueInner = this.dictTextInner.indexOf(val || this.transferCurrentState) || 0;
+        this.currentTabDictValueIndex = this.dictTextInner.indexOf(val || this.transferCurrentState) || 0;
         console.log('transferCurrentTabDictValue change', this.transferCurrentTabDictValue)
       }
     },
@@ -161,14 +168,14 @@ export default {
     //     if (!this.dictLoad) {
     //       return
     //     }
-    //     this.currentTabDictValueInner = this.dictTextInner.indexOf(this.transferCurrentTabDictValue || this.transferCurrentState) || 0;
-    //     console.log('currentTabDictValue change', this.transferCurrentTabDictValue, this.transferCurrentState, this.currentTabDictValueInner)
+    //     this.currentTabDictValueIndex = this.dictTextInner.indexOf(this.transferCurrentTabDictValue || this.transferCurrentState) || 0;
+    //     console.log('currentTabDictValue change', this.transferCurrentTabDictValue, this.transferCurrentState, this.currentTabDictValueIndex)
     //   }
     // },
     /**
      * 双向绑定内部steps组件和外部值
      */
-    currentTabDictValueInner(idx, old) {
+    currentTabDictValueIndex(idx, old) {
       const cb = (err) => {
         if (err) {
           console.error('错误触发了 ', err)
@@ -176,7 +183,7 @@ export default {
         }
         this.$emit('change', this.dict ? this.dictValueInner[idx] : this.dictTextInner[idx]);
         this.$emit('update:currentTabDictText', this.dictTextInner[idx])
-        console.log('currentTabDictValueInner change', this.dictTextInner[idx], this.dictValueInner[idx])
+        console.log('currentTabDictValueIndex change', this.dictTextInner[idx], this.dictValueInner[idx])
         this.updateHasNextPrev()
       };
       this.beforeChange(this.dictValueInner[old], this.dictValueInner[idx], cb)
@@ -206,9 +213,9 @@ export default {
   },
   methods: {
     updateHasNextPrev() {
-      console.log('updateHasNextPrev', this.currentTabDictValueInner + 1 < this.dictValueInner.length, this.currentTabDictValueInner > 0)
-      this.$emit('update:hasNext', this.currentTabDictValueInner + 1 < this.dictValueInner.length)
-      this.$emit('update:hasPrev', this.currentTabDictValueInner > 0)
+      console.log('updateHasNextPrev', this.currentTabDictValueIndex + 1 < this.dictValueInner.length, this.currentTabDictValueIndex > 0)
+      this.$emit('update:hasNext', this.currentTabDictValueIndex + 1 < this.dictValueInner.length)
+      this.$emit('update:hasPrev', this.currentTabDictValueIndex > 0)
     },
     /**
      * 上一步
@@ -217,8 +224,8 @@ export default {
       if (!this.hasPrev) {
         return
       }
-      this.currentTabDictValueInner--
-      this.$emit('update:currentState', this.dictValueInner[this.currentTabDictValueInner])
+      this.currentTabDictValueIndex--
+      this.$emit('update:currentState', this.dictValueInner[this.currentTabDictValueIndex])
     },
     /**
      * 下一步
@@ -227,8 +234,8 @@ export default {
       if (!this.hasNext) {
         return
       }
-      this.currentTabDictValueInner++
-      this.$emit('update:currentState', this.dictValueInner[this.currentTabDictValueInner])
+      this.currentTabDictValueIndex++
+      this.$emit('update:currentState', this.dictValueInner[this.currentTabDictValueIndex])
     },
     /**
      * 初始化字典
