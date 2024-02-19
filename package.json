@@ -46,6 +46,7 @@
     "vue-area-linkage": "^5.1.0",
     "vue-codemirror-lite": "^1.0.4",
     "vue-cropper": "^0.5.4",
+    "vue-esign": "^1.1.4",
     "vue-i18n": "^8.7.0",
     "vue-loader": "^15.7.0",
     "vue-ls": "^3.2.0",

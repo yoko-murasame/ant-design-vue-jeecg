@@ -24,6 +24,9 @@ import 'viewerjs/dist/viewer.css'
 // kform设计器js增强默认工具方法
 import { CustomMethods } from '@/components/yoko/kform/CustomMethods'
 
+// ESign签名工具
+import ESign from '@/components/yoko/ESign'
+
 export default {
   install(Vue) {
     // kform设计器js增强默认工具方法
@@ -34,6 +37,7 @@ export default {
     Vue.component('JUploadKnowledge', JUploadKnowledge)
     Vue.component('StepsTab', StepsTab)
     Vue.component('VuePdfAppModal', VuePdfAppModal)
+    Vue.component('ESign', ESign)
     // 动态表单
     Vue.use(DynamicForm)
     // 表单验证
