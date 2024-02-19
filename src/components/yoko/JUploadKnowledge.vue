@@ -201,6 +201,20 @@
       splitChar: {
         type: String,
         default: ','
+      },
+      /**
+       * 业务主键
+       */
+      businessId: {
+        type: String,
+        default: ''
+      },
+      /**
+       * 项目主键
+       */
+      projectId: {
+        type: String,
+        default: ''
       }
     },
     watch: {
@@ -274,7 +288,11 @@
        */
       async checkKnowledgePath() {
         if (this.knowledgePath) {
-          const { success, result, message }  = await postAction(this.checkKnowledgePathUrl, { folderTreeNames: this.knowledgePath })
+          const { success, result, message } = await postAction(this.checkKnowledgePathUrl, {
+            folderTreeNames: this.knowledgePath,
+            businessId: this.businessId,
+            projectId: this.projectId
+          })
           const errMsg = '知识库路径不存在，请重新配置'
           if (success) {
             if (result && result.length > 0) {
