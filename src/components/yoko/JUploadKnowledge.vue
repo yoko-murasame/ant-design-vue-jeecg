@@ -241,27 +241,36 @@
         }
       },
       knowledgePath: {
-        immediate: false,
+        immediate: true,
         handler(val) {
-          val && this.checkKnowledgePath()
-        }
-      },
-      knowledgePathAutoInit: {
-        immediate: false,
-        handler(val) {
-          val && this.checkKnowledgePath()
+          if (val && !this.knowledgePathAutoInit) {
+            this.$nextTick(() => {
+              this.checkKnowledgePath()
+              console.log('knowledgePath change', val, this.knowledgePathAutoInit)
+            })
+          }
         }
       },
       businessId: {
-        immediate: false,
+        immediate: true,
         handler(val) {
-          val && this.checkKnowledgePath()
+          if (val && this.knowledgePathAutoInit) {
+            this.$nextTick(() => {
+              this.checkKnowledgePath()
+              console.log('businessId change', val, this.knowledgePathAutoInit)
+            })
+          }
         }
       },
       projectId: {
-        immediate: false,
+        immediate: true,
         handler(val) {
-          val && this.checkKnowledgePath()
+          if (val && this.knowledgePathAutoInit) {
+            this.$nextTick(() => {
+              this.checkKnowledgePath()
+              console.log('projectId change', val, this.knowledgePathAutoInit)
+            })
+          }
         }
       }
     },
@@ -273,10 +282,6 @@
       this.headers = { 'X-Access-Token': token }
       this.containerId = 'container-ty-' + new Date().getTime()
       // ---------------------------- end 图片左右换位置 -------------------------------------
-      // 如果未配置自动初始化路径，则需要检查知识库路径是否存在
-      if (!this.knowledgePathAutoInit) {
-        await this.checkKnowledgePath()
-      }
     },
 
     methods: {
