@@ -215,6 +215,13 @@
       projectId: {
         type: String,
         default: ''
+      },
+      /**
+       * 当关联知识库路径不存在时，是否自动初始化
+       */
+      knowledgePathAutoInit: {
+        type: [String, Boolean],
+        default: false
       }
     },
     watch: {
@@ -291,7 +298,9 @@
           const { success, result, message } = await postAction(this.checkKnowledgePathUrl, {
             folderTreeNames: this.knowledgePath,
             businessId: this.businessId,
-            projectId: this.projectId
+            projectId: this.projectId,
+            initialFolderTreeNamesIfNotExist: !!this.knowledgePathAutoInit,
+            type: 'DOCUMENT'
           })
           const errMsg = '知识库路径不存在，请重新配置'
           if (success) {
