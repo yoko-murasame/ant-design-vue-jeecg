@@ -239,16 +239,44 @@
             this.initFileList(val)
           }
         }
+      },
+      knowledgePath: {
+        immediate: false,
+        handler(val) {
+          val && this.checkKnowledgePath()
+        }
+      },
+      knowledgePathAutoInit: {
+        immediate: false,
+        handler(val) {
+          val && this.checkKnowledgePath()
+        }
+      },
+      businessId: {
+        immediate: false,
+        handler(val) {
+          val && this.checkKnowledgePath()
+        }
+      },
+      projectId: {
+        immediate: false,
+        handler(val) {
+          val && this.checkKnowledgePath()
+        }
       }
     },
     async created() {
       const token = Vue.ls.get(ACCESS_TOKEN)
-      await this.checkKnowledgePath()
+      this.checkKnowledgePath = debounce(this.checkKnowledgePath, 300)
       this.openTagsDialog = debounce(this.openTagsDialog, 300)
       // ---------------------------- begin 图片左右换位置 -------------------------------------
       this.headers = { 'X-Access-Token': token }
       this.containerId = 'container-ty-' + new Date().getTime()
       // ---------------------------- end 图片左右换位置 -------------------------------------
+      // 如果未配置自动初始化路径，则需要检查知识库路径是否存在
+      if (!this.knowledgePathAutoInit) {
+        await this.checkKnowledgePath()
+      }
     },
 
     methods: {
