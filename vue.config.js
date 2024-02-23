@@ -57,6 +57,13 @@ module.exports = {
       .loader('file-loader')
       .end()
 
+    config.module
+    .rule('sql')
+    .test(/\.sql$/)
+    .use()
+    .loader('file-loader')
+    .end()
+
     // 编译vxe-table包里的es6代码，解决IE11兼容问题
     config.module
       .rule('vxe')
