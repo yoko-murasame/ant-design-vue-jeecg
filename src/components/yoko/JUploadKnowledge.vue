@@ -94,7 +94,7 @@
       return {
         uploadAction: window._CONFIG['domianURL'] + '/sys/common/upload',
         knowledgeUploadAction: window._CONFIG['domianURL'] + '/technical/file/upload',
-        checkKnowledgePathUrl: window._CONFIG['domianURL'] + '/technical/folder/queryTreeLastNodeByFolderTreeNames',
+        checkKnowledgePathUrl: '/technical/folder/queryTreeLastNodeByFolderTreeNames',
         knowledgeFolder: null,
         headers: {},
         fileList: [],
