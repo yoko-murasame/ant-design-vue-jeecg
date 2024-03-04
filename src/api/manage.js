@@ -202,8 +202,12 @@ export function getFileAccessHttpUrl(avatar, subStr) {
     if (avatar && avatar.startsWith(subStr)) {
       return avatar
     } else {
-      if (avatar &&　avatar.length > 0 && avatar.indexOf('[') == -1) {
-        return window._CONFIG['staticDomainURL'] + '/' + avatar
+      if (avatar && avatar.length > 0) {
+        let lastSlashIndex = avatar.lastIndexOf('/');
+        let baseUrl = avatar.substring(0, lastSlashIndex + 1);
+        let filename = avatar.substring(lastSlashIndex + 1);
+        let encodedFilename = encodeURIComponent(filename);
+        return `${window._CONFIG['staticDomainURL']}/${baseUrl}${encodedFilename}`
       }
     }
   } catch (err) {
