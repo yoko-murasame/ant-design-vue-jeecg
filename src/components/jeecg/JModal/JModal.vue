@@ -162,6 +162,7 @@ export default {
         if (this.okClose) {
           this.close()
         }
+        // this.$emit('ok')
       },
       handleCancel() {
         this.close()

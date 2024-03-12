@@ -124,11 +124,105 @@ function getTreeNodeFieldValues(key, newKeyArr, nodeArr, field = 'orderStr', dat
   return newKeyArr
 }
 
+/**
+ * 为树状数据生成完整数据（icon、key、path）
+ */
+function generateTreeData(arr, parentIdx = '', treeDataProcessed = []) {
+  arr.forEach((item, idx) => {
+    // 填充path信息，这里以无children为准，再填充isLeaf
+    if (!(item.children && item.children.length)) {
+      item.isLeaf = true
+      item.path = generatePath(item.title)
+    }
+    // 填充icon信息
+    let slots = {}
+    if (item.slots) {
+      slots = {
+        ...item.slots
+      }
+    }
+    if (item.isLeaf) {
+      item.slots = {
+        ...slots,
+        icon: 'customFileIcon'
+      }
+    } else {
+      item.slots = {
+        ...slots,
+        icon: 'customFolderIcon'
+      }
+    }
+    // 填充key信息
+    if (parentIdx) {
+      item.key = parentIdx + '-' + idx
+    } else {
+      item.key = idx + ''
+    }
+    // 生成拷贝树
+    if (!(item.children && item.children.length)) {
+      if (!~item.path.indexOf('welcome')) {
+        treeDataProcessed.push({
+          ...item
+        })
+      } else {
+        treeDataProcessed.push({})
+      }
+    } else {
+      treeDataProcessed.push({
+        ...item,
+        children: []
+      })
+    }
+    // 递归
+    item.children && item.children.length && generateTreeData(item.children, item.key, treeDataProcessed[idx].children)
+  })
+}
+
+/**
+ * 生成对应path
+ */
+function generatePath(title) {
+  const node = navTree.state.navTreeMap[title] || {
+    path: '/navtree/welcome'
+  }
+  if (~node.path.indexOf('welcome') || (node.component && ~node.component.indexOf('welcome'))) {
+    if (!~node.path.indexOf('?title')) {
+      node.path = `${node.path}?title=${title}`
+    }
+  }
+  return node.path
+}
+
+/**
+ * 递归过滤掉没有子项的节点
+ */
+function filterCopyArr(treeDataProcessed) {
+  return treeDataProcessed.filter(node => {
+    if (node.title) {
+      if (node.children && node.children.length) {
+        const res = filterCopyArr(node.children)
+        if (res.length) {
+          node.children = res
+          return true
+        }
+        return false
+      } else {
+        return true
+      }
+    } else {
+      return false
+    }
+  })
+}
+
 export {
   getTreeNodeByOrderStr,
   getTreeNodeBrotherByOrderStr,
   getTreeNodeParentByOrderStr,
   getVmParentByName,
   getTreeNodeFieldValues,
-  validateTreeCost
+  validateTreeCost,
+  generateTreeData,
+  generatePath,
+  filterCopyArr
 }

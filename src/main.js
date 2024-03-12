@@ -45,6 +45,12 @@ import VueAreaLinkage from 'vue-area-linkage'
 import '@/components/jeecg/JVxeTable/install'
 import '@/components/JVxeCells/install'
 import Yoko from '@/components/yoko'
+import KFormDesign from './components/k-form-design/packages/index.js'
+import './components/k-form-design/styles/form-design.less'
+import "./components/k-form-design/components/index.js"
+import "./components/k-form-design/jeecg/index.js"
+
+
 
 Vue.config.productionTip = false
 Vue.use(Storage, config.storageOptions)
@@ -59,6 +65,7 @@ Vue.use(vueBus)
 Vue.use(JeecgComponents)
 Vue.use(VueAreaLinkage)
 Vue.use(Yoko)
+Vue.use(KFormDesign)
 
 SSO.init(() => {
   main()

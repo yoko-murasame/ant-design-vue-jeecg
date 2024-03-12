@@ -13,7 +13,8 @@
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <a-form-item label="表类型">
-              <j-multi-select-tag dictCode="cgform_table_type" v-model="queryParam.tableType_MultiString" placeholder="请选择"/>
+              <j-multi-select-tag dictCode="cgform_table_type" v-model="queryParam.tableType_MultiString"
+                                  placeholder="请选择"/>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
@@ -25,7 +26,8 @@
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <j-super-query :fieldList="superQueryFieldList" ref="superQueryModal" @handleSuperQuery="handleSuperQuery" style="margin-left: 8px">
+              <j-super-query :fieldList="superQueryFieldList" ref="superQueryModal" @handleSuperQuery="handleSuperQuery"
+                             style="margin-left: 8px">
                 <!-- 直接在内部写一个按钮即可，点击事件自动添加
                 <a-button type="primary" ghost icon="clock-circle" style="margin-left: 8px">高级查询</a-button> -->
               </j-super-query>
@@ -69,32 +71,27 @@
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
-      <a-table
-        ref="table"
-        size="middle"
-        bordered
-        rowKey="id"
-        :columns="columns"
-        :dataSource="dataSource"
-        :pagination="ipagination"
-        :loading="loading"
-        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-        @change="handleTableChange">
+      <a-table ref="table" size="middle" bordered rowKey="id" :columns="columns" :dataSource="dataSource"
+               :pagination="ipagination" :loading="loading"
+               :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+               @change="handleTableChange">
 
         <template slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
 
+          <a-divider type="vertical"/>
+
+          <a @click="handleDesignForm(record)">设计表单</a>
           <a-divider type="vertical"/>
           <a-dropdown>
             <a class="ant-dropdown-link">更多
               <a-icon type="down"/>
             </a>
             <a-menu slot="overlay">
-              <a-menu-item v-if="record.isDbSynch!='Y'">
+              <a-menu-item v-if="record.isDbSynch != 'Y'">
                 <a @click="openSyncModal(record.id)">同步数据库</a>
               </a-menu-item>
-
-              <template v-if="record.isDbSynch=='Y' && record.tableType !== 3">
+              <template v-if="record.isDbSynch == 'Y' && record.tableType !== 3">
                 <a-menu-item>
                   <a @click="goPageOnline(record)">功能测试</a>
                 </a-menu-item>
@@ -116,7 +113,7 @@
                 </a-popconfirm>
               </a-menu-item>
 
-              <a-menu-item v-if="record.hascopy==1">
+              <a-menu-item v-if="record.hascopy == 1">
                 <a @click="showMyCopyInfo(record.id)">视图管理</a>
               </a-menu-item>
 
@@ -135,8 +132,8 @@
         </template>
 
         <template slot="dbsync" slot-scope="text">
-          <span v-if="text==='Y'" style="color:limegreen">已同步</span>
-          <span v-if="text==='N'" style="color:red">未同步</span>
+          <span v-if="text === 'Y'" style="color:limegreen">已同步</span>
+          <span v-if="text === 'N'" style="color:red">未同步</span>
         </template>
 
       </a-table>
@@ -147,13 +144,8 @@
     <onl-cgform-head-modal ref="modalForm" @ok="modalFormOk"></onl-cgform-head-modal>
 
     <!-- 同步数据库提示框 -->
-    <a-modal
-      :width="500"
-      :height="300"
-      title="同步数据库"
-      :visible="syncModalVisible"
-      @cancel="handleCancleDbSync"
-      style="top:5%;height: 95%;">
+    <a-modal :width="500" :height="300" title="同步数据库" :visible="syncModalVisible" @cancel="handleCancleDbSync"
+             style="top:5%;height: 95%;">
       <template slot="footer">
         <a-button @click="handleCancleDbSync">关闭</a-button>
         <a-button type="primary" :loading="syncLoading" @click="handleDbSync">
@@ -167,13 +159,11 @@
     </a-modal>
 
     <!-- 提示online报表链接 -->
-    <a-modal
-      :title="onlineUrlTitle"
-      :visible="onlineUrlVisible"
-      @cancel="handleOnlineUrlClose">
+    <a-modal :title="onlineUrlTitle" :visible="onlineUrlVisible" @cancel="handleOnlineUrlClose">
       <template slot="footer">
         <a-button @click="handleOnlineUrlClose">关闭</a-button>
-        <a-button type="primary" class="copy-this-text" :data-clipboard-text="onlineUrl" @click="onCopyUrl">复制</a-button>
+        <a-button type="primary" class="copy-this-text" :data-clipboard-text="onlineUrl" @click="onCopyUrl">复制
+        </a-button>
       </template>
       <p>{{ onlineUrl }}</p>
     </a-modal>
@@ -198,7 +188,7 @@
       </div>
       <div style="height: 50px;width: 100%">
         <div style="float: right;margin-top: 24px;">
-          <a-button @click="confirmVisible=false">取消</a-button>
+          <a-button @click="confirmVisible = false">取消</a-button>
           <a-button @click="doBatchDelete(0)" type="primary" style="margin-bottom: 0;margin-left: 8px;">移除</a-button>
           <a-button @click="doBatchDelete(1)" type="primary" style="margin-bottom: 0;margin-left: 8px;">删除</a-button>
         </div>
@@ -209,412 +199,488 @@
     <auth-manager ref="authManager"></auth-manager>
     <auth-setter ref="authSetter"></auth-setter>
 
+    <design-form-modal ref="designFormModal" @ok="modalFormOk"/>
+
   </a-card>
 </template>
 
 <script>
-  import OnlCgformHeadModal from './modules/OnlCgformHeadModal'
-  import { deleteAction, postAction } from '@/api/manage'
-  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import Clipboard from 'clipboard'
-  import EnhanceJs from './modules/EnhanceJs'
-  import EnhanceSql from './modules/EnhanceSql'
-  import EnhanceJava from './modules/EnhanceJava'
-  import TransDb2Online from './modules/TransDb2Online'
-  import CodeGenerator from './modules/CodeGenerator'
-  import OnlCgformButtonList from './button/OnlCgformButtonList'
-  import OnlEnhanceJavaList from './enhance/OnlEnhanceJavaList'
-  import OnlEnhanceSqlList from './enhance/OnlEnhanceSqlList'
-  import { filterObj } from '@/utils/util';
-  import AuthManager from './auth/AuthManager'
-  import AuthSetter from './auth/AuthSetter'
+import OnlCgformHeadModal from './modules/OnlCgformHeadModal'
+import { deleteAction, postAction, getAction } from '@/api/manage'
+import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import Clipboard from 'clipboard'
+import EnhanceJs from './modules/EnhanceJs'
+import EnhanceSql from './modules/EnhanceSql'
+import EnhanceJava from './modules/EnhanceJava'
+import TransDb2Online from './modules/TransDb2Online'
+import CodeGenerator from './modules/CodeGenerator'
+import OnlCgformButtonList from './button/OnlCgformButtonList'
+import OnlEnhanceJavaList from './enhance/OnlEnhanceJavaList'
+import OnlEnhanceSqlList from './enhance/OnlEnhanceSqlList'
+import { filterObj } from '@/utils/util';
+import AuthManager from './auth/AuthManager'
+import AuthSetter from './auth/AuthSetter'
+import DesignFormModal from '../desform/modules/DesignFormModal'
+import { merge } from 'lodash'
 
-  export default {
-    name: 'OnlCgformHeadList',
-    mixins: [JeecgListMixin],
-    components: {
-      OnlCgformHeadModal,
-      EnhanceJs,
-      EnhanceSql,
-      EnhanceJava,
-      TransDb2Online,
-      CodeGenerator,
-      OnlCgformButtonList,
-      AuthManager,
-      AuthSetter,
-      OnlEnhanceJavaList,
-      OnlEnhanceSqlList
-    },
-    data() {
-      return {
-        description: 'Online表单开发管理页面',
-        // 表头
-        columns: [
-          {
-            title: '#',
-            dataIndex: '',
-            key: 'rowIndex',
-            width: 60,
-            align: 'center',
-            customRender: function(t, r, index) {
-              return parseInt(index) + 1
-            }
-          },
-          {
-            title: '表类型',
-            align: 'center',
-            sorter: true,
-            dataIndex: 'tableType',
-            customRender: (text, record) => {
-              let tbTypeText = this.$filterDictText(this.tableTypeDictOptions, text)
-              if (record.isTree === 'Y') {
-                tbTypeText += '(树)'
-              }
-              if (record.themeTemplate === 'innerTable') {
-                tbTypeText += '(内嵌)'
-              } else if (record.themeTemplate === 'erp') {
-                tbTypeText += '(ERP)'
-              } else if (record.themeTemplate === 'tab') {
-                tbTypeText += '(TAB)'
-              }
-              return tbTypeText;
-            }
-          },
-          {
-            title: '表名',
-            sorter: true,
-            align: 'center',
-            dataIndex: 'tableName'
-          },
-          {
-            title: '表描述',
-            align: 'center',
-            dataIndex: 'tableTxt'
-          },
-          {
-            title: '版本',
-            align: 'center',
-            dataIndex: 'tableVersion'
-          },
-          {
-            title: '同步状态',
-            align: 'center',
-            sorter: true,
-            dataIndex: 'isDbSynch',
-            scopedSlots: { customRender: 'dbsync' }
-          },
-          {
-            title: '创建时间',
-            align: 'center',
-            sorter: true,
-            dataIndex: 'createTime'
-          },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            align: 'center',
-            scopedSlots: { customRender: 'action' }
+export default {
+  name: 'OnlCgformHeadList',
+  mixins: [JeecgListMixin],
+  components: {
+    OnlCgformHeadModal,
+    EnhanceJs,
+    EnhanceSql,
+    EnhanceJava,
+    TransDb2Online,
+    CodeGenerator,
+    OnlCgformButtonList,
+    AuthManager,
+    AuthSetter,
+    OnlEnhanceJavaList,
+    OnlEnhanceSqlList,
+    DesignFormModal
+  },
+  data() {
+    return {
+      description: 'Online表单开发管理页面',
+      // 表头
+      columns: [
+        {
+          title: '#',
+          dataIndex: '',
+          key: 'rowIndex',
+          width: 60,
+          align: 'center',
+          customRender: function (t, r, index) {
+            return parseInt(index) + 1
           }
-        ],
-        superQueryFlag: false,
-        superQueryParams: '',
-        superQueryFieldList: [
-          { type: 'input', value: 'tableName', text: '表名' },
-          { type: 'select', value: 'tableType', text: '表类型', dictCode: 'cgform_table_type' },
-          { type: 'select', value: 'formCategory', text: '表单业务分类', dictCode: 'ol_form_biz_type' },
-          { type: 'select',
-value: 'isDbSynch',
-text: '同步状态',
-options: [
-              { label: '已同步', value: 'Y' },
-              { label: '未同步', value: 'N' }
-            ] },
-          { type: 'date', value: 'createTime', text: '创建时间' },
-          { type: 'input', value: 'tableTxt', text: '表描述' }
-        ],
-        url: {
-          list: '/online/cgform/head/list',
-          delete: '/online/cgform/head/delete',
-          deleteBatch: '/online/cgform/head/deleteBatch',
-          doDbSynch: '/online/cgform/api/doDbSynch/',
-          removeRecord: '/online/cgform/head/removeRecord',
-          copyOnline: '/online/cgform/head/copyOnline'
         },
-        tableTypeDictOptions: [],
-        sexDictOptions: [],
-        syncModalVisible: false,
-        syncFormId: '',
-        synMethod: 'normal',
-        syncLoading: false,
-        onlineUrlTitle: '',
-        onlineUrlVisible: false,
-        onlineUrl: '',
-        selectedRowKeys: [],
-        selectedRows: [],
-        confirmVisible: false
+        {
+          title: '表类型',
+          align: 'center',
+          sorter: true,
+          dataIndex: 'tableType',
+          customRender: (text, record) => {
+            let tbTypeText = this.$filterDictText(this.tableTypeDictOptions, text)
+            if (record.isTree === 'Y') {
+              tbTypeText += '(树)'
+            }
+            if (record.themeTemplate === 'innerTable') {
+              tbTypeText += '(内嵌)'
+            } else if (record.themeTemplate === 'erp') {
+              tbTypeText += '(ERP)'
+            } else if (record.themeTemplate === 'tab') {
+              tbTypeText += '(TAB)'
+            }
+            return tbTypeText;
+          }
+        },
+        {
+          title: '表名',
+          sorter: true,
+          align: 'center',
+          dataIndex: 'tableName'
+        },
+        {
+          title: '表描述',
+          align: 'center',
+          dataIndex: 'tableTxt'
+        },
+        {
+          title: '版本',
+          align: 'center',
+          dataIndex: 'tableVersion'
+        },
+        {
+          title: '同步状态',
+          align: 'center',
+          sorter: true,
+          dataIndex: 'isDbSynch',
+          scopedSlots: { customRender: 'dbsync' }
+        },
+        {
+          title: '创建时间',
+          align: 'center',
+          sorter: true,
+          dataIndex: 'createTime'
+        },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          align: 'center',
+          scopedSlots: { customRender: 'action' }
+        }
+      ],
+      superQueryFlag: false,
+      superQueryParams: '',
+      superQueryFieldList: [
+        { type: 'input', value: 'tableName', text: '表名' },
+        { type: 'select', value: 'tableType', text: '表类型', dictCode: 'cgform_table_type' },
+        { type: 'select', value: 'formCategory', text: '表单业务分类', dictCode: 'ol_form_biz_type' },
+        {
+          type: 'select',
+          value: 'isDbSynch',
+          text: '同步状态',
+          options: [
+            { label: '已同步', value: 'Y' },
+            { label: '未同步', value: 'N' }
+          ]
+        },
+        { type: 'date', value: 'createTime', text: '创建时间' },
+        { type: 'input', value: 'tableTxt', text: '表描述' }
+      ],
+      url: {
+        list: '/online/cgform/head/list',
+        delete: '/online/cgform/head/delete',
+        deleteBatch: '/online/cgform/head/deleteBatch',
+        doDbSynch: '/online/cgform/api/doDbSynch/',
+        removeRecord: '/online/cgform/head/removeRecord',
+        copyOnline: '/online/cgform/head/copyOnline',
+        designForm: '/desform/queryByCode',
+        add: "/desform/add"
+      },
+      tableTypeDictOptions: [],
+      sexDictOptions: [],
+      syncModalVisible: false,
+      syncFormId: '',
+      synMethod: 'normal',
+      syncLoading: false,
+      onlineUrlTitle: '',
+      onlineUrlVisible: false,
+      onlineUrl: '',
+      selectedRowKeys: [],
+      selectedRows: [],
+      confirmVisible: false
+    }
+  },
+  created() {
+    // 初始化字典 - 表类型
+    this.$initDictOptions('cgform_table_type').then((res) => {
+      if (res.success) {
+        this.tableTypeDictOptions = res.result
       }
-    },
-    created() {
-      // 初始化字典 - 表类型
-      this.$initDictOptions('cgform_table_type').then((res) => {
+    })
+  },
+  methods: {
+    doDbSynch(id) {
+      postAction(this.url.doDbSynch + id, { synMethod: '1' }).then((res) => {
         if (res.success) {
-          this.tableTypeDictOptions = res.result
+          this.$message.success(res.message)
+          this.loadData()
+        } else {
+          this.$message.warning(res.message)
         }
       })
     },
-    methods: {
-      doDbSynch(id) {
-        postAction(this.url.doDbSynch + id, { synMethod: '1' }).then((res) => {
-          if (res.success) {
-            this.$message.success(res.message)
-            this.loadData()
-          } else {
-            this.$message.warning(res.message)
-          }
-        })
-      },
-      getQueryParams() {
-        // 获取高级查询器条件
-        let sqp = {}
-        if (this.superQueryParams) {
-          sqp['superQueryParams'] = encodeURI(this.superQueryParams)
-          sqp['superQueryMatchType'] = this.superQueryMatchType
-        }
-
-        // 获取查询条件
-        var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters);
-        param.field = this.getQueryField();
-        param.pageNo = this.ipagination.current;
-        param.pageSize = this.ipagination.pageSize;
-        param.copyType = 0;
-        return filterObj(param);
-      },
-      handleCancleDbSync() {
-        this.syncModalVisible = false
-      },
-      handleDbSync() {
-        this.syncLoading = true
-        postAction(this.url.doDbSynch + this.syncFormId + '/' + this.synMethod).then((res) => {
-          this.syncModalVisible = false
-          this.syncLoading = false
-          if (res.success) {
-            this.$message.success(res.message)
-            this.loadData()
-          } else {
-            this.$message.warning(res.message)
-          }
-        })
-        setTimeout(() => {
-          if (this.syncLoading) {
-            this.syncModalVisible = false
-            this.syncLoading = false
-            this.$message.success('网络延迟,已自动刷新!')
-            this.loadData()
-          }
-        }, 10000)
-      },
-      openSyncModal(id) {
-        this.syncModalVisible = true
-        this.syncLoading = false
-        this.syncFormId = id
-      },
-      goPageOnline(rd) {
-        if (rd.themeTemplate === 'erp') {
-          this.$router.push({ path: '/online/cgformErpList/' + rd.id })
-        } else if (rd.themeTemplate === 'innerTable') {
-          this.$router.push({ path: '/online/cgformInnerTableList/' + rd.id })
-        } else if (rd.themeTemplate === 'tab') {
-          this.$router.push({ path: '/online/cgformTabList/' + rd.id })
-        } else {
-          if (rd.isTree == 'Y') {
-            this.$router.push({ path: '/online/cgformTreeList/' + rd.id })
-          } else {
-            this.$router.push({ path: '/online/cgformList/' + rd.id })
-          }
-        }
-      },
-      handleOnlineUrlClose() {
-        this.onlineUrlTitle = ''
-        this.onlineUrlVisible = false
-      },
-      handleOnlineUrlShow(record) {
-        if (record.themeTemplate === 'erp') {
-          this.onlineUrl = `/online/cgformErpList/${record.id}`
-        } else if (record.themeTemplate === 'innerTable') {
-          this.onlineUrl = `/online/cgformInnerTableList/${record.id}`
-        } else if (record.themeTemplate === 'tab') {
-          this.onlineUrl = `/online/cgformTabList/${record.id}`
-        } else {
-          if (record.isTree == 'Y') {
-            this.onlineUrl = `/online/cgformTreeList/${record.id}`
-          } else {
-            this.onlineUrl = `/online/cgformList/${record.id}`
-          }
-        }
-        this.onlineUrlVisible = true
-        this.onlineUrlTitle = '菜单链接[' + record.tableTxt + ']'
-      },
-      handleRemoveRecord(id) {
-        let that = this
-        this.$confirm({
-          title: '确认要移除此记录?',
-          onOk() {
-            deleteAction(that.url.removeRecord, { id: id }).then((res) => {
-              if (res.success) {
-                that.$message.success('移除成功')
-                that.loadData()
-              } else {
-                that.$message.warning(res.message)
-              }
-            })
-          },
-          onCancel() {
-          }
-        })
-      },
-      doEnhanceJs() {
-        if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
-          this.$message.warning('请先选中一条记录')
-          return
-        }
-        this.$refs.ehjs.show(this.selectedRows[0])
-      },
-      doEnhanceSql() {
-        if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
-          this.$message.warning('请先选中一条记录')
-          return
-        }
-        this.$refs.ehsql.show(this.selectedRows[0])
-      },
-      doEnhanceJava() {
-        if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
-          this.$message.warning('请先选中一条记录')
-          return
-        }
-        this.$refs.ehjava.show(this.selectedRowKeys[0])
-      },
-      doCgformButton() {
-        if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
-          this.$message.warning('请先选中一条记录')
-          return
-        }
-        this.$refs.btnList.show(this.selectedRowKeys[0])
-
-        // this.$router.push({ path: '/online/cgformButton/' + this.selectedRowKeys[0] })
-      },
-      importOnlineForm() {
-        this.$refs.transd2o.show()
-      },
-      transOk() {
-        this.loadData()
-      },
-      goGenerateCode() {
-        if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
-          this.$message.warning('请先选中一条记录')
-          return
-        }
-        let row = this.selectedRows[0]
-        if (!row) {
-          this.$message.warning('请选择当前页数据!')
-          return
-        }
-        if (!row.isDbSynch || row.isDbSynch == 'N') {
-          this.$message.warning('请先同步数据库!')
-          return
-        }
-        if (row.tableType == 3) {
-          this.$message.warning('请选中该表对应的主表生成代码')
-          return
-        }
-        this.$refs.cg.show(this.selectedRowKeys[0])
-      },
-      onSelectChange(keys, rows) {
-        this.selectedRowKeys = keys
-        this.selectedRows = rows
-      },
-      onCopyUrl() {
-        var clipboard = new Clipboard('.copy-this-text')
-        clipboard.on('success', () => {
-          clipboard.destroy()
-          this.$message.success('复制成功')
-          this.handleOnlineUrlClose()
-        })
-        clipboard.on('error', () => {
-          this.$message.error('该浏览器不支持自动复制')
-          clipboard.destroy()
-        })
-      },
-      showMyCopyInfo(id) {
-        this.$router.push({ path: '/online/copyform/' + id })
-      },
-      copyConfig(id) {
-        postAction(`${this.url.copyOnline}?code=${id}`).then(res => {
-          if (res.success) {
-            this.$message.success('复制成功')
-            this.loadData()
-          } else {
-            this.$message.error('复制失败>>' + res.message)
-          }
-        })
-      },
-      batchDeleteCust() {
-        if (!this.url.deleteBatch) {
-          this.$message.error('请设置url.deleteBatch属性!')
-          return
-        }
-        if (this.selectedRowKeys.length <= 0) {
-          this.$message.warning('请选择一条记录！');
-          return;
-        }
-        this.confirmVisible = true;
-      },
-      doBatchDelete(flag) {
-        var ids = '';
-        for (var a = 0; a < this.selectedRowKeys.length; a++) {
-          ids += this.selectedRowKeys[a] + ',';
-        }
-        var that = this;
-        this.loading = true;
-        deleteAction(that.url.deleteBatch, { ids: ids, flag: flag }).then((res) => {
-          if (res.success) {
-            this.$message.success(res.message);
-            this.loadData();
-            this.onClearSelected();
-          } else {
-            this.$message.warning(res.message);
-          }
-        }).finally(() => {
-          this.loading = false;
-          this.confirmVisible = false
-        });
-      },
-      goAuthConfig(id) {
-        this.$refs.authManager.show(id)
-      },
-      doAuthConfig(id) {
-        this.$refs.authSetter.show(id)
+    getQueryParams() {
+      // 获取高级查询器条件
+      let sqp = {}
+      if (this.superQueryParams) {
+        sqp['superQueryParams'] = encodeURI(this.superQueryParams)
+        sqp['superQueryMatchType'] = this.superQueryMatchType
       }
 
+      // 获取查询条件
+      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters);
+      param.field = this.getQueryField();
+      param.pageNo = this.ipagination.current;
+      param.pageSize = this.ipagination.pageSize;
+      param.copyType = 0;
+      return filterObj(param);
+    },
+    handleCancleDbSync() {
+      this.syncModalVisible = false
+    },
+    handleDbSync() {
+      this.syncLoading = true
+      postAction(this.url.doDbSynch + this.syncFormId + '/' + this.synMethod).then((res) => {
+        this.syncModalVisible = false
+        this.syncLoading = false
+        if (res.success) {
+          this.$message.success(res.message)
+          this.loadData()
+        } else {
+          this.$message.warning(res.message)
+        }
+      })
+      setTimeout(() => {
+        if (this.syncLoading) {
+          this.syncModalVisible = false
+          this.syncLoading = false
+          this.$message.success('网络延迟,已自动刷新!')
+          this.loadData()
+        }
+      }, 10000)
+    },
+    openSyncModal(id) {
+      this.syncModalVisible = true
+      this.syncLoading = false
+      this.syncFormId = id
+    },
+    goPageOnline(rd) {
+      if (rd.themeTemplate === 'erp') {
+        this.$router.push({ path: '/online/cgformErpList/' + rd.id })
+      } else if (rd.themeTemplate === 'innerTable') {
+        this.$router.push({ path: '/online/cgformInnerTableList/' + rd.id })
+      } else if (rd.themeTemplate === 'tab') {
+        this.$router.push({ path: '/online/cgformTabList/' + rd.id })
+      } else {
+        if (rd.isTree == 'Y') {
+          this.$router.push({ path: '/online/cgformTreeList/' + rd.id })
+        } else {
+          this.$router.push({ path: '/online/cgformList/' + rd.id })
+        }
+      }
+    },
+    handleOnlineUrlClose() {
+      this.onlineUrlTitle = ''
+      this.onlineUrlVisible = false
+    },
+    handleOnlineUrlShow(record) {
+      if (record.themeTemplate === 'erp') {
+        this.onlineUrl = `/online/cgformErpList/${record.id}`
+      } else if (record.themeTemplate === 'innerTable') {
+        this.onlineUrl = `/online/cgformInnerTableList/${record.id}`
+      } else if (record.themeTemplate === 'tab') {
+        this.onlineUrl = `/online/cgformTabList/${record.id}`
+      } else {
+        if (record.isTree == 'Y') {
+          this.onlineUrl = `/online/cgformTreeList/${record.id}`
+        } else {
+          this.onlineUrl = `/online/cgformList/${record.id}`
+        }
+      }
+      this.onlineUrlVisible = true
+      this.onlineUrlTitle = '菜单链接[' + record.tableTxt + ']'
+    },
+    handleRemoveRecord(id) {
+      let that = this
+      this.$confirm({
+        title: '确认要移除此记录?',
+        onOk() {
+          deleteAction(that.url.removeRecord, { id: id }).then((res) => {
+            if (res.success) {
+              that.$message.success('移除成功')
+              that.loadData()
+            } else {
+              that.$message.warning(res.message)
+            }
+          })
+        },
+        onCancel() {
+        }
+      })
+    },
+    doEnhanceJs() {
+      if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
+        this.$message.warning('请先选中一条记录')
+        return
+      }
+      this.$refs.ehjs.show(this.selectedRows[0])
+    },
+    doEnhanceSql() {
+      if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
+        this.$message.warning('请先选中一条记录')
+        return
+      }
+      this.$refs.ehsql.show(this.selectedRows[0])
+    },
+    doEnhanceJava() {
+      if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
+        this.$message.warning('请先选中一条记录')
+        return
+      }
+      this.$refs.ehjava.show(this.selectedRowKeys[0])
+    },
+    doCgformButton() {
+      if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
+        this.$message.warning('请先选中一条记录')
+        return
+      }
+      this.$refs.btnList.show(this.selectedRowKeys[0])
+
+      // this.$router.push({ path: '/online/cgformButton/' + this.selectedRowKeys[0] })
+    },
+    importOnlineForm() {
+      this.$refs.transd2o.show()
+    },
+    transOk() {
+      this.loadData()
+    },
+    goGenerateCode() {
+      if (!this.selectedRowKeys || this.selectedRowKeys.length != 1) {
+        this.$message.warning('请先选中一条记录')
+        return
+      }
+      let row = this.selectedRows[0]
+      if (!row) {
+        this.$message.warning('请选择当前页数据!')
+        return
+      }
+      if (!row.isDbSynch || row.isDbSynch == 'N') {
+        this.$message.warning('请先同步数据库!')
+        return
+      }
+      if (row.tableType == 3) {
+        this.$message.warning('请选中该表对应的主表生成代码')
+        return
+      }
+      this.$refs.cg.show(this.selectedRowKeys[0])
+    },
+    onSelectChange(keys, rows) {
+      this.selectedRowKeys = keys
+      this.selectedRows = rows
+    },
+    onCopyUrl() {
+      var clipboard = new Clipboard('.copy-this-text')
+      clipboard.on('success', () => {
+        clipboard.destroy()
+        this.$message.success('复制成功')
+        this.handleOnlineUrlClose()
+      })
+      clipboard.on('error', () => {
+        this.$message.error('该浏览器不支持自动复制')
+        clipboard.destroy()
+      })
+    },
+    showMyCopyInfo(id) {
+      this.$router.push({ path: '/online/copyform/' + id })
+    },
+    copyConfig(id) {
+      postAction(`${this.url.copyOnline}?code=${id}`).then(res => {
+        if (res.success) {
+          this.$message.success('复制成功')
+          this.loadData()
+        } else {
+          this.$message.error('复制失败>>' + res.message)
+        }
+      })
+    },
+    batchDeleteCust() {
+      if (!this.url.deleteBatch) {
+        this.$message.error('请设置url.deleteBatch属性!')
+        return
+      }
+      if (this.selectedRowKeys.length <= 0) {
+        this.$message.warning('请选择一条记录！');
+        return;
+      }
+      this.confirmVisible = true;
+    },
+    doBatchDelete(flag) {
+      var ids = '';
+      for (var a = 0; a < this.selectedRowKeys.length; a++) {
+        ids += this.selectedRowKeys[a] + ',';
+      }
+      var that = this;
+      this.loading = true;
+      deleteAction(that.url.deleteBatch, { ids: ids, flag: flag }).then((res) => {
+        if (res.success) {
+          this.$message.success(res.message);
+          this.loadData();
+          this.onClearSelected();
+        } else {
+          this.$message.warning(res.message);
+        }
+      }).finally(() => {
+        this.loading = false;
+        this.confirmVisible = false
+      });
+    },
+    goAuthConfig(id) {
+      this.$refs.authManager.show(id)
+    },
+    doAuthConfig(id) {
+      this.$refs.authSetter.show(id)
+    },
+    handleDesignForm(record) {
+      let param = {
+        desformCode: record.tableName
+      }
+      // 默认配置，用于新建表单时使用
+      let jsonData = {
+        "list": [],
+        "config": {
+          "layout": "horizontal",
+          "labelCol": {
+            "xs": 4,
+            "sm": 4,
+            "md": 4,
+            "lg": 4,
+            "xl": 4,
+            "xxl": 4
+          },
+          "labelWidth": 100,
+          "labelLayout": "flex",
+          "wrapperCol": {
+            "xs": 18,
+            "sm": 18,
+            "md": 18,
+            "lg": 18,
+            "xl": 18,
+            "xxl": 18
+          },
+          "hideRequiredMark": false,
+          "customStyle": "",
+          "onlineForm": record.tableName
+        }
+      }
+      // 查询design_form是否存在记录
+      getAction(this.url.designForm, param)
+      .then(res => {
+        if (res.result == null) {
+          // 不存在记录自动创建并关联表单
+          let newFormData = {
+            "cgformCode": record.tableName,
+            "desformCode": record.tableName,
+            "desformDesignJson": JSON.stringify(jsonData),
+            "desformIcon": null,
+            "desformName": record.tableTxt,
+            "desformType": 1,
+            "izMobileView": 0,
+            "izOaShow": null,
+            "parentCode": null,
+            "parentId": null
+          }
+          postAction(this.url.add, newFormData)
+          .then(res => {
+            this.$refs.designFormModal.open(res.result)
+          })
+        } else {
+          // 存在记录进行加载
+          // console.log('存在记录', res.result, JSON.parse(res.result.desformDesignJson))
+          // 递归合并防止labelCol等配置不存在导致报错
+          let mergeData = merge(JSON.parse(res.result.desformDesignJson), jsonData)
+          res.result.desformDesignJson = JSON.stringify(mergeData)
+          this.$refs.designFormModal.open(res.result)
+        }
+      })
     }
+
   }
+}
 </script>
 <style scoped>
-  @import '~@assets/less/common.less';
+@import '~@assets/less/common.less';
 </style>
 <style lang="less" scoped>
-  /** 横向滚动设置配合样式 */
-  .ant-table td,th { white-space: nowrap; }
-  .anty-row-operator button {
-    margin: 0 5px
-  }
+/** 横向滚动设置配合样式 */
+.ant-table td,
+th {
+  white-space: nowrap;
+}
 
-  .ant-btn-danger {
-    background-color: #ffffff
-  }
+.anty-row-operator button {
+  margin: 0 5px
+}
 
-  .valid-error-cust{
-    .ant-select-selection{
-      border:2px solid #f5222d;
-    }
+.ant-btn-danger {
+  background-color: #ffffff
+}
+
+.valid-error-cust {
+  .ant-select-selection {
+    border: 2px solid #f5222d;
   }
+}
 </style>

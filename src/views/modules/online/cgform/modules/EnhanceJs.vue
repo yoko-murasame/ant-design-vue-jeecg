@@ -9,8 +9,9 @@
     style="top:5%;height: 95%;">
 
     <div style="height:32px;line-height:30px;margin-bottom: 0px">
-      请务必使用foo(row,keys,rows){console.log(this)}形式编写方法,多个方法必须用逗号隔开!this指向当前对象
-      <a target="blank" href="https://www.kancloud.cn/zhangdaiscott/jeecg-boot/2044101">默认钩子文档</a>
+      <!--请务必使用foo(row,keys,rows){console.log(this)}形式编写方法,多个方法必须用逗号隔开!this指向当前对象-->
+      <!--<a target="blank" href="https://www.kancloud.cn/zhangdaiscott/jeecg-boot/2044101">默认钩子文档</a>-->
+      <a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a>
     </div>
 
     <a-form style="height: 100%;">
@@ -30,7 +31,7 @@
         placeholder="请选择增强类型"
         @change="handleChangeType"
         :getPopupContainer="node => node.parentNode">
-        <a-select-option value="form">form</a-select-option>
+        <a-select-option disabled value="form">form</a-select-option>
         <a-select-option value="list">list</a-select-option>
       </a-select>
     </a-form>
@@ -45,6 +46,7 @@
     </template>
 
     <enhance-history ref="historyModal"></enhance-history>
+    <js-form-enhance-help ref="jsHelp" title="Online列表JS增强说明" url="/static/online列表JS增强说明.md"></js-form-enhance-help>
   </a-modal>
 </template>
 
@@ -52,10 +54,11 @@
   import { postAction, getAction, putAction } from '@/api/manage'
   import EnhanceHistory from './EnhanceHistory'
   import { AiTestOnlineMixin } from '@/views/modules/aitest/onlinetest.mixins'
+  import JsFormEnhanceHelp from '@comp/yoko/kform/JsFormEnhanceHelp.vue'
 
   export default {
     name: 'EnhanceJs',
-    components: { EnhanceHistory },
+    components: { EnhanceHistory, JsFormEnhanceHelp },
     mixins: [AiTestOnlineMixin],
     data() {
       return {

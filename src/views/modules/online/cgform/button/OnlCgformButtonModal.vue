@@ -53,6 +53,7 @@
           label="按钮类型">
           <a-select placeholder="请选择按钮类型" v-decorator="['optType']" :getPopupContainer="node => node.parentNode">
             <a-select-option value="js">js</a-select-option>
+            <a-select-option value="js-confirm">js-confirm</a-select-option>
             <a-select-option value="action">action</a-select-option>
           </a-select>
         </a-form-item>

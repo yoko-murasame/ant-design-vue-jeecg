@@ -50,7 +50,6 @@
           {{ btn.buttonName }}
         </a-button>
       </template>
-
       <a-button v-if="!disableSubmit" key="submit" type="primary" @click="handleSubmit" :loading="submitLoading">确定</a-button>
       <a-button key="back" @click="handleCancel">关闭</a-button>
     </template>

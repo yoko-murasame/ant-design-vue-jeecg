@@ -121,7 +121,7 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-
+<!-- 
               <a-col :span="24/3">
                 <a-form-item
                   style="width: 100%"
@@ -133,7 +133,7 @@
                     <a-select-option value="N">否</a-select-option>
                   </a-select>
                 </a-form-item>
-              </a-col>
+              </a-col> -->
 
               <a-col :span="24/3" v-if="showIdSequence">
                 <a-form-item

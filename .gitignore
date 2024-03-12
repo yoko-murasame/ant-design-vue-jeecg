@@ -1,6 +1,7 @@
 node_modules
 .DS_Store
 dist
+dist*
 .npmrc
 .cache
 
@@ -16,3 +17,4 @@ dist
 ## front
 /yarn-error.log
 /.fastRequest/
+*.local

@@ -156,7 +156,7 @@
 
         <span slot="action" slot-scope="text, record">
           <template v-if="hasBpmStatus">
-            <template v-if="record.bpm_status == '1'||record.bpm_status == ''|| record.bpm_status == null">
+            <template v-if="(record.bpm_status == '1'||record.bpm_status == ''|| record.bpm_status == null) ||(bpmCirculate==true&&record.bpm_status == '3')">
               <template v-if="buttonSwitch.update">
                 <a @click="handleEdit(record)">编辑</a>
                 <a-divider type="vertical"/>
@@ -201,10 +201,22 @@
               </template>
               <template v-if="cgButtonLinkList && cgButtonLinkList.length>0" v-for="(btnItem,btnIndex) in cgButtonLinkList">
                 <a-menu-item :key=" 'cgbtnLink'+btnIndex " v-if="showLinkButton(btnItem,record)">
-                  <a href="javascript:void(0);" @click="cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
-                    <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
-                    {{ btnItem.buttonName }}
-                  </a>
+                  <template v-if="btnItem.optType === 'js-confirm'">
+                    <a-popconfirm
+                      :title="`确定${btnItem.buttonName}?`"
+                      @confirm="() => cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
+                      <a href="javascript:void(0);">
+                        <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
+                        {{ btnItem.buttonName }}
+                      </a>
+                    </a-popconfirm>
+                  </template>
+                  <template v-else>
+                    <a href="javascript:void(0);" @click="cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
+                      <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
+                      {{ btnItem.buttonName }}
+                    </a>
+                  </template>
                 </a-menu-item>
               </template>
 
@@ -225,7 +237,7 @@
       </a-modal>
 
       <!-- 弹框表单设计器区域 -->
-      <auto-desform-data-full-screen ref="desformModal" @ok="handleFormSuccess"/>
+      <auto-desform-data-full-screen ref="desformModal" @ok="handleFormSuccess" :buttonSwitch="buttonSwitch" :currentTableName="currentTableName" :hasBpmStatus="hasBpmStatus" />
 
       <!-- 自定义流程接入 -->
       <bind-bpm :parent="vm" ref="bindBpm"></bind-bpm>
@@ -281,7 +293,8 @@
           exportXls: '/online/cgform/api/exportXls/',
           buttonAction: '/online/cgform/api/doButton',
           // startProcess: '/act/process/extActProcess/startMutilProcess'
-          startProcess: '/workflow/common/startMutilProcess'
+          startProcess: '/workflow/common/startMutilProcess',
+          getFormData: "/online/cgform/api/form/table_name"
         },
         flowCodePre: 'onl_',
         isorter: {
@@ -324,6 +337,13 @@
           showSizeChanger: true,
           total: 0
         },
+        rowIndexColumn: {
+          title: '序号',
+          dataIndex: '',
+          key: 'rowIndex',
+          width: 60,
+          align: 'center'
+        },
         actionColumn: {
           title: '操作',
           dataIndex: 'action',
@@ -364,7 +384,8 @@
         // 接受URL参数
         acceptHrefParams: {},
         isDesForm: '',
-        desFormCode: ''
+        desFormCode: '',
+        bpmCirculate:false
       }
     },
     created() {
@@ -445,6 +466,56 @@
       }
     },
     methods: {
+      /**
+       * 发送模板消息
+       * @returns {Promise<*>}
+       */
+      async sendTemplateAnnouncement() {
+        return this.$sendTemplateAnnouncement.call(this, ...arguments)
+      },
+      /**
+       * 获取完整的表单数据
+       * @param id 主键
+       * @param tableName 表名，即desFormCode
+       * @param desFormCode 表单编码，目前统一和表名保持一致
+       * @returns {Promise<*>}
+       */
+      async getFullFormData(id, tableName, desFormCode) {
+        if (!id) {
+          throw new Error('id不能为空')
+        }
+        desFormCode = tableName || desFormCode || this.desFormCode
+        if (!desFormCode) {
+          throw new Error('desFormCode不能为空，目前这个参数就是业务表名！')
+        }
+        const { result, success, message } = await getAction(`${this.url.getFormData}/${desFormCode}/${id}`)
+        !success && this.$message.error(message)
+        return result
+      },
+      /**
+       * 打开任意表单
+       * @param code online表单的配置地址中的code
+       * @param id 主键
+       * @param mode 模式 add | edit | detail
+       * @param title 标题
+       * @param defaultData 携带的数据对象 {}
+       * @returns {Promise<void>}
+       */
+      async openAnyForm(code, id, mode = 'add', title = '表单', defaultData = {}) {
+        if (mode !== 'add' && !id) {
+          throw new Error('非新增模式（add）时，id不能为空！')
+        }
+        if (!code) {
+          throw new Error('code不能为空，这个参数是online表单的配置地址中的code！')
+        }
+        const { result, success, message } = await getAction(`${this.url.getColumns}${code}`)
+        if (!success) {
+          this.$message.error(message)
+          console.error('openAnyForm', message)
+        }
+        const { desFormCode } = result
+        this.$refs.desformModal.open(mode, desFormCode, id, title, false, code, defaultData)
+      },
       hasBpmStatusFilter() {
         var columnObjs = this.defColumns;
         let columns = [];
@@ -513,7 +584,8 @@
 
         this.table.loading = true
         this.code = this.$route.params.code
-        if (!this.queryParam) {
+        // 存在id筛选我的待办时，切换online列表需要清空
+        if (!this.queryParam || this.queryParam.id) {
           this.queryParam = {}
         }
         this.handleAcceptHrefParams();
@@ -531,9 +603,22 @@
             } else {
               this.table.pagination = false
             }
+
+
+          // 修正BUG：配置查询条件无效问题,仅取第一个设置了排序的字段
+          let sortFlieds = res.result.columns.filter(u => u.sorter)
+          if (sortFlieds.length > 0) {
+            this.isorter = {
+              column: sortFlieds[0]["dataIndex"],
+              order: sortFlieds[0]["sorterType"] ? sortFlieds[0]["sorterType"] : 'desc'
+            }
+          }
+
             // href 跳转
             const fieldHrefSlotKeysMap = {}
             res.result.fieldHrefSlots.forEach(item => fieldHrefSlotKeysMap[item.slotName] = item)
+            this.bpmCirculate=res.result.bpmCirculate
+
             this.dictOptions = res.result.dictOptions
             this.formTemplate = res.result.formTemplate
             this.description = res.result.description
@@ -555,7 +640,8 @@
               // 处理显示长度
               this.handleColumnShowLength(column)
             })
-            this.defColumns = res.result.columns.concat([this.actionColumn])
+            // this.defColumns = res.result.columns.concat([this.actionColumn])
+            this.defColumns = [this.rowIndexColumn, ...res.result.columns, this.actionColumn]
             this.settingColumnsHandler(res.result.columns);
             this.scrollFlag = res.result.scrollFlag
             this.hasBpmStatusFilter();
@@ -581,6 +667,7 @@
           }
           this.table.loading = true
           let params = this.getQueryParams();// 查询条件
+          params['needList'] = 'id'
           console.log('--onlineList-查询条件-->', params)
           getAction(`${this.url.getData}${this.code}`, params).then((res) => {
             console.log('--onlineList-列表数据', res)
@@ -609,6 +696,7 @@
         this.table.loading = true
         let param = this.getQueryParams()// 查询条件
         param['pageSize'] = -521;
+        param['needList'] = 'id'
         getAction(`${this.url.getData}${this.code}`, filterObj(param)).then((res) => {
           console.log('--onlineList-列表数据', res)
           if (res.success) {
@@ -867,6 +955,9 @@
           that.$confirm({
             title: '确认删除',
             content: '是否删除选中数据?',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
             onOk: function() {
               that.handleDelete(ids)
               that.onClearSelected();
@@ -973,7 +1064,7 @@
         })
       },
       cgButtonLinkHandler(record, buttonCode, optType) {
-        if (optType == 'js') {
+        if (optType == 'js' || optType == 'js-confirm') {
           if (this.EnhanceJS[buttonCode]) {
             // this.EnhanceJS[buttonCode](this, record)
             const keys = this.table.selectedRowKeys

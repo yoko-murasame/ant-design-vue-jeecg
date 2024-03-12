@@ -94,7 +94,7 @@
       return {
         uploadAction: window._CONFIG['domianURL'] + '/sys/common/upload',
         knowledgeUploadAction: window._CONFIG['domianURL'] + '/technical/file/upload',
-        checkKnowledgePathUrl: window._CONFIG['domianURL'] + '/technical/folder/queryTreeLastNodeByFolderTreeNames',
+        checkKnowledgePathUrl: '/technical/folder/queryTreeLastNodeByFolderTreeNames',
         knowledgeFolder: null,
         headers: {},
         fileList: [],
@@ -201,6 +201,27 @@
       splitChar: {
         type: String,
         default: ','
+      },
+      /**
+       * 业务主键
+       */
+      businessId: {
+        type: String,
+        default: ''
+      },
+      /**
+       * 项目主键
+       */
+      projectId: {
+        type: String,
+        default: ''
+      },
+      /**
+       * 当关联知识库路径不存在时，是否自动初始化
+       */
+      knowledgePathAutoInit: {
+        type: [String, Boolean],
+        default: false
       }
     },
     watch: {
@@ -218,11 +239,44 @@
             this.initFileList(val)
           }
         }
+      },
+      knowledgePath: {
+        immediate: true,
+        handler(val) {
+          if (val && !this.knowledgePathAutoInit) {
+            this.$nextTick(() => {
+              this.checkKnowledgePath()
+              console.log('knowledgePath change', val, this.knowledgePathAutoInit)
+            })
+          }
+        }
+      },
+      businessId: {
+        immediate: true,
+        handler(val) {
+          if (val && this.knowledgePathAutoInit) {
+            this.$nextTick(() => {
+              this.checkKnowledgePath()
+              console.log('businessId change', val, this.knowledgePathAutoInit)
+            })
+          }
+        }
+      },
+      projectId: {
+        immediate: true,
+        handler(val) {
+          if (val && this.knowledgePathAutoInit) {
+            this.$nextTick(() => {
+              this.checkKnowledgePath()
+              console.log('projectId change', val, this.knowledgePathAutoInit)
+            })
+          }
+        }
       }
     },
     async created() {
       const token = Vue.ls.get(ACCESS_TOKEN)
-      await this.checkKnowledgePath()
+      this.checkKnowledgePath = debounce(this.checkKnowledgePath, 300)
       this.openTagsDialog = debounce(this.openTagsDialog, 300)
       // ---------------------------- begin 图片左右换位置 -------------------------------------
       this.headers = { 'X-Access-Token': token }
@@ -274,7 +328,13 @@
        */
       async checkKnowledgePath() {
         if (this.knowledgePath) {
-          const { success, result, message }  = await postAction(this.checkKnowledgePathUrl, { folderTreeNames: this.knowledgePath })
+          const { success, result, message } = await postAction(this.checkKnowledgePathUrl, {
+            folderTreeNames: this.knowledgePath,
+            businessId: this.businessId,
+            projectId: this.projectId,
+            initialFolderTreeNamesIfNotExist: !!this.knowledgePathAutoInit,
+            type: 'DOCUMENT'
+          })
           const errMsg = '知识库路径不存在，请重新配置'
           if (success) {
             if (result && result.length > 0) {
