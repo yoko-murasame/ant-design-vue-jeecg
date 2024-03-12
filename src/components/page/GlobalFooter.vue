@@ -23,7 +23,7 @@
       <span v-html="footer"></span>
     </div>
     <div class="copyright" v-show="showBeiAn">
-      经营性网站备案信息
+      网站备案信息
       <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank" style="margin-left: 1em;">xICP备xxxx号</a>
       <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=" style="margin-left: 1em;">
         <img src="@/assets/beian.png" style="" alt=""/>
@@ -43,7 +43,7 @@ export default {
       year: '',
       // 默认隐藏
       showNowYear: false,
-      showBeiAn: false,
+      showBeiAn: true,
       footer: process.env.VUE_APP_FOOTER_TEXT,
       logoNameCH: process.env.VUE_APP_LOGO_NAME_CH,
       logoNameEN: process.env.VUE_APP_LOGO_NAME_EN

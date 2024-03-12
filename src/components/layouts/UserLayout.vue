@@ -24,6 +24,14 @@
         <div class="copyright">
           Copyright &copy; {{ year }} <span v-html="footer"></span>
         </div>
+        <div class="copyright">
+          网站备案信息
+          <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank" style="margin-left: 1em;">xICP备xxxx号</a>
+          <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=" style="margin-left: 1em;">
+            <img src="@/assets/beian.png" style="" alt=""/>
+            <div style="display: inline-block;height:20px;line-height:20px;margin: 0 0 0 5px; color:#939393">X公网安备 xxxx号</div>
+          </a>
+        </div>
       </div>
     </div>
   </div>
