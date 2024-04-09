@@ -188,6 +188,11 @@
                     </a-popconfirm>
                   </a-menu-item>
                 </template>
+                <template v-if="record.bpm_status == '3'&& buttonSwitch.bpm">
+                  <a-menu-item v-if="buttonSwitch.bpm">
+                    <a href="javascript:;" @click="startProcess(record)">提交流程</a>
+                  </a-menu-item>
+                </template>
                 <template v-else>
                   <a-menu-item @click="handlePreviewPic(record)">审批进度</a-menu-item>
                 </template>

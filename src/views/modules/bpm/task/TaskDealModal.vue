@@ -27,9 +27,9 @@
           </template>
           <template v-else>
             <iframe :src="iframeUrl" frameborder="0" width="100%" :height="height" scrolling="auto"></iframe> -->
-
+          <!--:onlineTableId="formData.tableName"-->
             <desform-view class="desform-view" :mode="mode" :desformCode="formData.tableName" :dataId="formData.dataId"
-              :onlineTableId="formData.tableName" height="100vh" :innerDialog="true" @reload="handleReload" :isOnline="isOnline"
+              :onlineTableId="formData.cgformId" height="100vh" :innerDialog="true" @reload="handleReload" :isOnline="isOnline"
               ref="desform" />
           <!-- </template> -->
         </div>
@@ -107,7 +107,8 @@ export default {
       height: (window.innerHeight - 120) + 'px',
       iframeUrl: '',
       preSaveFormDebounce: null,
-        mode: 'detail',
+        mode: 'edit',
+        // mode: 'detail',
         title: '操作',
         visible: false,
         bodyOverflow: null,
@@ -115,7 +116,9 @@ export default {
         isOnline: false,
       url: {
         json: '/desform/queryByCode',
-      }
+      },
+      loading: false,
+      cgformId:""
     }
   },
   created() {
@@ -157,23 +160,23 @@ export default {
           let methodProxy = null
           let showFlowSubmitButton = null
           let isOnline = false
-          try {
-            let target = that.$refs.formModal.$children[0]
-            const { handleOk, submitForm, handleSubmit } = target
-            showFlowSubmitButton = target.showFlowSubmitButton || null
-            methodProxy = handleOk || submitForm || handleSubmit || null
-            // 找在线表单的
-            if (!methodProxy) {
-              // let { handleSubmit } = that.$refs.formModal.$children[0].$children[0].$children[0]
-              methodProxy = that.getFirstMethodByName(that.$refs.formModal, 'handleSubmit')
-              isOnline = !!methodProxy
-            }
-            console.log('实现的保存方法', methodProxy)
-          } catch (e) {
-            console.error('其他情况异常', e)
-            resolve()
-            return
-          }
+          // try {
+            // let target = that.$refs.formModal.$children[0]
+            // const { handleOk, submitForm, handleSubmit } = target
+            // showFlowSubmitButton = target.showFlowSubmitButton || null
+            // methodProxy = handleOk || submitForm || handleSubmit || null
+            // // 找在线表单的
+            // if (!methodProxy) {
+            //   // let { handleSubmit } = that.$refs.formModal.$children[0].$children[0].$children[0]
+            //   methodProxy = that.getFirstMethodByName(that.$refs.formModal, 'handleSubmit')
+            //   isOnline = !!methodProxy
+            // }
+            // console.log('实现的保存方法', methodProxy)
+          // } catch (e) {
+          //   console.error('其他情况异常', e)
+          //   resolve()
+          //   return
+          // }
 
           // 用函数获取自动保存方法
           // let showFlowSubmitButton = that.getFirstMethodByName(that.$refs.formModal, 'showFlowSubmitButton')
@@ -188,6 +191,10 @@ export default {
           // console.log('实现的保存方法', methodProxy)
           // reject()
           // return
+            // 添加数据表单保存操作
+            if(this.mode=== 'edit'){
+              this.$refs.desform.saveAllData()
+            }
           if (!methodProxy) {
             console.error('业务表单未实现保存方法！')
             resolve()
@@ -253,7 +260,7 @@ export default {
     },
     async init() {
       await this.loadFormJson()
-      await this.loadFormData()
+      // await this.loadFormData()
 
     },
     loadFormJson() {
@@ -270,6 +277,8 @@ export default {
           .then(res => {
             this.pageLoading = false
             this.formDataJson = JSON.parse(res.result.desformDesignJson)
+            this.formData.cgformId=res.result.cgformId
+            console.log("cgformId",this.formData.cgformId)
             resolve()
           })
       })
@@ -292,8 +301,15 @@ export default {
       })
     },
 
-  }
-
+  },
+    watch: {
+      formData: {
+        handler(value) {
+            this.formData = value
+    this.init();
+        }
+      },
+    }
 }
 </script>
 
