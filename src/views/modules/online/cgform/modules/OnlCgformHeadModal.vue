@@ -121,7 +121,7 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-<!-- 
+<!--
               <a-col :span="24/3">
                 <a-form-item
                   style="width: 100%"
@@ -924,7 +924,9 @@ QueryTable
         } else {
           var patt1 = new RegExp('^[a-zA-Z]{1}_.*');
           if (patt1.test(value)) {
-            callback('不能以单个字母加下划线开头')
+            // callback('不能以单个字母加下划线开头')
+            this.$message.warn('请注意：不能以单个字母加下划线开头！目前已放行！')
+            callback()
           } else if (new RegExp('^[0-9]*$').test(value)) {
             // 不能全部是数字
             callback('不能全部是数字')
