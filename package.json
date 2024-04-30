@@ -37,7 +37,7 @@
     "nprogress": "^0.2.0",
     "qiankun": "^2.5.1",
     "qrcodejs2": "^0.0.2",
-    "tinymce": "5.4.1",
+    "tinymce": "5.10.3",
     "v-viewer": "^1.6.4",
     "vcolorpicker": "^1.1.0",
     "viser-vue": "^2.4.8",
