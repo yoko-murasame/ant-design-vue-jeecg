@@ -1,13 +1,15 @@
-import DDict from "./DDic/DDict.vue"
-import SkyMap from "./skyMap/JSelectMap.vue"
-import DSubtable from "./DSubTable/DSubtable.vue"
+import DDict from './DDic/DDict.vue'
+import SkyMap from './skyMap/JSelectMap.vue'
+import DSubtable from './DSubTable/DSubtable.vue'
 
-import JSelectMultiUser from "../../jeecgbiz/JSelectMultiUser.vue"
-import JSelectDepart from "../../jeecgbiz/JSelectDepart.vue"
-import JSelectRole from "../../jeecgbiz/JSelectRole.vue"
-import JSelectPosition from "../../jeecgbiz/JSelectPosition.vue"
+import JSelectMultiUser from '../../jeecgbiz/JSelectMultiUser.vue'
+import JSelectDepart from '../../jeecgbiz/JSelectDepart.vue'
+import JSelectRole from '../../jeecgbiz/JSelectRole.vue'
+import JSelectPosition from '../../jeecgbiz/JSelectPosition.vue'
 
-import { nodeSchema } from "../packages/utils"
+import { nodeSchema } from '../packages/utils'
+
+import { MODE_POINT } from '@/components/k-form-design/components/skyMap/mapLoction'
 
 nodeSchema.addSchemas([
   {
@@ -89,7 +91,11 @@ nodeSchema.addSchemas([
     component: SkyMap,
     options: {
       map: true,
-      mapUrl: ""
+      mapUrl: "",
+      precision: 4, // 精度
+      mode: MODE_POINT, // 选择模式
+      lnglatSplitChar: ",",
+      lnglatArrSplitChar: ";"
     }
   },
   {

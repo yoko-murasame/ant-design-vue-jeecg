@@ -3,8 +3,6 @@
            @cancel="handleCancel" wrapClassName="j-depart-select-modal" switchFullscreen cancelText="关闭">
     <a-spin tip="Loading..." :spinning="false">
       <iframe :src="iframeUrl" name="iframe" frameborder="0" class="mapIframe"></iframe>
-      <!-- <a-input-search placeholder="搜索位置" enter-button="搜索" size="large" @search="onSearch" />
-      <div id="map" class="map"></div> -->
       <a-input placeholder="获取地图经纬度" type="text" onkeyup="value=value.replace(/[^0-9.,]/g,'')"
                v-model="lnglatStr" class="mapInput"/>
     </a-spin>
@@ -12,20 +10,31 @@
 </template>
 
 <script>
-// import MapInit from "./map.js"
 import { debounce } from 'lodash'
+
+/**
+ * 点模式
+ * @type {string}
+ */
+export const MODE_POINT = 'point'
+/**
+ * 线模式
+ * @type {string}
+ */
+export const MODE_LINE = 'line'
+/**
+ * 面模式
+ * @type {string}
+ */
+export const MODE_POLYGON = 'polygon'
 
 export default {
   name: 'mapLoction',
-  props: ['modalWidth', 'multi', 'rootOpened', 'mapUrl'],
+  props: ['modalWidth', 'mapUrl', 'mode', 'lnglatSplitChar', 'lnglatArrSplitChar'],
   data() {
     return {
       visible: false,
       confirmLoading: false,
-      searchValue: "",
-      T: null,
-      map: null,
-      localsearch: null,
       iframeUrl: '',
       lnglatStr: ''
     }
@@ -36,6 +45,10 @@ export default {
       deep: true,
       immediate: true
     }
+  },
+  created() {
+    this.dbounceHandleMessage = debounce(this.handleMessage, 300)
+    window.removeEventListener('message', this.dbounceHandleMessage)
   },
   methods: {
     initMap() {
@@ -50,45 +63,11 @@ export default {
       } else {
         this.iframeUrl = baseUrl
       }
-      window.addEventListener('message', debounce(this.handleMessage, 300), '*')
-
-    },
-    //地图点击获取经纬度
-    getLngLat(e) {
-      let lng = e.lnglat.getLng();
-      let lat = e.lnglat.getLat()
-      this.lnglatStr = `${lng},${lat}`;
-      this.map.clearOverLays();
-      var marker = new T.Marker(new T.LngLat(lng, lat));
-      this.map.addOverLay(marker);
-
-    },
-
-    //使用地理编码接口获得坐标信息
-    searchResult(result) {
-      if (result.getStatus() == 0) {
-        let location = result.getLocationPoint()
-        this.map.panTo(location, 16);
-        //创建标注对象
-        var marker = new T.Marker(location);
-        //向地图上添加标注
-        this.map.addOverLay(marker);
-        this.lnglatStr = `${location.lng},${location.lat}`
-      } else {
-        this.$message(result.getMsg());
-      }
-
-    },
-    onSearch(value) {
-      console.log(value);
-      let geocoder = new T.Geocoder();
-      geocoder.getPoint(value, this.searchResult);
-
+      window.addEventListener('message', this.dbounceHandleMessage, '*')
     },
     show() {
       this.visible = true
     },
-
     handleSubmit() {
       this.$emit("ok", this.lnglatStr)
       this.visible = false
@@ -96,8 +75,18 @@ export default {
     handleCancel() {
       this.visible = false
     },
-    handleMessage(e) {
+    /**
+     * 接收地图经纬度
+     *
+     * @param { data }
+     * {
+     *   lnglatStr: '拼接后的经纬度字符串',
+     *   address: '地名地址'
+     * }
+     */
+    handleMessage({ data }) {
       // console.log('handleMessage', e)
+      // 兼容一下老的数据
       if (e.data) {
         let loc = e.data[0]
         if (loc && loc.hasOwnProperty('lng')) {
@@ -114,13 +103,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.map {
-  width: 100%;
-  height: 100%;
-  min-height: 100px;
-  margin: 20px 0 20px 0;
-}
-
 .mapIframe {
   width: 100%;
   height: 500%;
