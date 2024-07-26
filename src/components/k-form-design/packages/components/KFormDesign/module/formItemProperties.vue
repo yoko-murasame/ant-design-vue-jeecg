@@ -112,14 +112,6 @@
           </a-radio-group>
         </a-form-item> -->
         <!-- 修改字典配置内容结束 -->
-        <!-- 地图参数配置开始 -->
-
-        <!-- tabs配置 start -->
-        <a-form-item v-if="isDefined(options.map)" label="地图URL">
-          <Input v-model="options.mapUrl" placeholder="请输入地图地址" />
-        </a-form-item>
-        <!-- 地图参数配置结束 -->
-
 
         <!-- 选项配置及动态数据配置 start -->
         <a-form-item v-if="isDefined(options.options) && !options.noDefaultProp" label="选项配置">
@@ -402,6 +394,8 @@
         <JSearchSelectTagProperties :select-item="selectItem"></JSearchSelectTagProperties>
         <!--JSelectUserByDepProperties-->
         <JSelectUserByDepProperties :select-item="selectItem"></JSelectUserByDepProperties>
+        <!--JSelectMapProperties 地图选择组件-->
+        <JSelectMapProperties :select-item="selectItem"></JSelectMapProperties>
 
         <!-- JS增强-数据值改变后调用 -->
         <a-form-item label="数据变更后调用" class="js-help">
@@ -419,10 +413,19 @@
  * date 2019-11-20
  * description 表单控件属性设置组件,因为配置数据是引用关系，所以可以直接修改
  */
-import KChangeOption from "../../KChangeOption/index.vue";
-import kCheckbox from "../../KCheckbox/index.vue";
+import KChangeOption from '../../KChangeOption/index.vue'
+import kCheckbox from '../../KCheckbox/index.vue'
 import { getAction } from '@api/manage'
-import { pluginManager } from "../../../utils/index";
+import { pluginManager } from '../../../utils/index'
+import JUploadProperties from '@comp/k-form-design/jeecg/properties/JUploadProperties'
+import JUploadKnowledgeProperties from '@comp/k-form-design/jeecg/properties/JUploadKnowledgeProperties'
+import JImageUploadProperties from '@comp/k-form-design/jeecg/properties/JImageUploadProperties'
+import JDictSelectTagProperties from '@comp/k-form-design/jeecg/properties/JDictSelectTagProperties'
+import JMultiSelectTagProperties from '@comp/k-form-design/jeecg/properties/JMultiSelectTagProperties'
+import JSearchSelectTagProperties from '@comp/k-form-design/jeecg/properties/JSearchSelectTagProperties'
+import JSelectUserByDepProperties from '@comp/k-form-design/jeecg/properties/JSelectUserByDepProperties'
+import JSelectMapProperties from '@comp/k-form-design/components/properties/JSelectMapProperties'
+
 const Input = pluginManager.getComponent("input").component;
 const InputNumber = pluginManager.getComponent("number").component;
 const Rate = pluginManager.getComponent("rate").component;
@@ -434,13 +437,6 @@ const Textarea = pluginManager.getComponent("textarea").component;
 const Select = pluginManager.getComponent("select").component;
 const ColorPicker = pluginManager.getComponent("colorPicker").component;
 const ASwitch = pluginManager.getComponent("switch").component;
-import JUploadProperties from '@comp/k-form-design/jeecg/properties/JUploadProperties'
-import JUploadKnowledgeProperties from '@comp/k-form-design/jeecg/properties/JUploadKnowledgeProperties'
-import JImageUploadProperties from '@comp/k-form-design/jeecg/properties/JImageUploadProperties'
-import JDictSelectTagProperties from '@comp/k-form-design/jeecg/properties/JDictSelectTagProperties'
-import JMultiSelectTagProperties from '@comp/k-form-design/jeecg/properties/JMultiSelectTagProperties'
-import JSearchSelectTagProperties from '@comp/k-form-design/jeecg/properties/JSearchSelectTagProperties'
-import JSelectUserByDepProperties from '@comp/k-form-design/jeecg/properties/JSelectUserByDepProperties'
 
 export default {
   name: "formItemProperties",
@@ -464,7 +460,8 @@ export default {
     JDictSelectTagProperties,
     JMultiSelectTagProperties,
     JSearchSelectTagProperties,
-    JSelectUserByDepProperties
+    JSelectUserByDepProperties,
+    JSelectMapProperties
   },
   data() {
     return {

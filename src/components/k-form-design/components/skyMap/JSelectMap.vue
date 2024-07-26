@@ -89,13 +89,11 @@ export default {
     return {
       visible: false,
       confirmLoading: false,
-      coordinates: '',
-      mapUrl: ''
+      coordinates: ''
     }
   },
   created() {
     this.coordinates = this.value
-    this.mapUrl = this.record.options.mapUrl
   },
   methods: {
     /**
@@ -105,7 +103,7 @@ export default {
      * @returns {string}
      */
     getCorrectValue(val, format = false) {
-      if (val) {
+      if (!val) {
         return ''
       }
       const coords = val.split(this.lnglatArrSplitChar).map(e => format ? this.formatCoordinates(e, this.precision) : e)

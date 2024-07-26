@@ -52,17 +52,12 @@ export default {
   },
   methods: {
     initMap() {
-      let baseUrl = process.env.VUE_APP_API_MAP_URL
+      let baseUrl = process.env.VUE_APP_API_MAP_URL + `?mode=${this.mode}`
       if (this.mapUrl) {
-        baseUrl = this.mapUrl
+        baseUrl = this.mapUrl + `?mode=${this.mode}`
       }
-      // console.log('initMap', baseUrl, this.lnglatStr)
       //温州天地图
-      if (this.lnglatStr) {
-        this.iframeUrl = `${baseUrl}?lat=${this.lnglatStr.split(',')[1]}&lng=${this.lnglatStr.split(',')[0]}`
-      } else {
-        this.iframeUrl = baseUrl
-      }
+      this.iframeUrl = baseUrl
       window.addEventListener('message', this.dbounceHandleMessage, '*')
     },
     show() {
@@ -85,17 +80,11 @@ export default {
      * }
      */
     handleMessage({ data }) {
-      // console.log('handleMessage', e)
-      // 兼容一下老的数据
-      if (e.data) {
-        let loc = e.data[0]
-        if (loc && loc.hasOwnProperty('lng')) {
-          this.lnglatStr = `${loc.lng},${loc.lat}`
-        }
-        // 判断是不是数组，数组形式的拼接经纬度
-        if (Array.isArray(loc) && loc.length === 2) {
-          this.lnglatStr = `${loc[0]},${loc[1]}`
-        }
+      if (!data) {
+        return
+      }
+      if (data.lnglatStr) {
+        this.lnglatStr = data.lnglatStr
       }
     }
   }
