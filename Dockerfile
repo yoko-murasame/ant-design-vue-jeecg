@@ -2,14 +2,22 @@ FROM nginx
 MAINTAINER YOKO
 VOLUME /var/www/custom/
 ENV LANG en_US.UTF-8
+
 # 接口协议
 ENV API_PROTOCOL http
 # 接口主机名 or IP
 ENV API_HOST jeecg-boot-system
 # 接口端口
 ENV API_PORT 8080
-# 接口上下文路径（微服务网关时留空）
+# 接口上下文路径
 ENV API_CONTEXT_PATH jeecg-boot
+# 接口代理地址（可以直接复写这个）
+ENV API_PROXY_PASS $API_PROTOCOL://$API_HOST:$API_PORT/$API_CONTEXT_PATH/
+
+# 超图服务-上下文路径
+ENV SUPERMAP_CONTEXT_PATH iserver
+# 超图服务-接口代理地址
+ENV SUPERMAP_PROXY_PASS http://127.0.0.1:8090/iserver/
 
 # html为默认的dist输出应用入口；custom为外部映射目录
 RUN mkdir  -p  /var/www/html /var/www/custom
@@ -53,7 +61,7 @@ CMD echo \
                     return 204; \
                   } \
                   location ^~ /$API_CONTEXT_PATH/ { \
-                      proxy_pass              $API_PROTOCOL://$API_HOST:$API_PORT/$API_CONTEXT_PATH/; \
+                      proxy_pass              $API_PROXY_PASS; \
                       proxy_set_header        Host $API_HOST; \
                       proxy_set_header        X-Real-IP \$remote_addr; \
                       proxy_set_header        X-Forwarded-For \$proxy_add_x_forwarded_for; \
@@ -63,6 +71,11 @@ CMD echo \
                       proxy_connect_timeout 60s; \
                       proxy_read_timeout 7200s; \
                       proxy_send_timeout 60s; \
+                  } \
+                  location ^~ /$SUPERMAP_CONTEXT_PATH/ { \
+                      proxy_pass              $SUPERMAP_PROXY_PASS; \
+                      proxy_set_header        X-Real-IP \$remote_addr; \
+                      proxy_set_header        X-Forwarded-For \$proxy_add_x_forwarded_for; \
                   } \
                   #解决Router(mode: 'history')模式下，刷新路由地址不能找到页面的问题 \
                   location / { \
@@ -118,7 +131,7 @@ CMD echo \
                     } \
                 } \
                 location ^~ /$API_CONTEXT_PATH/ { \
-                  proxy_pass $API_PROTOCOL://$API_HOST:$API_PORT/$API_CONTEXT_PATH/; \
+                  proxy_pass $API_PROXY_PASS; \
                   proxy_set_header Host $API_HOST; \
                   proxy_set_header X-Real-IP \$remote_addr; \
                   proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for; \
@@ -128,6 +141,11 @@ CMD echo \
                   proxy_connect_timeout 60s; \
                   proxy_read_timeout 7200s; \
                   proxy_send_timeout 60s; \
+                } \
+                location ^~ /$SUPERMAP_CONTEXT_PATH/ { \
+                  proxy_pass              $SUPERMAP_PROXY_PASS; \
+                  proxy_set_header        X-Real-IP \$remote_addr; \
+                  proxy_set_header        X-Forwarded-For \$proxy_add_x_forwarded_for; \
                 } \
                 access_log  /var/log/nginx/access-custom.log ; \
           }" \

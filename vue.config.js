@@ -129,6 +129,14 @@ module.exports = {
         pathRewrite: {
           '^/main': ''
         }
+      },
+      '/iserver': {
+        target: process.env.VUE_APP_SUPERMAP_ISERVER,
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/iserver': ''
+        }
       }
     }
   },

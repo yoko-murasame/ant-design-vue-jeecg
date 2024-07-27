@@ -216,3 +216,102 @@ if (!code) {
 ```
 
 3）现在每次新增表单时，都会自动生成编码了
+
+# 使用示例三：地图选择组件保存数据到超图
+
+1）去系统 `在线开发 -> online表单开发` 模块里新增测试表
+
+2）点击 `设计表单` 按钮，在表单里添加一个地图选择组件（左边 -> 自定义组件 -> 天地图）
+
+3）在设计界面右下角 `表单JS-afterSubmit-表单提交后调用` 模块加入增强JS代码
+
+3.1）**天地图-点模式**——参考JS增强代码：
+
+```js
+const addPointFunc = async () => {
+  // 必须拿到业务id
+  const { id } = formData
+  // 超图-服务地址-这里需要注意跨域，一般走代理
+  const iserverUrl = ''
+  // 超图-删除接口-sql模式
+  const deleteUrl = `${iserverUrl}/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/point_test/features.rjson?_method=DELETE&deleteMode=SQL`
+  // 超图-新增接口
+  const addUrl = `${iserverUrl}/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/point_test/features.rjson`
+  // TODO 从业务后端获取超图的token，现在暂时省略这个步骤
+  // 先删除对应关联的空间数据
+  const delRes = await myRequest({
+    baseURL: '',
+    url: deleteUrl,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+    data: { 'attributeFilter': `BUSS_ID like '${id}'` } // 这个根据业务主键删除，需要和超图空间表协商
+  })
+  console.log('超图删除点数据', delRes)
+  if (!delRes.succeed) {
+    that.$message.error('删除超图空间数据失败，请检查超图配置！')
+    return
+  }
+  // 处理业务数据字段
+  const fieldNames = []
+  const fieldValues = []
+  Object.keys(formData).forEach((key) => {
+    if (key === 'id') {
+      fieldNames.push('BUSS_ID')
+      fieldValues.push(id)
+    } else {
+      fieldNames.push(key.toUpperCase())
+      fieldValues.push(formData[key])
+    }
+  })
+  // 处理点空间数据
+  const getField = 'new_one' // 天地图组件绑定的业务字段名
+  const [longitude, latitude] = formData[getField].split(',')
+  const geometry = {
+    "type": "POINT",
+    "points": [
+      {
+        "x": longitude || 120.123, // 具体字段看业务
+        "y": latitude || 30.456
+      }
+    ]
+  }
+  // 新增的点数据结构
+  const pointResult = [
+    {
+      fieldNames,
+      fieldValues,
+      geometry
+    }
+  ]
+  // 新增
+  const addRes = await myRequest({
+    baseURL: '',
+    url: addUrl,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json;charset=utf-8' },
+    data: pointResult
+  })
+  console.log('超图新增点数据', pointResult, addRes)
+  if (!addRes.succeed) {
+    that.$message.error('新增超图空间数据失败，请检查超图配置！')
+    return
+  }
+  that.$message.success('新增超图点数据成功！')
+}
+await addPointFunc()
+
+```
+
+3.2）**天地图-线模式**——参考JS增强代码：
+
+```js
+
+
+```
+
+3.1）**天地图-面模式**——参考JS增强代码：
+
+```js
+
+
+```
