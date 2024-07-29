@@ -31,5 +31,5 @@ function main() {
     mounted () {
     },
     render: h => h(MapApp)
-  }).$mount('#app')
+  }).$mount('#mapApp')
 }
