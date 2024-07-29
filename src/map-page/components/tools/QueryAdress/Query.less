@@ -1,0 +1,68 @@
+.queryable {
+  position: absolute;
+  z-index: 999;
+  left: 3vh;
+  top: 2vh;
+
+  .query-list {
+    display: inline-block;
+    width: 380px;
+    //height: 4vh;
+    box-shadow: 0 0 20px 0 rgba(35, 48, 65, 0.18);
+    background-color: #cccccc;
+  }
+  .list {
+    width: 380px;
+    height: 30vh;
+    overflow-y: scroll;
+    margin-top: 1vh;
+    float: right;
+    position: fixed;
+    background-color: #ffffff;
+
+    .li {
+      min-height: 4vh;
+      padding: 0.5vh 0;
+      cursor: pointer;
+
+      img {
+        width: 2vh;
+        margin-left: 2vh;
+        margin-right: 1vh;
+      }
+      .content {
+        // margin: 1vh 0vh;
+      }
+      .title {
+        font-size: 1vh;
+        font-family: PingFang SC-Semibold, PingFang SC;
+        font-weight: 600;
+        color: #000;
+        line-height: 4vh;
+        width: 90%;
+        float: left;
+        margin-left: 2vh;
+        text-align: left;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .type {
+        font-size: 1vh;
+        font-family: PingFang SC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #b9b9b9;
+        line-height: 2vh;
+        margin-top: 1vh;
+        width: 21vh;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+    .liActive {
+      width: 100%;
+      background-color: #f5f8fe;
+    }
+  }
+}

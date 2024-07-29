@@ -12,22 +12,23 @@
           <!-- <Input v-model="selectItem.model" placeholder="请输入" /> -->
           <a-select show-search v-model="selectItem.model" placeholder="选择">
             <a-select-option v-for="n in filedLists" :key="n.dbFieldName" :value="n.dbFieldName">{{
-              n.dbFieldTxt + `(${n.dbFieldName})`
-            }}</a-select-option>
+                n.dbFieldTxt + `(${n.dbFieldName})`
+              }}
+            </a-select-option>
           </a-select>
         </a-form-item>
 
         <!-- 子表设置开始 -->
         <a-form-item v-if="isDefined(options.subtable)" label="子表单绑定">
           <j-search-select-tag v-model="selectItem.model" dict="onl_cgform_head,table_txt,table_name"
-            @change="subtableSelect"></j-search-select-tag>
+                               @change="subtableSelect"></j-search-select-tag>
         </a-form-item>
 
         <a-form-item v-if="isDefined(options.subtable)" label="显示内容">
           <a-table :dataSource="subtableShowDataSource" :columns="subtableShowColumns">
 
             <template slot="sort" slot-scope="text, row">
-              <a-input-number v-model:value="row.sort" @change="filedShowChange"/>
+              <a-input-number v-model:value="row.sort" @change="filedShowChange" />
             </template>
             <template slot="dynamic-opr-button" slot-scope="text, row">
               <a-checkbox v-model:checked="row.status" @change="(e) => filedShowChange()">显示</a-checkbox>
@@ -126,7 +127,7 @@
         <!-- 选项配置及动态数据配置 end -->
         <!-- tabs配置 start -->
         <a-form-item v-if="['tabs', 'selectInputList'].includes(selectItem.type)"
-          :label="selectItem.type === 'tabs' ? '页签配置' : '列选项配置'">
+                     :label="selectItem.type === 'tabs' ? '页签配置' : '列选项配置'">
           <KChangeOption v-model="selectItem.columns" type="tab" />
         </a-form-item>
         <!-- tabs配置 end -->
@@ -142,14 +143,14 @@
         </a-form-item>
         <a-form-item v-if="['number', 'slider'].indexOf(selectItem.type) >= 0" label="默认值">
           <InputNumber :step="options.step" :min="options.min || -Infinity" :max="options.max || Infinity"
-            v-model="options.defaultValue" />
+                       v-model="options.defaultValue" />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'rate'" label="默认值">
           <Rate v-model="options.defaultValue" :allowHalf="options.allowHalf" :count="options.max" />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'select'" label="默认值">
           <Select :options="options.options" v-model="options.defaultValue" :allowClear="options.clearable"
-            :mode="options.multiple ? 'multiple' : ''" />
+                  :mode="options.multiple ? 'multiple' : ''" />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'radio'" label="默认值">
           <Radio :options="options.options" v-model="options.defaultValue" />
@@ -160,11 +161,11 @@
         <!-- 日期选择器默认值 start -->
         <a-form-item v-if="selectItem.type === 'date'" label="默认值">
           <Input v-if="!options.range" v-model="options.defaultValue"
-            :placeholder="!isDefined(options.format) ? '' : options.format" />
+                 :placeholder="!isDefined(options.format) ? '' : options.format" />
           <Input v-if="options.range" v-model="options.rangeDefaultValue[0]"
-            :placeholder="!isDefined(options.format) ? '' : options.format" />
+                 :placeholder="!isDefined(options.format) ? '' : options.format" />
           <Input v-if="options.range" v-model="options.rangeDefaultValue[1]"
-            :placeholder="!isDefined(options.format) ? '' : options.format" />
+                 :placeholder="!isDefined(options.format) ? '' : options.format" />
         </a-form-item>
         <!-- 日期选择器默认值 start -->
         <a-form-item v-if="![
@@ -308,9 +309,9 @@
         <a-form-item v-if="selectItem.type === 'text'" label="字体属性设置">
           <ColorPicker v-model="options.color" />
           <Select :options="familyOptions" v-model="options.fontFamily"
-            style="width:36%;margin-left:2%;vertical-align:bottom;" />
+                  style="width:36%;margin-left:2%;vertical-align:bottom;" />
           <Select :options="sizeOptions" v-model="options.fontSize"
-            style="width:35%;margin-left:2%;vertical-align:bottom;" />
+                  style="width:35%;margin-left:2%;vertical-align:bottom;" />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'text'" label="操作属性">
           <kCheckbox v-model="options.showRequiredMark" label="显示必选标记" />
@@ -343,7 +344,8 @@
           <kCheckbox v-if="isDefined(options.showSearch)" v-model="options.showSearch" label="可搜索" />
           <kCheckbox v-if="isDefined(options.treeCheckable)" v-model="options.treeCheckable" label="可勾选" />
           <kCheckbox v-if="isDefined(options.animated)" v-model="options.animated" label="动画切换" />
-          <kCheckbox title="勾选后移除FormItem嵌套且表单无法获取该组件数据" v-model="options.noFormItem" label="移除FormItem" />
+          <kCheckbox title="勾选后移除FormItem嵌套且表单无法获取该组件数据" v-model="options.noFormItem"
+                     label="移除FormItem" />
         </a-form-item>
 
         <a-form-item v-if="isDefined(selectItem.rules) && selectItem.rules.length > 0" label="校验">
@@ -399,7 +401,7 @@
 
         <!-- JS增强-数据值改变后调用 -->
         <a-form-item label="数据变更后调用" class="js-help">
-          <a-textarea v-model="funcStr" label="afterDataChange" @change="setJsHandleAfterDataChange" :rows="10"/>
+          <a-textarea v-model="funcStr" label="afterDataChange" @change="setJsHandleAfterDataChange" :rows="10" />
           <!-- <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template> -->
         </a-form-item>
       </a-form>
@@ -426,20 +428,20 @@ import JSearchSelectTagProperties from '@comp/k-form-design/jeecg/properties/JSe
 import JSelectUserByDepProperties from '@comp/k-form-design/jeecg/properties/JSelectUserByDepProperties'
 import JSelectMapProperties from '@comp/k-form-design/components/properties/JSelectMapProperties'
 
-const Input = pluginManager.getComponent("input").component;
-const InputNumber = pluginManager.getComponent("number").component;
-const Rate = pluginManager.getComponent("rate").component;
-const Checkbox = pluginManager.getComponent("checkbox").component;
-const Radio = pluginManager.getComponent("radio").component;
-const RadioButton = pluginManager.getComponent("radioButton").component;
-const RadioItem = pluginManager.getComponent("radioItem").component;
-const Textarea = pluginManager.getComponent("textarea").component;
-const Select = pluginManager.getComponent("select").component;
-const ColorPicker = pluginManager.getComponent("colorPicker").component;
-const ASwitch = pluginManager.getComponent("switch").component;
+const Input = pluginManager.getComponent('input').component
+const InputNumber = pluginManager.getComponent('number').component
+const Rate = pluginManager.getComponent('rate').component
+const Checkbox = pluginManager.getComponent('checkbox').component
+const Radio = pluginManager.getComponent('radio').component
+const RadioButton = pluginManager.getComponent('radioButton').component
+const RadioItem = pluginManager.getComponent('radioItem').component
+const Textarea = pluginManager.getComponent('textarea').component
+const Select = pluginManager.getComponent('select').component
+const ColorPicker = pluginManager.getComponent('colorPicker').component
+const ASwitch = pluginManager.getComponent('switch').component
 
 export default {
-  name: "formItemProperties",
+  name: 'formItemProperties',
   components: {
     KChangeOption,
     kCheckbox,
@@ -468,109 +470,109 @@ export default {
       familyOptions: [
         // 字体选择设置
         {
-          value: "",
-          label: "默认"
+          value: '',
+          label: '默认'
         },
         {
-          value: "SimSun",
-          label: "宋体"
+          value: 'SimSun',
+          label: '宋体'
         },
         {
-          value: "FangSong",
-          label: "仿宋"
+          value: 'FangSong',
+          label: '仿宋'
         },
         {
-          value: "SimHei",
-          label: "黑体"
+          value: 'SimHei',
+          label: '黑体'
         },
         {
-          value: "PingFangSC-Regular",
-          label: "苹方"
+          value: 'PingFangSC-Regular',
+          label: '苹方'
         },
         {
-          value: "KaiTi",
-          label: "楷体"
+          value: 'KaiTi',
+          label: '楷体'
         },
         {
-          value: "LiSu",
-          label: "隶书"
+          value: 'LiSu',
+          label: '隶书'
         }
       ],
       sizeOptions: [
         //字号选择设置
         {
-          value: "26pt",
-          label: "一号"
+          value: '26pt',
+          label: '一号'
         },
         {
-          value: "24pt",
-          label: "小一"
+          value: '24pt',
+          label: '小一'
         },
         {
-          value: "22pt",
-          label: "二号"
+          value: '22pt',
+          label: '二号'
         },
         {
-          value: "18pt",
-          label: "小二"
+          value: '18pt',
+          label: '小二'
         },
         {
-          value: "16pt",
-          label: "三号"
+          value: '16pt',
+          label: '三号'
         },
         {
-          value: "15pt",
-          label: "小三"
+          value: '15pt',
+          label: '小三'
         },
         {
-          value: "14pt",
-          label: "四号"
+          value: '14pt',
+          label: '四号'
         },
         {
-          value: "12pt",
-          label: "小四"
+          value: '12pt',
+          label: '小四'
         },
         {
-          value: "10.5pt",
-          label: "五号"
+          value: '10.5pt',
+          label: '五号'
         },
         {
-          value: "9pt",
-          label: "小五"
+          value: '9pt',
+          label: '小五'
         }
       ],
       subtableShowColumns: [{
         title: '字段名称',
         dataIndex: 'title',
-        key: 'title',
+        key: 'title'
       }, {
         title: '字段code',
         dataIndex: 'code',
-        key: 'code',
+        key: 'code'
       }, {
-        title: "次序",
-        dataIndex: "sort",
-        fixed: "right",
-        width: "100px",
-        align: "center",
-        scopedSlots: { customRender: "sort" }
+        title: '次序',
+        dataIndex: 'sort',
+        fixed: 'right',
+        width: '100px',
+        align: 'center',
+        scopedSlots: { customRender: 'sort' }
       }, {
-        title: "操作",
-        dataIndex: "dynamic-opr-button",
-        fixed: "right",
-        width: "100px",
-        align: "center",
-        scopedSlots: { customRender: "dynamic-opr-button" }
+        title: '操作',
+        dataIndex: 'dynamic-opr-button',
+        fixed: 'right',
+        width: '100px',
+        align: 'center',
+        scopedSlots: { customRender: 'dynamic-opr-button' }
       }
       ],
       subtableShowDataSource: [],
-      funcStr:""
-    };
+      funcStr: ''
+    }
   },
   computed: {
     options() {
-      return this.selectItem.options || {};
-    },
+      return this.selectItem.options || {}
+    }
   },
   props: {
     selectItem: {
@@ -585,15 +587,15 @@ export default {
       type: [Object, Array],
       default() {
         return []
-      },
+      }
     },
 
     config: {
       type: Object,
       required: true
-    },
+    }
   },
-  mounted(){
+  mounted() {
 
   },
   methods: {
@@ -602,13 +604,13 @@ export default {
      * @param {*} value
      */
     isDefined(value) {
-      return typeof value !== "undefined";
+      return typeof value !== 'undefined'
     },
     async subtableSelect(value) {
       this.$set(this.config, 'subtableCode', value)
       const { result } = await getAction('/online/cgform/field/listByHeadCode', { headCode: value })
-      if(result===null){
-        this.subtableShowDataSource =[]
+      if (result === null) {
+        this.subtableShowDataSource = []
         return
       }
       let filedList = []
@@ -617,20 +619,20 @@ export default {
         let columns = {
           title: item.dbFieldTxt,
           code: item.dbFieldName,
-          status:false,
-          sort:null
+          status: false,
+          sort: null
         }
-        this.fileShowCheck(columns,value, item.dbFieldName)>-1,
-        filedList.push(columns)
+        this.fileShowCheck(columns, value, item.dbFieldName) > -1,
+          filedList.push(columns)
       })
       this.subtableShowDataSource = [...filedList]
     },
-    fileShowCheck(columns,table, code) {
+    fileShowCheck(columns, table, code) {
       if (this.selectItem.options.showFileds[table]) {
-        this.selectItem.options.showFileds[table].filter(item=>{
-          if(item.code===code){
-          columns.status=true
-          columns.sort= item.sort
+        this.selectItem.options.showFileds[table].filter(item => {
+          if (item.code === code) {
+            columns.status = true
+            columns.sort = item.sort
           }
         })
       }
@@ -639,29 +641,29 @@ export default {
 
       console.log(this.subtableShowDataSource)
       if (!this.selectItem.options.showFileds[this.selectItem.model]) {
-        this.selectItem.options.showFileds[this.selectItem.model]=[]
+        this.selectItem.options.showFileds[this.selectItem.model] = []
       }
       let filedList = this.selectItem.options.showFileds[this.selectItem.model]
       if (filedList === undefined) {
-          filedList = []
-        }
-        filedList=this.subtableShowDataSource.filter(item=>{
-          if(item.status){
-            return {
-              code:item.code,
-              sort:item.sort,
-              title:item.title
-            }
+        filedList = []
+      }
+      filedList = this.subtableShowDataSource.filter(item => {
+        if (item.status) {
+          return {
+            code: item.code,
+            sort: item.sort,
+            title: item.title
           }
-        })
-        if(filedList.length>0){
-          filedList.sort((a,b)=>{
-            return a.sort-b.sort
-          })
-
-          this.selectItem.options.showFileds[this.selectItem.model] = [...filedList]
         }
-        console.log("filedList",this.selectItem.options.showFileds)
+      })
+      if (filedList.length > 0) {
+        filedList.sort((a, b) => {
+          return a.sort - b.sort
+        })
+
+        this.selectItem.options.showFileds[this.selectItem.model] = [...filedList]
+      }
+      console.log('filedList', this.selectItem.options.showFileds)
       // if (e.target.checked) {
       //   if (filedList === undefined) {
       //     filedList = []
@@ -676,27 +678,29 @@ export default {
 
       // console.log(this.selectItem.options)
     },
-    setJsHandleAfterDataChange(e){
-      console.log("11111",e.target.value)
-      let funModel={
-        model:this.options.model,
-        funStr:e.target.value
+    setJsHandleAfterDataChange(e) {
+      console.log('11111', e.target.value)
+      let funModel = {
+        model: this.options.model,
+        funStr: e.target.value
       }
-      if(!this.config.afterDataChange){
-        this.config.afterDataChange={}
+      if (!this.config.afterDataChange) {
+        this.config.afterDataChange = {}
       }
 
-      let model= this.config.afterDataChange[this.selectItem.model]=e.target.value
+      let model = this.config.afterDataChange[this.selectItem.model] = e.target.value
       console.log(this.config.afterDataChange)
     },
-    getControllerJs(){
-
-    this.funcStr=""
-    let funcStr=this.config.afterDataChange[this.selectItem.model]
-    if(funcStr){
-       this.funcStr=funcStr
-    }
-    console.log("funcStr",funcStr)
+    getControllerJs() {
+      this.funcStr = ''
+      if (!this.config.afterDataChange) {
+        return
+      }
+      let funcStr = this.config.afterDataChange[this.selectItem.model]
+      if (funcStr) {
+        this.funcStr = funcStr
+      }
+      console.log('funcStr', funcStr)
     }
   },
   watch: {
@@ -704,7 +708,7 @@ export default {
     selectItem: {
       immediate: true,
       handler(val) {
-        console.log("selectItem", val)
+        console.log('selectItem', val)
         if (val == null || val === '') {
           this.selectItem = null
         } else {
@@ -718,5 +722,5 @@ export default {
       }
     }
   }
-};
+}
 </script>

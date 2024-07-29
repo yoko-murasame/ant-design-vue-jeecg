@@ -89,8 +89,9 @@ nodeSchema.addSchemas([
     label: "天地图", // 标题文字
     icon: "icon-gallery",
     component: SkyMap,
+    model: "",
     options: {
-      mapUrl: "",
+      mapUrl: "/map.html#/", // 新的多页应用-地图选点服务，已集成进基座，不需要再额外部署
       precision: 4, // 精度
       mode: MODE_POINT, // 选择模式
       lnglatSplitChar: ",", // 经纬度分隔符，和iframe页程序协商好，目前不开放表单配置

@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     initMap() {
-      let baseUrl = process.env.VUE_APP_API_MAP_URL + `?mode=${this.mode}`
+      let baseUrl = `/map.html#/?mode=${this.mode}`
       if (this.mapUrl) {
         baseUrl = this.mapUrl + `?mode=${this.mode}`
       }

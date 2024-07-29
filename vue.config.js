@@ -17,13 +17,19 @@ module.exports = {
   // qiankuan打包时放开
   // outputDir: "../dist/main",
   // 多入口配置
-  // pages: {
-  //   index: {
-  //     entry: 'src/main.js',
-  //     template: 'public/index.html',
-  //     filename: 'index.html',
-  //   }
-  // },
+  pages: {
+    index: {
+      entry: 'src/main.js',
+      template: 'public/index.html',
+      filename: 'index.html'
+    },
+    mapPage: {
+      entry: 'src/map-page/map-main.js',
+      template: 'public/map.html',
+      filename: 'map.html',
+      title: '地图选点服务'
+    }
+  },
   // 打包app时放开该配置
   // publicPath:'/',
   configureWebpack: config => {

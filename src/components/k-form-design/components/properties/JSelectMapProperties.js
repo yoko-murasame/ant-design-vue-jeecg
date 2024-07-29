@@ -59,7 +59,7 @@ export default {
           </Radio>
         </a-form-item>
         <a-form-item label={"地图程序iframe地址"} help="">
-          <Input vModel={options.mapUrl} placeholder={"地图程序iframe地址"} />
+          <Input vModel={options.mapUrl} placeholder={"地图程序iframe地址（基座已集成，无需额外部署）"} />
         </a-form-item>
         <a-form-item label={"格式化精度"} help="">
           <InputNumber min={0} vModel={options.precision} placeholder={"经纬度格式化精度，最小为0"} />
