@@ -56,21 +56,29 @@ const myRequest = await myRequest({
 
 **默认工具API**
 
-* `getCurrentRealname`：获取当前用户真实姓名
-* `getDepartmentByOrgCode`：根据`orgCode`值获取多个部门信息
-* `getCurrentDepartment`：获取当前用户的部门信息
-* `getCurrentDate`：获取当前日期，默认format参数为：`YYYY-MM-DD`
-* `getFullFormData`：获取完整的表单数据，参数为：id 主键，tableName 表名
-* `updateFormData`：更新表单数据，参数为：code online表单的配置地址中的code，data 需要更新的表单数据（必须包含id字段且有值）
-* `sendTemplateAnnouncement`：发送模板消息，参数为：
-  * fromUser 发送人
-  * toUser 接收人
-  * title 消息标题
-  * templateCode 模板编码
-  * formData 模板参数
-  * THIRD_APP_TYPE 第三方消息推送类型，可选值： DINGTALK、WECHAT_ENTERPRISE、ALL，不传都不推送
-  * msgAbstract 消息摘要，可选
-* `generateCodeByRule`：根据规则生成编码，参数为：ruleCode 规则编码（系统配置），formData 表单数据（可选）
+> `getCurrentRealname`：获取当前用户真实姓名
+
+> `getDepartmentByOrgCode`：根据`orgCode`值获取多个部门信息
+
+> `getCurrentDepartment`：获取当前用户的部门信息
+
+> `getCurrentDate`：获取当前日期，默认format参数为：`YYYY-MM-DD`
+
+> `getFullFormData`：获取完整的表单数据，参数为：id 主键，tableName 表名
+
+> `updateFormData`：更新表单数据，参数为：code online表单的配置地址中的code，data 需要更新的表单数据（必须包含id字段且有值）
+
+> `sendTemplateAnnouncement`：发送模板消息，参数为：
+
+* fromUser 发送人
+* toUser 接收人
+* title 消息标题
+* templateCode 模板编码
+* formData 模板参数
+* THIRD_APP_TYPE 第三方消息推送类型，可选值： DINGTALK、WECHAT_ENTERPRISE、ALL，不传都不推送
+* msgAbstract 消息摘要，可选
+
+> `generateCodeByRule`：根据规则生成编码，参数为：ruleCode 规则编码（系统配置），formData 表单数据（可选）
 
 ```js
 const realname = await getCurrentRealname()
@@ -85,6 +93,18 @@ const code = await generateCodeByRule('rule_code', {})
 console.log('默认工具', realname, depts, dept, dateStr, timeStr, fullData, updateId, code)
 ```
 
+> `saveBusinessGeometryDataToSupermapFeatures`：保存业务几何数据到超图空间表，参数为（使用请参考下文“天地图-点、线、面模式”）：
+
+* mode 模式(point、line、polygon)
+* formData 业务表单数据
+* businessIdField 业务主键字段
+* businessIdFieldInSupermap 空间表关联的业务主键字段
+* iserverFeaturesUrl 空间表服务地址，e.g. http://localhost:8090/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/region_test/features
+* coordinatesStr 坐标串（来自天地图组件的返回结果）
+* debug 调试模式，默认false
+* throwError 抛出错误，默认false
+* lnglatSplitChar 坐标串经纬度分隔符，默认逗号
+* lnglatArrSplitChar 坐标串经纬度数组分隔符，默认分号
 
 
 **操作表单数据方法**
@@ -225,93 +245,26 @@ if (!code) {
 
 3）在设计界面右下角 `表单JS-afterSubmit-表单提交后调用` 模块加入增强JS代码
 
-3.1）**天地图-点模式**——参考JS增强代码：
+3.1）**天地图-点、线、面模式**——参考JS增强代码：
 
 ```js
-const addPointFunc = async () => {
-  // 必须拿到业务id
-  const { id } = formData
-  // 超图-服务地址-这里需要注意跨域，一般走代理
-  const iserverUrl = ''
-  // 超图-删除接口-sql模式
-  const deleteUrl = `${iserverUrl}/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/point_test/features.rjson?_method=DELETE&deleteMode=SQL`
-  // 超图-新增接口
-  const addUrl = `${iserverUrl}/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/point_test/features.rjson`
-  // TODO 从业务后端获取超图的token，现在暂时省略这个步骤
-  // 先删除对应关联的空间数据
-  const delRes = await myRequest({
-    baseURL: '',
-    url: deleteUrl,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json;charset=utf-8' },
-    data: { 'attributeFilter': `BUSS_ID like '${id}'` } // 这个根据业务主键删除，需要和超图空间表协商
-  })
-  console.log('超图删除点数据', delRes)
-  if (!delRes.succeed) {
-    that.$message.error('删除超图空间数据失败，请检查超图配置！')
-    return
+const iserverUrl = ''
+const addPolygonFunc = async () => {
+  // 超图-服务地址-这里需要注意跨域，留空是为了走代理
+  const params = {
+    mode: 'polygon', // 模式：point（点）、line（线）、polygon（面）
+    formData: formData, // 表单数据
+    businessIdField: 'id', // 业务id字段
+    businessIdFieldInSupermap: 'BUSS_ID', // 业务id字段在超图空间表中的字段名
+    iserverFeaturesUrl: `${iserverUrl}/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/region_test/features`, // 服务地址，需要区分点线面的服务地址
+    coordinatesStr: formData['new_one'], // 从业务表单数据中取出天地图组件返回的坐标串数据
+    debug: false, // 调试模式，默认是false
+    throwError: false, // 抛出错误，默认是false
+    lnglatSplitChar: ',', // 坐标串中经纬度分隔符，默认是逗号（不建议修改）
+    lnglatArrSplitChar: ';' // 坐标串中经纬度数组分隔符，默认是分号（不建议修改）
   }
-  // 处理业务数据字段
-  const fieldNames = []
-  const fieldValues = []
-  Object.keys(formData).forEach((key) => {
-    if (key === 'id') {
-      fieldNames.push('BUSS_ID')
-      fieldValues.push(id)
-    } else {
-      fieldNames.push(key.toUpperCase())
-      fieldValues.push(formData[key])
-    }
-  })
-  // 处理点空间数据
-  const getField = 'new_one' // 天地图组件绑定的业务字段名
-  const [longitude, latitude] = formData[getField].split(',')
-  const geometry = {
-    "type": "POINT",
-    "points": [
-      {
-        "x": longitude || 120.123, // 具体字段看业务
-        "y": latitude || 30.456
-      }
-    ]
-  }
-  // 新增的点数据结构
-  const pointResult = [
-    {
-      fieldNames,
-      fieldValues,
-      geometry
-    }
-  ]
-  // 新增
-  const addRes = await myRequest({
-    baseURL: '',
-    url: addUrl,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json;charset=utf-8' },
-    data: pointResult
-  })
-  console.log('超图新增点数据', pointResult, addRes)
-  if (!addRes.succeed) {
-    that.$message.error('新增超图空间数据失败，请检查超图配置！')
-    return
-  }
-  that.$message.success('新增超图点数据成功！')
+  // 执行-保存业务几何数据到超图空间表
+  await saveBusinessGeometryDataToSupermapFeatures(params)
 }
-await addPointFunc()
-
-```
-
-3.2）**天地图-线模式**——参考JS增强代码：
-
-```js
-
-
-```
-
-3.1）**天地图-面模式**——参考JS增强代码：
-
-```js
-
-
+await addPolygonFunc()
 ```

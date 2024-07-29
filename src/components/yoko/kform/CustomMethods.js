@@ -3,7 +3,8 @@ import axios from 'axios'
 import Vue from 'vue'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import moment from 'moment'
-import { getAction, postAction, putAction, httpAction } from '@api/manage'
+import { getAction, httpAction, postAction, putAction } from '@api/manage'
+
 let apiBaseUrl = window._CONFIG['domianURL'] || '/jeecg-boot';
 
 /**
@@ -173,13 +174,154 @@ export const generateCodeByRule = async (ruleCode, formData = {}) => {
 }
 
 /**
+ * 保存业务几何数据到超图空间表
+ * @param mode 模式(point、line、polygon)
+ * @param formData 业务表单数据
+ * @param businessIdField 业务主键字段
+ * @param businessIdFieldInSupermap 空间表关联的业务主键字段
+ * @param iserverFeaturesUrl 空间表服务地址，e.g. http://localhost:8090/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/region_test/features
+ * @param coordinatesStr 坐标串（来自天地图组件的返回结果）
+ * @param debug 调试模式，默认false
+ * @param throwError 抛出错误，默认false
+ * @param lnglatSplitChar 坐标串经纬度分隔符，默认逗号
+ * @param lnglatArrSplitChar 坐标串经纬度数组分隔符，默认分号
+ * @returns {Promise<void>}
+ */
+export const saveBusinessGeometryDataToSupermapFeatures = async (
+  {
+    mode,
+    formData,
+    businessIdField,
+    businessIdFieldInSupermap,
+    iserverFeaturesUrl,
+    coordinatesStr,
+    debug,
+    throwError,
+    lnglatSplitChar,
+    lnglatArrSplitChar
+  }
+) => {
+  // 参数预处理
+  if (!mode) {
+    throw new Error('模式(mode)为空（point、line、polygon），请检查！')
+  }
+  if (!formData) {
+    throw new Error('表单数据(formData)为空，请检查！')
+  }
+  businessIdField = businessIdField || 'id'
+  const businessId = formData[businessIdField]
+  if (!businessId) {
+    throw new Error(`表单数据(formData)中没有${businessIdField}字段，或者业务主键值为空，请检查！`)
+  }
+  if (!businessIdFieldInSupermap) {
+    throw new Error('超图空间表关联的业务主键字段(businessIdFieldInSupermap)为空，请检查！')
+  }
+  businessIdFieldInSupermap = businessIdFieldInSupermap.toUpperCase()
+  if (!iserverFeaturesUrl) {
+    throw new Error('超图空间表服务地址(iserverFeaturesUrl)为空，请检查！备注：精确到features')
+  }
+  if (!coordinatesStr) {
+    throw new Error('坐标串(coordinatesStr)为空，请检查！')
+  }
+  debug = debug || false
+  throwError = throwError || false
+  lnglatSplitChar = lnglatSplitChar || ','
+  lnglatArrSplitChar = lnglatArrSplitChar || ';'
+  // url处理
+  if (!~iserverFeaturesUrl.lastIndexOf('json')) {
+    if (!~iserverFeaturesUrl.lastIndexOf('features')) {
+      throw new Error('超图空间表服务地址(iserverFeaturesUrl)格式错误，请检查！示例：' +
+        'http://localhost:8090/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/region_test/features')
+    }
+    iserverFeaturesUrl = iserverFeaturesUrl + '.rjson'
+  }
+  const deleteUrl = `${iserverFeaturesUrl}?_method=DELETE&deleteMode=SQL`
+  const addUrl = `${iserverFeaturesUrl}`
+
+  try { // 先删除对应关联的空间数据
+    const delRes = await myRequest({
+      baseURL: '',
+      url: deleteUrl,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json;charset=utf-8' },
+      data: { 'attributeFilter': `${businessIdFieldInSupermap} like '${businessId}'` } // 这个根据业务主键删除，需要和超图空间表协商
+    })
+    debug && console.log('删除超图空间表数据结果：', delRes)
+    if (!delRes.succeed) {
+      Vue.prototype.$message.error('删除超图空间数据失败，请检查超图配置！')
+      return
+    }
+    // 处理业务数据字段
+    const fieldNames = []
+    const fieldValues = []
+    Object.keys(formData).forEach((key) => {
+      if (key === businessIdField) {
+        fieldNames.push(businessIdFieldInSupermap)
+        fieldValues.push(businessId)
+      } else {
+        fieldNames.push(key.toUpperCase())
+        fieldValues.push(formData[key])
+      }
+    })
+    // 处理空间数据
+    const points = coordinatesStr.split(lnglatArrSplitChar).map(coord => {
+      let [x, y] = coord.split(lnglatSplitChar)
+      x = Number.parseFloat(x)
+      y = Number.parseFloat(y)
+      return { x, y }
+    })
+    const geometry = {
+      type: mode === 'point' ? 'POINT' : (mode === 'line' ? 'LINE' : 'REGION'),
+      points
+    }
+    // 新增的数据结构
+    const geometryResult = [
+      {
+        fieldNames,
+        fieldValues,
+        geometry
+      }
+    ]
+    // 新增
+    const addRes = await myRequest({
+      baseURL: '',
+      url: addUrl,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json;charset=utf-8' },
+      data: geometryResult
+    })
+    debug && console.log('超图新增孔家数据', geometryResult, addRes)
+    if (!addRes.succeed) {
+      Vue.prototype.$message.error('超图服务空间数据添加失败，请检查超图配置！')
+      return
+    }
+    Vue.prototype.$message.success('超图服务空间数据添加成功！')
+  } catch (e) {
+    if (throwError) {
+      throw e
+    } else {
+      console.error(e)
+    }
+  }
+}
+
+/**
  * 自定义方法名称
  * @type {string[]}
  */
-export const methodsFunc = [getCurrentRealname, getDepartmentByOrgCode, getCurrentDepartment,
-  getCurrentDate, myRequest, getFullFormData, updateFormData, sendTemplateAnnouncement, generateCodeByRule]
-export const methodsNames = ['getCurrentRealname', 'getDepartmentByOrgCode', 'getCurrentDepartment',
-  'getCurrentDate', 'myRequest', 'getFullFormData', 'updateFormData', 'sendTemplateAnnouncement', 'generateCodeByRule']
+export const methodsFunc = [
+  getCurrentRealname, getDepartmentByOrgCode, getCurrentDepartment,
+  getCurrentDate, myRequest, getFullFormData,
+  updateFormData, sendTemplateAnnouncement, generateCodeByRule,
+  saveBusinessGeometryDataToSupermapFeatures
+]
+
+export const methodsNames = [
+  'getCurrentRealname', 'getDepartmentByOrgCode', 'getCurrentDepartment',
+  'getCurrentDate', 'myRequest', 'getFullFormData',
+  'updateFormData', 'sendTemplateAnnouncement', 'generateCodeByRule',
+  'saveBusinessGeometryDataToSupermapFeatures'
+]
 
 /**
  * 创建异步函数

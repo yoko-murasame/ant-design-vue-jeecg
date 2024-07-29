@@ -111,7 +111,7 @@ export default {
         case MODE_POINT:
           return coords[0]
         case MODE_LINE:
-          return coords.length > 2 ? [coords[0], coords[1]].join(this.lnglatArrSplitChar) : coords.join(this.lnglatArrSplitChar)
+          return coords.join(this.lnglatArrSplitChar)
         case MODE_POLYGON:
           return coords.join(this.lnglatArrSplitChar)
         default:
