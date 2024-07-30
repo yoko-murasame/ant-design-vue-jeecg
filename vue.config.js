@@ -1,5 +1,6 @@
 const path = require('path')
 const CompressionPlugin = require('compression-webpack-plugin')
+const webpack = require('webpack')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -48,11 +49,32 @@ module.exports = {
 
     // 生产环境，开启js\css压缩
     if (process.env.NODE_ENV === 'production') {
-        config.plugin('compressionPlugin').use(new CompressionPlugin({
-          test: /\.(js|css|less)$/, // 匹配文件名
-          threshold: 10240, // 对超过10k的数据压缩
-          deleteOriginalAssets: false // 不删除源文件
-        }))
+      // 压缩图片, 插件安装：yarn add image-webpack-loader --dev
+      config.module
+        .rule('images')
+        .use('image-webpack-loader')
+        .loader('image-webpack-loader')
+        .options({
+          disable: true, // webpack@4.x
+          bypassOnDebug: true // webpack@3.x
+        })
+        .end()
+      // 优化moment.js, 忽略/moment/locale下的所有文件
+      config.plugin('ignorePlugin').use(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/))
+      // 开启js\css压缩
+      config.plugin('compressionPlugin').use(new CompressionPlugin({
+        test: /\.(js|ts|css|less|scss)$/, // 匹配文件名
+        threshold: 10240, // 对超过10k的数据压缩
+        deleteOriginalAssets: false // 不删除源文件
+      }))
+      // 如果想要输出后的html文件包含双引号的script，开启这个插件
+      // config.plugin('html').tap((args) => {
+      //   args[0].minify = {
+      //     ...args[0].minify,
+      //     removeAttributeQuotes: false
+      //   }
+      //   return args
+      // })
     }
 
     // 配置 webpack 识别 markdown 为普通的文件
