@@ -18,7 +18,7 @@ export default {
     }
   }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 @import '~@/map-page/less/App.less';
 @import '~@/map-page/less/Cesium.less';
 </style>
