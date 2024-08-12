@@ -64,6 +64,8 @@
             <span slot="action" slot-scope="text, record">
               <a @click="handleEdit(record)">编辑</a>
               <a-divider type="vertical"/>
+              <a @click="handleAddNext(record)">添加下级</a>
+              <a-divider type="vertical"/>
               <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                 <a>删除</a>
               </a-popconfirm>
@@ -78,12 +80,12 @@
 </template>
 
 <script>
-  import pick from 'lodash.pick'
-  import { filterObj } from '@/utils/util'
-  import DictItemModal from './modules/DictItemModal'
-  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import pick from 'lodash.pick'
+import { filterObj } from '@/utils/util'
+import DictItemModal from './modules/DictItemModal'
+import { JeecgListMixin } from '@/mixins/JeecgListMixin'
 
-  export default {
+export default {
     name: 'DictItemList',
     mixins: [JeecgListMixin],
     components: { DictItemModal },
@@ -145,6 +147,11 @@
       this.resetScreenSize()
     },
     methods: {
+      handleAddNext(record) {
+        this.$refs.modalForm.title = '新增子项'
+        this.$refs.modalForm.dictId = this.dictId
+        this.$refs.modalForm.edit({ sortOrder: 1, status: 1, parentId: record.id, dictId: this.dictId })
+      },
       add(dictId) {
         this.dictId = dictId
         this.edit({})

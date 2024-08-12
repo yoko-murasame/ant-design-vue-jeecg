@@ -11,6 +11,19 @@
     <a-spin :spinning="confirmLoading">
       <a-form-model ref="form" :model="model" :rules="validatorRules">
 
+        <a-form-model-item v-if="dictId" label="父级节点" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="parentId">
+          <j-tree-select
+            ref="treeSelect"
+            placeholder="请选择父级节点"
+            v-model="model.parentId"
+            :dict="`sys_dict_item,item_text,id`"
+            :condition="JSON.stringify({'dict_id':dictId})"
+            :view-condition="`dict_id='${dictId}'`"
+            pidField="parent_id"
+            pidValue="">
+          </j-tree-select>
+        </a-form-model-item>
+
         <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
@@ -56,11 +69,10 @@
 </template>
 
 <script>
-  import pick from 'lodash.pick'
-  import { addDictItem, editDictItem } from '@/api/api'
-  import { getAction } from '@api/manage'
+import { addDictItem, editDictItem } from '@/api/api'
+import { getAction } from '@api/manage'
 
-  export default {
+export default {
     name: 'DictItemModal',
     data() {
       return {
@@ -102,6 +114,7 @@
         this.model = Object.assign({}, record)
         this.model.dictId = this.dictId
         this.model.status = this.status
+        this.model.parentId = record.parentId || ''
         this.visible = true
       },
       onChose(checked) {
