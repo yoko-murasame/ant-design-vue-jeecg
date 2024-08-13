@@ -65,8 +65,9 @@
           <j-ellipsis :value="text" :length="25"/>
         </span>
         <!-- 字符串超长截取省略号显示-->
-        <span slot="component" slot-scope="text">
-          <j-ellipsis :value="text"/>
+        <span slot="component" slot-scope="text, record">
+          <j-ellipsis v-if="record.menuType === 2" :value="record.perms"/>
+          <j-ellipsis v-else :value="text"/>
         </span>
       </a-table>
 
@@ -80,13 +81,13 @@
 </template>
 
 <script>
-  import PermissionModal from './modules/PermissionModal'
-  import { getSystemMenuList, getSystemSubmenu, getSystemSubmenuBatch } from '@/api/api'
-  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import PermissionDataRuleList from './PermissionDataRuleList'
-  import JEllipsis from '@/components/jeecg/JEllipsis'
+import PermissionModal from './modules/PermissionModal'
+import { getSystemMenuList, getSystemSubmenu, getSystemSubmenuBatch } from '@/api/api'
+import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import PermissionDataRuleList from './PermissionDataRuleList'
+import JEllipsis from '@/components/jeecg/JEllipsis'
 
-  const columns = [
+const columns = [
     {
       title: '菜单名称',
       dataIndex: 'name',
@@ -116,7 +117,7 @@
       key: 'icon'
     },
     {
-      title: '组件',
+      title: '组件/按钮/权限',
       dataIndex: 'component',
       key: 'component',
       scopedSlots: { customRender: 'component' }
