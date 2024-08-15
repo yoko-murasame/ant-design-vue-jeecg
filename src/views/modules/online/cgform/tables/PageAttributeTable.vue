@@ -13,10 +13,10 @@
 
 <script>
 
-  import { FormTypes } from '@/utils/JEditableTableUtil'
-  import { syncAllTable } from '../util/TableUtils'
+import { FormTypes } from '@/utils/JEditableTableUtil'
+import { syncAllTable } from '../util/TableUtils'
 
-  const commonPageOptions = [
+const commonPageOptions = [
     { title: '文本框', value: 'text' },
     { title: '密码', value: 'password' },
     { title: '下拉框', value: 'list' },
@@ -89,19 +89,19 @@
             props: { 'disabled': true }
           },
           {
-            title: '表单显示',
+            title: '表单显示(可控制导入列)',
             key: 'isShowForm',
             // width: '3%',
-            width: '40px',
+            width: '100px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],
             defaultChecked: true
           },
           {
-            title: '列表显示', // 多选框、默认true
+            title: '列表显示(可控制导出列)', // 多选框、默认true
             key: 'isShowList',
             // width: '3%',
-            width: '40px',
+            width: '100px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],
             defaultChecked: true

@@ -253,26 +253,26 @@
 
 <script>
 
-  import '@/assets/less/TableExpand.less'
-  import { mixinDevice } from '@/utils/mixin'
-  import { HrefJump } from '@/mixins/OnlAutoListMixin'
-  import OnlCgformAutoModal from './OnlCgformAutoModal'
-  import { postAction, getAction, deleteAction, downFile, getFileAccessHttpUrl } from '@/api/manage'
-  import { cloneObject, filterObj } from '@/utils/util'
-  import OnlineQueryFormItem from '@/components/online/autoform/OnlineQueryFormItem.vue';
-  import ProcessInstPicModal from '@/components/bpm/ProcessInstPicModal';
-  import ButtonExpHandler from '@/components/online/autoform/model/ButtonExpHandler'
-  import { onlUtil } from '@/mixins/OnlineCommonUtil'
-  import lodash_object from 'lodash'
-  import Vue from 'vue'
-  import AutoDesformDataFullScreen from '@/views/modules/online/desform/auto/modules/AutoDesformDataFullScreen'
-  // 流程处理接入
-  import BindBpm from '@views/modules/bpm/mytask/BindBpm'
-  import BindBpmButton from '@views/modules/bpm/mytask/BindBpmButton'
-  import BindBpmOnlineMixin from '@views/modules/bpm/mytask/BindBpmOnlineMixin'
-  import BindBpmShowMyTask from '@views/modules/bpm/mytask/BindBpmShowMyTask'
+import '@/assets/less/TableExpand.less'
+import { mixinDevice } from '@/utils/mixin'
+import { HrefJump } from '@/mixins/OnlAutoListMixin'
+import OnlCgformAutoModal from './OnlCgformAutoModal'
+import { deleteAction, downFile, getAction, getFileAccessHttpUrl, postAction } from '@/api/manage'
+import { filterObj } from '@/utils/util'
+import OnlineQueryFormItem from '@/components/online/autoform/OnlineQueryFormItem.vue'
+import ProcessInstPicModal from '@/components/bpm/ProcessInstPicModal'
+import ButtonExpHandler from '@/components/online/autoform/model/ButtonExpHandler'
+import { onlUtil } from '@/mixins/OnlineCommonUtil'
+import lodash_object from 'lodash'
+import Vue from 'vue'
+import AutoDesformDataFullScreen from '@/views/modules/online/desform/auto/modules/AutoDesformDataFullScreen'
+// 流程处理接入
+import BindBpm from '@views/modules/bpm/mytask/BindBpm'
+import BindBpmButton from '@views/modules/bpm/mytask/BindBpmButton'
+import BindBpmOnlineMixin from '@views/modules/bpm/mytask/BindBpmOnlineMixin'
+import BindBpmShowMyTask from '@views/modules/bpm/mytask/BindBpmShowMyTask'
 
-  export default {
+export default {
     name: 'OnlCgFormAutoList',
     mixins: [HrefJump, mixinDevice, onlUtil, BindBpmOnlineMixin],
     components: {
@@ -315,7 +315,7 @@
         queryInfo: [],
         // 查询参数，多个页面的查询参数用 code 作为键来区分
         queryParamsMap: {},
-        toggleSearchStatus: false,
+        toggleSearchStatus: true,
         table: {
           loading: true,
           scroll: { x: false },
