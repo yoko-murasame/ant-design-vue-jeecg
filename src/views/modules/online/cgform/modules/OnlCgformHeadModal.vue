@@ -144,6 +144,25 @@
                   <a-input placeholder="请输入序号名称" v-decorator="['idSequence', validatorRules.idSequence]"/>
                 </a-form-item>
               </a-col>
+
+              <!--数据权限标识-->
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="数据权限标识">
+                  <!--<a-input placeholder="请选择数据权限标识" v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"/>-->
+                  <j-search-select-tag
+                    v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"
+                    placeholder="请选择数据权限标识"
+                    dict="sys_permission,name,perms,menu_type=2"
+                    :async="true"
+                    :pageSize="50"
+                    mode="multiple"
+                  />
+                </a-form-item>
+              </a-col>
             </a-row>
           </a-list-item>
           <!-- PC表单风格、移动表单风格、查询模式 -->
@@ -394,22 +413,22 @@
 
 <script>
 
-  import DBAttributeTable from '../tables/DBAttributeTable'
-  import PageAttributeTable from '../tables/PageAttributeTable'
-  import CheckDictTable from '../tables/CheckDictTable'
-  import ForeignKeyTable from '../tables/ForeignKeyTable'
-  import IndexTable from '../tables/IndexTable'
-  import QueryTable from '../tables/QueryTable'
+import DBAttributeTable from '../tables/DBAttributeTable'
+import PageAttributeTable from '../tables/PageAttributeTable'
+import CheckDictTable from '../tables/CheckDictTable'
+import ForeignKeyTable from '../tables/ForeignKeyTable'
+import IndexTable from '../tables/IndexTable'
+import QueryTable from '../tables/QueryTable'
 
-  import { setDataSource, getMasterTableInitialData, getTreeNeedFields } from '../util/TableUtils'
-  import { validateTables, VALIDATE_NO_PASSED } from '@/utils/JEditableTableUtil'
+import { getMasterTableInitialData, getTreeNeedFields, setDataSource } from '../util/TableUtils'
+import { VALIDATE_NO_PASSED, validateTables } from '@/utils/JEditableTableUtil'
 
-  import { getAction, httpAction } from '@/api/manage'
-  import pick from 'lodash.pick'
-  import { randomUUID, simpleDebounce } from '@/utils/util.js'
-  import { AiTestOnlineMixin } from '@/views/modules/aitest/onlinetest.mixins'
+import { getAction, httpAction } from '@/api/manage'
+import pick from 'lodash.pick'
+import { randomUUID, simpleDebounce } from '@/utils/util.js'
+import { AiTestOnlineMixin } from '@/views/modules/aitest/onlinetest.mixins'
 
-  export default {
+export default {
     name: 'OnlCgformHeadModal',
     mixins: [AiTestOnlineMixin],
     components: {
@@ -467,6 +486,7 @@ QueryTable
           },
           tableTxt: { rules: [{ required: true, message: '请输入表说明!' }] },
           idSequence: { rules: [{ required: true, message: '请输入序号名称!' }] },
+          dataRulePerms: { rules: [{ required: false, message: '请选择数据权限标识!' }] },
           treeParentIdField: { rules: [{ required: true, message: '请输入树表单父ID!' }] },
           treeFieldname: { rules: [{ required: true, message: '请输入树开表单列!' }] },
           treeIdField: { rules: [{ required: true, message: '请输入是否有子节点字段名!' }] },
@@ -571,7 +591,7 @@ QueryTable
         this.form.resetFields()
         this.model = Object.assign({}, record)
         this.treeFieldAdded = record.isTree == 'Y'
-        let pickAfter = pick(this.model, 'themeTemplate', 'tableName', 'scroll', 'tableType', 'tableVersion', 'tableTxt', 'isCheckbox', 'isDbSynch', 'isPage', 'isTree', 'idSequence', 'idType', 'queryMode', 'relationType', 'subTableStr', 'tabOrderNum', 'treeParentIdField', 'treeIdField', 'treeFieldname', 'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode')
+        let pickAfter = pick(this.model, 'themeTemplate', 'tableName', 'dataRulePerms', 'scroll', 'tableType', 'tableVersion', 'tableTxt', 'isCheckbox', 'isDbSynch', 'isPage', 'isTree', 'idSequence', 'idType', 'queryMode', 'relationType', 'subTableStr', 'tabOrderNum', 'treeParentIdField', 'treeIdField', 'treeFieldname', 'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode')
         this.tableJsonGetHelper(pickAfter)
         this.initialAllShowItem(pickAfter)
         this.$nextTick(() => {
