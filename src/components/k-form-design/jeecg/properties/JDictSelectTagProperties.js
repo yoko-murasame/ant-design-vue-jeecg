@@ -1,6 +1,7 @@
-import { pluginManager } from "../../packages/utils/index";
+import { pluginManager } from '../../packages/utils/index'
 import KCheckbox from '@comp/k-form-design/packages/components/KCheckbox/index.vue'
 import KChangeOption from '@comp/k-form-design/packages/components/KChangeOption/index.vue'
+
 const Input = pluginManager.getComponent("input").component;
 const InputNumber = pluginManager.getComponent("number").component;
 const Radio = pluginManager.getComponent("radio").component;
@@ -79,22 +80,29 @@ export default {
             <RadioButton value={"radio"}>单选框</RadioButton>
           </Radio>
         </a-form-item>
-        <a-form-item label={"字典配置"} help="">
+        <a-form-item label={'字典配置'} help="">
           <Radio buttonStyle="solid" v-model={options.dictType}>
-            <RadioButton value={"static"}>静态</RadioButton>
-            <RadioButton value={"dynamic"}>动态</RadioButton>
+            <RadioButton value={'static'}>静态</RadioButton>
+            <RadioButton value={'dynamic'}>动态</RadioButton>
           </Radio>
           {
             options.dictType === 'dynamic' ?
               (
-                <Input vModel={options.dictCode} placeholder={"格式：dict_code 或 table_name,code_field,text_field"}/>
-              ):
+                <Input vModel={options.dictCode}
+                       placeholder={'格式：dict_code 或 table_name,text_field,code_field,可选的查询条件'} />
+              ) :
               (
                 <KChangeOption v-model={options.options} />
               )
           }
         </a-form-item>
-        <a-form-item label={"其他属性"} help="">
+        <div>一些系统变量，通过{'#{}'}来使用：</div>
+        <div>用户名：sys_user_name</div>
+        <div>真实姓名：sys_user_code</div>
+        <div>登陆部门：sys_org_code</div>
+        <div>系统日期"yyyy-MM-dd"：sys_date</div>
+        <div>系统时间"yyyy-MM-dd HH:mm"：sys_time</div>
+        <a-form-item label={'其他属性'} help="">
           {/*<Input vModel={options.placeholder} placeholder={"placeholder"}/>*/}
           <kCheckbox v-model={options.allowClear} label="可清除" />
           <kCheckbox v-model={options.disabled} label="禁用" />
