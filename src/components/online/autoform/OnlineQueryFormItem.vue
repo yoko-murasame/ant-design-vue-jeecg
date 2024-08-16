@@ -1,4 +1,5 @@
 <template>
+  <!--online列表的动态搜索组件-->
   <a-form-item v-if="item.view=='date'" :label="item.label">
     <template v-if="single_mode===item.mode">
       <j-date :placeholder=" '请选择'+item.label " v-model="queryParam[item.field]"></j-date>
@@ -69,7 +70,7 @@
     <j-search-select-tag
       v-if="item.config==='1'"
       v-model="queryParam[item.field]"
-      :placeholder=" '请选择qq'+item.label "
+      :placeholder=" '请选择'+item.label "
       :dict="getDictCode(item)">
     </j-search-select-tag>
     <j-search-select-tag
