@@ -18,11 +18,11 @@
  * date 2019-11-20
  * description 将json数据构建成表单
  */
-import buildBlocks from "./buildBlocks";
-import zhCN from "ant-design-vue/lib/locale-provider/zh_CN";
-import { lazyLoadTick } from "../../utils/index";
+import buildBlocks from './buildBlocks'
+import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
+import { lazyLoadTick } from '../../utils/index'
 import { createAsyncJsEnhanceFunction } from '@comp/yoko/kform/CustomMethods'
-import Vue from 'vue'
+
 export default {
   name: "KFormBuild",
   data() {
@@ -204,11 +204,11 @@ export default {
       // 重置表单
       this.form.resetFields();
     },
-    getData() {
+    getData(fields) {
       // 提交函数，提供父级组件调用
       return new Promise((resolve, reject) => {
         try {
-          this.form.validateFields((err, formValues) => {
+          this.form.validateFields(fields, (err, formValues) => {
             if (err) {
               reject(err);
               /**
