@@ -67,6 +67,7 @@
   </a-form-item>
 
   <a-form-item v-else-if=" item.view=='sel_search' " :label="item.label">
+    <!--请选择qq-->
     <j-search-select-tag
       v-if="item.config==='1'"
       v-model="queryParam[item.field]"
