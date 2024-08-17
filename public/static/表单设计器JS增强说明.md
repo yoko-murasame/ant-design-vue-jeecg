@@ -106,6 +106,19 @@ console.log('默认工具', realname, depts, dept, dateStr, timeStr, fullData, u
 * lnglatSplitChar 坐标串经纬度分隔符，默认逗号
 * lnglatArrSplitChar 坐标串经纬度数组分隔符，默认分号
 
+> `getUserByUsername`：根据用户名获取用户信息，参数为：username
+
+```js
+// 这个示例，通过获取用户名，去填充关联的手机号，在字段onChange时触发
+const nowData = await getData(['captain_name'])
+const {captain_name} = nowData
+if (captain_name) {
+  const {phone}= await getUserByUsername(captain_name)
+  console.log('选择用户后自动填充手机号：', captain_name, phone)
+  setData({captain_phone: phone})
+}
+```
+
 
 **操作表单数据方法**
 

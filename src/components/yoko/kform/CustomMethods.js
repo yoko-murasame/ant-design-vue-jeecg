@@ -306,6 +306,14 @@ export const saveBusinessGeometryDataToSupermapFeatures = async (
 }
 
 /**
+ * 根据用户名获取用户信息
+ * @param username
+ */
+export const getUserByUsername = (username) => {
+  return getAction('/sys/api/getUserByName', { username })
+}
+
+/**
  * 自定义方法名称
  * @type {string[]}
  */
@@ -313,14 +321,16 @@ export const methodsFunc = [
   getCurrentRealname, getDepartmentByOrgCode, getCurrentDepartment,
   getCurrentDate, myRequest, getFullFormData,
   updateFormData, sendTemplateAnnouncement, generateCodeByRule,
-  saveBusinessGeometryDataToSupermapFeatures
+  saveBusinessGeometryDataToSupermapFeatures,
+  getUserByUsername
 ]
 
 export const methodsNames = [
   'getCurrentRealname', 'getDepartmentByOrgCode', 'getCurrentDepartment',
   'getCurrentDate', 'myRequest', 'getFullFormData',
   'updateFormData', 'sendTemplateAnnouncement', 'generateCodeByRule',
-  'saveBusinessGeometryDataToSupermapFeatures'
+  'saveBusinessGeometryDataToSupermapFeatures',
+  'getUserByUsername'
 ]
 
 /**
