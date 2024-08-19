@@ -160,8 +160,9 @@ export default {
      * 发起流程
      * @param record
      * @param auto 自动发起无需确认
+     * @param btnText
      */
-    startProcess(record, auto = false) {
+    startProcess(record, auto = false, btnText = '提交流程') {
       if (!this.getFlowCode(record)) {
         throw new Error('请配置data.flowCode或复写getFlowCode()方法')
       }
@@ -194,7 +195,7 @@ export default {
       } else {
         that.$confirm({
           title: '提示',
-          content: '确认提交流程吗?',
+          content: `确认${btnText}吗?`,
           onOk: submitFunc
         })
       }
