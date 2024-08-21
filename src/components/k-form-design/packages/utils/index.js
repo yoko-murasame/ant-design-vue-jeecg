@@ -16,5 +16,5 @@ export function getUUID(randomLength = 10) {
     Math.random()
       .toString()
       .substring(3, randomLength) + Date.now()
-  ).toString(36);
+  ).toString(32); // 这里只生成32为为了兼容老的表id(默认32位)
 }

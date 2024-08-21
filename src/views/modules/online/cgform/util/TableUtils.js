@@ -93,7 +93,7 @@ export function getMasterTableInitialData() {
     {
       dbFieldName: 'id',
       dbFieldTxt: '主键',
-      dbLength: 36,
+      dbLength: 64,
       dbPointLength: 0,
       dbDefaultVal: '',
       dbType: 'string',
@@ -111,7 +111,7 @@ export function getMasterTableInitialData() {
     {
       dbFieldName: 'create_by',
       dbFieldTxt: '创建人',
-      dbLength: 50,
+      dbLength: 64,
       dbPointLength: 0,
       dbDefaultVal: '',
       dbType: 'string',
@@ -145,7 +145,7 @@ export function getMasterTableInitialData() {
     {
       dbFieldName: 'update_by',
       dbFieldTxt: '更新人',
-      dbLength: 50,
+      dbLength: 64,
       dbPointLength: 0,
       dbDefaultVal: '',
       dbType: 'string',
@@ -213,7 +213,7 @@ export function getMasterTableInitialData() {
     {
       dbFieldName: 'bpm_status',
       dbFieldTxt: '流程状态',
-      dbLength: 32,
+      dbLength: 64,
       dbPointLength: 0,
       dbDefaultVal: '1',
       dbType: 'string',
@@ -260,7 +260,7 @@ export function getMasterTableInitialData() {
     // }, {
     //   dbFieldName: 'bpm_status',
     //   dbFieldTxt: '流程状态',
-    //   dbLength: 32,
+    //   dbLength: 64,
     //   dbPointLength: 0,
     //   dbDefaultVal: '',
     //   dbType: 'string',
@@ -274,7 +274,7 @@ export function getTreeNeedFields() {
   return [{
     dbFieldName: 'pid',
     dbFieldTxt: '父级节点',
-    dbLength: 32,
+    dbLength: 64,
     dbPointLength: 0,
     dbDefaultVal: '',
     dbType: 'string',

@@ -105,7 +105,7 @@ const MySQLKeywords = ['ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'AS
             // width: '9%',
             width: '100px',
             type: FormTypes.inputNumber,
-            defaultValue: 32,
+            defaultValue: 64,
             placeholder: '请输入${title}',
             validateRules: [{ required: true, message: '${title}不能为空' }],
             props: { 'disabled': !this.actionButton }
@@ -258,7 +258,7 @@ const MySQLKeywords = ['ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'AS
           } else if (value === 'int' || value === 'double' || value === 'BigDecimal') {
             target.setValues([{ rowKey: row.id, values: { dbLength: '10' } }])
           } else if (row['dbLength'] === '0') {
-            target.setValues([{ rowKey: row.id, values: { dbLength: '32' } }])
+            target.setValues([{ rowKey: row.id, values: { dbLength: '64' } }])
           }
         }
       },

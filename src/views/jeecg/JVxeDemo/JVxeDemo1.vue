@@ -102,7 +102,7 @@
             key: 'number',
             type: JVXETypes.inputNumber,
             width: '80px',
-            defaultValue: 32,
+            defaultValue: 64,
             // 【统计列】sum = 求和、average = 平均值
             statistics: ['sum', 'average']
           },
