@@ -149,7 +149,7 @@ const commonPageOptions = [
                         callback(false, '当控件类型类型为时间时,数据库属性里的字段类型必须是String！')
                       }
                       // 当控件类型类型为日期时，数据库类型必须是Date类型
-                      else if ((value === 'date' || value === 'datetime') && dbType !== 'Date') {
+                      else if ((value === 'date' || value === 'datetime') && (dbType !== 'Date' && dbType !== 'Datetime')) {
                         callback(false, '当控件类型类型为日期时，数据库属性里的字段类型必须是Date！')
                       } else {
                         callback(true)
