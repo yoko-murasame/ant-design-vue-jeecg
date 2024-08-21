@@ -118,12 +118,12 @@
               </a-menu-item>
 
               <a-menu-item>
-                <a @click="handleRemoveRecord(record.id)">移除</a>
+                <a @click="handleRemoveRecord(record.id)">移除(不删物理表)</a>
               </a-menu-item>
 
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)" placement="left">
-                  <a>删除</a>
+                  <a>删除(删物理表)</a>
                 </a-popconfirm>
               </a-menu-item>
 
@@ -189,8 +189,8 @@
       <div style="height: 50px;width: 100%">
         <div style="float: right;margin-top: 24px;">
           <a-button @click="confirmVisible = false">取消</a-button>
-          <a-button @click="doBatchDelete(0)" type="primary" style="margin-bottom: 0;margin-left: 8px;">移除</a-button>
-          <a-button @click="doBatchDelete(1)" type="primary" style="margin-bottom: 0;margin-left: 8px;">删除</a-button>
+          <a-button @click="doBatchDelete(0)" type="primary" style="margin-bottom: 0;margin-left: 8px;">移除(不删物理表)</a-button>
+          <a-button @click="doBatchDelete(1)" type="primary" style="margin-bottom: 0;margin-left: 8px;">删除(删物理表)</a-button>
         </div>
       </div>
 
@@ -205,23 +205,23 @@
 </template>
 
 <script>
-import OnlCgformHeadModal from './modules/OnlCgformHeadModal'
-import { deleteAction, postAction, getAction } from '@/api/manage'
+import { deleteAction, getAction, postAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import { filterObj } from '@/utils/util';
 import Clipboard from 'clipboard'
-import EnhanceJs from './modules/EnhanceJs'
-import EnhanceSql from './modules/EnhanceSql'
-import EnhanceJava from './modules/EnhanceJava'
-import TransDb2Online from './modules/TransDb2Online'
-import CodeGenerator from './modules/CodeGenerator'
+import { merge } from 'lodash'
+import DesignFormModal from '../desform/modules/DesignFormModal'
+import AuthManager from './auth/AuthManager'
+import AuthSetter from './auth/AuthSetter'
 import OnlCgformButtonList from './button/OnlCgformButtonList'
 import OnlEnhanceJavaList from './enhance/OnlEnhanceJavaList'
 import OnlEnhanceSqlList from './enhance/OnlEnhanceSqlList'
-import { filterObj } from '@/utils/util';
-import AuthManager from './auth/AuthManager'
-import AuthSetter from './auth/AuthSetter'
-import DesignFormModal from '../desform/modules/DesignFormModal'
-import { merge } from 'lodash'
+import CodeGenerator from './modules/CodeGenerator'
+import EnhanceJava from './modules/EnhanceJava'
+import EnhanceJs from './modules/EnhanceJs'
+import EnhanceSql from './modules/EnhanceSql'
+import OnlCgformHeadModal from './modules/OnlCgformHeadModal'
+import TransDb2Online from './modules/TransDb2Online'
 
 export default {
   name: 'OnlCgformHeadList',
@@ -456,7 +456,7 @@ export default {
     handleRemoveRecord(id) {
       let that = this
       this.$confirm({
-        title: '确认要移除此记录?',
+        title: '确认要移除此记录(不会删除物理表)?',
         onOk() {
           deleteAction(that.url.removeRecord, { id: id }).then((res) => {
             if (res.success) {
