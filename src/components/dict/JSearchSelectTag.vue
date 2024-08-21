@@ -41,12 +41,12 @@
 </template>
 
 <script>
-  import { ajaxGetDictItems, getDictItemsFromCache } from '@/api/api'
-  import debounce from 'lodash/debounce'
-  import { uniqWith } from 'lodash'
-  import { getAction } from '../../api/manage'
+import { ajaxGetDictItems, getDictItemsFromCache } from '@/api/api'
+import { uniqWith } from 'lodash'
+import debounce from 'lodash/debounce'
+import { getAction } from '../../api/manage'
 
-  export default {
+export default {
     name: 'JSearchSelectTag',
     props: {
       disabled: Boolean,
@@ -65,6 +65,11 @@
         required: false
       },
       dict: {
+        type: String,
+        default: '',
+        required: false
+      },
+      dictCode: {
         type: String,
         default: '',
         required: false
@@ -126,6 +131,12 @@
           val && this.initDictData()
         }
       },
+      'dictCode': {
+        immediate: true,
+        handler(val) {
+          val && this.initDictData()
+        }
+      },
       'dictOptions': {
         deep: true,
         immediate: true,
@@ -138,14 +149,15 @@
     },
     methods: {
       initSelectValue() {
+        const realDict = this.dict || this.dictCode
         if (this.async) {
-          if (!this.selectedAsyncValue || !this.selectedAsyncValue.key || this.selectedAsyncValue.key != this.value) {
+          if (!this.selectedAsyncValue || !this.selectedAsyncValue.key || this.selectedAsyncValue.key !== this.value) {
             console.log('这才请求后台')
             // update-begin-author:taoyan date:20220112 for: 方法initSelectValue 根据下拉框实际值查询下拉框的显示的文本 因后台接口只处理3个参数，所以将过滤条件去掉
             // TODO 隐患 查询效率问题 还是应该在后台作筛选
-            let itemDictStr = this.dict
+            let itemDictStr = realDict
             let arr = itemDictStr.split(',')
-            if (arr && arr.length == 4) {
+            if (arr && arr.length === 4) {
               // 删除最后一个元素
               arr.pop()
               itemDictStr = arr.join(',')
@@ -232,10 +244,11 @@
         this.options = []
         this.loading = true
         // 字典code格式：table,text,code
-        getAction(`/sys/dict/loadDict/${this.dict}`, { keyword: value, pageSize: this.pageSize }).then(res => {
+        const realDict = this.dict || this.dictCode
+        getAction(`/sys/dict/loadDict/${realDict}`, { keyword: value, pageSize: this.pageSize }).then(res => {
           this.loading = false
           if (res.success) {
-            if (currentLoad != this.lastLoad) {
+            if (currentLoad !== this.lastLoad) {
               return
             }
             // 是否保留输入值
@@ -244,7 +257,7 @@
                 const options = value.split(',').map(item => ({ text: item, title: item, value: item }))
                 // res.result的值需要拆分成列表
                 const allValues = res.result.reduce((pre, cur) => {
-                  if (null === cur) {
+                  if (cur === null) {
                     return pre
                   }
                   const values = cur.value.split(',')
@@ -264,7 +277,7 @@
               const options = value.split(',').map(item => ({ text: item, title: item, value: item }))
               // res.result的值需要拆分成列表
               const allValues = res.result.reduce((pre, cur) => {
-                if (null === cur) {
+                if (cur === null) {
                   return pre
                 }
                 const values = cur.value.split(',')
@@ -290,6 +303,7 @@
         })
       },
       initDictData() {
+        const realDict = this.dict || this.dictCode
         if (!this.async) {
           // 如果字典项集合有数据
           if (this.dictOptions && this.dictOptions.length > 0) {
@@ -297,18 +311,18 @@
           } else {
             // 根据字典Code, 初始化字典数组
             let dictStr = ''
-            if (this.dict) {
-                let arr = this.dict.split(',')
+            if (realDict) {
+                let arr = realDict.split(',')
                 if (arr[0].indexOf('where') > 0) {
                   let tbInfo = arr[0].split('where')
                   dictStr = tbInfo[0].trim() + ',' + arr[1] + ',' + arr[2] + ',' + encodeURIComponent(tbInfo[1])
                 } else {
-                  dictStr = this.dict
+                  dictStr = realDict
                 }
-                if (this.dict.indexOf(',') == -1) {
+                if (realDict.indexOf(',') === -1) {
                   // 优先从缓存中读取字典配置
-                  if (getDictItemsFromCache(this.dictCode)) {
-                    this.options = getDictItemsFromCache(this.dictCode)
+                  if (getDictItemsFromCache(realDict)) {
+                    this.options = getDictItemsFromCache(realDict)
                     return
                   }
                 }
@@ -320,18 +334,18 @@
             }
           }
         } else {
-          if (!this.dict) {
+          if (!realDict) {
             console.error('搜索组件未配置字典项')
           } else {
             // 异步一开始也加载一点数据
             this.loading = true
-            getAction(`/sys/dict/loadDict/${this.dict}`, { pageSize: this.pageSize, keyword: '' }).then(res => {
+            getAction(`/sys/dict/loadDict/${realDict}`, { pageSize: this.pageSize, keyword: '' }).then(res => {
               this.loading = false
               if (res.success) {
                 if (this.mode === 'multiple' || this.mode === 'tags') {
                   // 标签模式，每个项都得分离
                   const allValues = this.options = res.result.reduce((pre, cur) => {
-                    if (null === cur) {
+                    if (cur === null) {
                       return pre
                     }
                     const values = cur.value.split(',')
@@ -396,7 +410,7 @@
         // update-begin---author:wangshuai ---date:20221115  for：[issues/4213]JSearchSelectTag改造支持多选------------
         if (this.mode === 'multiple') {
           this.$emit('change', this.selectedValue.join(','))
-        } else if(this.mode === 'tags') {
+        } else if (this.mode === 'tags') {
           this.$emit('change', this.selectedValue.join(','))
         } else {
           this.$emit('change', this.selectedValue)
