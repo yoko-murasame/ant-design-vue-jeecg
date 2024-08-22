@@ -39,6 +39,7 @@
 </template>
 
 <script>
+  import BindBpmFormMixin from '@views/modules/bpm/mytask/BindBpmFormMixin'
   import OnlineFormItem from './OnlineFormItem.vue'
   import OnlineSubForm from './OnlineSubForm.vue'
   import FormProperty from './model/FormProperty'
@@ -50,6 +51,7 @@
 
   export default {
     name: 'OnlineDfComp',
+    mixins: [BindBpmFormMixin],
     components: {
       OnlineFormItem, OnlineSubForm
     },

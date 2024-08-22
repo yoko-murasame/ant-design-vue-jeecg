@@ -377,33 +377,33 @@ export default {
     },
     stepIndex: function () {
       if (this.resultObj.bpmLogListCount > 3) {
-        return this.resultObj.bpmLogStepListCount + 1;
+        return this.resultObj.bpmLogStepListCount + 1
       }
-      return this.resultObj.bpmLogStepListCount;
+      return this.resultObj.bpmLogStepListCount
     },
     hqUserList: function () {
-      console.log('hq user select ', this.hqUserSelectList);
-      var names = [];
-      var ids = [];
+      console.log('hq user select ', this.hqUserSelectList)
+      var names = []
+      var ids = []
       for (var a = 0; a < this.hqUserSelectList.length; a++) {
-        names.push(this.hqUserSelectList[a].realname);
-        ids.push(this.hqUserSelectList[a].username);
+        names.push(this.hqUserSelectList[a].realname)
+        ids.push(this.hqUserSelectList[a].username)
       }
-      this.model.nextUserId = ids.join(',');
-      this.model.nextUserName = names.join(',');
-      return names;
+      this.model.nextUserId = ids.join(',')
+      this.model.nextUserName = names.join(',')
+      return names
     },
     ccUserList: function () {
-      console.log('cc user select ', this.ccUserSelectList);
-      var names = [];
-      var ids = [];
+      console.log('cc user select ', this.ccUserSelectList)
+      var names = []
+      var ids = []
       for (var a = 0; a < this.ccUserSelectList.length; a++) {
-        names.push(this.ccUserSelectList[a].realname);
-        ids.push(this.ccUserSelectList[a].username);
+        names.push(this.ccUserSelectList[a].realname)
+        ids.push(this.ccUserSelectList[a].username)
       }
-      this.model.ccUserIds = ids.join(',');
-      this.model.ccUserRealNames = names.join(',');
-      return names;
+      this.model.ccUserIds = ids.join(',')
+      this.model.ccUserRealNames = names.join(',')
+      return names
     }
   },
   methods: {
@@ -421,80 +421,80 @@ export default {
     },
     handleChangeSelect(value) {
       console.log('handleChangeSelect', value)
-      this.model.reason = value;
+      this.model.reason = value
     },
     initDictConfig() {
       // 初始化字典 - 性别
       initDictOptions('approval_remarks').then((res) => {
         if (res.success) {
-          this.remarksDictOptions = res.result;
+          this.remarksDictOptions = res.result
         }
-      });
+      })
     },
     getFileDownloadUrl: function (path) {
-      return getFileAccessHttpUrl(path);
+      return getFileAccessHttpUrl(path)
     },
     // 此方法已作废
     handleChange2(info) {
-      this.fileList = [];
-      let fileList = info.fileList;
+      this.fileList = []
+      let fileList = info.fileList
       // fileList = fileList.slice(-2);
       fileList = fileList.map((file) => {
         if (file.response) {
-          file.url = file.response.message;
+          file.url = file.response.message
         }
-        return file;
-      });
+        return file
+      })
       fileList = fileList.filter((file) => {
-        console.log('-----fileList response-----', file.response);
+        console.log('-----fileList response-----', file.response)
         if (file.response) {
-          return file.response.success === true;
+          return file.response.success === true
         }
-        return false;
+        return false
       }).map((file) => {
         var fileJson = {
           fileName: file.name,
           filePath: file.url,
           fileSize: file.size
-        };
-        this.fileList.push(fileJson);
-      });
+        }
+        this.fileList.push(fileJson)
+      })
       this.model.fileList = JSON.stringify(this.fileList)
-      console.log('-----fileList-----', this.model.fileList);
+      console.log('-----fileList-----', this.model.fileList)
     },
     handleCheckedNextChange(e) {
-      this.checkedNext = e.target.checked;
-      this.hqUserSelectReset();
+      this.checkedNext = e.target.checked
+      this.hqUserSelectReset()
     },
     handleCheckedCcChange(e) {
-      this.checkedCc = e.target.checked;
-      this.ccUserSelectReset();
+      this.checkedCc = e.target.checked
+      this.ccUserSelectReset()
     },
     getProcessTaskTransInfo(formData) {
       console.log('getProcessTaskTransInfo', formData)
-      var params = { taskId: formData.taskId };// 查询条件
-      this.loading = true;
+      var params = { taskId: formData.taskId }// 查询条件
+      this.loading = true
       getAction(this.url.getProcessTaskTransInfo, params).then((res) => {
         if (res.success) {
-          console.log('流程流转信息', res);
-          this.resultObj = res.result;
+          console.log('流程流转信息', res)
+          this.resultObj = res.result
         }
-        this.loading = false;
+        this.loading = false
       }).finally(() => {
-        this.loading = false;
+        this.loading = false
       })
     },
     async handleProcessComplete(nextnode) {
-      const that = this;
-      console.log('流程办理数据：', this.model);
+      const that = this
+      console.log('流程办理数据：', this.model)
       if (!this.model.reason || this.model.reason.length == 0) {
-        this.$message.warning('请填写处理意见');
+        this.$message.warning('请填写处理意见')
         return
       }
       if (nextnode) {
-        this.model.nextnode = nextnode;
+        this.model.nextnode = nextnode
       }
-      var method = 'post';
+      var method = 'post'
       this.$confirm({
         title: '提示',
         content: '确认提交审批吗?',
@@ -502,24 +502,24 @@ export default {
           // 预校验表单
           try {
             if (that.model.processModel !== 3) {
-              await that.saveForm();
+              await that.saveForm()
             }
           } catch (e) {
             console.error('流程保存错误', e)
             console.log('流转信息', that.resultObj)
             return
           }
-          that.loading = true;
+          that.loading = true
           that.model.fileList = JSON.stringify(that.fileList)
           httpAction(that.url.processComplete, that.model, method).then((res) => {
             if (res.success) {
-              that.$message.success(res.message);
-              that.$emit('complete');
+              // that.$message.success(res.message)
+              that.$emit('complete')
             } else {
               // that.$message.error(res.message);
               // 明显点的提示框
-              const h = that.$createElement;
-              let secondsToGo = 30;
+              const h = that.$createElement
+              let secondsToGo = 30
               const modal = that.$error({
                 title: '错误消息',
                 // content: `${res.message}\n该提示将在 ${secondsToGo} 秒后自动关闭`
@@ -527,66 +527,66 @@ export default {
                   h('p', res.message),
                   h('div', `该提示将在 ${secondsToGo} 秒后自动关闭`)
                 ])
-              });
+              })
               const interval = setInterval(() => {
-                secondsToGo -= 1;
+                secondsToGo -= 1
                 modal.update({
                   // content: `${res.message}\n该提示将在 ${secondsToGo} 秒后自动关闭`
                   content: h('div', {}, [
                     h('p', res.message),
                     h('div', `该提示将在 ${secondsToGo} 秒后自动关闭`)
                   ])
-                });
-              }, 1000);
+                })
+              }, 1000)
               setTimeout(() => {
-                clearInterval(interval);
-                modal.destroy();
-              }, secondsToGo * 1000);
+                clearInterval(interval)
+                modal.destroy()
+              }, secondsToGo * 1000)
               // 自动勾选选人按钮
-              that.checkedNext = true;
+              that.checkedNext = true
             }
           }).finally(() => {
-            that.loading = false;
+            that.loading = false
             // that.close();
           })
         }
-      });
+      })
     },
     handleManyProcessComplete() {
       if (this.model.processModel == 3) {
         if (!this.model.rejectModelNode || this.model.rejectModelNode.length == 0) {
-          this.$message.warning('请选择驳回节点');
+          this.$message.warning('请选择驳回节点')
           return
         }
       }
-      this.handleProcessComplete();
+      this.handleProcessComplete()
     },
     selectHqUserOK: function (data) {
-      this.hqUserSelectList = data;
+      this.hqUserSelectList = data
     },
     handleHqUserSelect: function () {
-      this.$refs.selectHqUserModal.add();
+      this.$refs.selectHqUserModal.add()
     },
     hqUserSelectReset() {
-      this.hqUserSelectList = [];
+      this.hqUserSelectList = []
     },
     selectCcUserOK: function (data) {
-      this.ccUserSelectList = data;
+      this.ccUserSelectList = data
     },
     handleCcUserSelect: function () {
-      this.$refs.selectCcUserModal.add();
+      this.$refs.selectCcUserModal.add()
     },
     ccUserSelectReset() {
-      this.ccUserSelectList = [];
+      this.ccUserSelectList = []
     }
   },
   created() {
-    const token = Vue.ls.get(ACCESS_TOKEN);
-    this.headers = { 'X-Access-Token': token };
-    console.log('任务办理组件数据：', this.formData);
-    this.model.taskId = this.formData.taskId;
-    this.getProcessTaskTransInfo(this.formData);
-    this.initDictConfig();
+    const token = Vue.ls.get(ACCESS_TOKEN)
+    this.headers = { 'X-Access-Token': token }
+    console.log('任务办理组件数据：', this.formData)
+    this.model.taskId = this.formData.taskId
+    this.getProcessTaskTransInfo(this.formData)
+    this.initDictConfig()
   }
 }
 </script>

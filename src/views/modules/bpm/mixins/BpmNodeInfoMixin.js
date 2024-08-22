@@ -38,6 +38,7 @@ export const BpmNodeInfoMixin = {
           console.log('获取流程节点表单URL', res.result.formUrl)
 
           let tempFormUrl = res.result.formUrl
+          this.formData['disabled'] = true
           // 节点配置表单URL，VUE组件类型对应的拓展参数
           if (tempFormUrl && tempFormUrl.indexOf('?') !== -1 && !isURL(tempFormUrl) && tempFormUrl.indexOf('{{DOMAIN_URL}}') === -1) {
             tempFormUrl = res.result.formUrl.split('?')[0]

@@ -34,7 +34,7 @@
 -->
 
 <template>
-  <component :is="comp" :formData="formData" v-if="comp" form-bpm></component>
+  <component ref="realForm" :is="comp" :formData="formData" v-if="comp" form-bpm></component>
 </template>
 <script>
 export default {

@@ -17,11 +17,13 @@ import { httpAction, getAction, postAction } from '@/api/manage'
 import { randomString, cloneObject } from '@/utils/util'
 import { DESFORM_ROUTE_TYPE, DESFORM_ROUTE_DATA_ID } from '@/utils/desform/DesformRouteUtils'
 import { createAsyncJsEnhanceFunction } from '@/components/yoko/kform/CustomMethods'
+import BindBpmFormMixin from '@views/modules/bpm/mytask/BindBpmFormMixin'
 import { debounce } from 'lodash'
 
 /* desform 动态表单页面 */
 export default {
   name: 'DesformView',
+  mixins: [BindBpmFormMixin],
   props: {
     // add = 新增，edit = 修改，detail = 只读查看
     mode: {

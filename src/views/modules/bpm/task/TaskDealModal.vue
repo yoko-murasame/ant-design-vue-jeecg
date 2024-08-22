@@ -12,32 +12,53 @@
   <!--  style="top: 0px;"-->
   <!--  :footer="null"-->
   <!--  @cancel="handleModalCancel">-->
-  <j-modal :title="title" :visible="visible" width="80%" destroyOnClose :class="'jeecg-online-modal'"
-    :bodyStyle="bodyStyle" :maskClosable="false" :footer="null" @cancel="handleModalCancel" switchFullscreen>
+  <j-modal
+    :title="title"
+    :visible="visible"
+    width="80%"
+    destroyOnClose
+    :class="'jeecg-online-modal'"
+    :bodyStyle="bodyStyle"
+    :maskClosable="false"
+    :footer="null"
+    @cancel="handleModalCancel"
+    switchFullscreen>
     <a-tabs v-model="activeKey" tabPosition="left">
 
       <a-tab-pane key="1">
         <span slot="tab">
-          <a-icon type="file-text" />
+          <a-icon type="file-text"/>
           <span>业务信息</span>
         </span>
-        <div class="component_div">
-          <!-- <template v-if="isComp">
-            <dynamic-link ref="formModal" :path="path" :formData="formData"></dynamic-link>
-          </template>
-          <template v-else>
-            <iframe :src="iframeUrl" frameborder="0" width="100%" :height="height" scrolling="auto"></iframe> -->
+        <div class="component_div" v-if="!pageLoading">
+          <!--如果是kform表单设计器类型的走设计器-->
           <!--:onlineTableId="formData.tableName"-->
-            <desform-view class="desform-view" :mode="mode" :desformCode="formData.tableName" :dataId="formData.dataId"
-              :onlineTableId="formData.cgformId" height="100vh" :innerDialog="true" @reload="handleReload" :isOnline="isOnline"
-              ref="desform" />
-          <!-- </template> -->
+          <desform-view
+            v-if="formData.formType === FORM_TYPE_DESIGNFORM"
+            class="desform-view"
+            :mode="mode"
+            :desformCode="formData.tableName"
+            :dataId="formData.dataId"
+            :online-table-id="formData.cgformId"
+            height="100vh"
+            :innerDialog="true"
+            @reload="handleReload"
+            :isOnline="isOnline"
+            ref="realForm"
+          />
+          <!--online和编码类型的走组件-->
+          <dynamic-link v-if="[FORM_TYPE_ONLINE, FORM_TYPE_CODE].includes(formData.formType)" ref="realForm" :path="path" :formData="formData"></dynamic-link>
+
+          <template v-if="!isComp">
+            <!--旧版本url版本的表单设计器以iframe形式加载-->
+            <iframe :src="iframeUrl" frameborder="0" width="100%" :height="height" scrolling="auto"></iframe>
+          </template>
         </div>
       </a-tab-pane>
 
       <a-tab-pane key="2">
         <span slot="tab">
-          <a-icon type="user" />
+          <a-icon type="user"/>
           <span>任务处理</span>
         </span>
         <task-module :save-form="preSaveForm" :formData="formData" @complete="completeProcess"></task-module>
@@ -45,7 +66,7 @@
 
       <a-tab-pane key="3">
         <span slot="tab">
-          <a-icon type="sliders" />
+          <a-icon type="sliders"/>
           <span>流程图</span>
         </span>
         <process-module :formData="formData"></process-module>
@@ -59,15 +80,21 @@
 
 <script>
 
+import { getAction } from '@/api/manage'
+import DesformView from '@/components/online/desform/DesformView.vue'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { isURL } from '@/utils/validate'
 import Vue from 'vue'
 import DynamicLink from './form/DynamicLink.vue'
 import ProcessModule from './form/ProcessModule'
 import TaskModule from './form/TaskModule'
-import DesformView from '@/components/online/desform/DesformView.vue'
-import { httpAction, getAction } from '@/api/manage'
 
+// 表单类型-online
+export const FORM_TYPE_ONLINE = '1'
+// 表单类型-设计器
+export const FORM_TYPE_DESIGNFORM = '2'
+// 表单类型-编码
+export const FORM_TYPE_CODE = '3'
 export default {
   name: 'TaskDealModal',
   components: {
@@ -76,28 +103,37 @@ export default {
     ProcessModule,
     DesformView
   },
+  // eslint-disable-next-line vue/require-prop-types
   props: ['path', 'formData'],
   computed: {
+    // kForm表单的展示形式
+    mode() {
+      return (this.formData && this.formData.disabled) ? 'detail' : 'edit'
+    },
+    // 是否为组件
     isComp: function () {
-      console.log('isComp组件名称：', this.path);
-      var TOKEN = Vue.ls.get(ACCESS_TOKEN);
-      var DOMAIN_URL = window._CONFIG['domianURL'];
-      var TASKID = this.formData.taskDefKey;
-      var URL = (this.path || '').replace(/{{([^}}]+)?}}/g, (s1, s2) => eval(s2)); // URL支持{{ window.xxx }}占位符变量
-      console.log('isComp组件名称：', URL, this.path, this.formData);
+      console.log('isComp组件名称：', this.path)
+      var TOKEN = Vue.ls.get(ACCESS_TOKEN)
+      var DOMAIN_URL = window._CONFIG['domianURL']
+      var TASKID = this.formData.taskDefKey
+      // eslint-disable-next-line no-eval
+      var URL = (this.path || '').replace(/{{([^}}]+)?}}/g, (s1, s2) => eval(s2)) // URL支持{{ window.xxx }}占位符变量
+      console.log('isComp组件名称：', URL, this.path, this.formData)
+      // 判断是否是旧的设计器表单（以 {{DOMAIN_URL}}/desform/ 开头）
       if (isURL(URL)) {
-        this.iframeUrl = URL;
-        return false;
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.iframeUrl = URL
+        return false
       }
-      return true;
+      return true
     }
   },
   data() {
     return {
       activeKey: '1',
-      loading: false,
-      title: '流程',
-      visible: false,
+      // loading: false,
+      // title: '流程',
+      // visible: false,
       bodyStyle: {
         padding: '0',
         height: (window.innerHeight - 80) + 'px',
@@ -106,121 +142,48 @@ export default {
       },
       height: (window.innerHeight - 120) + 'px',
       iframeUrl: '',
-      preSaveFormDebounce: null,
-        mode: 'edit',
-        // mode: 'detail',
-        title: '操作',
-        visible: false,
-        bodyOverflow: null,
-        bgColor: 'rgba(0,0,0,0.6)',
-        isOnline: false,
+      // mode: 'edit',
+      // mode: 'detail',
+      title: '操作',
+      visible: false,
+      bodyOverflow: null,
+      bgColor: 'rgba(0,0,0,0.6)',
+      isOnline: false,
       url: {
-        json: '/desform/queryByCode',
+        getKFormMetaData: '/desform/queryByCode',
+        getFormData: '/online/cgform/api/form/table_name'
       },
-      loading: false,
-      cgformId:""
+      pageLoading: false,
+      cgformId: '',
+      FORM_TYPE_ONLINE,
+      FORM_TYPE_DESIGNFORM,
+      FORM_TYPE_CODE
     }
   },
   created() {
-    // this.preSaveFormDebounce = debounce(this.preSaveForm, 500)
-    this.init();
-  },
-  beforeUpdate() {
-    // this.preSaveFormDebounce()
-    // 需要判断当前modal是否显示状态，否则会提交两次（流程组件-修复改造方法中点击提交流程后会产生两次表单提交的问题）
-    // if (this.visible && this.activeKey === '2') {
-    //   console.log('页面变化->任务处理->预先检验和提交表单数据')
-    //   this.$refs.formModal.$children[0]
-    //     .submitForm(true) // false表示不立即提交
-    //     .then(record => {})
-    //     .catch(() => {
-    //       this.$message.error('表单未完成！')
-    //       this.activeKey = '1'
-    //     })
-    // }
   },
   methods: {
     /**
-     * 预处理业务表单，进行自动提交
-     * 1.需要debounce防抖动函数，可以： npm install lodash/debounce
-     * 2.created钩子里添加防抖
-     * 3.beforeUpdate钩子里对页面变化到“任务处理”进行业务表单提交
-     * 4.注意visible校验保证modal关闭下不再次提交表单
-     * 新增：不在beforeUpdate的保存逻辑
-     * 1.需要确保业务表单的提交方法，能够返回Promise
-     * 2.为组件TaskModule.vue添加此VM引用
-     * 3.在“handleProcessComplete”的方法中，调用： await this.parent.preSaveForm()
-     * 新增：@20220316
-     * 1.结合Jeecg自带的流程中表单编辑模式，showFlowSubmitButton，当此标识为true时，才自动保存数据
+     * 预处理表单，进行自动提交
      */
     preSaveForm() {
-      const that = this
-      return new Promise((resolve, reject) => {
-        if (that.visible && that.activeKey === '2') {
-          let methodProxy = null
-          let showFlowSubmitButton = null
-          let isOnline = false
-          // try {
-            // let target = that.$refs.formModal.$children[0]
-            // const { handleOk, submitForm, handleSubmit } = target
-            // showFlowSubmitButton = target.showFlowSubmitButton || null
-            // methodProxy = handleOk || submitForm || handleSubmit || null
-            // // 找在线表单的
-            // if (!methodProxy) {
-            //   // let { handleSubmit } = that.$refs.formModal.$children[0].$children[0].$children[0]
-            //   methodProxy = that.getFirstMethodByName(that.$refs.formModal, 'handleSubmit')
-            //   isOnline = !!methodProxy
-            // }
-            // console.log('实现的保存方法', methodProxy)
-          // } catch (e) {
-          //   console.error('其他情况异常', e)
-          //   resolve()
-          //   return
-          // }
-
-          // 用函数获取自动保存方法
-          // let showFlowSubmitButton = that.getFirstMethodByName(that.$refs.formModal, 'showFlowSubmitButton')
-          // let methodProxy
-          // const methods = ['handleOk', 'submitForm', 'handleSubmit']
-          // for (let method of methods) {
-          //   methodProxy = that.getFirstMethodByName(that.$refs.formModal, method)
-          //   if (methodProxy) {
-          //     break
-          //   }
-          // }
-          // console.log('实现的保存方法', methodProxy)
-          // reject()
-          // return
-            // 添加数据表单保存操作
-            if(this.mode=== 'edit'){
-              this.$refs.desform.saveAllData()
-            }
-          if (!methodProxy) {
-            console.error('业务表单未实现保存方法！')
+      return new Promise(async (resolve, reject) => {
+        if (this.formData.disabled) {
+          resolve()
+          return
+        }
+        const func = (this.formData.formType === FORM_TYPE_DESIGNFORM ? this.$refs.realForm : this.$refs.realForm.$refs.realForm).saveFormBeforeBpmSubmit
+        if (func) {
+          try {
+            await func(this.formData.formType)
             resolve()
-            return
+          } catch (e) {
+            this.$message.error('表单未完成！')
+            this.activeKey = '1'
+            reject(e)
           }
-          if (null == showFlowSubmitButton) {
-            showFlowSubmitButton = true
-          }
-          // 在线表单类型的自动保存设置延迟
-          if (isOnline) {
-            methodProxy && methodProxy(true)
-            setTimeout(() => {
-              resolve()
-            }, 2000)
-          } else {
-            // 编码表单的自动保存通过promise返回
-            const result = showFlowSubmitButton && methodProxy && methodProxy(true);
-            console.log('页面变化->任务处理->预先检验和提交表单数据', result, showFlowSubmitButton)
-            showFlowSubmitButton && result && result.then(record => resolve(record))
-              .catch(err => {
-                that.$message.error('表单未完成！')
-                that.activeKey = '1'
-                reject(err)
-              })
-            !showFlowSubmitButton && resolve()
-          }
+        } else {
+          reject('编码表单Form请引入组件：BindBpmFormMixin')
         }
       })
     },
@@ -229,87 +192,75 @@ export default {
       this.visible = false
     },
     deal(record) {
-      this.visible = true;
+      this.visible = true
     },
     completeProcess() {
-      this.visible = false;
-      this.$emit('ok');
+      this.visible = false
+      this.$emit('ok')
     },
-    // 获取指定方法
-    getFirstMethodByName(comp, funcName) {
-      if (comp[funcName] && typeof comp[funcName] === 'function') {
-        // if (comp[funcName]) {
-        // console.log('找到的属性', comp[funcName], comp)
-        // 如果当前组件存在名称为funcName的方法，则返回该方法
-        return comp[funcName];
-      }
-      // 遍历子组件
-      for (const childRef of comp.$children) {
-        const childMethod = this.getFirstMethodByName(childRef, funcName);
-        if (childMethod) {
-          // 如果子组件存在名称为funcName的方法，则返回该方法
-          return childMethod;
-        }
-      }
-      // 如果没有找到符合条件的方法，则返回null或者自定义的默认值
-      return null;
-    },
-
     handleReload(data) {
       this.$emit('reload', { target: this })
     },
-    async init() {
-      await this.loadFormJson()
-      // await this.loadFormData()
-
-    },
+    /**
+     * kForm表单设计器加载表单数据
+     * @returns {Promise<unknown>}
+     */
     loadFormJson() {
-      return new Promise((resolve, reject) => {
-        if (!this.formData || !this.formData.tableName) {
+      console.log('--TaskDealModal--loadFormJson--加载表单类型：', this.formData.formType, this.formData)
+      return new Promise((resolve) => {
+        if (!this.formData || this.formData.formType !== FORM_TYPE_DESIGNFORM) {
           this.pageLoading = false
-          console.warn('--TaskDealModal--loadFormJson--表单数据为空！')
           resolve()
           return
         }
-        // 获取json
-        var params = { desformCode: this.formData.tableName };// 查询条件
-        getAction(this.url.json, params)
-          .then(res => {
-            this.pageLoading = false
-            this.formDataJson = JSON.parse(res.result.desformDesignJson)
-            this.formData.cgformId=res.result.cgformId
-            console.log("cgformId",this.formData.cgformId)
-            resolve()
-          })
-      })
-    },
-    loadFormData(){
-      return new Promise((resolve,reject)=>{
-        if (!this.formData || !this.formData.tableName) {
+        // 加载kForm表单设计器
+        const params = { desformCode: this.formData.tableName }
+        getAction(this.url.getKFormMetaData, params).then(res => {
+          this.formDataJson = JSON.parse(res.result.desformDesignJson)
+          this.formData.cgformId = res.result.cgformId
           this.pageLoading = false
-          console.warn('--TaskDealModal--loadFormData--表单数据为空！')
+          console.log('--TaskDealModal--loadFormJson--加载kForm表单设计器：', res)
           resolve()
-          return
-        }
-      // 获取表单数据
-        getAction(`${this.url.getFormData}/${this.formData.tableName}/${this.formData.tableName.dataId}`).then(res => {
-          console.log("获取表单数据", res.result)
-          this.$refs.kfb.setData(res.result)
-            resolve()
         })
-
       })
     },
-
-  },
-    watch: {
-      formData: {
-        handler(value) {
-            this.formData = value
-    this.init();
-        }
-      },
+    // /**
+    //  * 旧版本表单设计器加载逻辑
+    //  * @deprecated
+    //  * @returns {Promise<unknown>}
+    //  */
+    // loadFormData() {
+    //   return new Promise((resolve, reject) => {
+    //     if (!this.formData || !this.formData.tableName) {
+    //       this.pageLoading = false
+    //       console.warn('--TaskDealModal--loadFormData--表单数据为空！')
+    //       resolve()
+    //       return
+    //     }
+    //     // 获取表单数据
+    //     getAction(`${this.url.getFormData}/${this.formData.tableName}/${this.formData.tableName.dataId}`).then(res => {
+    //       console.log('获取表单数据', res.result)
+    //       this.$refs.kfb.setData(res.result)
+    //       resolve()
+    //     })
+    //   })
+    // },
+    init() {
+      if (this.formData && Object.keys(this.formData).length) {
+        this.pageLoading = true
+        this.$nextTick(async () => {
+          await this.loadFormJson()
+          // await this.loadFormData()
+        })
+      }
     }
+  },
+  watch: {
+    // 初始化
+    formData() {
+      this.init()
+    }
+  }
 }
 </script>
 
