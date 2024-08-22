@@ -14,16 +14,34 @@
     />
   </div> -->
 
-
-  <j-modal :title="title" :visible="visible" :bodyStyle="{ padding: '50' }" :maskClosable="false" :destroyOnClose="true"
-    :closable="true" :keyboard="false" :switch-fullscreen="true" @cancel="close" @ok="handleSuccess" width="60%">
+  <j-modal
+    :title="title"
+    :visible="visible"
+    :bodyStyle="{ padding: '50' }"
+    :maskClosable="false"
+    :destroyOnClose="true"
+    :closable="true"
+    :keyboard="false"
+    :switch-fullscreen="true"
+    @cancel="close"
+    @ok="handleSuccess"
+    width="60%">
     <template slot="footer">
       <cancel-button :disableSubmit="disableSubmit" key="back" @click="close" />
       <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit">保存</a-button>
       <a-button type="primary" @click="saveAndSubmitBPM" v-if="!disableSubmit && buttonSwitch.bpm&&hasBpmStatus">保存并提交流程</a-button>
     </template>
-    <desform-view class="desform-view" :mode="mode" :desformCode="desformCode" :dataId="dataId" :onlineTableId="tableId"
-      height="100vh" :innerDialog="true" @reload="handleReload" :isOnline="isOnline" :newDefaultData="newDefaultData"
+    <desform-view
+      class="desform-view"
+      :mode="mode"
+      :desformCode="desformCode"
+      :dataId="dataId"
+      :onlineTableId="tableId"
+      height="100vh"
+      :innerDialog="true"
+      @reload="handleReload"
+      :isOnline="isOnline"
+      :newDefaultData="newDefaultData"
       ref="desform" />
   </j-modal>
 </template>
@@ -34,7 +52,7 @@ import DesformView from '@/components/online/desform/DesformView'
 export default {
   name: 'AutoDesformDataFullScreen',
   components: { DesformView },
-  props: ["buttonSwitch","hasBpmStatus"],
+  props: ['buttonSwitch', 'hasBpmStatus'],
   data() {
     return {
       mode: 'add',
@@ -45,7 +63,7 @@ export default {
       bodyOverflow: null,
       bgColor: 'rgba(0,0,0,0.6)',
       isOnline: false,
-      tableId: "",
+      tableId: '',
       newDefaultData: {}
     }
   },
@@ -94,20 +112,20 @@ export default {
     handleReload() {
       this.$emit('ok')
     },
-    async saveAndSubmitBPM(){
+    async saveAndSubmitBPM() {
       const data = await this.$refs.desform.saveAndSubmitBPM()
       // this.$refs.desform.handleGetData()
       this.$emit('ok', data)
       this.close()
     }
   },
-  watch:{
+  watch: {
     buttonSwitch: {
         immediate: true,
         handler(val) {
-          console.log("buttonSwitch",val)
+          console.log('buttonSwitch', val)
         }
-      },
+      }
   }
 }
 </script>

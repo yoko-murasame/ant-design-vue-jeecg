@@ -158,8 +158,9 @@ export default {
      * 流程跟踪
      * @param record
      */
-    handleTrack(record) {
-      const params = { flowCode: this.getFlowCode(record), dataId: record.id }// 查询条件
+    async handleTrack(record) {
+      const flowCode = await this.getFlowCode(record)
+      const params = { flowCode, dataId: record.id }// 查询条件
       this.$refs.bindBpm.$refs.bpmProcessTrackModal.handleTrack(params)
       this.$refs.bindBpm.$refs.bpmProcessTrackModal.title = this.trackName
     },
@@ -360,6 +361,7 @@ export default {
 
           let tempFormUrl = res.result.formUrl
           // 节点配置表单URL，VUE组件类型对应的拓展参数
+          this.formData['disabled'] = true
           if (tempFormUrl && tempFormUrl.indexOf('?') !== -1 && !isURL(tempFormUrl) && tempFormUrl.indexOf('{{DOMAIN_URL}}') === -1) {
             tempFormUrl = res.result.formUrl.split('?')[0]
             console.log('获取流程节点表单URL（去掉参数）', tempFormUrl)

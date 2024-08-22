@@ -157,12 +157,19 @@
         <span slot="action" slot-scope="text, record">
           <!--流程-->
           <template v-if="hasBpmStatus">
+            <!--流程未发起、或者已结束并且配置了可循环发起-->
             <template v-if="(record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null) ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
               <template v-if="buttonSwitch.update">
                 <a @click="handleEdit(record)">编辑</a>
                 <a-divider type="vertical"/>
               </template>
+              <!--新版本审批进度功能-->
+              <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
+                <a @click="handleTrack(record)">{{ record[bpmStatusFieldName] === '3' ? trackHisName : trackName }}</a>
+                <a-divider type="vertical" />
+              </template>
             </template>
+            <!--流程过程中或流程结束-->
             <template v-else>
               <template v-if="buttonSwitch.detail">
                 <a href="javascript:;" @click="handleDetail(record)">详情</a>
@@ -170,7 +177,7 @@
               </template>
               <!--新版本审批进度功能-->
               <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
-                <a @click="handleTrack(record)">{{ trackName }}</a>
+                <a @click="handleTrack(record)">{{ record[bpmStatusFieldName] === '3' ? trackHisName : trackName }}</a>
                 <a-divider type="vertical" />
               </template>
               <!--新版本审批功能-->
@@ -211,11 +218,6 @@
                     <a-popconfirm title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
                       <a>删除</a>
                     </a-popconfirm>
-                  </a-menu-item>
-                </template>
-                <template v-if="record[bpmStatusFieldName] === '3'&& buttonSwitch.bpm">
-                  <a-menu-item v-if="buttonSwitch.bpm">
-                    <a href="javascript:;" @click="startProcess(record)">提交流程</a>
                   </a-menu-item>
                 </template>
                 <!--原先的审批进度功能不用了，展示信息太少-->

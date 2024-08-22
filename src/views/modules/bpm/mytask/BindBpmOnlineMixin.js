@@ -1,5 +1,5 @@
 import { getAction, postAction, putAction } from '@api/manage'
-import { flatMap, intersectionWith, throttle } from 'lodash'
+import { intersectionWith, throttle } from 'lodash'
 
 /**
  * 高度封装流程接入核心方法类
@@ -65,7 +65,8 @@ export default {
       // 当前表名
       currentTableName: '',
       // 流程跟踪过程的按钮展示文本
-      trackName: '审批进度'
+      trackName: '审批进度',
+      trackHisName: '审批历史'
     }
   },
   created() {
@@ -106,9 +107,9 @@ export default {
       if (!this.processDefinitionId) {
         // console.log('获取processDefinitionId', flowCode, this.currentTableName)
         const { result, success, message } = await getAction(this.url.getExtActProcess, {
-            relationCode: flowCode,
-            formTableName: this.currentTableName
-          })
+          relationCode: flowCode,
+          formTableName: this.currentTableName
+        })
         if (!success) {
           // this.$message.error(message)
           console.error(message)
@@ -159,10 +160,16 @@ export default {
      * 流程跟踪
      * @param record
      */
-    handleTrack(record) {
-      const params = { flowCode: this.getFlowCode(record), dataId: record.id }// 查询条件
+    async handleTrack(record) {
+      const flowCode = await this.getFlowCode(record)
+      // 查询条件
+      const params = {
+        flowCode,
+        dataId: record.id,
+        throwEx: !this.bpmCirculate // 可循环发起时，查询历史就不报错误了
+      }
       this.$refs.bindBpm.$refs.bpmProcessTrackModal.handleTrack(params)
-      this.$refs.bindBpm.$refs.bpmProcessTrackModal.title = this.trackName
+      this.$refs.bindBpm.$refs.bpmProcessTrackModal.title = record[this.bpmStatusFieldName] === '3' ? this.trackHisName : this.trackName
     },
     /**
      * 发起流程
@@ -366,6 +373,7 @@ export default {
 
           let tempFormUrl = res.result.formUrl
           // 节点配置表单URL，VUE组件类型对应的拓展参数
+          this.formData['disabled'] = true
           if (tempFormUrl && tempFormUrl.indexOf('?') !== -1 && !isURL(tempFormUrl) && tempFormUrl.indexOf('{{DOMAIN_URL}}') === -1) {
             tempFormUrl = res.result.formUrl.split('?')[0]
             console.log('获取流程节点表单URL（去掉参数）', tempFormUrl)
