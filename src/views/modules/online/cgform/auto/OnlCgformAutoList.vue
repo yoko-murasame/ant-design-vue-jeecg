@@ -707,6 +707,7 @@ export default {
             this.defColumns = [this.rowIndexColumn, ...res.result.columns, this.actionColumn]
             this.settingColumnsHandler(res.result.columns)
             this.scrollFlag = res.result.scrollFlag
+            // 检查是否是流程
             this.hasBpmStatusFilter()
             this.initQueryInfo()
             // 加载新路由，清空checkbox选中
@@ -739,7 +740,8 @@ export default {
               if (Number(result.total) > 0) {
                 this.table.pagination.total = Number(result.total)
                 this.table.dataSource = result.records
-                this.combineBpmDataList()
+                // 如果有流程，去加载流程相关代办数据
+                this.hasBpmStatus && this.combineBpmDataList()
               } else {
                 this.table.pagination.total = 0
                 this.table.dataSource = []
@@ -766,7 +768,7 @@ export default {
             let result = res.result
             if (Number(result.total) > 0) {
               this.table.dataSource = result.records
-              this.combineBpmDataList()
+              this.hasBpmStatus && this.combineBpmDataList()
             } else {
               this.table.dataSource = []
             }

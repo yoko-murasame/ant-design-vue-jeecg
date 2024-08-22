@@ -22,7 +22,7 @@ export default {
         getProcessNodeInfo: '/act/process/extActProcessNode/getProcessNodeInfo',
         getHisProcessNodeInfo: '/act/process/extActProcessNode/getHisProcessNodeInfo',
         // 自定义流程处理接入：我的待办列表、签收、委托、获取流程节点信息
-        myTaskList: '/workflow/common/myTaskList', // 旧接口：/act/task/list
+        myTaskList: '/workflow/common/myTaskList/v2', // 旧接口：/act/task/list
         claim: '/act/task/claim',
         taskEntrust: '/act/task/taskEntrust',
         getBizProcessNodeInfo: '/act/process/extActProcessNode/getBizProcessNodeInfo',
@@ -58,12 +58,12 @@ export default {
       desFormCode: '',
       // 是否循环发起流程
       bpmCirculate: false,
-      // 当前表名
-      currentTableName: '',
       // 流程状态字段名
       bpmStatusFieldName: 'bpm_status',
       // 流程跟踪过程的特殊条件 TODO 加入online列表可配置化
       trackCondition: true,
+      // 当前表名
+      currentTableName: '',
       // 流程跟踪过程的按钮展示文本
       trackName: '审批进度'
     }
@@ -74,20 +74,7 @@ export default {
     this.getProcessDefinitionId = throttle(this.getProcessDefinitionId, 100, { 'trailing': false })
     console.log('BindBpmOnlineMixin', this.path, this.formUrl)
   },
-  watch: {
-    '$route'() {
-      this.clearOnlineConfig()
-    }
-  },
   methods: {
-    /**
-     * 清空在线表单流程相关配置，在切换表单（路由改变）时触发
-     */
-    clearOnlineConfig() {
-      console.log('clearOnlineConfig')
-      this.myTaskList = null
-      this.processDefinitionId = null
-    },
     /**
      * 获取flowCode
      * @param record
@@ -172,8 +159,8 @@ export default {
      * 流程跟踪
      * @param record
      */
-    async handleTrack(record) {
-      const params = { flowCode: await this.getFlowCode(record), dataId: record.id }// 查询条件
+    handleTrack(record) {
+      const params = { flowCode: this.getFlowCode(record), dataId: record.id }// 查询条件
       this.$refs.bindBpm.$refs.bpmProcessTrackModal.handleTrack(params)
       this.$refs.bindBpm.$refs.bpmProcessTrackModal.title = this.trackName
     },
@@ -181,8 +168,9 @@ export default {
      * 发起流程
      * @param record
      * @param auto 自动发起无需确认
+     * @param btnText
      */
-    async startProcess(record, auto = false) {
+    async startProcess(record, auto = false, btnText = '提交流程') {
       const flowCode = await this.getFlowCode(record)
       if (!flowCode) {
         throw new Error('请配置data.flowCode或复写getFlowCode()方法')
@@ -219,7 +207,7 @@ export default {
           okType: '',
           cancelText: '取消',
           title: '提示',
-          content: '确认提交流程吗?',
+          content: `确认${btnText}吗?`,
           onOk: submitFunc
         })
       }
@@ -265,7 +253,7 @@ export default {
         }
         return false
       })
-      console.log('加载我的待办列表，映射到数据列表', recordsWithTask, this.table.dataSource, this.myTaskList)
+      console.log('加载我的待办列表，映射到数据列表', recordsWithTask) //, this.table.dataSource, this.myTaskList)
     },
     // /**
     //  * 加载流程数据，需要在loadData后执行，注入流程数据到 record.bpmData
@@ -369,7 +357,8 @@ export default {
             procInsId: record.processInstanceId,
             tableName: res.result.tableName,
             permissionList: res.result.permissionList,
-            vars: res.result.records
+            vars: res.result.records,
+            formType: record.formType
           }
           this.formData = data
           // update--begin--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
@@ -383,7 +372,8 @@ export default {
             // update--begin--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
             let qv = getQueryVariable(res.result.formUrl)
             this.formData.extendUrlParams = qv
-            if (qv.edit === 1) {
+            // 设置表单可编辑
+            if (qv.edit === '1' || qv.edit === 'true' || qv.edit === 1) {
               this.formData['disabled'] = false
             }
             // update--end--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
@@ -404,7 +394,7 @@ export default {
 
           // update--end--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
 
-          console.log('获取流程节点信息', this.formData)
+          console.log('获取流程节点信息', this.formData, this.path)
           this.$refs.bindBpm.$refs.taskDealModal.deal(record)
           this.$refs.bindBpm.$refs.taskDealModal.title = '流程办理'
         }
@@ -421,7 +411,8 @@ export default {
             taskDefKey: record.taskId,
             procInsId: record.processInstanceId,
             tableName: res.result.tableName,
-            vars: res.result.records
+            vars: res.result.records,
+            formType: record.formType
           }
           this.formData = data
           // update--begin--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
@@ -437,7 +428,7 @@ export default {
           this.path = tempFormUrl
           // update--end--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
 
-          console.log('获取流程节点信息', this.formData)
+          console.log('获取流程节点信息', this.formData, this.path)
           this.$refs.bindBpm.$refs.taskDealModal.deal(record)
           this.$refs.bindBpm.$refs.taskDealModal.title = '流程历史'
         }
@@ -483,7 +474,21 @@ export default {
     //     }
     //   });
     // },
+    /**
+     * 清空在线表单流程相关配置，在切换表单（路由改变）时触发
+     */
+    clearOnlineConfig() {
+      console.log('clearOnlineConfig')
+      this.myTaskList = null
+      this.processDefinitionId = null
+    },
     endMethod() {}
+  },
+  // online表单监听路由改变时，重置流程相关数据
+  watch: {
+    '$route'() {
+      this.clearOnlineConfig()
+    }
   }
 }
 
@@ -498,14 +503,14 @@ function getQueryVariable(url) {
   var s = {}
   // eslint-disable-next-line no-sequences,no-unused-expressions
   t = i.split('&'),
-  r = null,
-  n = null
+    r = null,
+    n = null
   for (var o in t) {
     var u = t[o].indexOf('=')
     // eslint-disable-next-line no-unused-expressions
     u !== -1 && (r = t[o].substr(0, u),
-    n = t[o].substr(u + 1),
-    s[r] = n)
+      n = t[o].substr(u + 1),
+      s[r] = n)
   }
   return s
 }
