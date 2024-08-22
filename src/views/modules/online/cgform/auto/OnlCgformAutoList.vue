@@ -10,7 +10,7 @@
           </template>
           <template v-for="(item,index) in queryInfo">
             <template v-if=" item.hidden==='1' ">
-              <a-col v-if="item.view=='datetime' && 'single'!=item.mode" :md="12" :sm="16" :key=" 'query'+index " v-show="toggleSearchStatus">
+              <a-col v-if="item.view ==='datetime' && 'single'!== item.mode" :md="12" :sm="16" :key=" 'query'+index " v-show="toggleSearchStatus">
                 <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
               </a-col>
               <a-col v-else :md="6" :sm="8" :key=" 'query'+index " v-show="toggleSearchStatus">
@@ -18,7 +18,7 @@
               </a-col>
             </template>
             <template v-else>
-              <a-col v-if="item.view=='datetime' && 'single'!=item.mode" :md="12" :sm="16" :key=" 'query'+index ">
+              <a-col v-if="item.view === 'datetime' && 'single' !== item.mode" :md="12" :sm="16" :key=" 'query'+index ">
                 <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
               </a-col>
               <a-col v-else :md="6" :sm="8" :key=" 'query'+index ">
@@ -49,7 +49,7 @@
       <a-button v-if="buttonSwitch.export" @click="handleExportXls" type="primary" icon="download">导出</a-button>
       <template v-if="cgButtonList && cgButtonList.length>0" v-for="(item,index) in cgButtonList">
         <a-button
-          v-if=" item.optType=='js' "
+          v-if=" item.optType === 'js' "
           :key=" 'cgbtn'+index "
           @click="cgButtonJsHandler(item.buttonCode)"
           type="primary"
@@ -57,7 +57,7 @@
           {{ item.buttonName }}
         </a-button>
         <a-button
-          v-else-if=" item.optType=='action' "
+          v-else-if=" item.optType === 'action' "
           :key=" 'cgbtn'+index "
           @click="cgButtonActionHandler(item.buttonCode)"
           type="primary"
@@ -96,7 +96,7 @@
               <a-checkbox-group v-model="settingColumns">
                 <a-row>
                   <template v-for="(item,index) in defColumns">
-                    <template v-if="item.key!='rowIndex'&& item.dataIndex!='action'">
+                    <template v-if="item.key!=='rowIndex'&& item.dataIndex!=='action'">
                       <a-col :span="12" :key="index">
                         <a-checkbox :value="item.dataIndex">{{ item.title }}</a-checkbox>
                       </a-col>
@@ -155,14 +155,41 @@
         </template>
 
         <span slot="action" slot-scope="text, record">
+          <!--流程-->
           <template v-if="hasBpmStatus">
-            <template v-if="(record.bpm_status == '1'||record.bpm_status == ''|| record.bpm_status == null) ||(bpmCirculate==true&&record.bpm_status == '3')">
+            <template v-if="(record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null) ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
               <template v-if="buttonSwitch.update">
                 <a @click="handleEdit(record)">编辑</a>
                 <a-divider type="vertical"/>
               </template>
             </template>
+            <template v-else>
+              <template v-if="buttonSwitch.detail">
+                <a href="javascript:;" @click="handleDetail(record)">详情</a>
+                <a-divider type="vertical"/>
+              </template>
+              <!--新版本审批进度功能-->
+              <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
+                <a @click="handleTrack(record)">{{ trackName }}</a>
+                <a-divider type="vertical" />
+              </template>
+              <!--新版本审批功能-->
+              <template v-if="buttonSwitch.bpm_handle && record[bpmStatusFieldName] === '2' && record.bpmData">
+                <template v-if="(record.bpmData.taskAssigneeName || '').trim()">
+                  <a @click="handleProcess(record)">
+                    办理
+                  </a>
+                  <!--<a-divider type="vertical" />-->
+                  <!--<a @click="selectEntruster(record)">委托</a>-->
+                </template>
+                <template v-else>
+                  <a @click="handleClaim(record)" >签收</a>
+                </template>
+                <a-divider type="vertical" />
+              </template>
+            </template>
           </template>
+          <!--非流程-->
           <template v-else>
             <template v-if="buttonSwitch.update">
               <a @click="handleEdit(record)">编辑</a>
@@ -174,11 +201,9 @@
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item v-if="buttonSwitch.detail">
-                <a href="javascript:;" @click="handleDetail(record)">详情</a>
-              </a-menu-item>
+              <!--流程-->
               <template v-if="hasBpmStatus">
-                <template v-if="record.bpm_status == '1'||record.bpm_status == ''|| record.bpm_status == null">
+                <template v-if="record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
                   <a-menu-item v-if="buttonSwitch.bpm">
                     <a href="javascript:;" @click="startProcess(record)">提交流程</a>
                   </a-menu-item>
@@ -188,22 +213,66 @@
                     </a-popconfirm>
                   </a-menu-item>
                 </template>
-                <template v-if="record.bpm_status == '3'&& buttonSwitch.bpm">
+                <template v-if="record[bpmStatusFieldName] === '3'&& buttonSwitch.bpm">
                   <a-menu-item v-if="buttonSwitch.bpm">
                     <a href="javascript:;" @click="startProcess(record)">提交流程</a>
                   </a-menu-item>
                 </template>
-                <template v-else>
-                  <a-menu-item @click="handlePreviewPic(record)">审批进度</a-menu-item>
+                <!--原先的审批进度功能不用了，展示信息太少-->
+                <!--<template v-if="record[bpmStatusFieldName] === '3'&& buttonSwitch.bpm">-->
+                <!--  <a-menu-item @click="handlePreviewPic(record)">审批进度</a-menu-item>-->
+                <!--</template>-->
+                <!--委托-->
+                <template v-if="buttonSwitch.bpm_entrusted">
+                  <a-menu-item v-if="record[bpmStatusFieldName] === '2' && record.bpmData && record.bpmData.taskAssigneeName">
+                    <a-popconfirm title="确定要委托给别人处理吗?" @confirm="selectEntruster(record)">
+                      <a>委托</a>
+                    </a-popconfirm>
+                  </a-menu-item>
+                </template>
+                <!--完成流程-->
+                <template v-if="buttonSwitch.bpm_finish">
+                  <a-menu-item v-if="record[bpmStatusFieldName] === '2' ">
+                    <a-popconfirm title="确定要完成流程吗?" @confirm="() => finishProcess(record)">
+                      <a>完成流程</a>
+                    </a-popconfirm>
+                  </a-menu-item>
+                </template>
+                <!--取回流程-->
+                <template v-if="buttonSwitch.bpm_callback">
+                  <a-menu-item v-if="record[bpmStatusFieldName] === '2' ">
+                    <a-popconfirm title="确定要取回流程吗?" @confirm="() => callBackProcess(record)">
+                      <a>取回流程</a>
+                    </a-popconfirm>
+                  </a-menu-item>
+                </template>
+                <!--管理员编辑-->
+                <template v-if="buttonSwitch.bpm_admin_edit">
+                  <a-menu-item>
+                    <a @click="handleEdit(record)">编辑(管理员)</a>
+                  </a-menu-item>
+                </template>
+                <!--管理员删除-->
+                <template v-if="buttonSwitch.bpm_admin_delete">
+                  <a-menu-item>
+                    <a-popconfirm title="确定要删除吗?" @confirm="() => handleDeleteOne(record)">
+                      <a>删除(管理员)</a>
+                    </a-popconfirm>
+                  </a-menu-item>
                 </template>
               </template>
+              <!--非流程-->
               <template v-else>
+                <a-menu-item v-if="buttonSwitch.detail">
+                  <a href="javascript:;" @click="handleDetail(record)">详情</a>
+                </a-menu-item>
                 <a-menu-item v-if="buttonSwitch.delete">
                   <a-popconfirm title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
                     <a>删除</a>
                   </a-popconfirm>
                 </a-menu-item>
               </template>
+              <!--自定义JS增强按钮-->
               <template v-if="cgButtonLinkList && cgButtonLinkList.length>0" v-for="(btnItem,btnIndex) in cgButtonLinkList">
                 <a-menu-item :key=" 'cgbtnLink'+btnIndex " v-if="showLinkButton(btnItem,record)">
                   <template v-if="btnItem.optType === 'js-confirm'">
@@ -224,7 +293,6 @@
                   </template>
                 </a-menu-item>
               </template>
-
             </a-menu>
           </a-dropdown>
         </span>
@@ -263,6 +331,7 @@ import OnlineQueryFormItem from '@/components/online/autoform/OnlineQueryFormIte
 import ProcessInstPicModal from '@/components/bpm/ProcessInstPicModal'
 import ButtonExpHandler from '@/components/online/autoform/model/ButtonExpHandler'
 import { onlUtil } from '@/mixins/OnlineCommonUtil'
+// eslint-disable-next-line camelcase
 import lodash_object from 'lodash'
 import Vue from 'vue'
 import AutoDesformDataFullScreen from '@/views/modules/online/desform/auto/modules/AutoDesformDataFullScreen'
@@ -297,11 +366,8 @@ export default {
           optPre: '/online/cgform/api/form/',
           exportXls: '/online/cgform/api/exportXls/',
           buttonAction: '/online/cgform/api/doButton',
-          // startProcess: '/act/process/extActProcess/startMutilProcess'
-          startProcess: '/workflow/common/startMutilProcess',
-          getFormData: "/online/cgform/api/form/table_name"
+          getFormData: '/online/cgform/api/form/table_name'
         },
-        flowCodePre: 'onl_',
         isorter: {
           column: 'id',
           order: 'desc'
@@ -370,7 +436,14 @@ export default {
           detail: true,
           super_query: true,
           bpm: true,
-          bind_bpm_show_my_task: true
+          bind_bpm_show_my_task: true,
+          bpm_track: true,
+          bpm_handle: true,
+          bpm_entrusted: true,
+          bpm_admin_edit: true,
+          bpm_admin_delete: true,
+          bpm_finish: true,
+          bpm_callback: true
         },
         hasBpmStatus: false,
         checkboxFlag: false,
@@ -390,11 +463,14 @@ export default {
         acceptHrefParams: {},
         isDesForm: '',
         desFormCode: '',
-        bpmCirculate:false
+        // 可循环发起流程
+        bpmCirculate: false,
+        // 流程状态字段名
+        bpmStatusFieldName: 'bpm_status'
       }
     },
     created() {
-      this.initAutoList();
+      this.initAutoList()
     },
     watch: {
       '$route'() {
@@ -442,19 +518,19 @@ export default {
         }
         // 处理列
         if (!this.settingColumns || this.settingColumns.length <= 0) {
-          return this.defColumns;
+          return this.defColumns
         } else {
           const cols = this.defColumns.filter(item => {
             // 自定义序号字段
-            if (item.key == 'rowIndex' || item.dataIndex == 'action') {
-              if (item.key == 'rowIndex') {
+            if (item.key === 'rowIndex' || item.dataIndex === 'action') {
+              if (item.key === 'rowIndex') {
                 item.title = '序号'
                 item.customRender = customRender
               }
               return true
             }
             // 自定义流程状态文本
-            if (item.key == 'bpm_status' || item.dataIndex == 'BPM_STATUS') {
+            if (item.key === this.bpmStatusFieldName || item.dataIndex === this.bpmStatusFieldName.toUpperCase()) {
               item.customRender = this.getBpmStatusColumn().customRender
               return true
             }
@@ -463,7 +539,7 @@ export default {
             }
             return false
           })
-          return cols;
+          return cols
         }
       },
       localCode() {
@@ -476,6 +552,7 @@ export default {
        * @returns {Promise<*>}
        */
       async sendTemplateAnnouncement() {
+        // eslint-disable-next-line no-useless-call
         return this.$sendTemplateAnnouncement.call(this, ...arguments)
       },
       /**
@@ -522,64 +599,46 @@ export default {
         this.$refs.desformModal.open(mode, desFormCode, id, title, false, code, defaultData)
       },
       hasBpmStatusFilter() {
-        var columnObjs = this.defColumns;
-        let columns = [];
+        var columnObjs = this.defColumns
+        let columns = []
         for (var item of columnObjs) {
-          columns.push(item.dataIndex);
+          columns.push(item.dataIndex)
         }
-        if (columns.includes('bpm_status') || columns.includes('BPM_STATUS')) {
-          this.hasBpmStatus = true;
+        if (columns.includes(this.bpmStatusFieldName) || columns.includes(this.bpmStatusFieldName.toUpperCase())) {
+          this.hasBpmStatus = true
         } else {
-          this.hasBpmStatus = false;
+          this.hasBpmStatus = false
         }
       },
-      // startProcess: function(record) {
-      //   var that = this;
-      //   this.$confirm({
-      //     title: '提示',
-      //     content: '确认提交流程吗?',
-      //     onOk: function() {
-      //       var param = {
-      //         flowCode: that.flowCodePre + that.currentTableName,
-      //         id: record.id,
-      //         formUrl: 'modules/bpm/task/form/OnlineFormDetail',
-      //         formUrlMobile: 'check/onlineForm/detail'
-      //       }
-      //       postAction(that.url.startProcess, param).then((res) => {
-      //         if (res.success) {
-      //           that.$message.success(res.message);
-      //           that.loadData();
-      //           that.onClearSelected();
-      //         } else {
-      //           that.$message.warning(res.message);
-      //         }
-      //       });
-      //     }
-      //   });
-      // },
-      handlePreviewPic: function(record) {
-        var flowCode = this.flowCodePre + this.currentTableName;
-        var dataId = record.id;
-        this.$refs.processInstPicModal.preview(flowCode, dataId);
-        this.$refs.processInstPicModal.title = '流程图';
+      /**
+       * 查看审批流程图
+       * @deprecated 已废弃，使用新版本流程审批记录跟踪
+       * @param record
+       * @returns {Promise<void>}
+       */
+      async handlePreviewPic(record) {
+        var flowCode = await this.getFlowCode(record)
+        var dataId = record.id
+        this.$refs.processInstPicModal.preview(flowCode, dataId)
+        this.$refs.processInstPicModal.title = '流程图'
       },
       initQueryInfo() {
         getAction(`${this.url.getQueryInfo}${this.code}`).then((res) => {
-          console.log('--onlineList-获取查询条件配置', res);
+          console.log('--onlineList-获取查询条件配置', res)
           if (res.success) {
             this.queryInfo = res.result
             // 查询条件form 默认值设置
             for (let item of res.result) {
               if (item.config === '1') {
                 if (item.defValue && item.defValue.length > 0 && item.mode === 'single') {
-                  this.$set(this.queryParam, item.field, item.defValue);
+                  this.$set(this.queryParam, item.field, item.defValue)
                 }
               }
             }
           } else {
             this.$message.warning(res.message)
           }
-          this.loadData();
+          this.loadData()
         })
       },
       initAutoList() {
@@ -593,36 +652,35 @@ export default {
         if (!this.queryParam || this.queryParam.id) {
           this.queryParam = {}
         }
-        this.handleAcceptHrefParams();
+        this.handleAcceptHrefParams()
         getAction(`${this.url.getColumns}${this.code}`).then((res) => {
-          console.log('--onlineList-加载动态列>>', res);
+          console.log('--onlineList-加载动态列>>', res)
           if (res.success) {
-            if (res.result.checkboxFlag == 'Y') {
+            if (res.result.checkboxFlag === 'Y') {
               this.checkboxFlag = true
             } else {
               this.checkboxFlag = false
             }
 
-            if (res.result.paginationFlag == 'Y') {
+            if (res.result.paginationFlag === 'Y') {
               this.table.pagination = { ...this.metaPagination }
             } else {
               this.table.pagination = false
             }
 
-
           // 修正BUG：配置查询条件无效问题,仅取第一个设置了排序的字段
           let sortFlieds = res.result.columns.filter(u => u.sorter)
           if (sortFlieds.length > 0) {
             this.isorter = {
-              column: sortFlieds[0]["dataIndex"],
-              order: sortFlieds[0]["sorterType"] ? sortFlieds[0]["sorterType"] : 'desc'
+              column: sortFlieds[0]['dataIndex'],
+              order: sortFlieds[0]['sorterType'] ? sortFlieds[0]['sorterType'] : 'desc'
             }
           }
 
             // href 跳转
             const fieldHrefSlotKeysMap = {}
-            res.result.fieldHrefSlots.forEach(item => fieldHrefSlotKeysMap[item.slotName] = item)
-            this.bpmCirculate=res.result.bpmCirculate
+            res.result.fieldHrefSlots.forEach(item => (fieldHrefSlotKeysMap[item.slotName] = item))
+            this.bpmCirculate = res.result.bpmCirculate
 
             this.dictOptions = res.result.dictOptions
             this.formTemplate = res.result.formTemplate
@@ -647,12 +705,12 @@ export default {
             })
             // this.defColumns = res.result.columns.concat([this.actionColumn])
             this.defColumns = [this.rowIndexColumn, ...res.result.columns, this.actionColumn]
-            this.settingColumnsHandler(res.result.columns);
+            this.settingColumnsHandler(res.result.columns)
             this.scrollFlag = res.result.scrollFlag
-            this.hasBpmStatusFilter();
-            this.initQueryInfo();
+            this.hasBpmStatusFilter()
+            this.initQueryInfo()
             // 加载新路由，清空checkbox选中
-            this.table.selectedRowKeys = [];
+            this.table.selectedRowKeys = []
           } else {
             this.$message.warning(res.message)
           }
@@ -667,23 +725,23 @@ export default {
       },
       loadData(arg) {
         if (this.table.pagination) {
-          if (arg == 1) {
+          if (arg === 1) {
             this.table.pagination.current = 1
           }
           this.table.loading = true
-          let params = this.getQueryParams();// 查询条件
+          let params = this.getQueryParams()// 查询条件
           params['needList'] = 'id'
           console.log('--onlineList-查询条件-->', params)
           getAction(`${this.url.getData}${this.code}`, params).then((res) => {
             console.log('--onlineList-列表数据', res)
             if (res.success) {
-              let result = res.result;
+              let result = res.result
               if (Number(result.total) > 0) {
                 this.table.pagination.total = Number(result.total)
                 this.table.dataSource = result.records
                 this.combineBpmDataList()
               } else {
-                this.table.pagination.total = 0;
+                this.table.pagination.total = 0
                 this.table.dataSource = []
                 // this.$message.warning("查无数据")
               }
@@ -700,12 +758,12 @@ export default {
       loadDataNoPage() {
         this.table.loading = true
         let param = this.getQueryParams()// 查询条件
-        param['pageSize'] = -521;
+        param['pageSize'] = -521
         param['needList'] = 'id'
         getAction(`${this.url.getData}${this.code}`, filterObj(param)).then((res) => {
           console.log('--onlineList-列表数据', res)
           if (res.success) {
-            let result = res.result;
+            let result = res.result
             if (Number(result.total) > 0) {
               this.table.dataSource = result.records
               this.combineBpmDataList()
@@ -722,7 +780,7 @@ export default {
       // 接受URL参数
       handleAcceptHrefParams() {
         this.acceptHrefParams = {}
-        let hrefparam = this.$route.query;
+        let hrefparam = this.$route.query
         if (hrefparam) {
           this.acceptHrefParams = { ...hrefparam }
           Object.keys(hrefparam).map(key => {
@@ -731,12 +789,12 @@ export default {
         }
       },
       getQueryParams() {
-        let param = Object.assign({}, this.acceptHrefParams, this.queryParam, this.isorter);
-        param.pageNo = this.table.pagination.current;
-        param.pageSize = this.table.pagination.pageSize;
+        let param = Object.assign({}, this.acceptHrefParams, this.queryParam, this.isorter)
+        param.pageNo = this.table.pagination.current
+        param.pageSize = this.table.pagination.pageSize
         param.superQueryMatchType = this.superQuery.matchType
         param.superQueryParams = encodeURIComponent(this.superQuery.params)
-        return filterObj(param);
+        return filterObj(param)
       },
       handleChangeInTableSelect(selectedRowKeys, selectionRows) {
         this.table.selectedRowKeys = selectedRowKeys
@@ -746,21 +804,21 @@ export default {
       handleTableChange(pagination, filters, sorter) {
         // TODO 筛选
         if (Object.keys(sorter).length > 0) {
-          this.isorter.column = sorter.field;
-          this.isorter.order = sorter.order == 'ascend' ? 'asc' : 'desc'
+          this.isorter.column = sorter.field
+          this.isorter.order = sorter.order === 'ascend' ? 'asc' : 'desc'
         }
         if (this.table.pagination) {
-          this.table.pagination = pagination;
+          this.table.pagination = pagination
         }
-        this.loadData();
+        this.loadData()
       },
       handleAdd() {
-        console.log("code", this.isDesForm, this.code, this.desFormCode, this.formTemplate)
+        console.log('code', this.isDesForm, this.code, this.desFormCode, this.formTemplate)
         if (this.isDesForm === 'Y') {
           this.$refs.desformModal.open('add', this.desFormCode, null, '新增数据', false, this.code)
         } else {
           this.cgButtonJsHandler('beforeAdd')
-          this.$refs.modal.add(this.formTemplate);
+          this.$refs.modal.add(this.formTemplate)
         }
       },
       handleImportXls() {
@@ -770,24 +828,24 @@ export default {
         this.loadData(1)
       },
       handleExportXls2() {
-        let param = this.queryParam;
+        let param = this.queryParam
         if (this.table.selectedRowKeys && this.table.selectedRowKeys.length > 0) {
           param['selections'] = this.table.selectedRowKeys.join(',')
         }
-        let paramsStr = encodeURI(JSON.stringify(param));
+        let paramsStr = encodeURI(JSON.stringify(param))
         console.log('paramsStr: ' + paramsStr)
         let url = window._CONFIG['domianURL'] + this.url.exportXls + this.code + '?paramsStr=' + paramsStr
-        window.location.href = url;
+        window.location.href = url
       },
       handleExportXls() {
         // update--begin--autor:lvdandan-----date:20201110------for：LOWCOD-998 导出参数添加高级查询
-        let param = this.getQueryParams();
+        let param = this.getQueryParams()
         // update--end--autor:lvdandan-----date:20201110------for：LOWCOD-998 导出参数添加高级查询
         if (this.table.selectedRowKeys && this.table.selectedRowKeys.length > 0) {
           param['selections'] = this.table.selectedRowKeys.join(',')
         }
         console.log('导出参数', param)
-        let paramsStr = JSON.stringify(filterObj(param));
+        let paramsStr = JSON.stringify(filterObj(param))
         downFile(this.url.exportXls + this.code, { paramsStr: paramsStr }).then((data) => {
           if (!data || data.size === 0) {
             this.$message.warning('文件下载失败')
@@ -803,29 +861,29 @@ export default {
             link.setAttribute('download', this.description + '.xls')
             document.body.appendChild(link)
             link.click()
-            document.body.removeChild(link); // 下载完成移除元素
-            window.URL.revokeObjectURL(url); // 释放掉blob对象
+            document.body.removeChild(link) // 下载完成移除元素
+            window.URL.revokeObjectURL(url) // 释放掉blob对象
           }
         })
       },
       handleEdit(record) {
-        console.log("handleEdit", record)
+        console.log('handleEdit', record)
         if (this.isDesForm === 'Y') {
           this.$refs.desformModal.open('edit', this.desFormCode, record.id, '编辑数据', true, this.code)
         } else {
           this.cgButtonLinkHandler(record, 'beforeEdit', 'js')
-          this.$refs.modal.edit(this.formTemplate, record.id);
+          this.$refs.modal.edit(this.formTemplate, record.id)
         }
       },
       showLinkButton(item, record) {
-        let btn = new ButtonExpHandler(item.exp, record);
-        return btn.show;
+        let btn = new ButtonExpHandler(item.exp, record)
+        return btn.show
       },
       handleDetail(record) {
         if (this.isDesForm === 'Y') {
           this.$refs.desformModal.open('detail', this.desFormCode, record.id, '查看数据', true, this.code)
         } else {
-          this.$refs.modal.detail(this.formTemplate, record.id);
+          this.$refs.modal.detail(this.formTemplate, record.id)
         }
       },
       handleDeleteOne(record) {
@@ -881,7 +939,7 @@ export default {
             }
             let field = schema.properties[key]
             // tab = 子表 一对多
-            if (field.view === 'tab' && field.relationType == 0) {
+            if (field.view === 'tab' && field.relationType === 0) {
               let subTable = {
                 type: 'sub-table',
                 value: field.key,
@@ -895,7 +953,7 @@ export default {
               }
               fieldList.push(subTable)
               // tab = 子表 一对一
-            } else if (field.view === 'tab' && field.relationType == 1) {
+            } else if (field.view === 'tab' && field.relationType === 1) {
               let subTable = {
                 type: 'sub-table',
                 value: field.key,
@@ -903,8 +961,8 @@ export default {
                 children: []
               }
               Object.keys(field.properties).map(k => {
-                field.properties[k]['key'] = k;
-                setField(subTable.children, field.properties[k]);
+                field.properties[k]['key'] = k
+                setField(subTable.children, field.properties[k])
               })
               fieldList.push(subTable)
             } else {
@@ -939,24 +997,24 @@ export default {
       downloadRowFile(text) {
         if (!text) {
           this.$message.warning('未知的文件')
-          return;
+          return
         }
         if (text.indexOf(',') > 0) {
           text = text.substring(0, text.indexOf(','))
         }
-        let url = getFileAccessHttpUrl(text);
-        window.open(url);// TODO 下载的方法
+        let url = getFileAccessHttpUrl(text)
+        window.open(url)// TODO 下载的方法
       },
       handleDelBatch() {
         if (this.table.selectedRowKeys.length <= 0) {
-          this.$message.warning('请选择一条记录！');
-          return false;
+          this.$message.warning('请选择一条记录！')
+          return false
         } else {
-          let ids = '';
-          let that = this;
+          let ids = ''
+          let that = this
           that.table.selectedRowKeys.forEach(function(val) {
-            ids += val + ',';
-          });
+            ids += val + ','
+          })
           that.$confirm({
             title: '确认删除',
             content: '是否删除选中数据?',
@@ -965,31 +1023,31 @@ export default {
             cancelText: '取消',
             onOk: function() {
               that.handleDelete(ids)
-              that.onClearSelected();
+              that.onClearSelected()
             }
-          });
+          })
         }
       },
 
       searchByquery() {
-        this.loadData(1);
+        this.loadData(1)
       },
       searchReset() {
         this.queryParam = {}
-        this.loadData(1);
+        this.loadData(1)
       },
       handleToggleSearch() {
-        this.toggleSearchStatus = !this.toggleSearchStatus;
+        this.toggleSearchStatus = !this.toggleSearchStatus
       },
       getFormatDate(text) {
         if (!text) {
           return ''
         }
-        let a = text;
+        let a = text
         if (a.length > 10) {
-          a = a.substring(0, 10);
+          a = a.substring(0, 10)
         }
-        return a;
+        return a
       },
       getImportUrl() {
         return '/online/cgform/api/importXls/' + this.code
@@ -999,8 +1057,9 @@ export default {
         const that = this
         try {
           if (enhanceJs) {
-            let Obj = eval('(' + enhanceJs + ')');
-            this.EnhanceJS = new Obj(getAction, postAction, deleteAction, that);
+            // eslint-disable-next-line no-eval
+            let Obj = eval('(' + enhanceJs + ')')
+            this.EnhanceJS = new Obj(getAction, postAction, deleteAction, that)
             this.cgButtonJsHandler('created')
           } else {
             this.EnhanceJS = ''
@@ -1016,9 +1075,9 @@ export default {
         if (btnList && btnList.length > 0) {
           for (let i = 0; i < btnList.length; i++) {
             let temp = btnList[i]
-            if (temp.buttonStyle == 'button') {
+            if (temp.buttonStyle === 'button') {
               buttonArr.push(temp)
-            } else if (temp.buttonStyle == 'link') {
+            } else if (temp.buttonStyle === 'link') {
               linkArr.push(temp)
             }
           }
@@ -1045,7 +1104,7 @@ export default {
       },
       cgButtonActionHandler(buttonCode) {
         // 处理自定义button的 需要配置该button自定义sql
-        if (!this.table.selectedRowKeys || this.table.selectedRowKeys.length == 0) {
+        if (!this.table.selectedRowKeys || this.table.selectedRowKeys.length === 0) {
           this.$message.warning('请先选中一条记录')
           return false
         }
@@ -1069,14 +1128,14 @@ export default {
         })
       },
       cgButtonLinkHandler(record, buttonCode, optType) {
-        if (optType == 'js' || optType == 'js-confirm') {
+        if (optType === 'js' || optType === 'js-confirm') {
           if (this.EnhanceJS[buttonCode]) {
             // this.EnhanceJS[buttonCode](this, record)
             const keys = this.table.selectedRowKeys
             const rows = this.table.selectionRows
             this.EnhanceJS[buttonCode].bind(this)(record, keys, rows)
           }
-        } else if (optType == 'action') {
+        } else if (optType === 'action') {
           let params = {
             formId: this.code,
             buttonCode: buttonCode,
@@ -1119,7 +1178,7 @@ export default {
 
       settingColumnsHandler(columns) {
         let str = Vue.ls.get(this.localCode)
-        if (!str || str.length == 0) {
+        if (!str || str.length === 0) {
           this.settingColumns = []
           columns.forEach(column => {
             if (this.settingColumns.indexOf(column['dataIndex']) < 0) {

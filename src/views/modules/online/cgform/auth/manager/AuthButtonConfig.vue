@@ -30,9 +30,16 @@
     { code: 'batch_delete', title: '批量删除', status: 0 },
     { code: 'export', title: '导出', status: 0 },
     { code: 'import', title: '导入', status: 0 },
-    { code: 'bpm', title: '提交流程', status: 0 },
     { code: 'super_query', title: '高级查询', status: 0 },
-    { code: 'bind_bpm_show_my_task', title: '筛选我的代办', status: 0 },
+    { code: 'bpm', title: '提交流程', status: 0 },
+    { code: 'bind_bpm_show_my_task', title: '流程-筛选我的代办', status: 0 },
+    { code: 'bpm_track', title: '流程-审批进度', status: 0 },
+    { code: 'bpm_handle', title: '流程-办理', status: 0 },
+    { code: 'bpm_entrusted', title: '流程-委托', status: 0 },
+    { code: 'bpm_admin_edit', title: '流程-管理员编辑', status: 1 },
+    { code: 'bpm_admin_delete', title: '流程-管理员删除', status: 1 },
+    { code: 'bpm_finish', title: '流程-完成流程', status: 1 },
+    { code: 'bpm_callback', title: '流程-取回流程', status: 1 }
 
   ]
   export default {
@@ -151,7 +158,7 @@
         for (let a of temparr) {
           a.status = 0
           let auth = authList.filter(i => {
-            return i.code == a.code
+            return i.code === a.code
           })
           a['page'] = this.pageControlList
           if (auth && auth.length > 0) {
@@ -171,7 +178,7 @@
             code: b.buttonCode,
             title: b.buttonName,
             status: 0,
-            page: b.buttonStyle == 'form' ? this.pageControlForm : this.pageControlList
+            page: b.buttonStyle === 'form' ? this.pageControlForm : this.pageControlList
           }
           if (auth && auth.length > 0) {
             arr.push(Object.assign(obj, auth[0]))
