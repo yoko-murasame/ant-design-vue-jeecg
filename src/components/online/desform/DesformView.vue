@@ -30,10 +30,16 @@ export default {
       type: String,
       required: true
     },
+    /**
+     * kForm表单定义code，必填
+     */
     desformCode: {
       type: String,
       default: ''
     },
+    /**
+     * kForm表单定义id，同online表单的定义id，可以不填，通过desformCode获取
+     */
     onlineTableId: {
       type: String,
       default: ''
@@ -72,12 +78,14 @@ export default {
     return {
       show: true,
       loading: false,
-      formDataLoading: false,
+      formDataLoading: true,
       // 为了防止多个页面混淆的id
       messageId: randomString('16'),
       iframeHeight: 300,
-      innerDesformCode: this.desformCode,
-      innerTableId: this.onlineTableId,
+      // kForm表单定义code
+      innerDesformCode: '',
+      // kForm表单定义id
+      innerTableId: '',
       otherParams: '',
       url: {
         // add: '/desform/data/add',
@@ -140,11 +148,19 @@ export default {
 
   },
   watch: {
-    desformCode() {
-      this.innerDesformCode = this.desformCode
+    desformCode: {
+      immediate: true,
+      handler(val) {
+        console.log('初始化kForm', val)
+        this.innerDesformCode = val
+        val && this.initKForm()
+      }
     },
-    onlineTableId() {
-      this.innerTableId = this.onlineTableId
+    onlineTableId: {
+      immediate: true,
+      handler() {
+        this.innerTableId = this.onlineTableId
+      }
     }
   },
   async created() {
@@ -181,25 +197,30 @@ export default {
     //       break
     //   }
     // }, false)
-
-    if (this.enableLoading) {
-      this.loading = true
-    }
-    this.formDataLoading = true
-    try {
-      await this.loadFormJson()
-      await this.loadFormData()
-    } catch (e) {
-      console.error('设计器加载异常', e)
-      this.$message.error('设计器加载异常' + e)
-    } finally {
-      this.loading = false
-      this.formDataLoading = false
-      this.currentSavedResult = null
-      this.handleChange = debounce(this.handleChange, 500)
-    }
   },
   methods: {
+    /**
+     * 初始化kForm
+     * @returns {Promise<void>}
+     */
+    async initKForm() {
+      if (this.enableLoading) {
+        this.loading = true
+      }
+      this.formDataLoading = true
+      try {
+        await this.loadFormJson()
+        await this.loadFormData()
+      } catch (e) {
+        console.error('设计器加载异常', e)
+        this.$message.error('设计器加载异常' + e)
+      } finally {
+        this.loading = false
+        this.formDataLoading = false
+        this.currentSavedResult = null
+        this.handleChange = debounce(this.handleChange, 500)
+      }
+    },
     /**
      * 获取 form json
      * @returns {Promise<void>}
@@ -208,6 +229,7 @@ export default {
       const params = { desformCode: this.innerDesformCode }// 查询条件
       const res = await getAction(this.url.json, params)
       this.formDataJson = JSON.parse(res.result.desformDesignJson)
+      this.innerTableId = this.onlineTableId || res.result.cgformId
       console.log('loadFormJson', this.formDataJson)
     },
     /**
@@ -230,114 +252,118 @@ export default {
         this.show = true
       })
     },
-    async saveAllData() {
-      const { formData, callback } = await this.$refs.kfb.handleSubmit()
+    async saveAllData(throwEx = false) {
       const that = this
       return new Promise(async (resolve, reject) => {
-        if (this.innerTableId) {
-          // let formData = await this.handleGetData()
+        try {
+          const { formData, callback } = await that.$refs.kfb.handleSubmit()
+          if (this.innerTableId) {
+            // let formData = await this.handleGetData()
 
-          let url = that.url.add + '/' + that.innerTableId
-          let method = 'POST'
-          // let formData = {
-          //   desformCode: _this.desformCode,
-          //   desformDataJson: JSON.stringify(params)
-          // }
-          // let formData =
+            let url = that.url.add + '/' + that.innerTableId
+            let method = 'POST'
+            // let formData = {
+            //   desformCode: _this.desformCode,
+            //   desformDataJson: JSON.stringify(params)
+            // }
+            // let formData =
 
-          formData['desformCode'] = that.desformCode
-          if (that.dataId) {
-            url = that.url.edit + '/' + that.innerTableId
-            method = 'PUT'
-            formData['id'] = that.dataId
-          }
-          if (that.enableLoading) {
-            that.loading = true
-          }
-          (() => {
-            // 如果存在 onlineForm 就首先提交给online表单，获取到 id 后再提交到数据表
-            console.log('saveForm', formData)
-            if (formData.onlineForm) {
-              formData['onlineFormCode'] = formData.onlineForm
-              if (that.dataId != null) {
-                formData.json.id = formData.onlineDataId
-              }
-              let onlineUrl = `${that.url.online}/${formData.onlineForm}`
+            formData['desformCode'] = that.desformCode
+            if (that.dataId) {
+              url = that.url.edit + '/' + that.innerTableId
+              method = 'PUT'
+              formData['id'] = that.dataId
+            }
+            if (that.enableLoading) {
+              that.loading = true
+            }
+            (() => {
+              // 如果存在 onlineForm 就首先提交给online表单，获取到 id 后再提交到数据表
+              console.log('saveForm', formData)
+              if (formData.onlineForm) {
+                formData['onlineFormCode'] = formData.onlineForm
+                if (that.dataId != null) {
+                  formData.json.id = formData.onlineDataId
+                }
+                let onlineUrl = `${that.url.online}/${formData.onlineForm}`
 
-              // online 特殊处理，防止因为java的toString破坏了格式
-              let onlinePostJson = cloneObject(formData.json)
-              for (let key in onlinePostJson) {
-                if (onlinePostJson.hasOwnProperty(key)) {
-                  let item = onlinePostJson[key]
-                  if (typeof item === 'object') {
-                    onlinePostJson[key] = JSON.stringify(item)
+                // online 特殊处理，防止因为java的toString破坏了格式
+                let onlinePostJson = cloneObject(formData.json)
+                for (let key in onlinePostJson) {
+                  if (onlinePostJson.hasOwnProperty(key)) {
+                    let item = onlinePostJson[key]
+                    if (typeof item === 'object') {
+                      onlinePostJson[key] = JSON.stringify(item)
+                    }
                   }
                 }
+                // 当前提交过了，就不再让提交
+                if (that.currentSavedResult) {
+                  console.warn('当前提交过了，就不再让提交', that.currentSavedResult)
+                  return Promise.resolve(that.currentSavedResult.res)
+                }
+                return httpAction(onlineUrl, onlinePostJson, method)
+              } else {
+                return Promise.resolve(null)
+              }
+            })().then((res) => {
+              if (res == null) {
+                // 没有提交到online表单
+                // do nothing
+              } else if (res.success) {
+                // 提交到了onlineForm，获取到新增的uuid，且只有在新增时才提交
+                if (that.dataId == null) {
+                  formData['onlineFormDataId'] = res.result
+                }
+              } else {
+                if (that.alert === true) that.$error({ title: '保存失败', content: res.message })
+                return Promise.reject()
               }
               // 当前提交过了，就不再让提交
               if (that.currentSavedResult) {
                 console.warn('当前提交过了，就不再让提交', that.currentSavedResult)
                 return Promise.resolve(that.currentSavedResult.res)
               }
-              return httpAction(onlineUrl, onlinePostJson, method)
-            } else {
-              return Promise.resolve(null)
-            }
-          })().then((res) => {
-            if (res == null) {
-              // 没有提交到online表单
-              // do nothing
-            } else if (res.success) {
-              // 提交到了onlineForm，获取到新增的uuid，且只有在新增时才提交
-              if (that.dataId == null) {
-                formData['onlineFormDataId'] = res.result
+              // 提交到数据表
+              return httpAction(url, formData, method)
+            }).then(res => {
+              if (res.success) {
+                // 注释，没有params参数，暂未发现影响
+                // debugger
+                // // 保存到用户自定义url
+                // let { formConfig: { customRequestURL: curl } } = params
+                // if ((curl instanceof Array) && curl[0] && curl[0].url) {
+                //   formData.dataId = res.result
+                //   return httpAction(curl[0].url, formData, method)
+                // }
               }
-            } else {
-              if (that.alert === true) that.$error({ title: '保存失败', content: res.message })
-              return Promise.reject()
-            }
-            // 当前提交过了，就不再让提交
-            if (that.currentSavedResult) {
-              console.warn('当前提交过了，就不再让提交', that.currentSavedResult)
-              return Promise.resolve(that.currentSavedResult.res)
-            }
-            // 提交到数据表
-            return httpAction(url, formData, method)
-          }).then(res => {
-            if (res.success) {
-              // 注释，没有params参数，暂未发现影响
-              // debugger
-              // // 保存到用户自定义url
-              // let { formConfig: { customRequestURL: curl } } = params
-              // if ((curl instanceof Array) && curl[0] && curl[0].url) {
-              //   formData.dataId = res.result
-              //   return httpAction(curl[0].url, formData, method)
-              // }
-            }
-            return res
-          }).then(async res => {
-            const resData = { res, dataId: res.result }
-            if (res.success) {
-              if (that.alert && !that.currentSavedResult) {
-                that.$message.success('保存成功')
+              return res
+            }).then(async res => {
+              const resData = { res, dataId: res.result }
+              if (res.success) {
+                if (that.alert && !that.currentSavedResult) {
+                  that.$message.success('保存成功')
+                }
+                // 执行保存成功后的回调，返回id主键
+                console.log('kForm::saveAllData::success', resData)
+                await callback(res.result)
+                this.$emit('success', resData)
+                that.currentSavedResult = resData
+                resolve(resData)
+              } else {
+                that.$emit('error', { res, target: that })
+                if (that.alert) {
+                  that.$error({ title: '保存失败', content: res.message })
+                }
+                that.currentSavedResult = null
+                reject(resData)
               }
-              // 执行保存成功后的回调，返回id主键
-              console.log('kForm::saveAllData::success', resData)
-              await callback(res.result)
-              this.$emit('success', resData)
-              that.currentSavedResult = resData
-              resolve(resData)
-            } else {
-              that.$emit('error', { res, target: that })
-              if (that.alert) {
-                that.$error({ title: '保存失败', content: res.message })
-              }
-              that.currentSavedResult = null
-              reject(resData)
-            }
-          }).finally(() => {
-            that.loading = false
-          })
+            }).finally(() => {
+              that.loading = false
+            })
+          }
+        } catch (rootEx) {
+          throwEx && reject(rootEx)
         }
       })
     },
@@ -382,10 +408,10 @@ export default {
       return this.$nextTick(callback)
     },
     // 保存并发起流程
-    saveAndSubmitBPM() {
+    saveAndSubmitBPM(throwEx = false) {
       return new Promise(async(resolve, reject) => {
         try {
-          const data = await this.saveAllData()
+          const data = await this.saveAllData(throwEx)
           resolve(data)
         } catch (e) {
           reject(e)

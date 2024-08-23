@@ -115,11 +115,12 @@ export default {
     saveAndSubmitBPM() {
       return new Promise(async (resolve, reject) => {
         try {
-          const data = await this.$refs.desform.saveAndSubmitBPM()
+          const data = await this.$refs.desform.saveAndSubmitBPM(true)
           this.$emit('saveAndSubmitBPM', data)
           resolve(data)
         } catch (e) {
-          reject(e)
+          // TODO 自己处理下错误
+          // reject(e)
         }
       })
     }

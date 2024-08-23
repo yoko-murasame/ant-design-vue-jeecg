@@ -24,7 +24,7 @@ export default {
         }
         // kForm设计器表单的保存
         if (formType === FORM_TYPE_DESIGNFORM) {
-          return await this.saveAllData()
+          return await this.saveAllData(true)
         }
         // online表单的保存
         if (formType === FORM_TYPE_CODE) {
