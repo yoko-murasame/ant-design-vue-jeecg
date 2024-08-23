@@ -312,7 +312,13 @@
       </a-modal>
 
       <!-- 弹框表单设计器区域 -->
-      <auto-desform-data-full-screen ref="desformModal" @ok="handleFormSuccess" :buttonSwitch="buttonSwitch" :currentTableName="currentTableName" :hasBpmStatus="hasBpmStatus" />
+      <auto-desform-data-full-screen
+        ref="desformModal"
+        @ok="handleFormSuccess"
+        @saveAndSubmitBPM="saveAndSubmitBPM"
+        :buttonSwitch="buttonSwitch"
+        :currentTableName="currentTableName"
+        :hasBpmStatus="hasBpmStatus" />
 
       <!-- 自定义流程接入 -->
       <bind-bpm :parent="vm" ref="bindBpm"></bind-bpm>
@@ -904,7 +910,11 @@ export default {
           }
         })
       },
-
+      async saveAndSubmitBPM(data) {
+        data.id = data.id || data.dataId
+        await this.startProcess(data, true)
+        this.$refs.desformModal && this.$refs.desformModal.close()
+      },
       handleFormSuccess() {
         this.loadData()
       },

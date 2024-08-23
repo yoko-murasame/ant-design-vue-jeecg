@@ -30,30 +30,33 @@
           <a-icon type="file-text"/>
           <span>业务信息</span>
         </span>
-        <div class="component_div" v-if="!pageLoading">
-          <!--如果是kform表单设计器类型的走设计器-->
-          <!--:onlineTableId="formData.tableName"-->
-          <desform-view
-            v-if="formData.formType === FORM_TYPE_DESIGNFORM"
-            class="desform-view"
-            :mode="mode"
-            :desformCode="formData.tableName"
-            :dataId="formData.dataId"
-            :online-table-id="formData.cgformId"
-            height="100vh"
-            :innerDialog="true"
-            @reload="handleReload"
-            :isOnline="isOnline"
-            ref="realForm"
-          />
-          <!--online和编码类型的走组件-->
-          <dynamic-link v-if="[FORM_TYPE_ONLINE, FORM_TYPE_CODE].includes(formData.formType)" ref="realForm" :path="path" :formData="formData"></dynamic-link>
+        <a-spin :spinning="pageLoading">
+          <div class="component_div" v-if="!pageLoading">
+            <!--如果是kform表单设计器类型的走设计器-->
+            <!--:onlineTableId="formData.tableName"-->
+            <desform-view
+              v-if="formData && formData.formType === FORM_TYPE_DESIGNFORM"
+              class="desform-view"
+              :mode="mode"
+              :desformCode="formData.tableName"
+              :dataId="formData.dataId"
+              :online-table-id="formData.cgformId"
+              height="100vh"
+              :innerDialog="true"
+              @reload="handleReload"
+              :isOnline="isOnline"
+              :enable-loading="true"
+              ref="realForm"
+            />
+            <!--online和编码类型的走组件-->
+            <dynamic-link v-if="[FORM_TYPE_ONLINE, FORM_TYPE_CODE].includes(formData.formType)" ref="realForm" :path="path" :formData="formData"></dynamic-link>
 
-          <template v-if="!isComp">
-            <!--旧版本url版本的表单设计器以iframe形式加载-->
-            <iframe :src="iframeUrl" frameborder="0" width="100%" :height="height" scrolling="auto"></iframe>
-          </template>
-        </div>
+            <template v-if="!isComp">
+              <!--旧版本url版本的表单设计器以iframe形式加载-->
+              <iframe :src="iframeUrl" frameborder="0" width="100%" :height="height" scrolling="auto"></iframe>
+            </template>
+          </div>
+        </a-spin>
       </a-tab-pane>
 
       <a-tab-pane key="2">
@@ -81,7 +84,7 @@
 <script>
 
 import { getAction } from '@/api/manage'
-import DesformView from '@/components/online/desform/DesformView.vue'
+import DesformView from '@/components/online/desform/DesformView'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { isURL } from '@/utils/validate'
 import Vue from 'vue'
@@ -153,7 +156,7 @@ export default {
         getKFormMetaData: '/desform/queryByCode',
         getFormData: '/online/cgform/api/form/table_name'
       },
-      pageLoading: false,
+      pageLoading: true,
       cgformId: '',
       FORM_TYPE_ONLINE,
       FORM_TYPE_DESIGNFORM,
@@ -161,6 +164,7 @@ export default {
     }
   },
   created() {
+    this.pageLoading = true
   },
   methods: {
     /**
@@ -257,8 +261,9 @@ export default {
   },
   watch: {
     // 初始化
-    formData() {
-      this.init()
+    'formData.dataId': {
+      handler: 'init',
+      immediate: true
     }
   }
 }

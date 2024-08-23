@@ -112,11 +112,16 @@ export default {
     handleReload() {
       this.$emit('ok')
     },
-    async saveAndSubmitBPM() {
-      const data = await this.$refs.desform.saveAndSubmitBPM()
-      // this.$refs.desform.handleGetData()
-      this.$emit('ok', data)
-      this.close()
+    saveAndSubmitBPM() {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const data = await this.$refs.desform.saveAndSubmitBPM()
+          this.$emit('saveAndSubmitBPM', data)
+          resolve(data)
+        } catch (e) {
+          reject(e)
+        }
+      })
     }
   },
   watch: {
