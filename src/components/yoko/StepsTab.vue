@@ -1,6 +1,6 @@
 <template>
   <a-steps v-if="dictLoad" v-model="currentTabDictValueIndex" type="navigation" size="small">
-    <a-step v-for="step in stepItems" :key="step.title" :status="step.status" :title="step.title" :disabled="step.disabled" />
+    <a-step v-for="step in stepItems" :key="step.key" :status="step.status" :title="step.title" :disabled="step.disabled" />
   </a-steps>
 </template>
 
@@ -135,6 +135,7 @@ export default {
       return this.dictTextInner.map((text, idx) => {
         return {
           title: text,
+          key: this.dictValueInner[idx],
           status: curIdx === idx ? this.currentFinish ? 'finish' : 'process' : curIdx < idx ? 'wait' : 'finish',
           disabled: this.debug ? false : (curIdx < idx)
         }
