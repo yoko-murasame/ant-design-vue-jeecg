@@ -52,7 +52,25 @@ import DesformView from '@/components/online/desform/DesformView'
 export default {
   name: 'AutoDesformDataFullScreen',
   components: { DesformView },
-  props: ['buttonSwitch', 'hasBpmStatus'],
+  props: {
+    buttonSwitch: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    hasBpmStatus: {
+      type: Boolean,
+      default: false
+    },
+    // 默认数据,优先级较高
+    defaultData: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   data() {
     return {
       mode: 'add',
@@ -81,7 +99,7 @@ export default {
       this.dataId = dataId
       this.desformCode = desformCode
       this.tableId = tableId
-      this.newDefaultData = newDefaultData
+      this.newDefaultData = Object.assign(this.newDefaultData, newDefaultData, this.defaultData)
       this.visible = true
       // 禁止body滚动，防止滚动穿透
       // this.bodyOverflow = document.body.style.overflow
@@ -127,11 +145,17 @@ export default {
   },
   watch: {
     buttonSwitch: {
-        immediate: true,
-        handler(val) {
-          console.log('buttonSwitch', val)
-        }
+      immediate: true,
+      handler(val) {
+        console.log('buttonSwitch', val)
       }
+    },
+    defaultData: {
+      immediate: true,
+      handler(val) {
+        this.newDefaultData = Object.assign(this.newDefaultData, val)
+      }
+    }
   }
 }
 </script>

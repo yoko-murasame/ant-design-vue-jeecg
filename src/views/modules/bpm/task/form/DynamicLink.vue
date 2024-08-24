@@ -34,7 +34,14 @@
 -->
 
 <template>
-  <component ref="realForm" :is="comp" :formData="formData" v-if="comp" form-bpm></component>
+  <component
+    v-bind="$attrs"
+    ref="realForm"
+    :is="comp"
+    @complete="handleComplete"
+    :formData="formData"
+    v-if="comp"
+    form-bpm></component>
 </template>
 <script>
 export default {
@@ -46,11 +53,17 @@ export default {
   },
   computed: {
     comp: function () {
-      console.log('BPM 组件名称：', this.compName);
+      console.log('BPM 组件名称：', this.compName)
       console.log('BPM 组件数据：', this.formData)
       return () => import(`@/views/${this.compName}.vue`)
     }
   },
-  props: ['path', 'formData']
+  props: ['path', 'formData'],
+  methods: {
+    handleComplete (data) {
+      console.log('BPM 组件监听到complete：', data)
+      this.$emit('complete', data)
+    }
+  }
 }
 </script>

@@ -350,6 +350,8 @@
         this.$confirm({
           title: '提示',
           content: '确认提交审批吗?',
+          okText: '确定',
+          cancelText: '取消',
           onOk: function() {
             that.loading = true;
             that.model.fileList = JSON.stringify(that.fileList)

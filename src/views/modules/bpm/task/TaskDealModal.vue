@@ -51,6 +51,7 @@
             <dynamic-link
               v-if="formData.dataId && [FORM_TYPE_ONLINE, FORM_TYPE_CODE].includes(formData.formType)"
               ref="realForm"
+              @complete="completeProcess"
               :path="path"
               :formData="formData" />
           </template>
@@ -61,7 +62,7 @@
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="2">
+      <a-tab-pane key="2" v-if="formData.showTask">
         <span slot="tab">
           <a-icon type="user"/>
           <span>任务处理</span>
@@ -69,7 +70,7 @@
         <task-module :save-form="preSaveForm" :formData="formData" @complete="completeProcess"></task-module>
       </a-tab-pane>
 
-      <a-tab-pane key="3">
+      <a-tab-pane key="3" v-if="true">
         <span slot="tab">
           <a-icon type="sliders"/>
           <span>流程图</span>
@@ -118,7 +119,11 @@ export default {
         formType: '',
         tableName: '',
         // 表单数据id
-        dataId: ''
+        dataId: '',
+        // 是否显示任务处理模块 TODO 改造成后端可配置化
+        showTask: false,
+        // 是否显示流程图模块
+        showProcess: true
       })
     }
   },
