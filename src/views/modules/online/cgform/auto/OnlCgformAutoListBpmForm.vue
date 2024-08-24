@@ -629,7 +629,7 @@ export default {
       }
     },
     methods: {
-      async preSaveForm() {
+      async preSaveForm(flag, buttonName) {
         // TODO 流程按钮提交前会触发，表单自己实现相应的保存事件
       },
       /**

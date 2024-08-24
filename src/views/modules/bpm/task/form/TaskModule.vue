@@ -85,7 +85,8 @@
                 <a-radio-group v-model="model.processModel">
                   <a-radio :checked="true" :value="1">流转下一节点</a-radio>
                   <!-- <a-radio :value="2">多分支模式</a-radio> -->
-                  <a-radio :value="3" v-if="resultObj.histListSize>0">驳回</a-radio>
+                  <!--TODO 将驳回功能改成可配置化-->
+                  <a-radio :value="3" v-if="formData.showReject && resultObj.histListSize>0">驳回</a-radio>
                 </a-radio-group>
                 <span :hidden="this.model.processModel!==2">
                   <span style="color: red;">多分支模式默认执行所有分支：</span>
@@ -154,7 +155,7 @@
         <div style="margin-top:20px;text-align:center">
           <template v-if="model.processModel==1">
             <template v-for="(item,index) in resultObj.transitionList">
-              <a-button type="primary" @click="handleProcessComplete(item.nextnode)">{{ item.Transition }}</a-button>
+              <a-button type="primary" @click="handleProcessComplete(item.nextnode, item.Transition)">{{ item.Transition }}</a-button>
             </template>
           </template>
           <template v-else>
@@ -347,7 +348,8 @@ export default {
     saveForm: {
       type: Function,
       default() {
-        return async() => {}
+        // 两个参数，flag为表单的提交标识，可能是123去判断是否发起流程；buttonName为当前审批节点用户点击的按钮名称
+        return async(flag, buttonName) => {}
       }
     }
   },
@@ -500,10 +502,10 @@ export default {
         this.loading = false
       })
     },
-    async handleProcessComplete(nextnode) {
+    async handleProcessComplete(nextnode, buttonName = '确认提交') {
       const that = this
       console.log('流程办理数据：', this.model)
-      if (!this.model.reason || this.model.reason.length == 0) {
+      if (!this.model.reason || this.model.reason.length === 0) {
         this.$message.warning('请填写处理意见')
         return
       }
@@ -513,14 +515,14 @@ export default {
       var method = 'post'
       this.$confirm({
         title: '提示',
-        content: '确认提交审批吗?',
+        content: buttonName === '确认提交' ? '确认提交审批吗?' : `确认${buttonName}吗?`,
         okText: '确定',
         cancelText: '取消',
         onOk: async function () {
           // 预校验表单
           try {
             if (that.model.processModel !== 3) {
-              await that.saveForm()
+              await that.saveForm(null, buttonName)
             }
           } catch (e) {
             console.error('流程保存错误', e)

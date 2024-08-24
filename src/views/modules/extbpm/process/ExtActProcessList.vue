@@ -232,6 +232,8 @@
         this.$confirm({
           title: '确认发布流程',
           content: '是否发布该流程?',
+          okText: '确定',
+          cancelText: '取消',
           onOk: function() {
             putAction(that.url.deployProcess, { id: id }).then((res) => {
               if (res.success) {
