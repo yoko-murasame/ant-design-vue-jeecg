@@ -45,8 +45,8 @@ export default {
         initQueryParam: {},
         // 新增按钮文本
         addButtonName: '填报队伍',
-        // byId接口
-        queryById: '/warning/tbBisWarning/queryById'
+        // byId接口 /warning/tbBisWarning/queryById
+        queryById: ''
       },
       ready: false
     }
@@ -63,9 +63,12 @@ export default {
       if (this.formBpm === true) {
         let params = { id: this.formData.dataId }
         let { onlineFormConfig, onlineInitQueryParamGetter } = this.formData
-        console.log('TbBisWarningTeamBpmForm::showFlowData', this.formData)
-        if (!onlineFormConfig && typeof onlineFormConfig !== 'object') {
-          this.$message.error('流程节点配置错误，请配置：onlineFormConfig，类型为对象！')
+        console.log('渲染流程::online列表组件::OnlCgformAutoListBpmForm', this.formData)
+        if (!onlineFormConfig || typeof onlineFormConfig !== 'object') {
+          // 如果外部组件审批已开启，就默认不展示内嵌
+          this.onlineFormConfig.showDealBlock = !this.formData.showTask
+          this.ready = true
+          console.log('流程表单参数onlineFormConfig未配置，使用默认值。', this.onlineFormConfig)
           return
         }
         const { queryById } = onlineFormConfig

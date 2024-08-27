@@ -191,7 +191,34 @@ export default {
        * @param value
        */
       handleFormTypeChange (value) {
-        const defaultOnlineConfig = {
+        // online表单
+        if (value === '1') {
+          this.form.setFieldsValue({ modelAndView: `modules/bpm/task/form/OnlineFormDetail` })
+        }
+        // kForm表单
+        if (value === '2') {
+          const defaultKFormConfig = {
+            // 设计器code，默认和流程的表名一致
+            code: '',
+            // 展示审批模块
+            showDealBlock: true,
+            // 初始化筛选参数
+            initQueryParam: {},
+            // 确认提交的按钮名称
+            whichButtonToUse: '确认提交'
+          }
+          this.form.setFieldsValue({
+            modelAndView: `modules/online/cgform/auto/KFormBpmForm`,
+            onlineFormConfig: JSON.stringify(defaultKFormConfig, null, 2)
+          })
+        }
+        // 自定义表单
+        if (value === '3') {
+          this.form.setFieldsValue({ modelAndView: `views/下的组件路径，记得把views去掉/CustomFormDetail` })
+        }
+        // online列表
+        if (value === '4') {
+          const defaultOnlineConfig = {
             // 表单code，自动从流程配置获取
             code: this.form.getFieldValue('onlineCode') || '',
             // 展示审批模块
@@ -204,24 +231,7 @@ export default {
             addButtonName: '新增',
             // byId接口
             queryById: '/warning/tbBisWarning/queryById'
-        }
-        // online表单
-        if (value === '1') {
-          this.form.setFieldsValue({ modelAndView: `modules/bpm/task/form/OnlineFormDetail` })
-        }
-        // kForm表单
-        if (value === '2') {
-          this.form.setFieldsValue({
-            modelAndView: `modules/online/cgform/auto/KFormBpmForm`,
-            onlineFormConfig: JSON.stringify(defaultOnlineConfig, null, 2)
-          })
-        }
-        // 自定义表单
-        if (value === '3') {
-          this.form.setFieldsValue({ modelAndView: `views/下的组件路径，记得把views去掉/CustomFormDetail` })
-        }
-        // online列表
-        if (value === '4') {
+          }
           this.form.setFieldsValue({
             modelAndView: `modules/online/cgform/auto/OnlCgformAutoListBpmForm`,
             onlineFormConfig: JSON.stringify(defaultOnlineConfig, null, 2)

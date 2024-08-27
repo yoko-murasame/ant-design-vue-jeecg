@@ -1,4 +1,4 @@
-import { FORM_TYPE_ONLINE, FORM_TYPE_DESIGNFORM, FORM_TYPE_CODE } from '@views/modules/bpm/task/TaskDealModal'
+import { FORM_TYPE_CODE, FORM_TYPE_DESIGNFORM, FORM_TYPE_ONLINE } from '@views/modules/bpm/task/TaskDealModal'
 
 /**
  * 流程接入mixin-Form接入
@@ -14,9 +14,10 @@ export default {
     /**
      * 流程提交前，保存表单数据
      * @param formType 表单类型
+     * @param buttonName 按钮名称
      * @returns {Promise<void>}
      */
-    async saveFormBeforeBpmSubmit(formType) {
+    async saveFormBeforeBpmSubmit(formType, buttonName) {
       try {
         // online表单的保存
         if (formType === FORM_TYPE_ONLINE) {
@@ -24,11 +25,11 @@ export default {
         }
         // kForm设计器表单的保存
         if (formType === FORM_TYPE_DESIGNFORM) {
-          return await this.saveAllData(true)
+          return await this.saveAllData(true, buttonName)
         }
-        // online表单的保存
+        // 编码表单的保存
         if (formType === FORM_TYPE_CODE) {
-          return await this.submitForm()
+          return await this.submitForm(2, buttonName)
         }
         console.warn('流程提交前，保存表单数据::不支持的表单类型，请检查')
       } catch (e) {

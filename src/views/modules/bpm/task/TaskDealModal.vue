@@ -34,22 +34,23 @@
           <template v-if="isComp">
             <!--如果是kform表单设计器类型的走设计器-->
             <!--:onlineTableId="formData.tableName"-->
-            <desform-view
-              v-if="formData.dataId && formData.formType === FORM_TYPE_DESIGNFORM"
-              class="desform-view"
-              :mode="mode"
-              :desformCode="formData.tableName"
-              :dataId="formData.dataId"
-              height="100vh"
-              :innerDialog="true"
-              @reload="handleReload"
-              :isOnline="isOnline"
-              :enable-loading="true"
-              ref="realForm"
-            />
+            <!--@20240827 这个方式不需要了，走新封装组件：KFormBpmForm.vue-->
+            <!--<desform-view-->
+            <!--  v-if="formData.dataId && formData.formType === FORM_TYPE_DESIGNFORM"-->
+            <!--  class="desform-view"-->
+            <!--  :mode="mode"-->
+            <!--  :desformCode="formData.tableName"-->
+            <!--  :dataId="formData.dataId"-->
+            <!--  height="100vh"-->
+            <!--  :innerDialog="true"-->
+            <!--  @reload="handleReload"-->
+            <!--  :isOnline="isOnline"-->
+            <!--  :enable-loading="true"-->
+            <!--  ref="realForm"-->
+            <!--/>-->
             <!--online和编码类型的走组件-->
             <dynamic-link
-              v-if="formData.dataId && [FORM_TYPE_ONLINE, FORM_TYPE_CODE].includes(formData.formType)"
+              v-if="formData.dataId && [FORM_TYPE_ONLINE, FORM_TYPE_DESIGNFORM, FORM_TYPE_CODE].includes(formData.formType)"
               ref="realForm"
               @complete="completeProcess"
               :path="path"
@@ -105,7 +106,7 @@ export default {
     TaskModule,
     ProcessModule,
     // 解决父组件 BindBpm 被OnlCgformAutoList组件内部引入，存在重复引用导致的组件无法注册问题
-    DesformView: () => import('@/components/online/desform/DesformView')
+    // DesformView: () => import('@/components/online/desform/DesformView')
   },
   props: {
     path: {
@@ -120,7 +121,7 @@ export default {
         tableName: '',
         // 表单数据id
         dataId: '',
-        // 配置来的参数
+        // 流程各个节点的配置参数
         // 表单类型 1 Online表单 2 kform设计器 3 自定义开发 4 online列表
         modelAndViewType: '2',
         // 是否显示任务处理模块
@@ -192,16 +193,17 @@ export default {
     /**
      * 预处理表单，进行自动提交
      */
-    preSaveForm() {
+    preSaveForm(flag, buttonName) {
       return new Promise(async (resolve, reject) => {
         if (this.formData.disabled) {
           resolve()
           return
         }
-        const func = (this.formData.formType === FORM_TYPE_DESIGNFORM ? this.$refs.realForm : this.$refs.realForm.$refs.realForm).saveFormBeforeBpmSubmit
+        // const func = (this.formData.formType === FORM_TYPE_DESIGNFORM ? this.$refs.realForm : this.$refs.realForm.$refs.realForm).saveFormBeforeBpmSubmit
+        const func = this.$refs.realForm.$refs.realForm.saveFormBeforeBpmSubmit
         if (func) {
           try {
-            await func(this.formData.formType)
+            await func(this.formData.formType, buttonName)
             resolve()
           } catch (e) {
             this.$message.error('表单未完成！')
