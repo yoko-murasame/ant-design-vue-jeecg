@@ -70,7 +70,7 @@
         <task-module :save-form="preSaveForm" :formData="formData" @complete="completeProcess"></task-module>
       </a-tab-pane>
 
-      <a-tab-pane key="3" v-if="true">
+      <a-tab-pane key="3" v-if="formData.showProcess">
         <span slot="tab">
           <a-icon type="sliders"/>
           <span>流程图</span>
@@ -120,10 +120,17 @@ export default {
         tableName: '',
         // 表单数据id
         dataId: '',
-        // 是否显示任务处理模块 TODO 改造成后端可配置化
+        // 配置来的参数
+        // 表单类型 1 Online表单 2 kform设计器 3 自定义开发 4 online列表
+        modelAndViewType: '2',
+        // 是否显示任务处理模块
         showTask: false,
         // 是否显示流程图模块
-        showProcess: true
+        showProcess: true,
+        // online表单code
+        onlineCode: '',
+        // online表单配置
+        onlineFormConfig: {}
       })
     }
   },
@@ -134,7 +141,7 @@ export default {
     },
     // 是否为组件
     isComp() {
-      console.log('isComp组件名称：', this.path)
+      console.log('isComp组件名称：', this.path, this.formData)
       var TOKEN = Vue.ls.get(ACCESS_TOKEN)
       var DOMAIN_URL = window._CONFIG['domianURL']
       var TASKID = this.formData.taskDefKey

@@ -1,7 +1,7 @@
 <template>
   <a-card :bordered="false" style="height: 100%">
     <div class="table-page-search-wrapper">
-      <a-form layout="inline" @keyup.enter.native="searchByquery">
+      <a-form layout="inline" @keyup.enter.native="searchByquery" v-if="showQueryBlock">
         <a-row :gutter="24" v-if="queryInfo && queryInfo.length>0 || hasBpmStatus">
           <template v-if="buttonSwitch.bind_bpm_show_my_task && processDefinitionId">
             <a-col :xl="2" :lg="3" :md="4" :sm="24">
@@ -44,7 +44,7 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button v-if="buttonSwitch.add" @click="handleAdd" type="primary" icon="plus">新增</a-button>
+      <a-button v-if="buttonSwitch.add" @click="handleAdd" type="primary" icon="plus">{{ onlineFormConfig.addButtonName || '新增' }}</a-button>
       <a-button v-if="buttonSwitch.import" @click="handleImportXls" type="primary" icon="upload">导入</a-button>
       <a-button v-if="buttonSwitch.export" @click="handleExportXls" type="primary" icon="download">导出</a-button>
       <template v-if="cgButtonList && cgButtonList.length>0" v-for="(item,index) in cgButtonList">
@@ -318,11 +318,14 @@
         @saveAndSubmitBPM="saveAndSubmitBPM"
         :buttonSwitch="buttonSwitch"
         :currentTableName="currentTableName"
+        :default-data="onlineFormConfig.initQueryParam || {}"
         :hasBpmStatus="hasBpmStatus" />
 
       <!-- 自定义流程接入 -->
       <bind-bpm :parent="vm" ref="bindBpm"></bind-bpm>
 
+      <!--嵌入流程审批组件-->
+      <task-module-for-online v-if="showDealBlock && onlineFormData" :save-form="preSaveForm" :formData="onlineFormData" @complete="$emit('complete')" />
     </div>
   </a-card>
 </template>
@@ -330,40 +333,79 @@
 <script>
 
 import '@/assets/less/TableExpand.less'
-import { mixinDevice } from '@/utils/mixin'
-import { HrefJump } from '@/mixins/OnlAutoListMixin'
-import OnlCgformAutoModal from './OnlCgformAutoModal'
 import { deleteAction, downFile, getAction, getFileAccessHttpUrl, postAction } from '@/api/manage'
-import { filterObj } from '@/utils/util'
-import OnlineQueryFormItem from '@/components/online/autoform/OnlineQueryFormItem.vue'
 import ProcessInstPicModal from '@/components/bpm/ProcessInstPicModal'
 import ButtonExpHandler from '@/components/online/autoform/model/ButtonExpHandler'
+import OnlineQueryFormItem from '@/components/online/autoform/OnlineQueryFormItem.vue'
+import { HrefJump } from '@/mixins/OnlAutoListMixin'
 import { onlUtil } from '@/mixins/OnlineCommonUtil'
-// eslint-disable-next-line camelcase
-import lodash_object from 'lodash'
-import Vue from 'vue'
+import { mixinDevice } from '@/utils/mixin'
+import { filterObj } from '@/utils/util'
 import AutoDesformDataFullScreen from '@/views/modules/online/desform/auto/modules/AutoDesformDataFullScreen'
 // 流程处理接入
 import BindBpm from '@views/modules/bpm/mytask/BindBpm'
 import BindBpmButton from '@views/modules/bpm/mytask/BindBpmButton'
 import BindBpmOnlineMixin from '@views/modules/bpm/mytask/BindBpmOnlineMixin'
 import BindBpmShowMyTask from '@views/modules/bpm/mytask/BindBpmShowMyTask'
+import TaskModule from '@views/modules/bpm/task/form/TaskModule.vue'
+import TaskModuleForOnline from '@views/modules/bpm/task/form/TaskModuleForOnline'
+// eslint-disable-next-line camelcase
+import lodash_object from 'lodash'
+import Vue from 'vue'
+import OnlCgformAutoModal from './OnlCgformAutoModal'
 
 export default {
     name: 'OnlCgFormAutoList',
     mixins: [HrefJump, mixinDevice, onlUtil, BindBpmOnlineMixin],
     components: {
+      TaskModule,
       OnlCgformAutoModal,
       OnlineQueryFormItem,
       ProcessInstPicModal,
       AutoDesformDataFullScreen,
       BindBpm,
       BindBpmShowMyTask,
-      BindBpmButton
+      BindBpmButton,
+      TaskModuleForOnline
+    },
+    props: {
+      // 流程表单data
+      onlineFormData: {
+        type: Object,
+        default: null,
+        required: false
+      },
+      // 流程表单配置
+      onlineFormConfig: {
+        type: Object,
+        default() {
+          return {
+            // 表单code
+            code: '',
+            // 展示审批模块
+            showDealBlock: false,
+            // 展示查询模块
+            showQueryBlock: true,
+            // 初始化筛选参数
+            initQueryParam: {},
+            // 新增按钮文本
+            addButtonName: '新增'
+          }
+        },
+        required: false
+      }
     },
     data() {
       return {
+        // 表单code
         code: '',
+        // 是否展示审批模块
+        showDealBlock: false,
+        // 是否展示查询模块
+        showQueryBlock: false,
+        // 初始化筛选参数
+        initQueryParam: {},
+        // 其他参数
         lodash: lodash_object,
         description: '在线报表功能测试页面',
         currentTableName: '',
@@ -478,13 +520,29 @@ export default {
       }
     },
     created() {
-      this.initAutoList()
     },
     watch: {
-      '$route'() {
-        // 刷新参数放到这里去触发，就可以刷新相同界面了
-        console.log('Online自动列表加载::OnlCgformAutoList::initAutoList')
-        this.initAutoList()
+      onlineFormData: {
+        handler(v) {
+          if (v) {
+            console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听onlineFormData')
+            this.initOnlineBpmData()
+            this.initAutoList()
+          }
+        },
+        deep: false,
+        immediate: true
+      },
+      '$route': {
+        handler() {
+          // 刷新参数放到这里去触发，就可以刷新相同界面了
+          console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听$route', this.$route.params.code)
+          if (this.$route.params.code) {
+            this.initOnlineBpmData()
+            this.initAutoList()
+          }
+        },
+        immediate: true
       }
     },
     computed: {
@@ -555,6 +613,27 @@ export default {
       }
     },
     methods: {
+      async preSaveForm(flag, buttonName) {
+        // TODO 流程按钮提交前会触发，表单自己实现相应的保存事件
+      },
+      /**
+       * 初始化Online流程展示列表
+       */
+      initOnlineBpmData() {
+        // 先加载props配置
+        this.code = this.onlineFormConfig.code || this.$route.params.code
+        this.showDealBlock = this.onlineFormConfig.showDealBlock
+        this.showQueryBlock = this.onlineFormConfig.showQueryBlock
+        this.initQueryParam = this.onlineFormConfig.initQueryParam
+        // 如果从流程配置中有定义，去加载覆盖
+        if (this.onlineFormData && this.onlineFormData.extendUrlParams) {
+          const extParams = this.onlineFormData.extendUrlParams || {}
+          this.code = extParams.hasOwnProperty('code') ? extParams.code : this.code
+          this.showDealBlock = extParams.hasOwnProperty('showDealBlock') ? extParams.showDealBlock : this.showDealBlock
+          this.showQueryBlock = extParams.hasOwnProperty('showQueryBlock') ? extParams.showQueryBlock : this.showQueryBlock
+          this.initQueryParam = extParams.hasOwnProperty('initQueryParam') ? (JSON.parse(extParams.initQueryParam) || {}) : this.initQueryParam
+        }
+      },
       /**
        * 发送模板消息
        * @returns {Promise<*>}
@@ -631,37 +710,44 @@ export default {
         this.$refs.processInstPicModal.title = '流程图'
       },
       initQueryInfo() {
-        getAction(`${this.url.getQueryInfo}${this.code}`).then((res) => {
-          console.log('--onlineList-获取查询条件配置', res)
-          if (res.success) {
-            this.queryInfo = res.result
-            // 查询条件form 默认值设置
-            for (let item of res.result) {
-              if (item.config === '1') {
-                if (item.defValue && item.defValue.length > 0 && item.mode === 'single') {
-                  this.$set(this.queryParam, item.field, item.defValue)
+        return new Promise(resolve => {
+          getAction(`${this.url.getQueryInfo}${this.code}`).then((res) => {
+            console.log('--onlineList-获取查询条件配置', res)
+            if (res.success) {
+              this.queryInfo = res.result
+              // 查询条件form 默认值设置
+              for (let item of res.result) {
+                if (item.config === '1') {
+                  if (item.defValue && item.defValue.length > 0 && item.mode === 'single') {
+                    this.$set(this.queryParam, item.field, item.defValue)
+                  }
                 }
               }
+              // 初始化传递的查询条件
+              Object.keys(this.initQueryParam).forEach(key => {
+                this.$set(this.queryParam, key, this.initQueryParam[key])
+              })
+              console.log('OnlCgformAutoListBpmForm::初始化筛选', this.initQueryParam, this.queryParam)
+            } else {
+              this.$message.warning(res.message)
             }
-          } else {
-            this.$message.warning(res.message)
-          }
-          this.loadData()
+            this.loadData()
+            resolve()
+          })
         })
       },
       initAutoList() {
-        if (!this.$route.params.code) {
+        if (!this.code) {
           return false
         }
 
         this.table.loading = true
-        this.code = this.$route.params.code
         // 存在id筛选我的待办时，切换online列表需要清空
         if (!this.queryParam || this.queryParam.id) {
           this.queryParam = {}
         }
         this.handleAcceptHrefParams()
-        getAction(`${this.url.getColumns}${this.code}`).then((res) => {
+        getAction(`${this.url.getColumns}${this.code}`).then(async(res) => {
           console.log('--onlineList-加载动态列>>', res)
           if (res.success) {
             if (res.result.checkboxFlag === 'Y') {
@@ -717,7 +803,8 @@ export default {
             this.scrollFlag = res.result.scrollFlag
             // 检查是否是流程
             this.hasBpmStatusFilter()
-            this.initQueryInfo()
+            // 初始化查询条件，这里需要等待先加载
+            await this.initQueryInfo()
             // 加载新路由，清空checkbox选中
             this.table.selectedRowKeys = []
           } else {

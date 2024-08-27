@@ -1,6 +1,12 @@
 <template>
-  <a-modal :title="title" :width="800" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk"
-    @cancel="handleCancel" cancelText="关闭">
+  <a-modal
+    :title="title"
+    :width="800"
+    :visible="visible"
+    :confirmLoading="confirmLoading"
+    @ok="handleOk"
+    @cancel="handleCancel"
+    cancelText="关闭">
 
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
@@ -27,35 +33,49 @@
 
         <template v-if="formTypeValue == '1'">
           <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="表名">
-            <a-input placeholder="请输入表名" v-decorator="['formTableName', validatorRules.formTableName]"
+            <a-input
+              placeholder="请输入表名"
+              v-decorator="['formTableName', validatorRules.formTableName]"
               @change="handleFormTableName" />
           </a-form-item>
           <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="唯一编码">
-            <a-input placeholder="请输入唯一编码" v-decorator="['relationCode', validatorRules.relationCode]"
+            <a-input
+              placeholder="请输入唯一编码"
+              v-decorator="['relationCode', validatorRules.relationCode]"
               :readOnly="relationCodeReadonly" />
           </a-form-item>
           <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="流程状态列名">
-            <a-input placeholder="请输入流程状态字段" v-decorator="['flowStatusCol', validatorRules.flowStatusCol]"
+            <a-input
+              placeholder="请输入流程状态字段"
+              v-decorator="['flowStatusCol', validatorRules.flowStatusCol]"
               :readOnly="relationCodeReadonly" />
           </a-form-item>
         </template>
         <template v-else-if="formTypeValue == '2'">
           <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="表单编码">
-            <a-input placeholder="请输入表单编码" v-decorator="['formTableName', validatorRules.formTableName]"
+            <a-input
+              placeholder="请输入表单编码"
+              v-decorator="['formTableName', validatorRules.formTableName]"
               @change="handleDesignFormTableName" />
           </a-form-item>
           <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="唯一编码">
-            <a-input placeholder="请输入唯一编码" v-decorator="['relationCode', validatorRules.relationCode]"
+            <a-input
+              placeholder="请输入唯一编码"
+              v-decorator="['relationCode', validatorRules.relationCode]"
               :readOnly="relationCodeReadonly" />
           </a-form-item>
           <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="流程状态列名">
-            <a-input placeholder="请输入流程状态字段" v-decorator="['flowStatusCol', validatorRules.flowStatusCol]"
+            <a-input
+              placeholder="请输入流程状态字段"
+              v-decorator="['flowStatusCol', validatorRules.flowStatusCol]"
               :readOnly="relationCodeReadonly" />
           </a-form-item>
         </template>
         <template v-else>
           <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="表名">
-            <a-input placeholder="请输入表名" v-decorator="['formTableName', validatorRules.formTableName]"
+            <a-input
+              placeholder="请输入表名"
+              v-decorator="['formTableName', validatorRules.formTableName]"
               @blur="genDefaultCode" />
           </a-form-item>
           <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="唯一编码">
@@ -68,10 +88,16 @@
 
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="标题表达式">
           <a-input placeholder="请输入标题表达式" v-decorator="['titleExp', validatorRules.titleExp]" />
-          <span style="color: red;font-size: 12px">参考：XXXX【${busname}】-XXXX【${name}】；其中${}表达式取流程变量的值</span>
+          <span style="color: red;font-size: 12px">参考：XXXX【${busname}】-XXXX【${name}】；其中${}表达式取流程变量的值，字段命名以数据库为准（蛇形）。</span>
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否循环发起">
           <a-switch checked-children="是" un-checked-children="否" v-decorator="['circulate', validatorRules.circulate]" />
+        </a-form-item>
+        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否显示任务处理模块">
+          <a-switch checked-children="是" un-checked-children="否" v-decorator="['showTask', validatorRules.showTask]" />
+        </a-form-item>
+        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否显示流程图模块">
+          <a-switch checked-children="是" un-checked-children="否" v-decorator="['showProcess', validatorRules.showProcess]" />
         </a-form-item>
 
       </a-form>
@@ -80,9 +106,8 @@
 </template>
 
 <script>
-import { httpAction, getAction } from '@/api/manage'
+import { getAction, httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
-import moment from 'moment'
 
 export default {
   name: 'ExtActProcessFormModal',
@@ -115,7 +140,9 @@ export default {
         flowStatusCol: { rules: [{ required: true, message: '请输入流程状态字段!' }] },
         titleExp: { rules: [{ required: true, message: '请输入标题表达式!' }] },
         processId: { rules: [{ required: true, message: '请输入流程ID!' }] },
-        circulate: {valuePropName: 'checked', rules: [{ required: false, message: '是否允许循环提交!'}],initialValue: false }
+        circulate: { valuePropName: 'checked', rules: [{ required: false, message: '是否允许循环提交!' }], initialValue: false },
+        showTask: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示任务处理模块!' }], initialValue: true },
+        showProcess: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示流程图模块!' }], initialValue: true }
       },
       url: {
         add: '/act/process/extActProcessForm/add',
@@ -130,98 +157,98 @@ export default {
   },
   methods: {
     genDefaultCode() {
-      var tabeName = this.form.getFieldValue('formTableName');
+      var tabeName = this.form.getFieldValue('formTableName')
       if (tabeName != null && tabeName != '' && tabeName != undefined) {
-        var relationCode = this.form.getFieldValue('relationCode');
+        var relationCode = this.form.getFieldValue('relationCode')
         if (relationCode == null || relationCode == '' || relationCode == undefined) {
           var params = {
             tabeName: tabeName
-          };// 查询条件
+          }// 查询条件
           getAction(this.url.genDefaultCode, params).then((res) => {
             if (res.success) {
-              var flowCode = res.result;
-              this.form.setFieldsValue({ relationCode: flowCode });
+              var flowCode = res.result
+              this.form.setFieldsValue({ relationCode: flowCode })
             }
           })
         }
       } else {
-        this.$message.success('请填写表名！');
+        this.$message.success('请填写表名！')
       }
     },
     handleFormTableName(e) {
-      var value = e.target.value;
-      console.log(value);
+      var value = e.target.value
+      console.log(value)
       if (value != null && value != '' && value != undefined) {
-        var flowCode = 'onl_' + value;
-        this.form.setFieldsValue({ relationCode: flowCode });
+        var flowCode = 'onl_' + value
+        this.form.setFieldsValue({ relationCode: flowCode })
       } else {
-        this.form.setFieldsValue({ relationCode: '' });
+        this.form.setFieldsValue({ relationCode: '' })
       }
     },
     handleDesignFormTableName(e) {
-      var value = e.target.value;
-      console.log(value);
+      var value = e.target.value
+      console.log(value)
       if (value != null && value != '' && value != undefined) {
-        var flowCode = 'desform_' + value;
-        this.form.setFieldsValue({ relationCode: flowCode });
+        var flowCode = 'desform_' + value
+        this.form.setFieldsValue({ relationCode: flowCode })
       } else {
-        this.form.setFieldsValue({ relationCode: '' });
+        this.form.setFieldsValue({ relationCode: '' })
       }
     },
     handleFormTypeChange(value) {
-      this.formTypeValue = value;
+      this.formTypeValue = value
       // this.model.listenerValue = "";
-      this.form.setFieldsValue({ formTableName: '' });
-      this.form.setFieldsValue({ relationCode: '' });
+      this.form.setFieldsValue({ formTableName: '' })
+      this.form.setFieldsValue({ relationCode: '' })
     },
     add() {
-      this.edit({ formType: '1', formDealStyle: 'default', flowStatusCol: 'bpm_status' });
+      this.edit({ formType: '1', formDealStyle: 'default', flowStatusCol: 'bpm_status' })
     },
     edit(record) {
-      this.form.resetFields();
-      this.formTypeValue = record.formType;
-      this.model = Object.assign({}, record);
-      this.visible = true;
+      this.form.resetFields()
+      this.formTypeValue = record.formType
+      this.model = Object.assign({}, record)
+      this.visible = true
       this.$nextTick(() => {
           this.form.setFieldsValue(pick(this.model, 'relationCode', 'bizName', 'processId', 'formTableName', 'formType', 'titleExp', 'formDealStyle', 'flowStatusCol', 'circulate'))
           // 时间格式化
-      });
+      })
     },
     close() {
-      this.$emit('close');
-      this.visible = false;
+      this.$emit('close')
+      this.visible = false
     },
     handleOk() {
-      const that = this;
+      const that = this
       // 触发表单验证
       this.form.validateFields((err, values) => {
         if (!err) {
-          that.confirmLoading = true;
-          let httpurl = '';
-          let method = '';
+          that.confirmLoading = true
+          let httpurl = ''
+          let method = ''
           if (!this.model.id) {
-            httpurl += this.url.add;
-            method = 'post';
+            httpurl += this.url.add
+            method = 'post'
           } else {
-            httpurl += this.url.edit;
-            method = 'put';
+            httpurl += this.url.edit
+            method = 'put'
           }
-          let formData = Object.assign(this.model, values);
+          let formData = Object.assign(this.model, values)
           // 时间格式化
           if (this.processId) {
-            formData.processId = this.processId;
+            formData.processId = this.processId
           }
           console.log(formData)
           httpAction(httpurl, formData, method).then((res) => {
             if (res.success) {
-              that.$message.success(res.message);
-              that.$emit('ok');
+              that.$message.success(res.message)
+              that.$emit('ok')
             } else {
-              that.$message.warning(res.message);
+              that.$message.warning(res.message)
             }
           }).finally(() => {
-            that.confirmLoading = false;
-            that.close();
+            that.confirmLoading = false
+            that.close()
           })
         }
       })

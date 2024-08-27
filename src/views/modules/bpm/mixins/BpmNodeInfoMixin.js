@@ -5,6 +5,7 @@
  */
 import { getAction } from '@/api/manage'
 import { isURL } from '@/utils/validate'
+
 export const BpmNodeInfoMixin = {
   data() {
     return {
@@ -31,7 +32,14 @@ export const BpmNodeInfoMixin = {
             tableName: res.result.tableName,
             permissionList: res.result.permissionList,
             vars: res.result.records,
-            formType: record.formType
+            formType: record.formType,
+            // 配置来的参数
+            modelAndViewType: res.result.modelAndViewType,
+            showTask: res.result.showTask,
+            showProcess: res.result.showProcess,
+            onlineCode: res.result.onlineCode,
+            onlineFormConfig: res.result.onlineFormConfig,
+            onlineInitQueryParamGetter: res.result.onlineInitQueryParamGetter
           }
           this.formData = data
           // update--begin--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
