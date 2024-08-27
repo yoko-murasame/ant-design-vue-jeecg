@@ -21,34 +21,33 @@
 </template>
 
 <script type="text/ecmascript-6">
-  // 引入全局实例
-  import _CodeMirror from 'codemirror'
+import { isIE, isIE11 } from '@/utils/browser'
+// 引入全局实例
+import _CodeMirror from 'codemirror'
 
-  // 核心样式
-  import 'codemirror/lib/codemirror.css'
-  // 引入主题后还需要在 options 中指定主题才会生效 darcula  gruvbox-dark hopscotch  monokai
-  import 'codemirror/theme/panda-syntax.css'
-  // 提示css
-  import 'codemirror/addon/hint/show-hint.css'
+// 核心样式
+import 'codemirror/lib/codemirror.css'
+// 引入主题后还需要在 options 中指定主题才会生效 darcula  gruvbox-dark hopscotch  monokai
+import 'codemirror/theme/panda-syntax.css'
+// 提示css
+import 'codemirror/addon/hint/show-hint.css'
 
-  // 需要引入具体的语法高亮库才会有对应的语法高亮效果
-  // codemirror 官方其实支持通过 /addon/mode/loadmode.js 和 /mode/meta.js 来实现动态加载对应语法高亮库
-  // 但 vue 貌似没有无法在实例初始化后再动态加载对应 JS ，所以此处才把对应的 JS 提前引入
-  import 'codemirror/mode/javascript/javascript.js'
-  import 'codemirror/mode/css/css.js'
-  import 'codemirror/mode/xml/xml.js'
-  import 'codemirror/mode/clike/clike.js'
-  import 'codemirror/mode/markdown/markdown.js'
-  import 'codemirror/mode/python/python.js'
-  import 'codemirror/mode/r/r.js'
-  import 'codemirror/mode/shell/shell.js'
-  import 'codemirror/mode/sql/sql.js'
-  import 'codemirror/mode/swift/swift.js'
-  import 'codemirror/mode/vue/vue.js'
+// 需要引入具体的语法高亮库才会有对应的语法高亮效果
+// codemirror 官方其实支持通过 /addon/mode/loadmode.js 和 /mode/meta.js 来实现动态加载对应语法高亮库
+// 但 vue 貌似没有无法在实例初始化后再动态加载对应 JS ，所以此处才把对应的 JS 提前引入
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/css/css.js'
+import 'codemirror/mode/xml/xml.js'
+import 'codemirror/mode/clike/clike.js'
+import 'codemirror/mode/markdown/markdown.js'
+import 'codemirror/mode/python/python.js'
+import 'codemirror/mode/r/r.js'
+import 'codemirror/mode/shell/shell.js'
+import 'codemirror/mode/sql/sql.js'
+import 'codemirror/mode/swift/swift.js'
+import 'codemirror/mode/vue/vue.js'
 
-  import { isIE11, isIE } from '@/utils/browser'
-
-  // 尝试获取全局实例
+// 尝试获取全局实例
   const CodeMirror = window.CodeMirror || _CodeMirror
 
   export default {
@@ -181,14 +180,17 @@
           }
         }
       },
-      // value: {
-      //   immediate: false,
-      //   handler(value) {
-      //     this._getCoder().then(() => {
-      //       this.coder.setValue(value)
-      //     })
-      //   }
-      // },
+      value: {
+        immediate: true,
+        handler(value) {
+          value && this._getCoder().then(() => {
+            if (!this.code) {
+              this.code = value
+              this.coder.setValue(value)
+            }
+          })
+        }
+      },
       language: {
         immediate: true,
         handler(language) {
@@ -302,6 +304,7 @@
           } else {
             this.hasCode = false
           }
+          this.$emit('change', this.code)
         })
 
        /* this.coder.on('cursorActivity',()=>{
