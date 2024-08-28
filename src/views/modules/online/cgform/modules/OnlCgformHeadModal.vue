@@ -283,6 +283,24 @@
                     v-decorator=" ['desFormCode', validatorRules.desFormCode]"/>
                 </a-form-item>
               </a-col>
+              <!--表单数据初始化增强-->
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="数据初始化JS增强">
+                  <j-code-editor
+                    ref="codeEditor"
+                    :line-numbers="false"
+                    height="2vh"
+                    language="javascript"
+                    v-decorator="['onlineInitQueryParamGetter', validatorRules.onlineInitQueryParamGetter]"
+                    :fullScreen="true"
+                    style="min-height: 2vh"/>
+                  <span style="color: red;font-size: 12px">备注：JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。</span>
+                </a-form-item>
+              </a-col>
             </a-row>
           </a-list-item>
           <!--update--begin--autor:lvdandan-----date:20201023------for：online表单是否开启表单设计器-->
@@ -413,20 +431,19 @@
 
 <script>
 
-import DBAttributeTable from '../tables/DBAttributeTable'
-import PageAttributeTable from '../tables/PageAttributeTable'
+import { getAction, httpAction } from '@/api/manage'
+import { VALIDATE_NO_PASSED, validateTables } from '@/utils/JEditableTableUtil'
+import { randomUUID, simpleDebounce } from '@/utils/util.js'
+import { AiTestOnlineMixin } from '@/views/modules/aitest/onlinetest.mixins'
+import pick from 'lodash.pick'
 import CheckDictTable from '../tables/CheckDictTable'
+import DBAttributeTable from '../tables/DBAttributeTable'
 import ForeignKeyTable from '../tables/ForeignKeyTable'
 import IndexTable from '../tables/IndexTable'
+import PageAttributeTable from '../tables/PageAttributeTable'
 import QueryTable from '../tables/QueryTable'
 
 import { getMasterTableInitialData, getTreeNeedFields, setDataSource } from '../util/TableUtils'
-import { VALIDATE_NO_PASSED, validateTables } from '@/utils/JEditableTableUtil'
-
-import { getAction, httpAction } from '@/api/manage'
-import pick from 'lodash.pick'
-import { randomUUID, simpleDebounce } from '@/utils/util.js'
-import { AiTestOnlineMixin } from '@/views/modules/aitest/onlinetest.mixins'
 
 export default {
     name: 'OnlCgformHeadModal',
@@ -434,10 +451,10 @@ export default {
     components: {
       'db-attribute-table': DBAttributeTable,
       PageAttributeTable,
-CheckDictTable,
-ForeignKeyTable,
-IndexTable,
-QueryTable
+      CheckDictTable,
+      ForeignKeyTable,
+      IndexTable,
+      QueryTable
     },
     provide() {
       return {
@@ -494,7 +511,8 @@ QueryTable
             initialValue: 1,
             rules: [{ required: true, message: '请输入序号！' }]
           },
-          desFormCode: { rules: [{ required: true, message: '请输入表单设计器编码!' }] }
+          desFormCode: { rules: [{ required: true, message: '请输入表单设计器编码!' }] },
+          onlineInitQueryParamGetter: { rules: [{ required: false, message: '请编写数据初始化JS增强!' }] }
         },
         url: {
           add: '/online/cgform/head/add',
@@ -591,7 +609,11 @@ QueryTable
         this.form.resetFields()
         this.model = Object.assign({}, record)
         this.treeFieldAdded = record.isTree == 'Y'
-        let pickAfter = pick(this.model, 'themeTemplate', 'tableName', 'dataRulePerms', 'scroll', 'tableType', 'tableVersion', 'tableTxt', 'isCheckbox', 'isDbSynch', 'isPage', 'isTree', 'idSequence', 'idType', 'queryMode', 'relationType', 'subTableStr', 'tabOrderNum', 'treeParentIdField', 'treeIdField', 'treeFieldname', 'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode')
+        let pickAfter = pick(this.model, 'themeTemplate', 'tableName', 'dataRulePerms', 'scroll',
+          'tableType', 'tableVersion', 'tableTxt', 'isCheckbox', 'isDbSynch',
+          'isPage', 'isTree', 'idSequence', 'idType', 'queryMode', 'relationType',
+          'subTableStr', 'tabOrderNum', 'treeParentIdField', 'treeIdField', 'treeFieldname',
+          'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode', 'onlineInitQueryParamGetter')
         this.tableJsonGetHelper(pickAfter)
         this.initialAllShowItem(pickAfter)
         this.$nextTick(() => {

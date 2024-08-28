@@ -348,6 +348,7 @@ import { onlUtil } from '@/mixins/OnlineCommonUtil'
 import { mixinDevice } from '@/utils/mixin'
 import { filterObj } from '@/utils/util'
 import AutoDesformDataFullScreen from '@/views/modules/online/desform/auto/modules/AutoDesformDataFullScreen'
+import { createAsyncJsEnhanceFunction } from '@comp/yoko/kform/CustomMethods'
 // 流程处理接入
 import BindBpm from '@views/modules/bpm/mytask/BindBpm'
 import BindBpmButton from '@views/modules/bpm/mytask/BindBpmButton'
@@ -720,9 +721,9 @@ export default {
         this.$refs.processInstPicModal.preview(flowCode, dataId)
         this.$refs.processInstPicModal.title = '流程图'
       },
-      initQueryInfo() {
-        return new Promise(resolve => {
-          getAction(`${this.url.getQueryInfo}${this.code}`).then((res) => {
+      initQueryInfo(onlineInitQueryParamGetter) {
+        return new Promise((resolve, reject) => {
+          getAction(`${this.url.getQueryInfo}${this.code}`).then(async(res) => {
             console.log('--onlineList-获取查询条件配置', res)
             if (res.success) {
               this.queryInfo = res.result
@@ -732,6 +733,19 @@ export default {
                   if (item.defValue && item.defValue.length > 0 && item.mode === 'single') {
                     this.$set(this.queryParam, item.field, item.defValue)
                   }
+                }
+              }
+              // 参数JS增强
+              if (onlineInitQueryParamGetter && onlineInitQueryParamGetter.trim() !== '') {
+                try {
+                  const func = createAsyncJsEnhanceFunction(this, onlineInitQueryParamGetter, ['queryParam'], [this.queryParam])
+                  const getterParams = await func()
+                  this.initQueryParam = Object.assign(this.initQueryParam, getterParams || {})
+                } catch (e) {
+                  this.$message.error('数据初始化JS增强：onlineInitQueryParamGetter，执行异常！')
+                  console.error(e)
+                  reject(e)
+                  return
                 }
               }
               // 初始化传递的查询条件
@@ -815,7 +829,7 @@ export default {
             // 检查是否是流程
             this.hasBpmStatusFilter()
             // 初始化查询条件，这里需要等待先加载
-            await this.initQueryInfo()
+            await this.initQueryInfo(res.result.onlineInitQueryParamGetter)
             // 加载新路由，清空checkbox选中
             this.table.selectedRowKeys = []
           } else {
@@ -1145,7 +1159,7 @@ export default {
         this.loadData(1)
       },
       searchReset() {
-        this.queryParam = {}
+        this.queryParam = { ...this.initQueryParam }
         this.loadData(1)
       },
       handleToggleSearch() {
