@@ -13,7 +13,8 @@
       ref="realForm"
     />
     <!--嵌入流程审批组件-->
-    <task-module
+    <component
+      :is="realTaskModule"
       v-if="formBpm && ready && onlineFormConfig.showDealBlock"
       :show-steps="false"
       :save-form="(throwEx, buttonName, showError) => saveAllData(true, buttonName, true)"
@@ -51,6 +52,13 @@ export default {
     // kForm表单的展示形式
     mode() {
       return (this.formData && this.formData.disabled) ? 'detail' : 'edit'
+    },
+    realTaskModule() {
+      console.log('加载动态审批组件', this.formData.customTaskModule)
+      if (this.formData.customTaskModule) {
+        return () => import(`@/views/${this.formData.customTaskModule}.vue`)
+      }
+      return 'TaskModule'
     }
   },
   data() {

@@ -325,7 +325,13 @@
       <bind-bpm :parent="vm" ref="bindBpm"></bind-bpm>
 
       <!--嵌入流程审批组件-->
-      <task-module v-if="showDealBlock && onlineFormData" :show-steps="false" :save-form="preSaveForm" :formData="onlineFormData" @complete="$emit('complete')" />
+      <component
+        :is="realTaskModule"
+        v-if="showDealBlock && onlineFormData"
+        :show-steps="false"
+        :save-form="preSaveForm"
+        :formData="onlineFormData"
+        @complete="$emit('complete')" />
     </div>
   </a-card>
 </template>
@@ -364,7 +370,7 @@ export default {
       AutoDesformDataFullScreen,
       BindBpm,
       BindBpmShowMyTask,
-      BindBpmButton,
+      BindBpmButton
     },
     props: {
       // 流程表单data
@@ -544,6 +550,13 @@ export default {
       }
     },
     computed: {
+      realTaskModule() {
+        console.log('加载动态审批组件', this.formData.customTaskModule)
+        if (this.formData.customTaskModule) {
+          return () => import(`@/views/${this.formData.customTaskModule}.vue`)
+        }
+        return 'TaskModule'
+      },
       rowSelectionConfig: function() {
         if (!this.checkboxFlag) {
           return null

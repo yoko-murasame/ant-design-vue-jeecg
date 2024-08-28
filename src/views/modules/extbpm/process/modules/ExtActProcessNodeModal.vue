@@ -85,13 +85,14 @@
           v-show="['2', '4'].includes(form.getFieldValue('modelAndViewType'))"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="Online查询筛选参数获取器（JS增强支持await）">
+          label="初始化表单参数Getter">
           <j-code-editor
             ref="codeEditor"
             language="javascript"
             v-decorator="['onlineInitQueryParamGetter', validatorRules.onlineInitQueryParamGetter]"
             :fullScreen="true"
             style="min-height: 100px"/>
+          <span style="color: red;font-size: 12px">备注：JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。</span>
         </a-form-item>
         <!--<a-form-item
           :labelCol="labelCol"
@@ -104,6 +105,15 @@
         </a-form-item>
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否显示流程图模块">
           <a-switch checked-children="是" un-checked-children="否" v-decorator="['showProcess', validatorRules.showProcess]" />
+        </a-form-item>
+        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否显示驳回按钮">
+          <a-switch checked-children="是" un-checked-children="否" v-decorator="['showReject', validatorRules.showReject]" />
+        </a-form-item>
+        <a-form-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="自定义任务处理模块">
+          <a-input placeholder="自定义任务处理模块" v-decorator="['customTaskModule', validatorRules.customTaskModule]" />
         </a-form-item>
         <a-form-item
           :labelCol="labelCol"
@@ -155,6 +165,8 @@ export default {
           onlineCode: { rules: [{ required: false, message: '请选择Online编码!' }] },
           showTask: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示任务处理模块!' }], initialValue: true },
           showProcess: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示流程图模块!' }], initialValue: true },
+          showReject: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示驳回按钮!' }], initialValue: false },
+          customTaskModule: { rules: [{ required: false, message: '自定义任务处理模块!' }] },
           onlineFormConfig: { rules: [{ required: false, message: '请配置参数!' }] },
           onlineInitQueryParamGetter: { rules: [{ required: false, message: '请配置初始化参数增强!' }] }
         },
@@ -249,6 +261,7 @@ export default {
           // 时间格式化
           this.$refs.codeEditor._getCoder().then(() => {
             this.form.setFieldsValue(pick(this.model,
+              'showReject', 'customTaskModule',
               'showTask', 'showProcess', 'onlineCode', 'onlineFormConfig', 'onlineInitQueryParamGetter',
               'modelAndViewType', 'formId', 'processId', 'processNodeCode',
               'processNodeName', 'modelAndView', 'modelAndViewMobile', 'nodeTimeout', 'nodeBpmStatus'))

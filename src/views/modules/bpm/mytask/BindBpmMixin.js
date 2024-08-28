@@ -358,6 +358,8 @@ export default {
             modelAndViewType: res.result.modelAndViewType,
             showTask: res.result.showTask,
             showProcess: res.result.showProcess,
+            showReject: res.result.showReject,
+            customTaskModule: res.result.customTaskModule,
             onlineCode: res.result.onlineCode,
             onlineFormConfig: res.result.onlineFormConfig,
             onlineInitQueryParamGetter: res.result.onlineInitQueryParamGetter
