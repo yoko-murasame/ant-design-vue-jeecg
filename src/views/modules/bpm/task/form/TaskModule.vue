@@ -2,7 +2,7 @@
   <div style="background: #ffffff">
     <!-- 步骤条 -->
     <a-spin :spinning="loading">
-      <a-card>
+      <a-card v-if="showSteps">
         <a-steps progressDot :current="stepIndex" style="padding: 10px" size="default">
           <template v-if="resultObj.bpmLogListCount >3">
             <a-step>
@@ -318,9 +318,8 @@
 </template>
 
 <script>
-import { getAction, getFileAccessHttpUrl, httpAction } from '@/api/manage'
-import { initDictOptions } from '@/components/dict/JDictSelectUtil'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { getFileAccessHttpUrl } from '@/api/manage'
+import { TaskModuleMixin } from '@views/modules/bpm/mixins/TaskModuleMixin'
 import AListItem from 'ant-design-vue/es/list/Item'
 import Vue from 'vue'
 import JEllipsis from '../../../../../components/jeecg/JEllipsis.vue'
@@ -328,6 +327,7 @@ import JUpload from '../../../../../components/jeecg/JUpload'
 import SelectUserModal from './SelectUserModal'
 
 export default {
+  mixins: [TaskModuleMixin],
   components: {
     JUpload,
     JEllipsis,
@@ -335,58 +335,16 @@ export default {
     SelectUserModal
   },
   name: 'TaskModule',
-  props: {
-    formData: {
-      type: Object,
-      default() {
-        return {}
-      }
-    },
-    /**
-     * 流程按钮提交前会触发，表单自己实现相应的保存事件
-     */
-    saveForm: {
-      type: Function,
-      default() {
-        // 两个参数，flag为表单的提交标识，可能是123去判断是否发起流程；buttonName为当前审批节点用户点击的按钮名称
-        return async(flag, buttonName) => {}
-      }
-    }
-  },
   data() {
     return {
       parent: null,
-      url: {
-        getProcessTaskTransInfo: '/act/task/getProcessTaskTransInfo',
-        processComplete: '/act/task/processComplete',
-        upload: window._CONFIG['domianURL'] + '/sys/common/upload'
-      },
-      headers: {},
-      resultObj: {},
-      checkedNext: false,
       transition: [],
       hqUserSelectList: [],
       ccUserSelectList: [],
-      remarksDictOptions: [],
-      model: {
-        taskId: '',
-        nextnode: '',
-        nextCodeCount: '',
-        reason: '已完成', // 修改默认处理意见
-        processModel: 1,
-        rejectModelNode: '',
-        nextUserName: '',
-        nextUserId: '',
-        ccUserIds: '',
-        ccUserRealNames: '',
-        fileList: ''
-      },
       bodyStyle: {
         padding: '10px'
       },
-      checkedCc: false,
-      fileList: [],
-      loading: false
+      checkedCc: false
     }
   },
   computed: {
@@ -441,44 +399,8 @@ export default {
       console.log('handleChangeSelect', value)
       this.model.reason = value
     },
-    initDictConfig() {
-      // 初始化字典 - 性别
-      initDictOptions('approval_remarks').then((res) => {
-        if (res.success) {
-          this.remarksDictOptions = res.result
-        }
-      })
-    },
     getFileDownloadUrl: function (path) {
       return getFileAccessHttpUrl(path)
-    },
-    // 此方法已作废
-    handleChange2(info) {
-      this.fileList = []
-      let fileList = info.fileList
-      // fileList = fileList.slice(-2);
-      fileList = fileList.map((file) => {
-        if (file.response) {
-          file.url = file.response.message
-        }
-        return file
-      })
-      fileList = fileList.filter((file) => {
-        console.log('-----fileList response-----', file.response)
-        if (file.response) {
-          return file.response.success === true
-        }
-        return false
-      }).map((file) => {
-        var fileJson = {
-          fileName: file.name,
-          filePath: file.url,
-          fileSize: file.size
-        }
-        this.fileList.push(fileJson)
-      })
-      this.model.fileList = JSON.stringify(this.fileList)
-      console.log('-----fileList-----', this.model.fileList)
     },
     handleCheckedNextChange(e) {
       this.checkedNext = e.target.checked
@@ -487,99 +409,6 @@ export default {
     handleCheckedCcChange(e) {
       this.checkedCc = e.target.checked
       this.ccUserSelectReset()
-    },
-    getProcessTaskTransInfo(formData) {
-      console.log('getProcessTaskTransInfo', formData)
-      var params = { taskId: formData.taskId }// 查询条件
-      this.loading = true
-      getAction(this.url.getProcessTaskTransInfo, params).then((res) => {
-        if (res.success) {
-          console.log('流程流转信息', res)
-          this.resultObj = res.result
-        }
-        this.loading = false
-      }).finally(() => {
-        this.loading = false
-      })
-    },
-    async handleProcessComplete(nextnode, buttonName = '确认提交') {
-      const that = this
-      console.log('流程办理数据：', this.model)
-      if (!this.model.reason || this.model.reason.length === 0) {
-        this.$message.warning('请填写处理意见')
-        return
-      }
-      if (nextnode) {
-        this.model.nextnode = nextnode
-      }
-      var method = 'post'
-      this.$confirm({
-        title: '提示',
-        content: buttonName === '确认提交' ? '确认提交审批吗?' : `确认${buttonName}吗?`,
-        okText: '确定',
-        cancelText: '取消',
-        onOk: async function () {
-          // 预校验表单
-          try {
-            if (that.model.processModel !== 3) {
-              await that.saveForm(null, buttonName)
-            }
-          } catch (e) {
-            console.error('流程保存错误', e)
-            console.log('流转信息', that.resultObj)
-            return
-          }
-          that.loading = true
-          that.model.fileList = JSON.stringify(that.fileList)
-          httpAction(that.url.processComplete, that.model, method).then((res) => {
-            if (res.success) {
-              // that.$message.success(res.message)
-              that.$emit('complete')
-            } else {
-              // that.$message.error(res.message);
-              // 明显点的提示框
-              const h = that.$createElement
-              let secondsToGo = 30
-              const modal = that.$error({
-                title: '错误消息',
-                // content: `${res.message}\n该提示将在 ${secondsToGo} 秒后自动关闭`
-                content: h('div', {}, [
-                  h('p', res.message),
-                  h('div', `该提示将在 ${secondsToGo} 秒后自动关闭`)
-                ])
-              })
-              const interval = setInterval(() => {
-                secondsToGo -= 1
-                modal.update({
-                  // content: `${res.message}\n该提示将在 ${secondsToGo} 秒后自动关闭`
-                  content: h('div', {}, [
-                    h('p', res.message),
-                    h('div', `该提示将在 ${secondsToGo} 秒后自动关闭`)
-                  ])
-                })
-              }, 1000)
-              setTimeout(() => {
-                clearInterval(interval)
-                modal.destroy()
-              }, secondsToGo * 1000)
-              // 自动勾选选人按钮
-              that.checkedNext = true
-            }
-          }).finally(() => {
-            that.loading = false
-            // that.close();
-          })
-        }
-      })
-    },
-    handleManyProcessComplete() {
-      if (this.model.processModel == 3) {
-        if (!this.model.rejectModelNode || this.model.rejectModelNode.length == 0) {
-          this.$message.warning('请选择驳回节点')
-          return
-        }
-      }
-      this.handleProcessComplete()
     },
     selectHqUserOK: function (data) {
       this.hqUserSelectList = data
@@ -599,14 +428,6 @@ export default {
     ccUserSelectReset() {
       this.ccUserSelectList = []
     }
-  },
-  created() {
-    const token = Vue.ls.get(ACCESS_TOKEN)
-    this.headers = { 'X-Access-Token': token }
-    console.log('任务办理组件数据：', this.formData)
-    this.model.taskId = this.formData.taskId
-    this.getProcessTaskTransInfo(this.formData)
-    this.initDictConfig()
   }
 }
 </script>

@@ -68,7 +68,7 @@
           <a-icon type="user"/>
           <span>任务处理</span>
         </span>
-        <task-module :save-form="preSaveForm" :formData="formData" @complete="completeProcess"></task-module>
+        <task-module :show-steps="true" :save-form="preSaveForm" :formData="formData" @complete="completeProcess"></task-module>
       </a-tab-pane>
 
       <a-tab-pane key="3" v-if="formData.showProcess">

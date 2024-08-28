@@ -13,8 +13,9 @@
       ref="realForm"
     />
     <!--嵌入流程审批组件-->
-    <task-module-for-online
+    <task-module
       v-if="formBpm && ready && onlineFormConfig.showDealBlock"
+      :show-steps="false"
       :save-form="(throwEx, buttonName, showError) => saveAllData(true, buttonName, true)"
       :formData="formData"
       @complete="$emit('complete')" />
@@ -26,12 +27,12 @@
 import DesformView from '@comp/online/desform/DesformView'
 import { createAsyncJsEnhanceFunction } from '@comp/yoko/kform/CustomMethods'
 import BindBpmFormMixin from '@views/modules/bpm/mytask/BindBpmFormMixin'
-import TaskModuleForOnline from '@views/modules/bpm/task/form/TaskModuleForOnline.vue'
+import TaskModule from '@views/modules/bpm/task/form/TaskModule'
 
 export default {
   name: 'KFormBpmForm',
   mixins: [BindBpmFormMixin],
-  components: { TaskModuleForOnline, DesformView },
+  components: { TaskModule, DesformView },
   props: {
     // 流程表单data
     formData: {

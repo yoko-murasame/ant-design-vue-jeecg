@@ -325,7 +325,7 @@
       <bind-bpm :parent="vm" ref="bindBpm"></bind-bpm>
 
       <!--嵌入流程审批组件-->
-      <task-module-for-online v-if="showDealBlock && onlineFormData" :save-form="preSaveForm" :formData="onlineFormData" @complete="$emit('complete')" />
+      <task-module v-if="showDealBlock && onlineFormData" :show-steps="false" :save-form="preSaveForm" :formData="onlineFormData" @complete="$emit('complete')" />
     </div>
   </a-card>
 </template>
@@ -347,8 +347,7 @@ import BindBpm from '@views/modules/bpm/mytask/BindBpm'
 import BindBpmButton from '@views/modules/bpm/mytask/BindBpmButton'
 import BindBpmOnlineMixin from '@views/modules/bpm/mytask/BindBpmOnlineMixin'
 import BindBpmShowMyTask from '@views/modules/bpm/mytask/BindBpmShowMyTask'
-import TaskModule from '@views/modules/bpm/task/form/TaskModule.vue'
-import TaskModuleForOnline from '@views/modules/bpm/task/form/TaskModuleForOnline'
+import TaskModule from '@views/modules/bpm/task/form/TaskModule'
 // eslint-disable-next-line camelcase
 import lodash_object from 'lodash'
 import Vue from 'vue'
@@ -366,7 +365,6 @@ export default {
       BindBpm,
       BindBpmShowMyTask,
       BindBpmButton,
-      TaskModuleForOnline
     },
     props: {
       // 流程表单data
