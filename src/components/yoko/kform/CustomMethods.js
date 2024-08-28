@@ -77,6 +77,24 @@ export const getCurrentDate = (format = 'YYYY-MM-DD') => {
 }
 
 /**
+ * 获取在线表单列表数据，同online列表接口，支持搜索参数和分页
+ * @param onlineCode online表单配置地址的code
+ * @param params 搜索参数，如：{name:'张三'}，分页也在这里
+ * @returns {Promise<*>}
+ */
+export const getOnlineDataList = async (onlineCode, params = {}) => {
+  if (!onlineCode) {
+    throw new Error('onlineCode不能为空')
+  }
+  params.needList = 'id'
+  params.pageSize = params.pageSize || 10
+  params.pageNo = params.pageNo || 1
+  const { result, success, message } = await getAction('/online/cgform/api/getData/' + onlineCode, params)
+  !success && Vue.prototype.$message.error(message)
+  return result
+}
+
+/**
  * 获取表单数据
  * @param id 主键
  * @param tableName 表名
@@ -319,7 +337,7 @@ export const getUserByUsername = (username) => {
  */
 export const methodsFunc = [
   getCurrentRealname, getDepartmentByOrgCode, getCurrentDepartment,
-  getCurrentDate, myRequest, getFullFormData,
+  getCurrentDate, myRequest, getFullFormData, getOnlineDataList,
   updateFormData, sendTemplateAnnouncement, generateCodeByRule,
   saveBusinessGeometryDataToSupermapFeatures,
   getUserByUsername
@@ -327,7 +345,7 @@ export const methodsFunc = [
 
 export const methodsNames = [
   'getCurrentRealname', 'getDepartmentByOrgCode', 'getCurrentDepartment',
-  'getCurrentDate', 'myRequest', 'getFullFormData',
+  'getCurrentDate', 'myRequest', 'getFullFormData', 'getOnlineDataList',
   'updateFormData', 'sendTemplateAnnouncement', 'generateCodeByRule',
   'saveBusinessGeometryDataToSupermapFeatures',
   'getUserByUsername'

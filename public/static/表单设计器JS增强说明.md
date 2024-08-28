@@ -64,6 +64,8 @@ const myRequest = await myRequest({
 
 > `getCurrentDate`：获取当前日期，默认format参数为：`YYYY-MM-DD`
 
+> `getOnlineDataList`：获取在线表单列表数据，同online列表接口，支持搜索参数和分页，参数为：onlineCode：online表单配置地址的code；params 搜索参数，如：{name:'张三'}，分页也在这里
+
 > `getFullFormData`：获取完整的表单数据，参数为：id 主键，tableName 表名
 
 > `updateFormData`：更新表单数据，参数为：code online表单的配置地址中的code，data 需要更新的表单数据（必须包含id字段且有值）
@@ -86,11 +88,12 @@ const depts = await getDepartmentByOrgCode('A01,A01A01')
 const dept = await getCurrentDepartment()
 const dateStr = await getCurrentDate()
 const timeStr = await getCurrentDate('YYYY-MM-DD HH:mm:ss')
+const onlineDataList = await getOnlineDataList('online表单配置地址的code', {}) // 查询条件和分页都放这里
 const fullData = await getFullFormData('id', 'table_name')
 const updateId = await updateFormData('code', { id: '1', name: 'yoko' })
 await sendTemplateAnnouncement('yoko', 'yoko,admin', '模板消息标题', 'template_code', { name: 'yoko', text: '随便写点什么' }, 'DINGTALK', '请查收消息！')
 const code = await generateCodeByRule('rule_code', {})
-console.log('默认工具', realname, depts, dept, dateStr, timeStr, fullData, updateId, code)
+console.log('默认工具', realname, depts, dept, dateStr, timeStr, onlineDataList, fullData, updateId, code)
 ```
 
 > `saveBusinessGeometryDataToSupermapFeatures`：保存业务几何数据到超图空间表，参数为（使用请参考下文“天地图-点、线、面模式”）：
