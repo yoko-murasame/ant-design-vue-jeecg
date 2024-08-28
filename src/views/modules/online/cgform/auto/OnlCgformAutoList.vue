@@ -738,9 +738,12 @@ export default {
               // 参数JS增强
               if (onlineInitQueryParamGetter && onlineInitQueryParamGetter.trim() !== '') {
                 try {
-                  const func = createAsyncJsEnhanceFunction(this, onlineInitQueryParamGetter, ['queryParam'], [this.queryParam])
+                  const func = createAsyncJsEnhanceFunction(this, onlineInitQueryParamGetter,
+                    ['queryParam', 'initQueryParam'],
+                    [this.queryParam, this.initQueryParam])
                   const getterParams = await func()
-                  this.initQueryParam = Object.assign(this.initQueryParam, getterParams || {})
+                  // FIXME 其实流程变量优先级更高，放前面，这里自己看情况调整吧
+                  this.onlineFormConfig.initQueryParam = this.initQueryParam = Object.assign(getterParams || {}, this.initQueryParam)
                 } catch (e) {
                   this.$message.error('数据初始化JS增强：onlineInitQueryParamGetter，执行异常！')
                   console.error(e)

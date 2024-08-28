@@ -423,7 +423,7 @@ export default {
      * @param {*} value
      * @param {*} key
      */
-    handleChange(value, key) {
+    async handleChange(value, key) {
       // console.log(value, key)
       // const formData = this.$refs.kfb.getData()
       // formData[key] = value
@@ -435,14 +435,22 @@ export default {
         let afterDataChange = config.afterDataChange
         if (afterDataChange.hasOwnProperty(key)) {
           let funcStr = afterDataChange[key]
-          return createAsyncJsEnhanceFunction(
-            that,
-            funcStr,
-            ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
-              'hide', 'show', 'disable', 'enable', 'reset'],
-            [value, key, that.data, that.getData, that.setData, that.setOptions,
-              that.hide, that.show, that.disable, that.enable, that.reset])
-          .call()
+          if (!funcStr || funcStr.trim() === '') {
+            return Promise.resolve()
+          }
+          try {
+            const res = await createAsyncJsEnhanceFunction(
+              that,
+              funcStr,
+              ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
+                'hide', 'show', 'disable', 'enable', 'reset'],
+              [value, key, that.data, that.getData, that.setData, that.setOptions,
+                that.hide, that.show, that.disable, that.enable, that.reset])
+            .call()
+            return res
+          } catch (e) {
+            this.$message.error(e)
+          }
         }
       }
     }

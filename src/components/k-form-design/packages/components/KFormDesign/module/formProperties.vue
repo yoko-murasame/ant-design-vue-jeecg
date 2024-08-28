@@ -103,19 +103,43 @@
           <kCheckbox v-model="config.hideRequiredMark" label="隐藏必选标记" />
         </a-form-item>
         <a-form-item label="表单JS-handleMounted-数据填充前调用" class="js-help">
-          <a-textarea v-model="config.handleMounted" label="handleMounted" />
+          <!--<a-textarea v-model="config.handleMounted" label="handleMounted" />-->
+          <j-code-editor
+            ref="codeEditor"
+            language="javascript"
+            v-model="config.handleMounted"
+            :fullScreen="true"
+            style="min-height: 2vh"/>
           <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
         </a-form-item>
         <a-form-item label="表单JS-handleSetData-数据填充后调用" class="js-help">
-          <a-textarea v-model="config.handleSetData" label="handleSetData" />
+          <!--<a-textarea v-model="config.handleSetData" label="handleSetData" />-->
+          <j-code-editor
+            ref="codeEditor"
+            language="javascript"
+            v-model="config.handleSetData"
+            :fullScreen="true"
+            style="min-height: 2vh"/>
           <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
         </a-form-item>
         <a-form-item label="表单JS-beforeSubmit-表单提交前调用" class="js-help">
-          <a-textarea v-model="config.beforeSubmit" label="beforeSubmit" />
+          <!--<a-textarea v-model="config.beforeSubmit" label="beforeSubmit" />-->
+          <j-code-editor
+            ref="codeEditor"
+            language="javascript"
+            v-model="config.beforeSubmit"
+            :fullScreen="true"
+            style="min-height: 2vh"/>
           <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
         </a-form-item>
         <a-form-item label="表单JS-afterSubmit-表单提交后调用" class="js-help">
-          <a-textarea v-model="config.afterSubmit" label="afterSubmit" />
+          <!--<a-textarea v-model="config.afterSubmit" label="afterSubmit" />-->
+          <j-code-editor
+            ref="codeEditor"
+            language="javascript"
+            v-model="config.afterSubmit"
+            :fullScreen="true"
+            style="min-height: 2vh"/>
           <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
         </a-form-item>
         <a-form-item label="提示">

@@ -201,7 +201,11 @@ export default {
         e && e.preventDefault()
         try { await that.beforeSubmit() } catch (ex) {
           console.error('KFormBuild::beforeSubmit', ex)
-          that.$message.error('' + ex)
+          if (typeof ex === 'string') {
+            that.$message.error(ex)
+          } else {
+            that.$message.error('表单未完成！')
+          }
           reject(ex)
           return
         }
@@ -214,7 +218,11 @@ export default {
         const callback = async (id) => {
           try { await that.afterSubmit({ ...formData, id }) } catch (ex) {
             console.error('KFormBuild::afterSubmit', ex)
-            that.$message.error('' + ex)
+            if (typeof ex === 'string') {
+              that.$message.error(ex)
+            } else {
+              that.$message.error('数据保存后回调JS增强函数异常！')
+            }
             throw ex
           }
         }
@@ -227,12 +235,15 @@ export default {
       // 重置表单
       this.form.resetFields()
     },
-    getData(fields) {
+    getData(fields, throwEx = true) {
       // 提交函数，提供父级组件调用
+      if (throwEx === undefined) {
+        throwEx = true
+      }
       return new Promise((resolve, reject) => {
         try {
           this.form.validateFields(fields, (err, formValues) => {
-            if (err) {
+            if (err && throwEx) {
               reject(err)
               /**
                * @author: lizhichao<meteoroc@outlook.com>

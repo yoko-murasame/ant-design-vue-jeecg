@@ -123,7 +123,7 @@ if (captain_name) {
 **操作表单数据方法**
 
 * `setData`：设置表单数据
-* `getData`：获取表单数据，可传入参数 ['字段A', '字段B']
+* `getData`：获取表单数据，可传入参数1指定字段列表 ['字段A', '字段B']，参数2是否抛出异常 true/false
 * `hide`：隐藏表单字段
 * `show`：显示表单字段
 * `disable`：禁用表单字段
@@ -136,7 +136,7 @@ if (captain_name) {
 const newData = { id: '1', name: 'yoko' }
 const flag = await setData(newData)
 const nowData = await getData() // 支持
-const nowDataWithFields = await getData(['name', 'sex']) // 支持
+const nowDataWithFields = await getData(['name', 'sex'], false) // 支持, 参数false表示字段为空时不抛异常
 console.log('nowData', flag, nowData, nowDataWithFields)
 
 // 操作表单字段的方法是非异步的

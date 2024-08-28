@@ -401,15 +401,24 @@
 
         <!-- JS增强-数据值改变后调用 -->
         <a-form-item label="数据变更后调用" class="js-help">
-          <a-textarea v-model="funcStr" label="afterDataChange" @change="setJsHandleAfterDataChange" :rows="10" />
-          <!-- <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template> -->
+          <!--<a-textarea v-model="funcStr" label="afterDataChange" @change="setJsHandleAfterDataChange" :rows="10" />-->
+          <j-code-editor
+            ref="codeEditor"
+            language="javascript"
+            v-model="funcStr"
+            :fullScreen="true"
+            @change="setJsHandleAfterDataChange"
+            style="min-height: 2vh"/>
+          <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
         </a-form-item>
       </a-form>
     </div>
+    <js-form-enhance-help ref="jsHelp"></js-form-enhance-help>
   </div>
 </template>
 
 <script>
+
 /*
  * author kcz
  * date 2019-11-20
@@ -443,6 +452,7 @@ const ASwitch = pluginManager.getComponent('switch').component
 export default {
   name: 'formItemProperties',
   components: {
+    JsFormEnhanceHelp: () => import('@comp/yoko/kform/JsFormEnhanceHelp.vue'),
     KChangeOption,
     kCheckbox,
     ColorPicker,
@@ -679,17 +689,15 @@ export default {
       // console.log(this.selectItem.options)
     },
     setJsHandleAfterDataChange(e) {
-      console.log('11111', e.target.value)
-      let funModel = {
-        model: this.options.model,
-        funStr: e.target.value
-      }
+      console.log('setJsHandleAfterDataChange', e, this.config)
+      // let funModel = {
+      //   model: this.options.model,
+      //   funStr: e
+      // }
       if (!this.config.afterDataChange) {
         this.config.afterDataChange = {}
       }
-
-      let model = this.config.afterDataChange[this.selectItem.model] = e.target.value
-      console.log(this.config.afterDataChange)
+      this.config.afterDataChange[this.selectItem.model] = e
     },
     getControllerJs() {
       this.funcStr = ''

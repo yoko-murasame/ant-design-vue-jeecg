@@ -298,7 +298,8 @@
                     v-decorator="['onlineInitQueryParamGetter', validatorRules.onlineInitQueryParamGetter]"
                     :fullScreen="true"
                     style="min-height: 2vh"/>
-                  <span style="color: red;font-size: 12px">备注：JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。</span>
+                  <div style="color: red;font-size: 12px">备注：1、JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。</div>
+                  <div style="color: red;font-size: 12px">2、可使用变量：`initQueryParam`获取流程节点配置的初始化参数。</div>
                 </a-form-item>
               </a-col>
             </a-row>

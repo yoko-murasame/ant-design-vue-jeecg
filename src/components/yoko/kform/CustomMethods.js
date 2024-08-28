@@ -361,6 +361,10 @@ export const createAsyncJsEnhanceFunction = (ref, funStr, customArgsName = [], c
       const paramStr = argsText.reduce((str, arg, index) => {
         return `${str}let ${arg} = _arguments[${index}];\n`;
       }, '\n');
+      if (!funStr || !funStr.trim()) {
+        return Promise.reject('JS增强代码不能为空')
+      }
+      // eslint-disable-next-line no-eval
       return eval(`(async function(_arguments) {${paramStr}${funStr}\n}).call(ref, _arguments)`);
     } catch (e) {
       Vue.prototype.$message.error('JS增强代码执行失败 ' + e)
