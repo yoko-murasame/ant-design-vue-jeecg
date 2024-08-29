@@ -44,8 +44,8 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator">
-      <a-button v-if="buttonSwitch.add" @click="handleAdd" type="primary" icon="plus">{{ onlineFormConfig.addButtonName || '新增' }}</a-button>
-      <a-button v-if="buttonSwitch.import" @click="handleImportXls" type="primary" icon="upload">导入</a-button>
+      <a-button v-if="buttonSwitch.add" :disabled="buttonSwitch.disableAdd" @click="handleAdd" type="primary" icon="plus">{{ onlineFormConfig.addButtonName || '新增' }}</a-button>
+      <a-button v-if="buttonSwitch.import" :disabled="buttonSwitch.disableAdd" @click="handleImportXls" type="primary" icon="upload">导入</a-button>
       <a-button v-if="buttonSwitch.export" @click="handleExportXls" type="primary" icon="download">导出</a-button>
       <template v-if="cgButtonList && cgButtonList.length>0" v-for="(item,index) in cgButtonList">
         <a-button
@@ -77,6 +77,7 @@
 
       <a-button
         v-if="buttonSwitch.batch_delete"
+        :disabled="buttonSwitch.disableDelete"
         @click="handleDelBatch"
         v-show="table.selectedRowKeys.length > 0"
         ghost
@@ -160,7 +161,7 @@
             <!--流程未发起、或者已结束并且配置了可循环发起-->
             <template v-if="(record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null) ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
               <template v-if="buttonSwitch.update">
-                <a @click="handleEdit(record)">编辑</a>
+                <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">编辑</a>
                 <a-divider type="vertical"/>
               </template>
               <!--新版本审批进度功能-->
@@ -199,7 +200,7 @@
           <!--非流程-->
           <template v-else>
             <template v-if="buttonSwitch.update">
-              <a @click="handleEdit(record)">编辑</a>
+              <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">编辑</a>
               <a-divider type="vertical"/>
             </template>
           </template>
@@ -215,8 +216,8 @@
                     <a href="javascript:;" @click="startProcess(record)">提交流程</a>
                   </a-menu-item>
                   <a-menu-item v-if="buttonSwitch.delete">
-                    <a-popconfirm title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
-                      <a>删除</a>
+                    <a-popconfirm :disabled="buttonSwitch.disableDelete" title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
+                      <a :disabled="buttonSwitch.disableDelete">删除</a>
                     </a-popconfirm>
                   </a-menu-item>
                 </template>
@@ -269,8 +270,8 @@
                   <a href="javascript:;" @click="handleDetail(record)">详情</a>
                 </a-menu-item>
                 <a-menu-item v-if="buttonSwitch.delete">
-                  <a-popconfirm title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
-                    <a>删除</a>
+                  <a-popconfirm :disabled="buttonSwitch.disableDelete" title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
+                    <a :disabled="buttonSwitch.disableDelete">删除</a>
                   </a-popconfirm>
                 </a-menu-item>
               </template>
@@ -348,7 +349,7 @@ import { onlUtil } from '@/mixins/OnlineCommonUtil'
 import { mixinDevice } from '@/utils/mixin'
 import { filterObj } from '@/utils/util'
 import AutoDesformDataFullScreen from '@/views/modules/online/desform/auto/modules/AutoDesformDataFullScreen'
-import { createAsyncJsEnhanceFunction } from '@comp/yoko/kform/CustomMethods'
+import { createAsyncJsEnhanceFunction, createVue2Watcher } from '@comp/yoko/kform/CustomMethods'
 // 流程处理接入
 import BindBpm from '@views/modules/bpm/mytask/BindBpm'
 import BindBpmButton from '@views/modules/bpm/mytask/BindBpmButton'
@@ -482,6 +483,9 @@ export default {
         EnhanceJS: '',
         hideColumns: [],
         buttonSwitch: {
+          disableAdd: false,
+          disableEdit: false,
+          disableDelete: false,
           add: true,
           update: true,
           delete: true,
@@ -521,7 +525,9 @@ export default {
         // 可循环发起流程
         bpmCirculate: false,
         // 流程状态字段名
-        bpmStatusFieldName: 'bpm_status'
+        bpmStatusFieldName: 'bpm_status',
+        // 调用$watch api的监听fun结果，需要放入这里后，online表单改变时，去清空旧的监听
+        cachedUnWatchMap: {}
       }
     },
     created() {
@@ -625,6 +631,7 @@ export default {
       }
     },
     methods: {
+      // TODO 放入后端配置JS增强，可自定义实现流转前保存事件
       async preSaveForm(flag, buttonName) {
         // TODO 流程按钮提交前会触发，表单自己实现相应的保存事件
       },
@@ -811,7 +818,10 @@ export default {
             this.isDesForm = res.result.isDesForm
             this.desFormCode = res.result.desFormCode
             this.initCgButtonList(res.result.cgButtonList)
-            this.initCgEnhanceJs(res.result.enhanceJs)
+            // 创建vue2监听器
+            // createVue2Watcher(res.result.watcherJsStr, this.code, this.cachedUnWatchMap, this)
+            createVue2Watcher(`'queryParam.company': {handler(a, b) {console.log('测试监听器', a, b, this)}, deep: true, immediate: true}`, this.code, this.cachedUnWatchMap, this)
+            await this.initCgEnhanceJs(res.result.enhanceJs)
             this.initButtonSwitch(res.result.hideColumns)
             res.result.columns.forEach(column => {
               Object.keys(column).map(key => {
@@ -1181,7 +1191,7 @@ export default {
       getImportUrl() {
         return '/online/cgform/api/importXls/' + this.code
       },
-      initCgEnhanceJs(enhanceJs) {
+      async initCgEnhanceJs(enhanceJs) {
         // console.log("--onlineList-js增强",enhanceJs)
         const that = this
         try {
@@ -1190,7 +1200,7 @@ export default {
             // eslint-disable-next-line no-eval
             let Obj = eval(`(${enhanceJs})`)
             this.EnhanceJS = new Obj(getAction, postAction, deleteAction, that)
-            this.cgButtonJsHandler('created')
+            await this.cgButtonJsHandler('created')
           } else {
             this.EnhanceJS = ''
           }
@@ -1221,7 +1231,7 @@ export default {
        * 其余的代码，根据不同的 buttonCode 执行
        * @param buttonCode 方法名称
        */
-      cgButtonJsHandler(buttonCode) {
+      async cgButtonJsHandler(buttonCode) {
         // console.log('this.EnhanceJS', buttonCode, this.EnhanceJS, this.EnhanceJS[buttonCode])
         // console.log('this.EnhanceJS', typeof this.EnhanceJS[buttonCode] === 'function', typeof this.EnhanceJS[buttonCode])
         if (this.EnhanceJS[buttonCode]) {
@@ -1229,7 +1239,7 @@ export default {
           const keys = this.table.selectedRowKeys
           const rows = this.table.selectionRows
           const row = (rows || [])[0]
-          this.EnhanceJS[buttonCode].bind(this)(row, keys, rows)
+          await this.EnhanceJS[buttonCode].bind(this)(row, keys, rows)
           // FIXME 后端如果增强的类型是class对象，bind(this)后会改变指向，对老版本有影响
           // this.EnhanceJS[buttonCode](row, keys, rows)
         }
@@ -1286,7 +1296,8 @@ export default {
       },
       initButtonSwitch(hideColumns) {
         Object.keys(this.buttonSwitch).forEach(key => {
-          this.buttonSwitch[key] = true
+          // 以disable为开头的默认取消禁止，其余按钮默认开放
+          this.buttonSwitch[key] = !key.startsWith('disable')
         })
         if (hideColumns && hideColumns.length > 0) {
           Object.keys(this.buttonSwitch).forEach(key => {

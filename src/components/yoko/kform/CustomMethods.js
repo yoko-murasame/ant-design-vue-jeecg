@@ -393,6 +393,67 @@ export const createAsyncJsEnhanceFunction = (ref, funStr, customArgsName = [], c
 }
 
 /**
+ * 初始化js增强的监听器
+ * @param watcherJsStr Vue2的监听属性里怎么写就怎么写
+ * @param code 表单code
+ * @param cacheMap 缓存的监听器Map<code, Array<UnWatchedApi>>
+ * @param vm vue对象
+ */
+export const createVue2Watcher = (watcherJsStr, code, cacheMap, vm) => {
+  if (!watcherJsStr) {
+    return
+  }
+  try {
+    // eslint-disable-next-line no-eval
+    const WatcherFun = eval(`(function(){return {${watcherJsStr}}})`)
+    const WatcherObject = new WatcherFun()
+
+    // 当前online表单存在的监听器先取消
+    Object.keys(cacheMap).forEach(key => {
+      const unWatchedApi = cacheMap[key]
+      if (unWatchedApi && unWatchedApi.length) {
+        unWatchedApi.forEach(func => func())
+      }
+    })
+    if (!cacheMap[code]) {
+      cacheMap[code] = []
+    }
+    // 依次注册到Vue
+    Object.keys(WatcherObject).forEach(key => {
+      const func = WatcherObject[key]
+      // 函数形式直接注册
+      if (typeof func === 'function') {
+        // 校验是否是当前online的监听器
+        const preCheckWrapper = `(async function(nv, ov){console.log('js增强监听器增强::判断是否执行监听,当前表单code:', this.code, '注册的code:', '${code}');if(this.code !== '${code}'){return}return await func.bind(vm)(nv, ov)})`
+        // eslint-disable-next-line no-eval
+        const wrapperFunc = eval(preCheckWrapper)
+        console.log('初始化监听器', key)
+        const unWatched = vm.$watch('queryParam.company', wrapperFunc)
+        cacheMap[code].push(unWatched)
+      }
+      if (typeof func === 'object') {
+        if (func.hasOwnProperty('handler')) {
+          const { handler, deep, immediate } = func
+          // 校验是否是当前online的监听器
+          const preCheckWrapper = `(async function(nv, ov){console.log('js增强监听器增强::判断是否执行监听,当前表单code:', this.code, '注册的code:', '${code}');if(this.code !== '${code}'){return}return await handler.bind(vm)(nv, ov)})`
+          // eslint-disable-next-line no-eval
+          const wrapperFunc = eval(preCheckWrapper)
+          console.log('初始化监听器', key)
+          const unWatched = vm.$watch('queryParam.company', wrapperFunc, {
+            deep: deep || false,
+            immediate: immediate || false
+          })
+          cacheMap[code].push(unWatched)
+        }
+      }
+    })
+  } catch (e) {
+    console.error('初始化监听器失败', e)
+    Vue.prototype.$message.error('初始化监听器失败，请检查js增强监听器配置是否正确！和Vue2写法相同！')
+  }
+}
+
+/**
  * 扩展表单设计器自定义方法
  */
 const installer = {
@@ -406,6 +467,7 @@ const installer = {
       })
     }
     Vue.prototype.$createAsyncJsEnhanceFunction = createAsyncJsEnhanceFunction
+    Vue.prototype.$createVue2Watcher = createVue2Watcher
     // Vue.prototype.$getCurrentDepartment = getCurrentDepartment
     // Vue.prototype.$getCurrentRealname = getCurrentRealname
     // Vue.prototype.$getDepartmentByOrgCode = getDepartmentByOrgCode
