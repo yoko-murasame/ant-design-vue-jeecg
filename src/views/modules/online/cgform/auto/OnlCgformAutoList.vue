@@ -1186,8 +1186,9 @@ export default {
         const that = this
         try {
           if (enhanceJs) {
+            // FIXME 后端如果增强的类型是class对象，bind(this)后会改变指向，对老版本有影响
             // eslint-disable-next-line no-eval
-            let Obj = eval('(' + enhanceJs + ')')
+            let Obj = eval(`(${enhanceJs})`)
             this.EnhanceJS = new Obj(getAction, postAction, deleteAction, that)
             this.cgButtonJsHandler('created')
           } else {
@@ -1229,6 +1230,8 @@ export default {
           const rows = this.table.selectionRows
           const row = (rows || [])[0]
           this.EnhanceJS[buttonCode].bind(this)(row, keys, rows)
+          // FIXME 后端如果增强的类型是class对象，bind(this)后会改变指向，对老版本有影响
+          // this.EnhanceJS[buttonCode](row, keys, rows)
         }
       },
       cgButtonActionHandler(buttonCode) {
