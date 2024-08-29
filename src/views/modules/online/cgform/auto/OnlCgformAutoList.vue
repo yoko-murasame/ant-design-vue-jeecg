@@ -819,8 +819,7 @@ export default {
             this.desFormCode = res.result.desFormCode
             this.initCgButtonList(res.result.cgButtonList)
             // 创建vue2监听器
-            // createVue2Watcher(res.result.watcherJsStr, this.code, this.cachedUnWatchMap, this)
-            createVue2Watcher(`'queryParam.company': {handler(a, b) {console.log('测试监听器', a, b, this)}, deep: true, immediate: true}`, this.code, this.cachedUnWatchMap, this)
+            createVue2Watcher(res.result.onlineVueWatchJsStr, this.code, this.cachedUnWatchMap, this)
             await this.initCgEnhanceJs(res.result.enhanceJs)
             this.initButtonSwitch(res.result.hideColumns)
             res.result.columns.forEach(column => {

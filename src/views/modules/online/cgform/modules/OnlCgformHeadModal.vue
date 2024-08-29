@@ -291,8 +291,7 @@
                   :wrapperCol="threeCol.wrapper"
                   label="数据初始化JS增强">
                   <j-code-editor
-                    ref="codeEditor"
-                    :line-numbers="false"
+                    :line-numbers="true"
                     height="2vh"
                     language="javascript"
                     v-decorator="['onlineInitQueryParamGetter', validatorRules.onlineInitQueryParamGetter]"
@@ -300,6 +299,23 @@
                     style="min-height: 2vh"/>
                   <div style="color: red;font-size: 12px">备注：1、JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。</div>
                   <div style="color: red;font-size: 12px">2、可使用变量：`initQueryParam`获取流程节点配置的初始化参数。</div>
+                </a-form-item>
+              </a-col>
+              <!--Vue2监听器JS增强-->
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="Vue2监听器JS增强">
+                  <j-code-editor
+                    :line-numbers="true"
+                    height="2vh"
+                    language="javascript"
+                    v-decorator="['onlineVueWatchJsStr', validatorRules.onlineVueWatchJsStr]"
+                    :fullScreen="true"
+                    style="min-height: 2vh"/>
+                  <div style="color: red;font-size: 12px">备注：Vue的watch监听器怎么写这里就怎么写！this指向当前Online列表组件！</div>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -513,7 +529,8 @@ export default {
             rules: [{ required: true, message: '请输入序号！' }]
           },
           desFormCode: { rules: [{ required: true, message: '请输入表单设计器编码!' }] },
-          onlineInitQueryParamGetter: { rules: [{ required: false, message: '请编写数据初始化JS增强!' }] }
+          onlineInitQueryParamGetter: { rules: [{ required: false, message: '请编写数据初始化JS增强!' }] },
+          onlineVueWatchJsStr: { rules: [{ required: false, message: '请编写Vue2监听器JS增强!' }] }
         },
         url: {
           add: '/online/cgform/head/add',
@@ -614,7 +631,8 @@ export default {
           'tableType', 'tableVersion', 'tableTxt', 'isCheckbox', 'isDbSynch',
           'isPage', 'isTree', 'idSequence', 'idType', 'queryMode', 'relationType',
           'subTableStr', 'tabOrderNum', 'treeParentIdField', 'treeIdField', 'treeFieldname',
-          'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode', 'onlineInitQueryParamGetter')
+          'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode', 'onlineInitQueryParamGetter',
+          'onlineVueWatchJsStr')
         this.tableJsonGetHelper(pickAfter)
         this.initialAllShowItem(pickAfter)
         this.$nextTick(() => {
