@@ -17,7 +17,7 @@
       :is="realTaskModule"
       v-if="formBpm && ready && onlineFormConfig.showDealBlock"
       :show-steps="false"
-      :form-vm="$refs.realForm ? $refs.realForm.$refs.kfb : null"
+      :form-vm="$refs.realForm ? $refs.realForm : null"
       :save-form="(throwEx, buttonName, showError) => saveAllData(true, buttonName, true)"
       :formData="formData"
       @complete="$emit('complete')" />

@@ -57,7 +57,7 @@
     created () {
     },
     mounted() {
-      window.addEventListener('message', this.handleMessage);
+      // window.addEventListener('message', this.handleMessage);
     },
     methods: {
       iframeurl () {

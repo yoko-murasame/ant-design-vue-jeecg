@@ -71,7 +71,7 @@
         <component
           :is="realTaskModule"
           :show-steps="true"
-          :form-vm="$refs.realForm ? $refs.realForm.$refs.realForm : null"
+          :form-vm="$refs.realForm ? $refs.realForm : null"
           :save-form="preSaveForm"
           :formData="formData"
           @complete="completeProcess" />
