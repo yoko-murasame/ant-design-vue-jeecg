@@ -92,7 +92,7 @@
             v-decorator="['onlineInitQueryParamGetter', validatorRules.onlineInitQueryParamGetter]"
             :fullScreen="true"
             style="min-height: 100px"/>
-          <span style="color: red;font-size: 12px">备注：JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。</span>
+          <span style="color: red;font-size: 12px">备注：1、JS增强支持await语法 2、已提供流程中的业务表单数据参数：`record` 3、最后一行代码务必return 对象，如：`return {}`。</span>
         </a-form-item>
         <!--<a-form-item
           :labelCol="labelCol"
@@ -216,7 +216,7 @@ export default {
             showDealBlock: true,
             // 初始化筛选参数
             initQueryParam: {},
-            // 确认提交的按钮名称
+            // 确认提交的按钮名称，多个用逗号隔开
             whichButtonToUse: '确认提交'
           }
           this.form.setFieldsValue({

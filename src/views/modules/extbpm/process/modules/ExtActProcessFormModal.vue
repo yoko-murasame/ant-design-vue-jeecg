@@ -93,12 +93,6 @@
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否循环发起">
           <a-switch checked-children="是" un-checked-children="否" v-decorator="['circulate', validatorRules.circulate]" />
         </a-form-item>
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否显示任务处理模块">
-          <a-switch checked-children="是" un-checked-children="否" v-decorator="['showTask', validatorRules.showTask]" />
-        </a-form-item>
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否显示流程图模块">
-          <a-switch checked-children="是" un-checked-children="否" v-decorator="['showProcess', validatorRules.showProcess]" />
-        </a-form-item>
 
       </a-form>
     </a-spin>
@@ -140,9 +134,7 @@ export default {
         flowStatusCol: { rules: [{ required: true, message: '请输入流程状态字段!' }] },
         titleExp: { rules: [{ required: true, message: '请输入标题表达式!' }] },
         processId: { rules: [{ required: true, message: '请输入流程ID!' }] },
-        circulate: { valuePropName: 'checked', rules: [{ required: false, message: '是否允许循环提交!' }], initialValue: false },
-        showTask: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示任务处理模块!' }], initialValue: true },
-        showProcess: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示流程图模块!' }], initialValue: true }
+        circulate: { valuePropName: 'checked', rules: [{ required: false, message: '是否允许循环提交!' }], initialValue: false }
       },
       url: {
         add: '/act/process/extActProcessForm/add',

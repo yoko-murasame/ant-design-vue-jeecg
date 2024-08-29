@@ -22,6 +22,13 @@ export const TaskModuleMixin = {
       }
     },
     /**
+     * 表单组件实例
+     */
+    formVm: {
+      type: Object,
+      default: null
+    },
+    /**
      * TODO 流程按钮提交前会触发，表单自己实现相应的保存事件
      */
     saveForm: {

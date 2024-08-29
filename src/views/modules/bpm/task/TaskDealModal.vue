@@ -68,7 +68,13 @@
           <a-icon type="user"/>
           <span>任务处理</span>
         </span>
-        <task-module :show-steps="true" :save-form="preSaveForm" :formData="formData" @complete="completeProcess"></task-module>
+        <component
+          :is="realTaskModule"
+          :show-steps="true"
+          :form-vm="$refs.realForm ? $refs.realForm.$refs.realForm : null"
+          :save-form="preSaveForm"
+          :formData="formData"
+          @complete="completeProcess" />
       </a-tab-pane>
 
       <a-tab-pane key="3" v-if="formData.showProcess">
@@ -104,7 +110,7 @@ export default {
   components: {
     DynamicLink,
     TaskModule,
-    ProcessModule,
+    ProcessModule
     // 解决父组件 BindBpm 被OnlCgformAutoList组件内部引入，存在重复引用导致的组件无法注册问题
     // DesformView: () => import('@/components/online/desform/DesformView')
   },
@@ -131,7 +137,9 @@ export default {
         // online表单code
         onlineCode: '',
         // online表单配置
-        onlineFormConfig: {}
+        onlineFormConfig: {},
+        // 自定义审批组件路径
+        customTaskModule: ''
       })
     }
   },
@@ -139,6 +147,13 @@ export default {
     // kForm表单的展示形式
     mode() {
       return (this.formData && this.formData.disabled) ? 'detail' : 'edit'
+    },
+    realTaskModule() {
+      console.log('加载动态审批组件', this.formData.customTaskModule)
+      if (this.formData.customTaskModule) {
+        return () => import(`@/views/${this.formData.customTaskModule}.vue`)
+      }
+      return 'TaskModule'
     },
     // 是否为组件
     isComp() {

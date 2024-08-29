@@ -17,6 +17,7 @@
       :is="realTaskModule"
       v-if="formBpm && ready && onlineFormConfig.showDealBlock"
       :show-steps="false"
+      :form-vm="$refs.realForm ? $refs.realForm.$refs.kfb : null"
       :save-form="(throwEx, buttonName, showError) => saveAllData(true, buttonName, true)"
       :formData="formData"
       @complete="$emit('complete')" />
@@ -118,8 +119,9 @@ export default {
           }
         }
         this.onlineFormConfig = Object.assign(this.onlineFormConfig, onlineFormConfig)
+        this.newDefaultData = { ...this.onlineFormConfig.initQueryParam }
         this.ready = true
-        console.log('渲染流程::kForm表单组件::KFormBpmForm', this.formData)
+        console.log('渲染流程::kForm表单组件::KFormBpmForm', this.formData, this.onlineFormConfig)
       }
     },
     /**
@@ -130,7 +132,7 @@ export default {
      * @returns {Promise<void>}
      */
     saveAllData(throwEx = true, buttonName, showError = false) {
-      if (this.formData.disabled || (buttonName && buttonName !== this.realUseButton)) {
+      if (this.formData.disabled || (buttonName && !~this.realUseButton.indexOf(buttonName))) {
         return Promise.resolve()
       }
       return new Promise(async(resolve, reject) => {
