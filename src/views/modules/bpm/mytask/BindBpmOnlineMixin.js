@@ -66,7 +66,9 @@ export default {
       currentTableName: '',
       // 流程跟踪过程的按钮展示文本
       trackName: '审批进度',
-      trackHisName: '审批历史'
+      trackHisName: '审批历史',
+      // 初始化参数，也会自动注入发起时的流程变量
+      initQueryParam: {}
     }
   },
   created() {
@@ -191,7 +193,8 @@ export default {
           flowCode,
           id: record.id,
           formUrl: that.formUrl,
-          formUrlMobile: that.formUrlMobile
+          formUrlMobile: that.formUrlMobile,
+          bpmVariables: that.initQueryParam || {}
         }
         postAction(that.url.startProcess, params).then(async res => {
           if (res.success) {
