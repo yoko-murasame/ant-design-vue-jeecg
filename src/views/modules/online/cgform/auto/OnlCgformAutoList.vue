@@ -537,6 +537,7 @@ export default {
         handler(v) {
           if (v) {
             console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听onlineFormData')
+            this.resetConfig()
             this.initOnlineBpmData()
             this.initAutoList()
           }
@@ -547,8 +548,9 @@ export default {
       '$route': {
         handler() {
           // 刷新参数放到这里去触发，就可以刷新相同界面了
-          console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听$route', this.$route.params.code)
           if (this.$route.params.code) {
+            this.resetConfig()
+            console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听$route::after', this.$route.params.code, JSON.stringify(this.onlineFormConfig), JSON.stringify(this.initQueryParam))
             this.initOnlineBpmData()
             this.initAutoList()
           }
@@ -634,6 +636,20 @@ export default {
       // TODO 放入后端配置JS增强，可自定义实现流转前保存事件
       async preSaveForm(flag, buttonName) {
         // TODO 流程按钮提交前会触发，表单自己实现相应的保存事件
+      },
+      /**
+       * 重置配置
+       * 主要搜索参数会互相影响
+       */
+      resetConfig() {
+        this.code = ''
+        this.showDealBlock = false
+        this.showQueryBlock = false
+        this.$set(this.onlineFormConfig, 'initQueryParam', {})
+        this.$set(this, 'initQueryParam', {})
+        this.$set(this, 'queryParam', {})
+        this.$set(this.queryParamsMap, this.code, {})
+        this.bpmCirculate = false
       },
       /**
        * 初始化Online流程展示列表
