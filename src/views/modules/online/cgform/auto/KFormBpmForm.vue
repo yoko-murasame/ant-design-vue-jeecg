@@ -105,12 +105,12 @@ export default {
         this.realUseButton = onlineFormConfig.whichButtonToUse || '确认提交'
 
         // 处理表单默认参数
-        const record = this.formData.records
+        const record = this.formData.records || this.formData.vars
         onlineFormConfig.initQueryParam = onlineFormConfig.initQueryParam || {}
         // 参数放入配置化getter函数，这里可以自己决定调用store等处理方式
         if (onlineInitQueryParamGetter && onlineInitQueryParamGetter.trim() !== '') {
           try {
-            const func = createAsyncJsEnhanceFunction(this, onlineInitQueryParamGetter, ['record'], [record])
+            const func = createAsyncJsEnhanceFunction(this, onlineInitQueryParamGetter, ['formData', 'record'], [this.formData, record])
             const getterParams = await func()
             onlineFormConfig.initQueryParam = Object.assign(onlineFormConfig.initQueryParam, getterParams || {})
           } catch (e) {

@@ -17,7 +17,10 @@ export const TaskModuleMixin = {
       default() {
         return {
           showReject: false,
-          taskId: ''
+          taskId: '',
+          onlineFormConfig: {
+            initQueryParam: {}
+          }
         }
       }
     },
