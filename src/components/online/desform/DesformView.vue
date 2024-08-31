@@ -7,6 +7,7 @@
       :value="formDataJson"
       :disabled="formDisabled || currentSavedResult !== null"
       :default-value="defaultValue"
+      :new-default-data="newDefaultData"
       :output-string="false"
       @change="handleChange" />
   </a-spin>
@@ -242,8 +243,10 @@ export default {
         this.defaultValue = { ...this.newDefaultData }
         return
       }
+      // 有id即是编辑操作
       const res = await getAction(`${this.url.getFormData}/${this.innerDesformCode}/${this.dataId}`)
-      this.defaultValue = { ...res.result, ...this.newDefaultData }
+      // 编辑操作优先以拿回来的数据为准
+      this.defaultValue = { ...this.newDefaultData, ...res.result }
       console.log('loadFormData', this.defaultValue)
     },
     reload() {

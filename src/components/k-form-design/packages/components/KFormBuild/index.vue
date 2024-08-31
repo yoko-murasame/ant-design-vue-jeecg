@@ -83,6 +83,11 @@ export default {
     defaultValue: {
       type: Object,
       default: () => ({})
+    },
+    // 来自流程或者online列表上文的默认数据
+    newDefaultData: {
+      type: Object,
+      default: () => ({})
     }
   },
   components: {
@@ -116,9 +121,9 @@ export default {
           this,
           afterSubmit,
           ['data', 'formConfig', 'setData', 'getData', 'setOptions',
-            'hide', 'show', 'disable', 'enable', 'reset', 'formData'],
+            'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newDefaultData'],
           [this.data, config, this.setData, this.getData, this.setOptions,
-            this.hide, this.show, this.disable, this.enable, this.reset, formData])
+            this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newDefaultData])
         .call()
       }
     },
@@ -137,9 +142,9 @@ export default {
           this,
           beforeSubmit,
           ['data', 'formConfig', 'setData', 'getData', 'setOptions',
-            'hide', 'show', 'disable', 'enable', 'reset'],
+            'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData'],
           [this.data, config, this.setData, this.getData, this.setOptions,
-            this.hide, this.show, this.disable, this.enable, this.reset])
+            this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData])
         .call()
       }
     },
@@ -158,9 +163,9 @@ export default {
             this,
             handleMounted,
             ['data', 'formConfig', 'setData', 'getData', 'setOptions',
-              'hide', 'show', 'disable', 'enable', 'reset'],
+              'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData'],
             [this.data, config, this.setData, this.getData, this.setOptions,
-              this.hide, this.show, this.disable, this.enable, this.reset])
+              this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData])
         .call()
       }
     },
@@ -179,9 +184,9 @@ export default {
             this,
             handleSetData,
             ['data', 'formConfig', 'setData', 'getData', 'setOptions',
-              'hide', 'show', 'disable', 'enable', 'reset'],
+              'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData'],
             [this.data, config, this.setData, this.getData, this.setOptions,
-              this.hide, this.show, this.disable, this.enable, this.reset])
+              this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData])
         .call()
       }
     },
