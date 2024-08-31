@@ -63,7 +63,7 @@ export default {
       if (this.formBpm === true) {
         let params = { id: this.formData.dataId }
         let { onlineFormConfig, onlineInitQueryParamGetter } = this.formData
-        console.log('渲染流程::online列表组件::OnlCgformAutoListBpmForm', this.formData)
+        console.log('渲染流程::online列表组件::OnlCgformAutoListBpmForm::before', JSON.parse(JSON.stringify(this.formData)))
         if (!onlineFormConfig || typeof onlineFormConfig !== 'object') {
           // 如果外部组件审批已开启，就默认不展示内嵌
           this.onlineFormConfig.showDealBlock = !this.formData.showTask
@@ -87,15 +87,16 @@ export default {
               try {
                 const func = createAsyncJsEnhanceFunction(this, onlineInitQueryParamGetter, ['record'], [record])
                 const getterParams = await func()
-                onlineFormConfig.initQueryParam = Object.assign(onlineFormConfig.initQueryParam, getterParams || {})
+                onlineFormConfig.initQueryParam = Object.assign(onlineFormConfig.initQueryParam, (getterParams || {}))
+                // console.log('getterParams', getterParams, JSON.parse(JSON.stringify(onlineFormConfig)))
               } catch (e) {
                 this.$message.error('流程节点配置错误，参数初始化函数：onlineInitQueryParamGetter，执行异常！')
                 console.error(e)
               }
             }
             this.onlineFormConfig = onlineFormConfig
+            console.log('渲染流程::online列表组件::OnlCgformAutoListBpmForm::after', JSON.parse(JSON.stringify(this.formData)))
             this.ready = true
-            console.log('渲染流程::online列表组件::OnlCgformAutoListBpmForm', this.formData)
           }
         })
       }
