@@ -118,6 +118,7 @@
             </a-tab-pane>
             <a-tab-pane :key="2" tab="控件属性设置">
               <formItemProperties
+                v-if="activeKey === 2"
                 class="form-item-properties"
                 :filedLists="filedLists"
                 :selectItem="selectItem"
@@ -389,7 +390,8 @@ export default {
       // 判断是否选中控件，如果选中则弹出属性面板，否则关闭属性面板
       if (record.key) {
         this.startType = record.type;
-        this.changeTab(2);
+        this.changeTab(1);
+        this.$nextTick(() => this.changeTab(2))
       } else {
         this.changeTab(1);
       }
