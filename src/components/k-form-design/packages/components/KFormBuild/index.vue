@@ -23,6 +23,7 @@
         :validatorError="validatorError"
         :key="index"
         @change="handleChange"
+        @myInput="handleMyInput"
         :disabled="disabled"/>
 
     </a-form>
@@ -374,6 +375,11 @@ export default {
     handleChange(value, key) {
       // 触发change事件
       this.$emit('change', value, key)
+    },
+    handleMyInput(value, key) {
+      // console.log('KFormBuild::handleMyInput', value, key)
+      // 触发input事件
+      this.$emit('myInput', value, key)
     }
   },
   mounted() {

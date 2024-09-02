@@ -13,7 +13,12 @@
     :bodyStyle="bodyStyle"
     wrapClassName="k-form-modal"
     :width="`${previewWidth}px`">
-    <k-form-build :value="jsonData" @change="handleChange" @submit="handleSubmit" ref="KFormBuild" />
+    <k-form-build
+      :value="jsonData"
+      @myInput="handleMyInput"
+      @change="handleChange"
+      @submit="handleSubmit"
+      ref="KFormBuild" />
     <jsonModel ref="jsonModel" />
   </a-modal>
 </template>
@@ -75,7 +80,7 @@ export default {
      * @param {*} key
      */
     async handleChange(value, key) {
-      // console.log('handleChange', value, key)
+      // console.log('监听表单change 事件', value, key)
       // const formData = await this.$refs.KFormBuild.getData()
       // formData[key] = value
       // this.$refs.KFormBuild.setData(formData)
@@ -92,12 +97,44 @@ export default {
             const res = await createAsyncJsEnhanceFunction(
               this,
               funcStr,
-              ['data', 'getData', 'setData', 'setOptions',
+              ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
                 'hide', 'show', 'disable', 'enable', 'reset'],
-              [this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData, this.$refs.KFormBuild.setOptions,
+              [value, key, this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData, this.$refs.KFormBuild.setOptions,
                 this.$refs.KFormBuild.hide, this.$refs.KFormBuild.show, this.$refs.KFormBuild.disable, this.$refs.KFormBuild.enable, this.$refs.KFormBuild.reset])
             .call()
             return res
+          } catch (e) {
+            this.$message.error(e)
+          }
+        }
+      }
+    },
+    async handleMyInput(value, key) {
+      // console.log('监听表单input 事件', value, key)
+      // const formData = await this.$refs.KFormBuild.getData()
+      // formData[key] = value
+      // this.$refs.KFormBuild.setData(formData)
+      // 判断是否有配置js
+      const { config } = this.jsonData
+      if (config.hasOwnProperty('afterDataInput')) {
+        let afterDataInput = config.afterDataInput
+        if (afterDataInput.hasOwnProperty(key)) {
+          let funcStr = afterDataInput[key]
+          if (!funcStr || funcStr.trim() === '') {
+            return Promise.resolve()
+          }
+          try {
+            console.log(funcStr, 'input执行')
+            const res = await createAsyncJsEnhanceFunction(
+              this,
+              funcStr,
+              ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
+                'hide', 'show', 'disable', 'enable', 'reset'],
+              [value, key, this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData, this.$refs.KFormBuild.setOptions,
+                this.$refs.KFormBuild.hide, this.$refs.KFormBuild.show, this.$refs.KFormBuild.disable, this.$refs.KFormBuild.enable, this.$refs.KFormBuild.reset])
+            .call()
+            console.log(res, 'input执行结果')
+            return Promise.resolve()
           } catch (e) {
             this.$message.error(e)
           }

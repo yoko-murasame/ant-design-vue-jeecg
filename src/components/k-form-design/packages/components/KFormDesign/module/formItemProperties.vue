@@ -400,14 +400,24 @@
         <JSelectMapProperties :select-item="selectItem"></JSelectMapProperties>
 
         <!-- JS增强-数据值改变后调用 -->
-        <a-form-item label="数据变更后调用" class="js-help">
-          <!--<a-textarea v-model="funcStr" label="afterDataChange" @change="setJsHandleAfterDataChange" :rows="10" />-->
+        <a-form-item label="数据变更后调用。`value`：回调值，`key`：组件id。" class="js-help">
           <j-code-editor
             ref="codeEditor"
             language="javascript"
-            v-model="funcStr"
+            v-model="onChangeFuncStr"
             :fullScreen="true"
             @change="setJsHandleAfterDataChange"
+            style="min-height: 2vh"/>
+          <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
+        </a-form-item>
+        <!-- JS增强-数据值Input后调用 -->
+        <a-form-item label="数据值Input后调用。`value`：回调值，`key`：组件id。" class="js-help">
+          <j-code-editor
+            ref="codeEditor"
+            language="javascript"
+            v-model="onInputFuncStr"
+            :fullScreen="true"
+            @change="setJsHandleAfterDataInput"
             style="min-height: 2vh"/>
           <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
         </a-form-item>
@@ -576,7 +586,8 @@ export default {
       }
       ],
       subtableShowDataSource: [],
-      funcStr: ''
+      onChangeFuncStr: '',
+      onInputFuncStr: ''
     }
   },
   computed: {
@@ -689,7 +700,7 @@ export default {
       // console.log(this.selectItem.options)
     },
     setJsHandleAfterDataChange(e) {
-      console.log('setJsHandleAfterDataChange', e, this.config)
+      // console.log('setJsHandleAfterDataChange', e, this.config)
       // let funModel = {
       //   model: this.options.model,
       //   funStr: e
@@ -699,16 +710,38 @@ export default {
       }
       this.config.afterDataChange[this.selectItem.model] = e
     },
-    getControllerJs() {
-      this.funcStr = ''
+    getChangeControllerJs() {
+      this.onChangeFuncStr = ''
       if (!this.config.afterDataChange) {
         return
       }
-      let funcStr = this.config.afterDataChange[this.selectItem.model]
-      if (funcStr) {
-        this.funcStr = funcStr
+      let onChangeFuncStr = this.config.afterDataChange[this.selectItem.model]
+      if (onChangeFuncStr) {
+        this.onChangeFuncStr = onChangeFuncStr
       }
-      console.log('funcStr', funcStr)
+      // console.log('onChangeFuncStr', onChangeFuncStr)
+    },
+    setJsHandleAfterDataInput(e) {
+      // console.log('setJsHandleAfterDataInput', e, this.config)
+      // let funModel = {
+      //   model: this.options.model,
+      //   funStr: e
+      // }
+      if (!this.config.afterDataInput) {
+        this.config.afterDataInput = {}
+      }
+      this.config.afterDataInput[this.selectItem.model] = e
+    },
+    getInputControllerJs() {
+      this.onInputFuncStr = ''
+      if (!this.config.afterDataInput) {
+        return
+      }
+      let onInputFuncStr = this.config.afterDataInput[this.selectItem.model]
+      if (onInputFuncStr) {
+        this.onInputFuncStr = onInputFuncStr
+      }
+      // console.log('onInputFuncStr', onInputFuncStr)
     }
   },
   watch: {
@@ -724,7 +757,8 @@ export default {
           // 判断是否绑定表单
           if (val.model) {
             this.subtableSelect(val.model)
-            this.getControllerJs()
+            this.getChangeControllerJs()
+            this.getInputControllerJs()
           }
         }
       }
