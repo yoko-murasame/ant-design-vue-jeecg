@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     initMap() {
-      let baseUrl = `/map.html#/?mode=${this.mode}`
+      let baseUrl = `${process.env.BASE_URL || '/'}map.html#/?mode=${this.mode}`
       if (this.mapUrl) {
         baseUrl = this.mapUrl + `?mode=${this.mode}`
       }
