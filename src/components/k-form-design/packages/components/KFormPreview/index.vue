@@ -76,6 +76,7 @@ export default {
     },
     /**
      * 监听表单change 事件
+     * 预览模式
      * @param {*} value
      * @param {*} key
      */
@@ -84,6 +85,7 @@ export default {
       // const formData = await this.$refs.KFormBuild.getData()
       // formData[key] = value
       // this.$refs.KFormBuild.setData(formData)
+      const that = this.$refs.KFormBuild
       // 判断是否有配置js
       const { config } = this.jsonData
       if (config.hasOwnProperty('afterDataChange')) {
@@ -95,7 +97,7 @@ export default {
           }
           try {
             const res = await createAsyncJsEnhanceFunction(
-              this,
+              that,
               funcStr,
               ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
                 'hide', 'show', 'disable', 'enable', 'reset'],
@@ -109,11 +111,18 @@ export default {
         }
       }
     },
+    /**
+     * 监听表单Input 事件
+     * 预览模式
+     * @param {*} value
+     * @param {*} key
+     */
     async handleMyInput(value, key) {
       // console.log('监听表单input 事件', value, key)
       // const formData = await this.$refs.KFormBuild.getData()
       // formData[key] = value
       // this.$refs.KFormBuild.setData(formData)
+      const that = this.$refs.KFormBuild
       // 判断是否有配置js
       const { config } = this.jsonData
       if (config.hasOwnProperty('afterDataInput')) {
@@ -124,17 +133,15 @@ export default {
             return Promise.resolve()
           }
           try {
-            console.log(funcStr, 'input执行')
             const res = await createAsyncJsEnhanceFunction(
-              this,
+              that,
               funcStr,
               ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
                 'hide', 'show', 'disable', 'enable', 'reset'],
               [value, key, this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData, this.$refs.KFormBuild.setOptions,
                 this.$refs.KFormBuild.hide, this.$refs.KFormBuild.show, this.$refs.KFormBuild.disable, this.$refs.KFormBuild.enable, this.$refs.KFormBuild.reset])
             .call()
-            console.log(res, 'input执行结果')
-            return Promise.resolve()
+            return res
           } catch (e) {
             this.$message.error(e)
           }

@@ -9,7 +9,9 @@
       :default-value="defaultValue"
       :new-default-data="newDefaultData"
       :output-string="false"
-      @change="handleChange" />
+      @change="handleChange"
+      @myInput="handleMyInput"
+    />
   </a-spin>
 </template>
 
@@ -423,6 +425,7 @@ export default {
     },
     /**
      * 监听表单change 事件
+     * 正是渲染
      * @param {*} value
      * @param {*} key
      */
@@ -438,6 +441,43 @@ export default {
         let afterDataChange = config.afterDataChange
         if (afterDataChange.hasOwnProperty(key)) {
           let funcStr = afterDataChange[key]
+          if (!funcStr || funcStr.trim() === '') {
+            return Promise.resolve()
+          }
+          try {
+            const res = await createAsyncJsEnhanceFunction(
+              that,
+              funcStr,
+              ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
+                'hide', 'show', 'disable', 'enable', 'reset'],
+              [value, key, that.data, that.getData, that.setData, that.setOptions,
+                that.hide, that.show, that.disable, that.enable, that.reset])
+            .call()
+            return res
+          } catch (e) {
+            this.$message.error(e)
+          }
+        }
+      }
+    },
+    /**
+     * 监听表单Input 事件
+     * 正式渲染
+     * @param {*} value
+     * @param {*} key
+     */
+    async handleMyInput(value, key) {
+      // console.log(value, key)
+      // const formData = this.$refs.kfb.getData()
+      // formData[key] = value
+      // this.$refs.kfb.setData(formData)
+      const that = this.$refs.kfb
+      // 判断是否有配置js
+      const { config } = this.formDataJson
+      if (that && config.hasOwnProperty('afterDataInput')) {
+        let afterDataInput = config.afterDataInput
+        if (afterDataInput.hasOwnProperty(key)) {
+          let funcStr = afterDataInput[key]
           if (!funcStr || funcStr.trim() === '') {
             return Promise.resolve()
           }
