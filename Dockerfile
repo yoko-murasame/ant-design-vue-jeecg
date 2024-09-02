@@ -94,6 +94,12 @@ CMD echo \
               proxy_read_timeout 7200s; \
               proxy_send_timeout 60s; \
           } \
+          # 先匹配非子应用，根目录访问 \
+          location / { \
+              root   $APP_1_PATH; \
+              index  index.html index.htm; \
+              try_files \$uri \$uri/ \index.html; \
+          } \
           # 假设部署目录中有onemap的子应用，登录页重定向到子应用onemap的页面 \
           # location = /sso/login { \
           #     rewrite ^/sso/login\$ /onemap/ permanent; \
@@ -102,7 +108,7 @@ CMD echo \
           # location = / { \
           #     return 301 /onemap/; \
           # } \
-          #解决Router(mode: 'history')模式下，刷新路由地址不能找到页面的问题 \
+          # 再匹配子应用，解决Router(mode: 'history')模式下，刷新路由地址不能找到页面的问题 \
           location ~* ^/(.+?)(/.*)?\$ { \
               root   $APP_1_PATH; \
               index  index.html index.htm; \
@@ -158,11 +164,11 @@ CMD echo \
           } \
           # 后端接口 \
           location ^~ /$API_CONTEXT_PATH/ { \
-              proxy_pass $API_PROXY_PASS; \
-              proxy_set_header Host $API_HOST:$APP_2_PORT; \
-              proxy_set_header API-GATEWAY-PROXY-PATH $API_GATEWAY_PROXY_PATH_APP_2; \
-              proxy_set_header X-Real-IP \$remote_addr; \
-              proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for; \
+              proxy_pass              $API_PROXY_PASS; \
+              proxy_set_header        Host $API_HOST:$APP_2_PORT; \
+              proxy_set_header        API-GATEWAY-PROXY-PATH $API_GATEWAY_PROXY_PATH_APP_2; \
+              proxy_set_header        X-Real-IP \$remote_addr; \
+              proxy_set_header        X-Forwarded-For \$proxy_add_x_forwarded_for; \
               proxy_http_version 1.1; \
               proxy_set_header Upgrade \$http_upgrade; \
               proxy_set_header Connection 'upgrade'; \
@@ -170,7 +176,13 @@ CMD echo \
               proxy_read_timeout 7200s; \
               proxy_send_timeout 60s; \
           } \
-          # 假设部署目录中有onemap的子应用，单点登录页重定向到子应用onemap的页面 \
+          # 先匹配非子应用，根目录访问 \
+          location / { \
+              root   $APP_2_PATH; \
+              index  index.html index.htm; \
+              try_files \$uri \$uri/ \index.html; \
+          } \
+          # 假设部署目录中有onemap的子应用，登录页重定向到子应用onemap的页面 \
           # location = /sso/login { \
           #     rewrite ^/sso/login\$ /onemap/ permanent; \
           # } \
@@ -178,7 +190,7 @@ CMD echo \
           # location = / { \
           #     return 301 /onemap/; \
           # } \
-          #解决Router(mode: 'history')模式下，刷新路由地址不能找到页面的问题 \
+          # 再匹配子应用，解决Router(mode: 'history')模式下，刷新路由地址不能找到页面的问题 \
           location ~* ^/(.+?)(/.*)?\$ { \
               root   $APP_2_PATH; \
               index  index.html index.htm; \
