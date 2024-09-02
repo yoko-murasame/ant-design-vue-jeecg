@@ -33,6 +33,7 @@ export const MapHandler = (Map) => {
           let coordinatesAry = [];
           coordinatesAry[0] = lngLat.lng;
           coordinatesAry[1] = lngLat.lat;
+          // console.log('点击定位', e)
           Vue.prototype.$bus.$emit('getPointLayer',coordinatesAry)
         },
         onCancel () {

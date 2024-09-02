@@ -16,7 +16,7 @@
       :lnglatSplitChar="lnglatSplitChar"
       :lnglatArrSplitChar="lnglatArrSplitChar"
       @ok="handleOK"
-      />
+    />
   </div>
 </template>
 
@@ -25,19 +25,19 @@ import mapLoction, { MODE_LINE, MODE_POINT, MODE_POLYGON } from './mapLoction'
 
 export default {
   components: {
-    mapLoction,
+    mapLoction
   },
   props: {
     modalWidth: {
       type: Number,
       default: 1000,
-      required: false,
+      required: false
     },
     // 保留精度
     precision: {
       type: Number,
       default: 4,
-      required: false,
+      required: false
     },
     record: {
       type: Object,
@@ -45,12 +45,12 @@ export default {
     },
     value: {
       type: String,
-      required: false,
+      required: false
     },
     disabled: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
     /**
      * 地图应用地址（额外服务单独部署）
@@ -58,7 +58,7 @@ export default {
     mapUrl: {
       type: String,
       required: false,
-      default: '',
+      default: ''
     },
     /**
      * 选择模式 point/line/polygon 点线面
@@ -66,7 +66,7 @@ export default {
     mode: {
       type: String,
       required: false,
-      default: MODE_POINT,
+      default: MODE_POINT
     },
     /**
      * 经纬度之间的分隔符，默认逗号
@@ -74,7 +74,7 @@ export default {
     lnglatSplitChar: {
       type: String,
       required: false,
-      default: ',',
+      default: ','
     },
     /**
      * 多组经纬度间的分隔符，默认分号
@@ -82,8 +82,8 @@ export default {
     lnglatArrSplitChar: {
       type: String,
       required: false,
-      default: ';',
-    },
+      default: ';'
+    }
   },
   data() {
     return {
@@ -126,10 +126,10 @@ export default {
      * @returns {string}
      */
     formatCoordinates(coordinates, precision = 4) {
-      const [longitude, latitude] = coordinates.split(this.lnglatSplitChar);
-      const formattedLongitude = Number(longitude).toFixed(precision);
-      const formattedLatitude = Number(latitude).toFixed(precision);
-      return `${formattedLongitude}${this.lnglatSplitChar}${formattedLatitude}`;
+      const [longitude, latitude] = coordinates.split(this.lnglatSplitChar)
+      const formattedLongitude = Number(longitude).toFixed(precision)
+      const formattedLatitude = Number(latitude).toFixed(precision)
+      return `${formattedLongitude}${this.lnglatSplitChar}${formattedLatitude}`
     },
     /**
      * 打开地图选择模态框
@@ -142,20 +142,27 @@ export default {
      * 选择回调
      * @param result
      */
-    handleOK(result) {
-      this.coordinates = this.getCorrectValue(result, true)
+    handleOK(result = {}) {
+      const { lnglatStr, address } = result
+      this.coordinates = this.getCorrectValue(lnglatStr, true)
+      console.log('选择结果：', result, this.coordinates)
+      this.$emit('input', {
+        coordinates: this.coordinates,
+        address,
+        lnglatStr
+      })
       this.$emit('change', this.coordinates)
-    },
+    }
   },
   model: {
     prop: 'value',
-    event: 'change',
+    event: 'change'
   },
   watch: {
     value() {
       this.coordinates = this.value
-    },
-  },
+    }
+  }
 }
 </script>
 

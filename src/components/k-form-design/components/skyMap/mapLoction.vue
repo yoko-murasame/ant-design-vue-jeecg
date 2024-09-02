@@ -1,10 +1,22 @@
 <template>
-  <j-modal title="选择位置" :width="modalWidth" :visible="visible" :confirmLoading="confirmLoading" @ok="handleSubmit"
-           @cancel="handleCancel" wrapClassName="j-depart-select-modal" switchFullscreen cancelText="关闭">
+  <j-modal
+    title="选择位置"
+    :width="modalWidth"
+    :visible="visible"
+    :confirmLoading="confirmLoading"
+    @ok="handleSubmit"
+    @cancel="handleCancel"
+    wrapClassName="j-depart-select-modal"
+    switchFullscreen
+    cancelText="关闭">
     <a-spin tip="Loading..." :spinning="false">
       <iframe :src="iframeUrl" name="iframe" frameborder="0" class="mapIframe"></iframe>
-      <a-input placeholder="获取地图经纬度" type="text" onkeyup="value=value.replace(/[^0-9.,]/g,'')"
-               v-model="lnglatStr" class="mapInput"/>
+      <a-input
+        placeholder="获取地图经纬度"
+        type="text"
+        onkeyup="value=value.replace(/[^0-9.,]/g,'')"
+        v-model="lnglatStr"
+        class="mapInput"/>
     </a-spin>
   </j-modal>
 </template>
@@ -29,14 +41,15 @@ export const MODE_LINE = 'line'
 export const MODE_POLYGON = 'polygon'
 
 export default {
-  name: 'mapLoction',
+  name: 'MapLoction',
   props: ['modalWidth', 'mapUrl', 'mode', 'lnglatSplitChar', 'lnglatArrSplitChar'],
   data() {
     return {
       visible: false,
       confirmLoading: false,
       iframeUrl: '',
-      lnglatStr: ''
+      lnglatStr: '',
+      address: ''
     }
   },
   watch: {
@@ -56,7 +69,7 @@ export default {
       if (this.mapUrl) {
         baseUrl = this.mapUrl + `?mode=${this.mode}`
       }
-      //温州天地图
+      // 温州天地图
       this.iframeUrl = baseUrl
       window.addEventListener('message', this.dbounceHandleMessage, '*')
     },
@@ -64,7 +77,10 @@ export default {
       this.visible = true
     },
     handleSubmit() {
-      this.$emit("ok", this.lnglatStr)
+      this.$emit('ok', {
+        lnglatStr: this.lnglatStr,
+        address: this.address
+      })
       this.visible = false
     },
     handleCancel() {
@@ -83,8 +99,10 @@ export default {
       if (!data) {
         return
       }
+      console.log('接受Iframe消息', data)
       if (data.lnglatStr) {
         this.lnglatStr = data.lnglatStr
+        this.address = data.address
       }
     }
   }
