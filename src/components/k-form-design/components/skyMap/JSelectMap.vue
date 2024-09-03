@@ -24,6 +24,7 @@
 import mapLoction, { MODE_LINE, MODE_POINT, MODE_POLYGON } from './mapLoction'
 
 export default {
+  name: 'JSelectMap',
   components: {
     mapLoction
   },

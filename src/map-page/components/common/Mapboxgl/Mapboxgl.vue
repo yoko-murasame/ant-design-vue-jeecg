@@ -1,14 +1,17 @@
 <template>
   <div class="container">
-    <Query />
-    <draw />
-    <div id="map" class="map"></div>
+    <a-spin :spinning="!mapLoaded">
+      <Query v-if="mapLoaded" />
+      <draw v-if="mapLoaded" />
+      <div id="map" class="map"></div>
+    </a-spin>
   </div>
 </template>
 <script>
 import draw from '@/map-page/components/tools/draw/draw.vue'
 import Query from '@/map-page/components/tools/QueryAdress/Query.vue'
 import { MapboxglInit } from '@/map-page/configs/MapApi'
+import { mapGetters } from 'vuex'
 import { MapLoadHandler } from './MapboxglHandler'
 
 export default {
@@ -20,6 +23,9 @@ export default {
   data() {
     return {}
   },
+  computed: {
+    ...mapGetters(['mapLoaded'])
+  },
   beforeMount() {
     window.map = undefined
     window.IsClick = false
@@ -27,7 +33,7 @@ export default {
   mounted() {
     window.map = MapboxglInit('map', 12) // 地图初始化
     // 监听地图初始化完成
-    MapLoadHandler(window.map)
+    MapLoadHandler(window.map, this)
     // 调用事件
     this.eventRegsiter()
   },

@@ -12,12 +12,12 @@ export default new Vuex.Store({
   mutations: {
     UPDATE_MAP_LOADED: (state, flag) => {
       state.mapLoaded = flag
-    },
+    }
   },
   actions: {
     updateMapLoaded({ commit }, flag) {
       commit('UPDATE_MAP_LOADED', flag)
-    },
+    }
   },
   getters: {
     mapLoaded: state => state.mapLoaded

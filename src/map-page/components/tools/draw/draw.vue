@@ -70,7 +70,7 @@ export default {
       }
     })
 
-    this.$bus.$on('getPointLayer', (pointLngLat) => {
+    this.$bus.$on('getPointLayer', async (pointLngLat) => {
       window.map.getCanvas().style.cursor = ''
       window.IsClick = false
       let point = {
@@ -92,9 +92,20 @@ export default {
       // 添加点
       AddPointServer(window.map, 'ClickPoint', point, '', 'ClickPoint', '')
       that.drawData = pointLngLat.join(',')
-      // 直接传递消息
-      that.PostMessage(false)
+
+      // 点模式下 直接查询地址，然后传递消息
+      if (that.drawMode === 'point') {
+        await that.GetAndCopyAddress()
+      } else {
+        // 传递消息
+        that.PostMessage(false)
+      }
     })
+
+    // 点模式下 直接绘制
+    if (this.drawMode === 'point') {
+      this.draw()
+    }
   },
   methods: {
     // 国家2000转高德
