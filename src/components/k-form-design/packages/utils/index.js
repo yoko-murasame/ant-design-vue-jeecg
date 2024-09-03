@@ -2,10 +2,10 @@
 // export { pluginManager, revoke, nodeSchema, lazyLoadTick } from "k-form-design";
 
 // 本地测试
-export { pluginManager } from "./PluginManager";
-export { revoke } from "./Revoke";
-export { nodeSchema } from "./NodeSchema";
-export { lazyLoadTick } from "./LazyLoadTick";
+export { pluginManager } from './PluginManager'
+export { revoke } from './Revoke'
+export { nodeSchema } from './NodeSchema'
+export { lazyLoadTick } from './LazyLoadTick'
 
 /**
  * 生成一个用不重复的ID
@@ -16,5 +16,5 @@ export function getUUID(randomLength = 10) {
     Math.random()
       .toString()
       .substring(3, randomLength) + Date.now()
-  ).toString(32); // 这里只生成32为为了兼容老的表id(默认32位)
+  ).toString(32) // 这里只生成32为为了兼容老的表id(默认32位)
 }

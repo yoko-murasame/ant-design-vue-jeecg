@@ -1,60 +1,66 @@
 /**
  * 节点管理
  */
-import { pluginManager } from "./index";
-import { defaultSchemaList } from "../components/KFormDesign/config/formItemsConfig";
+import { pluginManager } from './index'
+import { defaultComoponetsSchemaList, defaultLayoutSchemaList } from '@comp/k-form-design/packages/components/KFormDesign/config/formItemsConfig'
+
 class NodeSchema {
   schemaList = [];
   schemaGroup = [
     {
-      title: "基础组件",
+      title: '表单组件',
       list: [
-        "input",
-        "textarea",
-        "number",
-        "select",
-        "checkbox",
-        "radio",
-        "date",
-        "time",
-        "rate",
-        "slider",
-        "uploadFile",
-        "uploadImg",
-        "cascader",
-        "treeSelect",
-        "batch",
-        "selectInputList",
-        "editor",
-        "switch",
-        "button",
-        "alert",
-        "text",
-        "html"
+        // 默认组件
+        ...defaultComoponetsSchemaList.map(item => item.type)
       ]
+      // list: [
+      //   'input',
+      //   'textarea',
+      //   'number',
+      //   'select',
+      //   'checkbox',
+      //   'radio',
+      //   'date',
+      //   'time',
+      //   'rate',
+      //   'slider',
+      //   'uploadFile',
+      //   'uploadImg',
+      //   'cascader',
+      //   'treeSelect',
+      //   'batch',
+      //   'selectInputList',
+      //   'editor',
+      //   'switch',
+      //   'button',
+      //   'alert',
+      //   'text',
+      //   'html'
+      // ]
     },
     {
-      title: "布局组件",
-      list: ["divider", "card", "tabs", "grid", "table"]
+      title: '布局组件',
+      list: defaultLayoutSchemaList.map(item => item.type)
+      // list: ['divider', 'card', 'tabs', 'grid', 'table']
     }
   ];
   designSchemaGroup = [];
 
   /**
    * 添加节点结构数据
-   * @param {*} schemas []
    * @returns
+   * @param schemas
    */
   addSchemas(schemas) {
     const s = schemas.map(item => {
       // 存在component组件则添加到插件管理器中
-      item.component && pluginManager.addComponent(item.type, item.component);
+      item.component && pluginManager.addComponent(item.type, item.component)
       // 删除schemas中的component属性
-      delete item.component;
-      return item;
-    });
+      delete item.component
+      return item
+    })
 
-    return this.schemaList.push(...s);
+    return this.schemaList.push(...s)
   }
 
   /**
@@ -62,7 +68,7 @@ class NodeSchema {
    * @returns
    */
   getSchemaList() {
-    return this.schemaList;
+    return this.schemaList
   }
 
   /**
@@ -70,13 +76,13 @@ class NodeSchema {
    * @returns
    */
   getSchemaByType(type) {
-    const schemaList = this.schemaList;
+    const schemaList = this.schemaList
     for (const i in schemaList) {
       if (schemaList[i].type === type) {
-        return schemaList[i];
+        return schemaList[i]
       }
     }
-    return null;
+    return null
   }
 
   /**
@@ -85,7 +91,7 @@ class NodeSchema {
    * @returns
    */
   setSchemaGroup(schemaGroup) {
-    this.schemaGroup = schemaGroup;
+    this.schemaGroup = schemaGroup
   }
 
   /**
@@ -94,9 +100,9 @@ class NodeSchema {
    * @returns
    */
   addSchemaGroup(schemaGroupItem) {
-    this.schemaGroup.push(schemaGroupItem);
-    this.designSchemaGroup.length = 0;
-    this.designSchemaGroup.push(...this.getSchemaByGroup());
+    this.schemaGroup.push(schemaGroupItem)
+    this.designSchemaGroup.length = 0
+    this.designSchemaGroup.push(...this.getSchemaByGroup())
   }
 
   /**
@@ -104,8 +110,8 @@ class NodeSchema {
    * @param {*} schemaGroup
    */
   addComputed(schemaGroup) {
-    this.designSchemaGroup = schemaGroup;
-    schemaGroup.push(...this.getSchemaByGroup());
+    this.designSchemaGroup = schemaGroup
+    schemaGroup.push(...this.getSchemaByGroup())
   }
 
   /**
@@ -116,16 +122,38 @@ class NodeSchema {
     const schemaGroupList = this.schemaGroup.map(item => {
       // console.log('this.schemaList',this.schemaList, this.schemaGroup)
       const list = this.schemaList.filter(v => {
-        return item.list.includes(v.type);
-      });
+        return item.list.includes(v.type)
+      })
       return {
         ...item,
         list
-      };
-    });
-    return schemaGroupList;
+      }
+    })
+    return schemaGroupList
+  }
+
+  /**
+   * 添加schema到指定分组，如果分组不存在则创建
+   * @param schemas 需要添加的schema
+   * @param groupTitle 组标题
+   */
+  addSchemaToGroup(schemas, groupTitle = '表单组件') {
+    this.addSchemas(schemas)
+    const gp = this.schemaGroup.find(item => item.title === groupTitle)
+    if (gp) {
+      gp.list.push(...schemas.map(item => item.type))
+    } else {
+      this.addSchemaGroup({
+        title: groupTitle,
+        list: schemas.map(item => item.type)
+      })
+    }
   }
 }
 
-export const nodeSchema = new NodeSchema();
-nodeSchema.addSchemas(defaultSchemaList);
+// 注册默认组件
+export const nodeSchema = new NodeSchema()
+// 默认表单组件
+nodeSchema.addSchemas(defaultComoponetsSchemaList)
+// 默认布局组件
+nodeSchema.addSchemas(defaultLayoutSchemaList)

@@ -4,6 +4,7 @@
 class PluginManager {
   components = {};
 
+  // eslint-disable-next-line no-useless-constructor
   constructor() {}
   /**
    * 添加组件到插件管理器中
@@ -11,12 +12,12 @@ class PluginManager {
    * @param component 组件
    * @param bindModel v-model 绑定的属性名,兼容不同ui差异
    */
-  addComponent(componentName, component, bindModel = "value") {
+  addComponent(componentName, component, bindModel = 'value') {
     // 添加组件
     this.components[componentName] = {
       component,
       bindModel
-    };
+    }
   }
 
   /**
@@ -24,7 +25,7 @@ class PluginManager {
    * @returns components
    */
   getComponents() {
-    return this.components;
+    return this.components
   }
 
   /**
@@ -32,8 +33,8 @@ class PluginManager {
    * @returns components
    */
   getComponent(name) {
-    return this.components[name];
+    return this.components[name]
   }
 }
 
-export const pluginManager = new PluginManager();
+export const pluginManager = new PluginManager()

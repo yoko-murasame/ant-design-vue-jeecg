@@ -400,7 +400,7 @@
         <JSelectMapProperties :select-item="selectItem"></JSelectMapProperties>
 
         <!-- JS增强-数据值改变后调用 -->
-        <a-form-item label="数据变更后调用。`value`：回调值，`key`：组件id。" class="js-help">
+        <a-form-item label="数据变更后调用。`value`：回调值，`key`：组件id" class="js-help">
           <j-code-editor
             ref="codeEditor"
             language="javascript"
@@ -411,7 +411,7 @@
           <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
         </a-form-item>
         <!-- JS增强-数据值Input后调用 -->
-        <a-form-item label="数据值Input后调用。`value`：回调值，`key`：组件id。" class="js-help">
+        <a-form-item label="数据值Input后调用。`value`：回调值，`key`：组件id" class="js-help">
           <j-code-editor
             ref="codeEditor"
             language="javascript"

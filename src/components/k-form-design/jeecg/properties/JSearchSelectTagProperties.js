@@ -108,8 +108,8 @@ export default {
           <Radio buttonStyle="solid" v-model={options.mode}>
             <RadioButton value={"default"}>单选</RadioButton>
             <RadioButton value={"multiple"}>多选</RadioButton>
-            {/*<RadioButton value={"tags"}>标签</RadioButton>*/}
-            {/*<RadioButton value={"combobox"}>组合</RadioButton>*/}
+            <RadioButton value={"tags"}>标签(保存输入的多选)</RadioButton>
+            {/* <RadioButton value={"combobox"}>组合</RadioButton> */}
           </Radio>
         </a-form-item>
         <a-form-item label={"字典配置"} help="">

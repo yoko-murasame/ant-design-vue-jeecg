@@ -141,28 +141,28 @@
  * date 2019-11-20
  * description 表单设计器
  */
-import kHeader from "./module/header";
-import operatingArea from "./module/operatingArea";
+import kHeader from './module/header'
+import operatingArea from './module/operatingArea'
 
 // import kFooter from "./module/footer";
-import kFormComponentPanel from "./module/formComponentPanel";
-import kJsonModal from "./module/jsonModal";
-import kCodeModal from "./module/codeModal";
-import collapseItem from "./module/collapseItem";
-import importJsonModal from "./module/importJsonModal";
-import previewModal from "../KFormPreview/index.vue";
-import zhCN from "ant-design-vue/lib/locale-provider/zh_CN";
-import { Modal, message } from "ant-design-vue";
-import { revoke, nodeSchema } from "../../utils/index";
-import formItemProperties from "./module/formItemProperties";
-import formProperties from "./module/formProperties";
+import kFormComponentPanel from './module/formComponentPanel'
+import kJsonModal from './module/jsonModal'
+import kCodeModal from './module/codeModal'
+import collapseItem from './module/collapseItem'
+import importJsonModal from './module/importJsonModal'
+import previewModal from '../KFormPreview/index.vue'
+import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
+import { Modal, message } from 'ant-design-vue'
+import { revoke, nodeSchema } from '../../utils/index'
+import formItemProperties from './module/formItemProperties'
+import formProperties from './module/formProperties'
 
 export default {
-  name: "KFormDesign",
+  name: 'KFormDesign',
   props: {
     title: {
       type: String,
-      default: "表单设计器 --表单名称"
+      default: '表单设计器 --表单名称'
     },
     showHead: {
       type: Boolean,
@@ -179,15 +179,15 @@ export default {
     toolbars: {
       type: Array,
       default: () => [
-        "save",
-        "preview",
-        "importJson",
-        "exportJson",
-        "exportCode",
-        "reset",
-        "close",
-        "undo",
-        "redo"
+        'save',
+        'preview',
+        'importJson',
+        'exportJson',
+        'exportCode',
+        'reset',
+        'close',
+        'undo',
+        'redo'
       ]
     },
     showToolbarsText: {
@@ -207,39 +207,39 @@ export default {
       activeKey: 1,
       updateTime: 0,
       updateRecordTime: 0,
-      startType: "",
-      filedLists:{},
+      startType: '',
+      filedLists: {},
       noModel: [
-        "button",
-        "divider",
-        "card",
-        "grid",
-        "tabs",
-        "table",
-        "alert",
-        "text",
-        "html"
+        'button',
+        'divider',
+        'card',
+        'grid',
+        'tabs',
+        'table',
+        'alert',
+        'text',
+        'html'
       ],
       schemaGroup: [],
       data: {
         list: [],
         config: {
-          layout: "horizontal",
+          layout: 'horizontal',
           labelCol: { xs: 4, sm: 4, md: 4, lg: 4, xl: 4, xxl: 4 },
           labelWidth: 100,
-          labelLayout: "flex",
+          labelLayout: 'flex',
           wrapperCol: { xs: 18, sm: 18, md: 18, lg: 18, xl: 18, xxl: 18 },
           hideRequiredMark: false,
-          customStyle: ""
+          customStyle: ''
         }
       },
       previewOptions: {
         width: 850
       },
       selectItem: {
-        key: ""
+        key: ''
       }
-    };
+    }
   },
   components: {
     kHeader,
@@ -258,8 +258,8 @@ export default {
     data: {
       handler(e) {
         this.$nextTick(() => {
-          revoke.push(e);
-        });
+          revoke.push(e)
+        })
       },
       deep: true,
       immediate: true
@@ -269,27 +269,28 @@ export default {
     collapseDefaultActiveKey() {
       // 计算当前展开的控件列表
       const defaultActiveKey = window.localStorage.getItem(
-        "collapseDefaultActiveKey"
-      );
+        'collapseDefaultActiveKey'
+      )
+      // console.log('collapseDefaultActiveKey', defaultActiveKey);
       if (defaultActiveKey) {
-        return defaultActiveKey.split(",");
+        return defaultActiveKey.split(',')
       } else {
-        return ["1"];
+        return ['1']
       }
     }
   },
   methods: {
     generateKey(list, index) {
       // 生成key值
-      const key = list[index].type + "_" + new Date().getTime();
+      const key = list[index].type + '_' + new Date().getTime()
       this.$set(list, index, {
         ...list[index],
         key,
         model: key
-      });
+      })
       if (this.noModel.includes(list[index].type)) {
         // 删除不需要的model属性
-        delete list[index].model;
+        delete list[index].model
       }
     },
     handleListPush(item) {
@@ -297,103 +298,103 @@ export default {
       // 生成key值
       if (!this.selectItem.key) {
         // 在没有选择表单时，将数据push到this.data.list
-        const key = item.type + "_" + new Date().getTime();
+        const key = item.type + '_' + new Date().getTime()
         item = {
           ...item,
           key,
           model: key
-        };
+        }
         if (this.noModel.includes(item.type)) {
           // 删除不需要的model属性
-          delete item.model;
+          delete item.model
         }
-        const itemString = JSON.stringify(item);
-        const record = JSON.parse(itemString);
+        const itemString = JSON.stringify(item)
+        const record = JSON.parse(itemString)
         // 删除icon及compoent属性
-        delete record.icon;
-        delete record.component;
-        this.data.list.push(record);
-        this.handleSetSelectItem(record);
-        return false;
+        delete record.icon
+        delete record.component
+        this.data.list.push(record)
+        this.handleSetSelectItem(record)
+        return false
       }
-      this.$refs.KFCP.handleCopy(false, item);
+      this.$refs.KFCP.handleCopy(false, item)
     },
     handleOpenJsonModal() {
       // 打开json预览模态框
-      this.$refs.jsonModal.jsonData = this.data;
-      this.$refs.jsonModal.visible = true;
+      this.$refs.jsonModal.jsonData = this.data
+      this.$refs.jsonModal.visible = true
     },
     handleOpenCodeModal() {
       // 打开代码预览模态框
-      this.$refs.codeModal.jsonData = this.data;
-      this.$refs.codeModal.visible = true;
+      this.$refs.codeModal.jsonData = this.data
+      this.$refs.codeModal.visible = true
     },
     handleOpenImportJsonModal() {
       // 打开json预览模态框
-      this.$refs.importJsonModal.jsonData = this.data;
-      this.$refs.importJsonModal.handleSetSelectItem = this.handleSetSelectItem;
-      this.$refs.importJsonModal.visible = true;
+      this.$refs.importJsonModal.jsonData = this.data
+      this.$refs.importJsonModal.handleSetSelectItem = this.handleSetSelectItem
+      this.$refs.importJsonModal.visible = true
     },
     handlePreview() {
       // 打开预览模态框
-      this.$refs.previewModal.jsonData = this.data;
-      this.$refs.previewModal.previewWidth = this.previewOptions.width;
-      this.$refs.previewModal.visible = true;
+      this.$refs.previewModal.jsonData = this.data
+      this.$refs.previewModal.previewWidth = this.previewOptions.width
+      this.$refs.previewModal.visible = true
     },
     handleReset() {
       // 清空
       if (this.hideResetHint) {
         // 不显示提示直接清空
-        this.resetData();
-        return;
+        this.resetData()
+        return
       }
 
       Modal.confirm({
-        title: "警告",
-        content: "是否确认清空内容?",
-        okText: "是",
-        okType: "danger",
-        cancelText: "否",
+        title: '警告',
+        content: '是否确认清空内容?',
+        okText: '是',
+        okType: 'danger',
+        cancelText: '否',
         onOk: () => {
-          this.resetData();
+          this.resetData()
         }
-      });
+      })
     },
     resetData() {
       this.data = {
         list: [],
         config: {
-          layout: "horizontal",
+          layout: 'horizontal',
           labelCol: { xs: 4, sm: 4, md: 4, lg: 4, xl: 4, xxl: 4 },
           labelWidth: 100,
-          labelLayout: "flex",
+          labelLayout: 'flex',
           wrapperCol: { xs: 18, sm: 18, md: 18, lg: 18, xl: 18, xxl: 18 },
           hideRequiredMark: false,
-          customStyle: ""
+          customStyle: ''
         }
-      };
-      this.handleSetSelectItem({ key: "" });
-      message.success("已清空");
+      }
+      this.handleSetSelectItem({ key: '' })
+      message.success('已清空')
     },
     handleSetSelectItem(record) {
       // 操作间隔不能低于100毫秒
-      const newTime = new Date().getTime();
+      const newTime = new Date().getTime()
       if (newTime - this.updateTime < 100) {
-        return false;
+        return false
       }
 
-      this.updateTime = newTime;
+      this.updateTime = newTime
 
       // 设置selectItem的值
-      this.selectItem = record;
+      this.selectItem = record
 
       // 判断是否选中控件，如果选中则弹出属性面板，否则关闭属性面板
       if (record.key) {
-        this.startType = record.type;
-        this.changeTab(1);
+        this.startType = record.type
+        this.changeTab(1)
         this.$nextTick(() => this.changeTab(2))
       } else {
-        this.changeTab(1);
+        this.changeTab(1)
       }
     },
     /**
@@ -403,7 +404,7 @@ export default {
      */
 
     changeTab(e) {
-      this.activeKey = e;
+      this.activeKey = e
     },
     /**
      * @Author: kcz
@@ -412,59 +413,59 @@ export default {
      * @return {*} Array
      */
     getFieldSchema() {
-      const fields = [];
+      const fields = []
       const traverse = array => {
         array.forEach(element => {
-          if (element.type === "grid" || element.type === "tabs") {
+          if (element.type === 'grid' || element.type === 'tabs') {
             // 栅格布局
             element.columns.forEach(item => {
-              traverse(item.list);
-            });
-          } else if (element.type === "card") {
+              traverse(item.list)
+            })
+          } else if (element.type === 'card') {
             // 卡片布局
-            traverse(element.list);
-          } else if (element.type === "batch" ||element.type === "subtable") {
+            traverse(element.list)
+          } else if (element.type === 'batch' || element.type === 'subtable') {
             // 子表表格内复制
-            traverse(element.list);
-          }  else if (element.type === "table") {
+            traverse(element.list)
+          } else if (element.type === 'table') {
             // 表格布局
             element.trs.forEach(item => {
               item.tds.forEach(val => {
-                traverse(val.list);
-              });
-            });
+                traverse(val.list)
+              })
+            })
           } else {
             if (element.model) {
-              fields.push(element);
+              fields.push(element)
             }
           }
-        });
-      };
-      traverse(this.data.list);
-      return fields;
+        })
+      }
+      traverse(this.data.list)
+      return fields
     },
     handleSetData(data) {
       // 用于父组件赋值
       try {
-        if (typeof data !== "object") {
-          return false;
+        if (typeof data !== 'object') {
+          return false
         } else {
-          this.data = data;
+          this.data = data
           // 导入json数据后，需要清除已选择key
-          this.handleSetSelectItem({ key: "" });
+          this.handleSetSelectItem({ key: '' })
         }
-        return true;
+        return true
       } catch (error) {
-        console.error(error);
-        return false;
+        console.error(error)
+        return false
       }
     },
     collapseChange(val) {
       // 点击collapse时，保存当前collapse状态
-      window.localStorage.setItem("collapseDefaultActiveKey", val);
+      window.localStorage.setItem('collapseDefaultActiveKey', val)
     },
     handleStart(type) {
-      this.startType = type;
+      this.startType = type
     },
 
     /**
@@ -473,13 +474,13 @@ export default {
      * @return {*}
      */
     handleUndo() {
-      const record = revoke.undo();
+      const record = revoke.undo()
       if (!record) {
-        return false;
+        return false
       }
-      this.data = record;
+      this.data = record
 
-      this.handleSetSelectItem({ key: "" });
+      this.handleSetSelectItem({ key: '' })
     },
 
     /**
@@ -488,36 +489,36 @@ export default {
      * @return {*}
      */
     handleRedo() {
-      const record = revoke.redo();
+      const record = revoke.redo()
       if (!record) {
-        return false;
+        return false
       }
-      this.data = record;
+      this.data = record
     },
 
     handleSave() {
-      console.log("kformdata",this.data)
+      console.log('kformdata', this.data)
 
       // 保存函数
-      this.$emit("save", JSON.stringify(this.data));
+      this.$emit('save', JSON.stringify(this.data))
     },
     getValue() {
       // 获取数据
-      return this.data;
+      return this.data
     },
     handleClose() {
-      this.$emit("close");
+      this.$emit('close')
     },
 
     changeHead(list) {
       // 绑定数据源
-      this.filedLists= list
+      this.filedLists = list
     }
   },
   created() {
-    this.loadState = true;
-    nodeSchema.addComputed(this.schemaGroup);
+    this.loadState = true
+    nodeSchema.addComputed(this.schemaGroup)
     console.log('设计器初始化', this.schemaGroup)
   }
-};
+}
 </script>

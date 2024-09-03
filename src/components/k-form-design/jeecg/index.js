@@ -11,12 +11,13 @@ import { FILE_TYPE_ALL } from '@comp/yoko/mixins/ImageZipCompressMixin'
 import { nodeSchema } from '../packages/utils'
 
 /**
+ * Jeecg相关组件KForm配置
  * 注意两个自定义属性：
  * 1.allowClear
  * 2.mode
  * 在 KFormItem 中被逻辑覆写了，因此需要修改
  */
-nodeSchema.addSchemas([
+export const jeecgComponents = [
   {
     type: 'JUpload', // 表单类型
     label: '文件上传', // 标题文字
@@ -34,8 +35,10 @@ nodeSchema.addSchemas([
       doCompress: true,
       zipPercent: 0.7,
       zipEnableSize: 2,
-      disabled: false,
       buttonVisible: true,
+      showLabel: true,
+      hidden: false, // 是否隐藏，false显示，true隐藏
+      disabled: false // 是否禁用
       // triggerChange: true, // 已废弃的属性
     },
     model: '',
@@ -67,8 +70,10 @@ nodeSchema.addSchemas([
       doCompress: true,
       zipPercent: 0.7,
       zipEnableSize: 2,
-      disabled: false,
       buttonVisible: true,
+      showLabel: true,
+      hidden: false, // 是否隐藏，false显示，true隐藏
+      disabled: false // 是否禁用
       // triggerChange: true, // 已废弃的属性
     },
     model: '',
@@ -95,14 +100,16 @@ nodeSchema.addSchemas([
       doCompress: true,
       zipPercent: 0.7,
       zipEnableSize: 2,
-      disabled: false,
       buttonVisible: true,
       limitSize: 20,
       limitWidth: 0,
       limitHeight: 0,
       visibleWidth: '',
       visibleNumber: 20,
-      urlSuffix: ''
+      urlSuffix: '',
+      showLabel: true,
+      hidden: false, // 是否隐藏，false显示，true隐藏
+      disabled: false // 是否禁用
     },
     model: '',
     key: '',
@@ -122,13 +129,15 @@ nodeSchema.addSchemas([
     options: {
       noDefaultProp: true,
       allowClear: true,
-      disabled: false,
       triggerChange: true,
       type: 'select',
       dictType: 'static', // static dynamic
       dictCode: '',
       placeholder: '请选择',
-      options: []
+      options: [],
+      showLabel: true,
+      hidden: false, // 是否隐藏，false显示，true隐藏
+      disabled: false // 是否禁用
     },
     model: '',
     key: '',
@@ -148,14 +157,16 @@ nodeSchema.addSchemas([
     options: {
       noDefaultProp: true,
       allowClear: true,
-      disabled: false,
       triggerChange: true,
       type: 'select',
       dictType: 'static', // static dynamic
       dictCode: '',
       placeholder: '请选择',
       options: [],
-      spliter: ','
+      spliter: ',',
+      showLabel: true,
+      hidden: false, // 是否隐藏，false显示，true隐藏
+      disabled: false // 是否禁用
     },
     model: '',
     key: '',
@@ -176,13 +187,15 @@ nodeSchema.addSchemas([
       noDefaultProp: true,
       placeholder: '请选择',
       mode: 'default', // default multiple
-      disabled: false,
       dictType: 'static', // static dynamic
       dict: '',
       async: true, // 是否异步搜索
       pageSize: 50, // 异步加载的数量
       keepInput: false,
-      dictOptions: []
+      dictOptions: [],
+      showLabel: true,
+      hidden: false, // 是否隐藏，false显示，true隐藏
+      disabled: false // 是否禁用
     },
     model: '',
     key: '',
@@ -202,7 +215,9 @@ nodeSchema.addSchemas([
     options: {
       noDefaultProp: true,
       placeholder: '请选择',
-      disabled: false
+      showLabel: true,
+      hidden: false, // 是否隐藏，false显示，true隐藏
+      disabled: false // 是否禁用
     },
     model: '',
     key: '',
@@ -222,12 +237,14 @@ nodeSchema.addSchemas([
     options: {
       noDefaultProp: true,
       placeholder: '请选择',
-      disabled: false,
       modalWidth: 1250,
       multi: true,
       backUser: false,
       store: 'username',
-      text: 'realname'
+      text: 'realname',
+      showLabel: true,
+      hidden: false, // 是否隐藏，false显示，true隐藏
+      disabled: false // 是否禁用
     },
     model: '',
     key: '',
@@ -239,10 +256,14 @@ nodeSchema.addSchemas([
     ],
     help: ''
   }
-]);
+]
+// 新方法，直接添加到已存在的分组
+nodeSchema.addSchemaToGroup(jeecgComponents)
 
-// 添加分组
-nodeSchema.addSchemaGroup({
-  title: '高级组件',
-  list: ['JUpload', 'JUploadKnowledge', 'JImageUpload', 'JDictSelectTag', 'JMultiSelectTag', 'JSearchSelectTag', 'JSelectMultiUser', 'JSelectUserByDep']
-});
+// jeecg组件类型
+// export const jeecgComponentTypes = jeecgComponents.map(e => e.type)
+// 添加分组，分组去 NodeSchema 统一管理吧
+// nodeSchema.addSchemaGroup({
+//   title: '高级组件',
+//   list: jeecgComponentTypes
+// })
