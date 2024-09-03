@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       visible: false,
-      previewWidth: 850,
+      previewWidth: 1200,
       jsonData: {},
       dialogStyle,
       bodyStyle

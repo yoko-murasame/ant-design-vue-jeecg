@@ -246,9 +246,17 @@
           <Radio buttonStyle="solid" v-model="options.handle">
             <RadioButton value="submit">提交</RadioButton>
             <RadioButton value="reset">重置</RadioButton>
+            <RadioButton value="dynamicFormFun">表单自定义函数名</RadioButton>
             <RadioButton value="dynamic">动态函数</RadioButton>
           </Radio>
-          <Input v-show="options.handle === 'dynamic'" v-model="options.dynamicFun" placeholder="动态函数名" />
+          <Input v-show="options.handle === 'dynamicFormFun'" v-model="options.dynamicFormFun" placeholder="表单自定义函数名" />
+          <j-code-editor
+            v-if="options.handle === 'dynamic'"
+            ref="codeEditorButton"
+            language="javascript"
+            v-model="options.dynamicFun"
+            :fullScreen="true"
+            style="min-height: 2vh"/>
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'alert'" label="辅助描述">
           <Input v-model="options.description" />
@@ -402,7 +410,7 @@
         <!-- JS增强-数据值改变后调用 -->
         <a-form-item label="数据变更后调用。`value`：回调值，`key`：组件id" class="js-help">
           <j-code-editor
-            ref="codeEditor"
+            ref="codeEditorOnChange"
             language="javascript"
             v-model="onChangeFuncStr"
             :fullScreen="true"
@@ -413,7 +421,7 @@
         <!-- JS增强-数据值Input后调用 -->
         <a-form-item label="数据值Input后调用。`value`：回调值，`key`：组件id" class="js-help">
           <j-code-editor
-            ref="codeEditor"
+            ref="codeEditorOnInput"
             language="javascript"
             v-model="onInputFuncStr"
             :fullScreen="true"

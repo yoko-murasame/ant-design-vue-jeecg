@@ -992,6 +992,7 @@ export const defaultSchemaListBackup = [
       type: 'primary',
       handle: 'submit',
       dynamicFun: '',
+      dynamicFormFun: '',
       showLabel: false,
       hidden: false, // 是否隐藏，false显示，true隐藏
       disabled: false // 是否禁用，false不禁用，true禁用

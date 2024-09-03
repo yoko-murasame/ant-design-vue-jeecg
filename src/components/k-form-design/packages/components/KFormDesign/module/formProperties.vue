@@ -105,7 +105,7 @@
         <a-form-item label="表单JS-handleMounted-数据填充前调用" class="js-help">
           <!--<a-textarea v-model="config.handleMounted" label="handleMounted" />-->
           <j-code-editor
-            ref="codeEditor"
+            ref="codeEditor1"
             language="javascript"
             v-model="config.handleMounted"
             :fullScreen="true"
@@ -115,7 +115,7 @@
         <a-form-item label="表单JS-handleSetData-数据填充后调用" class="js-help">
           <!--<a-textarea v-model="config.handleSetData" label="handleSetData" />-->
           <j-code-editor
-            ref="codeEditor"
+            ref="codeEditor2"
             language="javascript"
             v-model="config.handleSetData"
             :fullScreen="true"
@@ -125,7 +125,7 @@
         <a-form-item label="表单JS-beforeSubmit-表单提交前调用" class="js-help">
           <!--<a-textarea v-model="config.beforeSubmit" label="beforeSubmit" />-->
           <j-code-editor
-            ref="codeEditor"
+            ref="codeEditor3"
             language="javascript"
             v-model="config.beforeSubmit"
             :fullScreen="true"
@@ -135,9 +135,19 @@
         <a-form-item label="表单JS-afterSubmit-表单提交后调用" class="js-help">
           <!--<a-textarea v-model="config.afterSubmit" label="afterSubmit" />-->
           <j-code-editor
-            ref="codeEditor"
+            ref="codeEditor4"
             language="javascript"
             v-model="config.afterSubmit"
+            :fullScreen="true"
+            style="min-height: 2vh"/>
+          <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
+        </a-form-item>
+        <a-form-item label="表单JS-自定义函数-Vue的Methods这里就怎么写" class="js-help">
+          <!--<a-textarea v-model="config.afterSubmit" label="afterSubmit" />-->
+          <j-code-editor
+            ref="codeEditor5"
+            language="javascript"
+            v-model="config.customFunctionStr"
             :fullScreen="true"
             style="min-height: 2vh"/>
           <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>

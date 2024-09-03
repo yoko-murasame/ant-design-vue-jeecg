@@ -30,6 +30,8 @@
   </a-config-provider>
 </template>
 <script>
+import Vue from 'vue'
+
 /*
  * author kcz
  * date 2019-11-20
@@ -107,6 +109,37 @@ export default {
   },
   methods: {
     // moment
+    /**
+     * JS增强-为表单Form注册自定义函数
+     */
+    registerCustomFunction() {
+      const { config } = this.value
+      if (!config) {
+        console.log('KFormBuild::registerCustomFunction', 'config is undefined', this.value)
+        return
+      }
+      const { customFunctionStr } = config
+      try {
+        if (customFunctionStr) {
+          const vm = this
+          // eslint-disable-next-line no-eval
+          const CustomFunStr = eval(`(function () {return { ${customFunctionStr} }})`)
+          const FunObj = new CustomFunStr()
+          // 依次注册到Vue
+          Object.keys(FunObj).forEach(key => {
+            const func = FunObj[key]
+            // 函数形式直接注册
+            if (typeof func === 'function') {
+              console.log('初始化自定义函数', key)
+              this[key] = func.bind(vm)
+            }
+          })
+        }
+      } catch (e) {
+        console.error('初始化自定义函数失败', e)
+        Vue.prototype.$message.error('初始化自定义函数失败，请检查js自定义函数配置是否正确！和Vue2写法相同！')
+      }
+    },
     /**
      * 数据提交后钩子（提交后）
      */
@@ -405,6 +438,8 @@ export default {
   },
   created() {
     lazyLoadTick.reset()
+    // 注册自定义函数
+    this.registerCustomFunction()
   },
   watch: {
   }
