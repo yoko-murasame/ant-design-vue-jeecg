@@ -89,6 +89,10 @@ export const getOnlineDataList = async (onlineCode, params = {}) => {
   params.needList = 'id'
   params.pageSize = params.pageSize || 10
   params.pageNo = params.pageNo || 1
+  // 默认查询全部字段
+  if (!params.hasOwnProperty('queryAllColumn')) {
+    params.queryAllColumn = '1'
+  }
   const { result, success, message } = await getAction('/online/cgform/api/getData/' + onlineCode, params)
   !success && Vue.prototype.$message.error(message)
   return result
