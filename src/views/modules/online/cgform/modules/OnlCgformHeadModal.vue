@@ -150,8 +150,19 @@
                 <a-form-item
                   style="width: 100%"
                   :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="数据权限标识">
+                  :wrapperCol="threeCol.wrapper">
+                  <span slot="label">
+                    <a-tooltip placement="bottom" :overlayStyle="{'min-width': '40vw'}">
+                      <span>数据权限标识</span>
+                      <span slot="title">
+                        1、当前Online表单的数据权限规则，在系统->菜单管理->新增数据权限菜单节点。<br/>
+                        2、配置后会自动应用该节点perms数据权限！<br/>
+                        3、比如父节点perms为：data:rule，子节点：data:rule:child1、data:rule:child2，选中父节点后将自动应用所有子节点权限！<br/>
+                        4、不配置数据权限规则将不生效！
+                      </span>
+                      <a-icon class="question-circle" type="question-circle-o"/>
+                    </a-tooltip>
+                  </span>
                   <!--<a-input placeholder="请选择数据权限标识" v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"/>-->
                   <j-search-select-tag
                     v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"
@@ -288,8 +299,17 @@
                 <a-form-item
                   style="width: 100%"
                   :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="数据初始化JS增强">
+                  :wrapperCol="threeCol.wrapper">
+                  <span slot="label">
+                    <a-tooltip :overlayStyle="{'min-width': '27vw'}">
+                      <span>数据初始化JS增强</span>
+                      <span slot="title">
+                        1、JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。<br/>
+                        2、可使用变量：`initQueryParam`获取流程节点配置的初始化参数。
+                      </span>
+                      <a-icon class="question-circle" type="question-circle-o"/>
+                    </a-tooltip>
+                  </span>
                   <j-code-editor
                     :line-numbers="true"
                     height="2vh"
@@ -297,8 +317,6 @@
                     v-decorator="['onlineInitQueryParamGetter', validatorRules.onlineInitQueryParamGetter]"
                     :fullScreen="true"
                     style="min-height: 2vh"/>
-                  <div style="color: red;font-size: 12px">备注：1、JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。</div>
-                  <div style="color: red;font-size: 12px">2、可使用变量：`initQueryParam`获取流程节点配置的初始化参数。</div>
                 </a-form-item>
               </a-col>
               <!--Vue2监听器JS增强-->
@@ -306,8 +324,16 @@
                 <a-form-item
                   style="width: 100%"
                   :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="Vue2监听器JS增强">
+                  :wrapperCol="threeCol.wrapper">
+                  <span slot="label">
+                    <a-tooltip :overlayStyle="{'min-width': '25vw'}">
+                      <span>Vue2监听器JS增强</span>
+                      <span slot="title">
+                        Vue的watch监听器怎么写这里就怎么写！this指向当前Online列表组件！
+                      </span>
+                      <a-icon class="question-circle" type="question-circle-o"/>
+                    </a-tooltip>
+                  </span>
                   <j-code-editor
                     :line-numbers="true"
                     height="2vh"
@@ -315,7 +341,6 @@
                     v-decorator="['onlineVueWatchJsStr', validatorRules.onlineVueWatchJsStr]"
                     :fullScreen="true"
                     style="min-height: 2vh"/>
-                  <div style="color: red;font-size: 12px">备注：Vue的watch监听器怎么写这里就怎么写！this指向当前Online列表组件！</div>
                 </a-form-item>
               </a-col>
             </a-row>

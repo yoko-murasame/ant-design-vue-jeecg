@@ -214,8 +214,11 @@
         return filterObj(param);
       },
       handleAdd: function () {
-        this.$refs.modalForm.add(this.processId);
-        this.$refs.modalForm.title = '新增';
+        this.currentNode = {}
+        this.$nextTick(() => {
+          this.$refs.modalForm.add(this.processId);
+          this.$refs.modalForm.title = '新增';
+        })
       },
       // 打开权限设置
       handleRule(record) {
