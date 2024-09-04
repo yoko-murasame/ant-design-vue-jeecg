@@ -39,6 +39,7 @@ export const BpmNodeInfoMixin = {
             showProcess: res.result.showProcess,
             showReject: res.result.showReject,
             customTaskModule: res.result.customTaskModule,
+            showMessageHandle: res.result.showMessageHandle,
             onlineCode: res.result.onlineCode,
             onlineFormConfig: res.result.onlineFormConfig,
             onlineInitQueryParamGetter: res.result.onlineInitQueryParamGetter

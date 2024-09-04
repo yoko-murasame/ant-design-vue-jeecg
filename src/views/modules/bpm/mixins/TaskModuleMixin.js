@@ -16,7 +16,10 @@ export const TaskModuleMixin = {
       type: Object,
       default() {
         return {
+          // showReject:是否显示驳回按钮，默认不显示
           showReject: false,
+          // showMessageHandle:是否显示处理意见框，默认显示
+          showMessageHandle: true,
           taskId: '',
           onlineFormConfig: {
             initQueryParam: {}

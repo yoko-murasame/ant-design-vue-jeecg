@@ -47,38 +47,39 @@
           </a-step>-->
         </a-steps>
       </a-card>
-      <a-card title="意见信息" :bodyStyle="{padding:'0 20px'}" size="default" style="margin-top:20px">
+      <a-card :title="formData.showMessageHandle ? '意见信息' : '流程办理'" :bodyStyle="{padding:'0 20px'}" size="default" style="margin-top:20px">
         <a-list itemLayout="vertical">
-
-          <a-list-item>
-            <div style="width: 100%;">
-              <div style="margin-bottom: 5px">
-                处理意见：
-                <a-select
-                  style="width: 300px"
-                  placeholder="常用审批语"
-                  :getPopupContainer="(target) => target.parentNode"
-                  @change="handleChangeSelect">
-                  <a-icon slot="suffixIcon" type="smile"/>
-                  <a-select-option v-for="(item, key) in remarksDictOptions" :key="key" :value="item.value">{{
-                    item.text
-                  }}
-                  </a-select-option>
-                </a-select>
-                <!--2022.07.20-添加流程处理意见暂存功能-->
-                <a-popconfirm title="确定要暂存处理意见吗?" @confirm="cacheMessage">
-                  <a-button type="primary">暂存处理意见</a-button>
-                </a-popconfirm>
-                <a-popconfirm title="确定要恢复暂存意见吗?" @confirm="reloadMessage">
-                  <a-button type="primary">恢复暂存意见</a-button>
-                </a-popconfirm>
+          <template v-if="formData.showMessageHandle">
+            <a-list-item>
+              <div style="width: 100%;">
+                <div style="margin-bottom: 5px">
+                  处理意见：
+                  <a-select
+                    style="width: 300px"
+                    placeholder="常用审批语"
+                    :getPopupContainer="(target) => target.parentNode"
+                    @change="handleChangeSelect">
+                    <a-icon slot="suffixIcon" type="smile"/>
+                    <a-select-option v-for="(item, key) in remarksDictOptions" :key="key" :value="item.value">{{
+                        item.text
+                      }}
+                    </a-select-option>
+                  </a-select>
+                  <!--2022.07.20-添加流程处理意见暂存功能-->
+                  <a-popconfirm title="确定要暂存处理意见吗?" @confirm="cacheMessage">
+                    <a-button type="primary">暂存处理意见</a-button>
+                  </a-popconfirm>
+                  <a-popconfirm title="确定要恢复暂存意见吗?" @confirm="reloadMessage">
+                    <a-button type="primary">恢复暂存意见</a-button>
+                  </a-popconfirm>
+                </div>
+                <a-textarea rows="3" v-model="model.reason"/>
               </div>
-              <a-textarea rows="3" v-model="model.reason"/>
-            </div>
-          </a-list-item>
-          <a-list-item>
-            <j-upload text="添加文件" v-model="fileList" :returnUrl="false"></j-upload>
-          </a-list-item>
+            </a-list-item>
+            <a-list-item>
+              <j-upload text="添加文件" v-model="fileList" :returnUrl="false"></j-upload>
+            </a-list-item>
+          </template>
           <a-list-item>
             <a-row>
               <a-col :span="24">

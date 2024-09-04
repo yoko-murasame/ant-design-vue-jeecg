@@ -148,6 +148,9 @@
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否显示驳回按钮">
           <a-switch checked-children="是" un-checked-children="否" v-decorator="['showReject', validatorRules.showReject]" />
         </a-form-item>
+        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="是否显示处理意见框">
+          <a-switch checked-children="是" un-checked-children="否" v-decorator="['showMessageHandle', validatorRules.showMessageHandle]" />
+        </a-form-item>
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol">
@@ -214,6 +217,7 @@ export default {
           showTask: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示任务处理模块!' }], initialValue: true },
           showProcess: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示流程图模块!' }], initialValue: true },
           showReject: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示驳回按钮!' }], initialValue: false },
+          showMessageHandle: { valuePropName: 'checked', rules: [{ required: false, message: '是否显示处理意见框!' }], initialValue: true },
           customTaskModule: { rules: [{ required: false, message: '自定义任务处理模块!' }] },
           onlineFormConfig: { rules: [{ required: false, message: '请配置参数!' }] },
           onlineInitQueryParamGetter: { rules: [{ required: false, message: '请配置初始化参数增强!' }] }
@@ -341,7 +345,7 @@ export default {
           await this.$refs.codeEditorGetter._getCoder()
           // 时间格式化
           this.form.setFieldsValue(pick(this.model,
-            'showReject', 'customTaskModule',
+            'showReject', 'showMessageHandle', 'customTaskModule',
             'showTask', 'showProcess', 'onlineCode', 'onlineFormConfig', 'onlineInitQueryParamGetter',
             'modelAndViewType', 'formId', 'processId', 'processNodeCode',
             'processNodeName', 'modelAndView', 'modelAndViewMobile', 'nodeTimeout', 'nodeBpmStatus'))
