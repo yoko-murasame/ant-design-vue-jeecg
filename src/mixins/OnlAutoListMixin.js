@@ -100,6 +100,7 @@ export const HrefJump = {
       if (customRender || hrefSlotName) {
         let dictCode = customRender
         let replaceFlag = '_replace_text_'
+        let dictTextFlag = '_dictText'
         column.customRender = (text, record) => {
           let value = text
           // 如果 dictCode 有值，就进行字典转换
@@ -107,6 +108,8 @@ export const HrefJump = {
             if (dictCode.startsWith(replaceFlag)) {
               let textFieldName = dictCode.replace(replaceFlag, '')
               value = record[textFieldName]
+            } else if (dictCode.endsWith(dictTextFlag)) {
+              value = record[dictCode]
             } else {
               value = this.$filterMultiDictText(this.dictOptions[dictCode], text)
             }

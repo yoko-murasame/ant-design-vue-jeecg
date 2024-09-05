@@ -307,7 +307,7 @@
       <j-import-modal ref="importModal" :url="getImportUrl()" @ok="importOk"></j-import-modal>
 
       <!--原先的审批进度功能不用了，展示信息太少-->
-      <process-inst-pic-modal ref="processInstPicModal"></process-inst-pic-modal>
+      <!--<process-inst-pic-modal ref="processInstPicModal"></process-inst-pic-modal>-->
 
       <!-- 跳转Href的动态组件方式 -->
       <a-modal v-bind="hrefComponent.model" v-on="hrefComponent.on">
@@ -919,6 +919,14 @@ export default {
             if (res.success) {
               let result = res.result
               if (Number(result.total) > 0) {
+                // 新增功能-懒加载字典
+                if (result.dictOptions && Object.keys(result.dictOptions).length > 0) {
+                  Object.keys(result.dictOptions).forEach(key => {
+                    this.$set(this.dictOptions, key, result.dictOptions[key])
+                  })
+                  // 换用_dictText自动填充了，不需要下面再处理
+                  // this.handleColumnHrefAndDict(this.defColumns, {})
+                }
                 this.table.pagination.total = Number(result.total)
                 this.table.dataSource = result.records
                 // 如果有流程，去加载流程相关代办数据

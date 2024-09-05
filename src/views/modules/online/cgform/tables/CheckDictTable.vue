@@ -90,6 +90,15 @@
             defaultChecked: false
           },
           {
+            title: '字典懒加载',
+            key: 'dictLazyLoad',
+            // width: '5%',
+            width: '80px',
+            type: FormTypes.checkbox,
+            customValue: ['1', '0'],
+            defaultChecked: false
+          },
+          {
             title: '字典Table',
             key: 'dictTable',
             // width: '12%',
