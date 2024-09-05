@@ -1,11 +1,11 @@
 <template>
-  <div class="container">
-    <a-spin :spinning="!mapLoaded">
+  <a-spin :spinning="!mapLoaded">
+    <div class="container">
       <Query v-if="mapLoaded" />
       <draw v-if="mapLoaded" />
       <div id="map" class="map"></div>
-    </a-spin>
-  </div>
+    </div>
+  </a-spin>
 </template>
 <script>
 import draw from '@/map-page/components/tools/draw/draw.vue'
