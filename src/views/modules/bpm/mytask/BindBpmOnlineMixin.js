@@ -52,6 +52,8 @@ export default {
       flowCodePreDesign: 'desform_',
       // 是否含有流程状态字段
       hasBpmStatus: false,
+      // 是否是online表单
+      isOnlineForm: '',
       // 是否是kForm设计器表单
       isDesForm: '',
       // kForm设计器表单保存后，会自动生成的表单编码

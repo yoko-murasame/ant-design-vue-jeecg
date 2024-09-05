@@ -301,10 +301,12 @@
         </span>
       </a-table>
 
-      <onl-cgform-auto-modal @success="handleFormSuccess" ref="modal" :code="code" @schema="handleGetSchema" />
+      <!--原始的Online渲染表单-->
+      <onl-cgform-auto-modal v-if="isOnlineForm" @success="handleFormSuccess" ref="modal" :code="code" @schema="handleGetSchema" />
 
       <j-import-modal ref="importModal" :url="getImportUrl()" @ok="importOk"></j-import-modal>
 
+      <!--原先的审批进度功能不用了，展示信息太少-->
       <process-inst-pic-modal ref="processInstPicModal"></process-inst-pic-modal>
 
       <!-- 跳转Href的动态组件方式 -->
@@ -312,7 +314,7 @@
         <component :is="hrefComponent.is" v-bind="hrefComponent.params"/>
       </a-modal>
 
-      <!-- 弹框表单设计器区域 -->
+      <!-- kForm弹框表单设计器区域 -->
       <auto-desform-data-full-screen
         ref="desformModal"
         @ok="handleFormSuccess"
@@ -323,12 +325,12 @@
         :hasBpmStatus="hasBpmStatus" />
 
       <!-- 自定义流程接入 -->
-      <bind-bpm :parent="vm" ref="bindBpm"></bind-bpm>
+      <bind-bpm v-if="hasBpmStatus" :parent="vm" ref="bindBpm"></bind-bpm>
 
       <!--嵌入流程审批组件-->
       <component
         :is="realTaskModule"
-        v-if="showDealBlock && onlineFormData"
+        v-if="hasBpmStatus && showDealBlock && onlineFormData"
         :show-steps="false"
         :save-form="preSaveForm"
         :formData="onlineFormData"
@@ -341,7 +343,7 @@
 
 import '@/assets/less/TableExpand.less'
 import { deleteAction, downFile, getAction, getFileAccessHttpUrl, postAction } from '@/api/manage'
-import ProcessInstPicModal from '@/components/bpm/ProcessInstPicModal'
+// import ProcessInstPicModal from '@/components/bpm/ProcessInstPicModal'
 import ButtonExpHandler from '@/components/online/autoform/model/ButtonExpHandler'
 import OnlineQueryFormItem from '@/components/online/autoform/OnlineQueryFormItem.vue'
 import { HrefJump } from '@/mixins/OnlAutoListMixin'
@@ -368,7 +370,7 @@ export default {
       TaskModule,
       OnlCgformAutoModal,
       OnlineQueryFormItem,
-      ProcessInstPicModal,
+      // ProcessInstPicModal,
       AutoDesformDataFullScreen,
       BindBpm,
       BindBpmShowMyTask,
@@ -422,7 +424,9 @@ export default {
           optPre: '/online/cgform/api/form/',
           exportXls: '/online/cgform/api/exportXls/',
           buttonAction: '/online/cgform/api/doButton',
-          getFormData: '/online/cgform/api/form/table_name'
+          getFormData: '/online/cgform/api/form/table_name',
+          // 查询原始的online表单配置
+          loadFormItems: '/online/cgform/api/getFormItem/'
         },
         isorter: {
           column: 'id',
@@ -493,7 +497,7 @@ export default {
           import: true,
           export: true,
           detail: true,
-          super_query: true,
+          super_query: false,
           bpm: true,
           bind_bpm_show_my_task: true,
           bpm_track: true,
@@ -520,7 +524,11 @@ export default {
         defColumns: [],
         // 接受URL参数
         acceptHrefParams: {},
+        // 是否是online表单
+        isOnlineForm: '',
+        // 是否是kForm设计器表单
         isDesForm: '',
+        // kForm设计器表单保存后，会自动生成的表单编码
         desFormCode: '',
         // 可循环发起流程
         bpmCirculate: false,
@@ -654,6 +662,11 @@ export default {
         this.$set(this, 'queryParam', {})
         this.$set(this.queryParamsMap, this.code, {})
         this.bpmCirculate = false
+        // 重置流程和设计器判断
+        this.hasBpmStatus = false
+        this.isOnlineForm = ''
+        this.isDesForm = ''
+        this.desFormCode = ''
       },
       /**
        * 初始化Online流程展示列表
@@ -849,6 +862,8 @@ export default {
             this.currentTableName = res.result.currentTableName
             this.isDesForm = res.result.isDesForm
             this.desFormCode = res.result.desFormCode
+            // 如果不是kForm设计器表单，才走普通online表单
+            this.isOnlineForm = !(this.isDesForm && this.desFormCode)
             this.initCgButtonList(res.result.cgButtonList)
             // 创建vue2监听器
             createVue2Watcher(res.result.onlineVueWatchJsStr, this.code, this.cachedUnWatchMap, this)
@@ -872,6 +887,8 @@ export default {
             this.scrollFlag = res.result.scrollFlag
             // 检查是否是流程
             this.hasBpmStatusFilter()
+            // 初始化高级查询组件条件
+            await this.initSuperQuery()
             // 初始化查询条件，这里需要等待先加载
             await this.initQueryInfo(res.result.onlineInitQueryParamGetter)
             // 加载新路由，清空checkbox选中
@@ -1073,6 +1090,23 @@ export default {
       },
       handleFormSuccess() {
         this.loadData()
+      },
+      // 高级查询，如果为默认online表单，会自动触发加载，但是kForm下，需要手动加载
+      initSuperQuery() {
+        if (this.buttonSwitch.super_query && !this.isOnlineForm && this.code) {
+          return new Promise((resolve) => {
+            getAction(`${this.url.loadFormItems}${this.code}`).then((res) => {
+              console.log('OnlCgformAutoList--加载高级查询条件：', res)
+              if (res.success) {
+                this.handleGetSchema(res.result.schema)
+              } else {
+                this.$message.error(res.message)
+              }
+              resolve()
+            })
+          })
+        }
+        return Promise.resolve()
       },
       // 查询完 schema 后，生成高级查询的字段列表
       handleGetSchema(schema) {
