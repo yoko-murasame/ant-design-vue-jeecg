@@ -245,7 +245,7 @@ export default {
           const newConfigStr = JSON.stringify(newConfig, null, 2)
           console.log(newConfig, newConfigStr)
           this.form.setFieldsValue({ onlineFormConfig: newConfigStr })
-          this.$refs.codeEditorConfig.setCodeContent(newConfigStr)
+          // this.$refs.codeEditorConfig.setCodeContent(newConfigStr)
         } catch (e) {
           console.error('JSON解析错误', e)
         }
@@ -256,8 +256,8 @@ export default {
        */
       handleFormTypeChange (value) {
         this.form.setFieldsValue({ onlineFormConfig: '', onlineInitQueryParamGetter: '' })
-        this.$refs.codeEditorConfig.setCodeContent('')
-        this.$refs.codeEditorGetter.setCodeContent('')
+        // this.$refs.codeEditorConfig.setCodeContent('')
+        // this.$refs.codeEditorGetter.setCodeContent('')
         // online表单
         if (value === '1') {
           this.form.setFieldsValue({ modelAndView: `modules/bpm/task/form/OnlineFormDetail` })
@@ -289,8 +289,8 @@ export default {
               onlineFormConfig: onlineFormConfigStr,
               onlineInitQueryParamGetter: onlineInitQueryParamGetterStr
             })
-            this.$refs.codeEditorConfig.setCodeContent(onlineFormConfigStr)
-            this.$refs.codeEditorGetter.setCodeContent(onlineInitQueryParamGetterStr)
+            // this.$refs.codeEditorConfig.setCodeContent(onlineFormConfigStr)
+            // this.$refs.codeEditorGetter.setCodeContent(onlineInitQueryParamGetterStr)
           })
         }
         // 自定义表单
@@ -328,8 +328,8 @@ export default {
               onlineFormConfig: onlineFormConfigStr,
               onlineInitQueryParamGetter: onlineInitQueryParamGetterStr
             })
-            this.$refs.codeEditorConfig.setCodeContent(onlineFormConfigStr)
-            this.$refs.codeEditorGetter.setCodeContent(onlineInitQueryParamGetterStr)
+            // this.$refs.codeEditorConfig.setCodeContent(onlineFormConfigStr)
+            // this.$refs.codeEditorGetter.setCodeContent(onlineInitQueryParamGetterStr)
           })
         }
       },
@@ -341,8 +341,8 @@ export default {
         this.model = Object.assign({}, record)
         this.visible = true
         this.$nextTick(async () => {
-          await this.$refs.codeEditorConfig._getCoder()
-          await this.$refs.codeEditorGetter._getCoder()
+          // await this.$refs.codeEditorConfig._getCoder()
+          // await this.$refs.codeEditorGetter._getCoder()
           // 时间格式化
           this.form.setFieldsValue(pick(this.model,
             'showReject', 'showMessageHandle', 'customTaskModule',

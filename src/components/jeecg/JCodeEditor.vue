@@ -357,7 +357,7 @@ import 'codemirror/mode/vue/vue.js'
           } else {
             this.coder.setValue(val)
           }
-        }, 50)
+        }, 200)
       },
       // 获取当前语法类型
       _getLanguage (language) {
