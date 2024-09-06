@@ -443,11 +443,13 @@ export const createVue2Watcher = (watcherJsStr, code, cacheMap, vm) => {
           // eslint-disable-next-line no-eval
           const wrapperFunc = eval(preCheckWrapper)
           console.log('初始化监听器', key)
-          const unWatched = vm.$watch('queryParam.company', wrapperFunc, {
+          const unWatched = vm.$watch(key, wrapperFunc, {
             deep: deep || false,
             immediate: immediate || false
           })
           cacheMap[code].push(unWatched)
+        } else {
+          throw new Error('JS增强监听器配置错误，handler属性必须存在！')
         }
       }
     })
