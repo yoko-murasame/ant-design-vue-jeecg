@@ -121,7 +121,7 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-<!--
+              <!--
               <a-col :span="24/3">
                 <a-form-item
                   style="width: 100%"
@@ -304,8 +304,13 @@
                     <a-tooltip :overlayStyle="{'min-width': '27vw'}">
                       <span>数据初始化JS增强</span>
                       <span slot="title">
+                        作用：<br/>
+                        1、Online列表初始化渲染时，自动将返回的参数对象与搜索参数合并，实现默认查询效果。<br/>
+                        2、返回的参数对象，还将作为KForm表单的默认值填充。<br/>
+                        3、如果是流程列表，将自动注入流程节点配置中返回的初始化参数，详见`initQueryParam`。<br/>
+                        备注：<br/>
                         1、JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。<br/>
-                        2、可使用变量：`initQueryParam`获取流程节点配置的初始化参数。
+                        2、如果需要使用到流程配置中返回的初始化变量，可通过`initQueryParam`获取。
                       </span>
                       <a-icon class="question-circle" type="question-circle-o"/>
                     </a-tooltip>
@@ -329,7 +334,9 @@
                     <a-tooltip :overlayStyle="{'min-width': '25vw'}">
                       <span>Vue2监听器JS增强</span>
                       <span slot="title">
-                        Vue的watch监听器怎么写这里就怎么写！this指向当前Online列表组件！
+                        备注：<br/>
+                        1、可以监听任何参数，如：`$route.query`、`queryParam.name`等。<br/>
+                        2、Vue的watch监听器怎么写这里就怎么写！this指向当前Online列表组件！
                       </span>
                       <a-icon class="question-circle" type="question-circle-o"/>
                     </a-tooltip>
@@ -640,8 +647,8 @@ export default {
             setDataSource(table1, datas)
           }, 1)
         })
-
-        this.edit({}, 'add')
+        const onlineInitQueryParamGetter = `console.log('流程节点配置中返回的初始化参数', initQueryParam)\nreturn initQueryParam`
+        this.edit({ onlineInitQueryParamGetter }, 'add')
       },
       edit(record, caller = '') {
         this.metaTableName = ''
@@ -900,11 +907,11 @@ export default {
         // update-begin-author:taoyan date:20190924 for:表字段转小写
         if (formData.fields && formData.fields.length > 0) {
           for (let i of formData.fields) {
-            i.dbFieldName = i.dbFieldName.toLowerCase();
+            i.dbFieldName = i.dbFieldName.toLowerCase()
           }
         }
         if (formData.head && formData.head.tableName) {
-          formData.head.tableName = formData.head.tableName.toLowerCase().trim();
+          formData.head.tableName = formData.head.tableName.toLowerCase().trim()
         }
         // update-end-author:taoyan date:20190924 for:表字段转小写
 
@@ -1008,7 +1015,7 @@ export default {
         if (!value) {
           callback()
         } else {
-          var patt1 = new RegExp('^[a-zA-Z]{1}_.*');
+          var patt1 = new RegExp('^[a-zA-Z]{1}_.*')
           if (patt1.test(value)) {
             // callback('不能以单个字母加下划线开头')
             this.$message.warn('请注意：不能以单个字母加下划线开头！目前已放行！')
@@ -1020,11 +1027,11 @@ export default {
             var params = {
               id: !this.model.id ? '' : this.model.id,
               tbname: value
-            };
+            }
             getAction(this.url.checkOnlyTable, params).then(res => {
               if (res.success) {
                 if (res.result == -1) {
-                  callback('表名已存在！');
+                  callback('表名已存在！')
                 }
               }
               callback()

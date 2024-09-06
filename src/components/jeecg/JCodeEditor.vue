@@ -3,7 +3,7 @@
     <a-icon v-if="fullScreen" class="full-screen-icon" :type="iconType" @click="()=>fullCoder=!fullCoder"/>
 
     <div class="code-editor-cust full-screen-child">
-      <textarea ref="textarea"></textarea>
+      <textarea ref="textarea" :id="uniqueId"></textarea>
       <span @click="nullTipClick" class="null-tip" :class="{'null-tip-hidden':hasCode}" :style="nullTipStyle">{{ placeholderShow }}</span>
       <template v-if="languageChange">
         <a-select v-model="mode" size="small" class="code-mode-select" @change="changeMode" placeholder="请选择主题">
@@ -167,7 +167,8 @@ import 'codemirror/mode/vue/vue.js'
           label: 'Markdown'
         }],
         // code 编辑器 是否全屏
-        fullCoder: false
+        fullCoder: false,
+        uniqueId: 'code-editor-' + Math.random().toString(36).substr(2, 9)
       }
     },
     watch: {
@@ -183,12 +184,30 @@ import 'codemirror/mode/vue/vue.js'
       value: {
         immediate: true,
         handler(value) {
-          value && this._getCoder().then(() => {
-            if (!this.code) {
+          // await this._getCoder()
+          // this.code = value
+          // 初始化
+          if (!this.coder) {
+            this.code = value
+          } else {
+            console.log('value变化', value)
+            if (value) {
+              this.hasCode = true
               this.code = value
               this.coder.setValue(value)
+            } else {
+              this.hasCode = false
+              this.code = ''
+              this.coder.setValue('')
             }
-          })
+          }
+          // this.coder && this.coder.setValue(value)
+          // value && this._getCoder().then(() => {
+          //   if (!this.code) {
+          //     this.code = value
+          //     this.coder.setValue(value)
+          //   }
+          // })
         }
       },
       language: {
@@ -265,22 +284,36 @@ import 'codemirror/mode/vue/vue.js'
         return props
       }
     },
-    mounted () {
-      // 初始化
-      this._initialize()
+    model: {
+      prop: 'value',
+      event: 'change'
+    },
+    created () {
+      this.init()
     },
     methods: {
-      // 初始化
-      _initialize () {
+      init() {
+        this._getTextarea().then((textarea) => {
+          this.coder = CodeMirror.fromTextArea(textarea, this.coderOptions)
+          this._getCoder().then(() => {
+            this._initializeValue()
+          })
+        })
+      },
+      // 初始化Value和On
+      _initializeValue () {
+        console.log('初始化_initialize', this.value, this.code)
         // 初始化编辑器实例，传入需要被实例化的文本域对象和默认配置
-        this.coder = CodeMirror.fromTextArea(this.$refs.textarea, this.coderOptions)
+        // this.coder = CodeMirror.fromTextArea(this.$refs.textarea, this.coderOptions)
         // 编辑器赋值
         if (this.value || this.code) {
-          this.hasCode = true
+          this.code = this.code || this.value
           // this.coder.setValue(this.value || this.code)
-          this.setCodeContent(this.value || this.code)
+          this.setCodeContent(this.code)
+          this.hasCode = true
         } else {
-          this.coder.setValue('')
+          // this.coder.setValue('')
+          this.setCodeContent('')
           this.hasCode = false
         }
         // 支持双向绑定
@@ -307,6 +340,9 @@ import 'codemirror/mode/vue/vue.js'
           this.$emit('change', this.code)
         })
 
+       // 首次初始化触发一下emit
+       //  this.$emit('change', this.code || this.value)
+       //  this.$emit('input', this.code || this.value)
        /* this.coder.on('cursorActivity',()=>{
           this.coder.showHint()
         }) */
@@ -321,7 +357,7 @@ import 'codemirror/mode/vue/vue.js'
           } else {
             this.coder.setValue(val)
           }
-        }, 300)
+        }, 50)
       },
       // 获取当前语法类型
       _getLanguage (language) {
@@ -342,6 +378,20 @@ import 'codemirror/mode/vue/vue.js'
           (function get() {
             if (_this.coder) {
               resolve(_this.coder)
+            } else {
+              setTimeout(get, 10)
+            }
+          })()
+        })
+      },
+      _getTextarea() {
+        let _this = this
+        return new Promise((resolve) => {
+          (function get() {
+            const target = document.getElementById(_this.uniqueId)
+            // if (_this.$refs.textarea) {
+            if (target) {
+              resolve(target)
             } else {
               setTimeout(get, 10)
             }
