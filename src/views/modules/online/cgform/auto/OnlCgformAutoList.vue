@@ -330,7 +330,7 @@
       <!--嵌入流程审批组件-->
       <component
         :is="realTaskModule"
-        v-if="hasBpmStatus && showDealBlock && onlineFormData"
+        v-if="showDealBlock && onlineFormData"
         :show-steps="false"
         :save-form="preSaveForm"
         :formData="onlineFormData"
