@@ -468,7 +468,7 @@ export default {
         align: 'center',
         dataIndex: 'bpmStatus_dictText',
         customRender: (t, r, index) => {
-          return r.bpmData ? r.bpmData.taskName : t
+          return r.bpmData ? r.bpmData.taskName : this.$filterMultiDictText(this.dictOptions['bpm_status'], t)
         }
       }
     },

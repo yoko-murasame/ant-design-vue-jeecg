@@ -98,6 +98,7 @@ export const HrefJump = {
       // 如果 hrefSlotName 有值则代表使用了href跳转
       // 两者可以兼容。兼容的具体思路为：先获取到字典替换的值，再添加href链接跳转
       if (customRender || hrefSlotName) {
+        // console.log('渲染字典', customRender, column)
         let dictCode = customRender
         let replaceFlag = '_replace_text_'
         let dictTextFlag = '_dictText'

@@ -623,9 +623,11 @@ export default {
               }
               return true
             }
+            // console.log('加载序号列', item)
             // 自定义流程状态文本
-            if (item.key === this.bpmStatusFieldName || item.dataIndex === this.bpmStatusFieldName.toUpperCase()) {
+            if (item.key === this.bpmStatusFieldName || item.dataIndex.toUpperCase() === this.bpmStatusFieldName.toUpperCase()) {
               item.customRender = this.getBpmStatusColumn().customRender
+              // console.log('加载流程状态列', item)
               return true
             }
             if (this.settingColumns.includes(item.dataIndex)) {
