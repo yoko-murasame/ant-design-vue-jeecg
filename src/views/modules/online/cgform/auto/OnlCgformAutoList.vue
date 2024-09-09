@@ -354,7 +354,7 @@ import AutoDesformDataFullScreen from '@/views/modules/online/desform/auto/modul
 import { createAsyncJsEnhanceFunction, createVue2Watcher } from '@comp/yoko/kform/CustomMethods'
 // 流程处理接入
 import BindBpm from '@views/modules/bpm/mytask/BindBpm'
-import BindBpmButton from '@views/modules/bpm/mytask/BindBpmButton'
+// import BindBpmButton from '@views/modules/bpm/mytask/BindBpmButton'
 import BindBpmOnlineMixin from '@views/modules/bpm/mytask/BindBpmOnlineMixin'
 import BindBpmShowMyTask from '@views/modules/bpm/mytask/BindBpmShowMyTask'
 import TaskModule from '@views/modules/bpm/task/form/TaskModule'
@@ -373,8 +373,7 @@ export default {
       // ProcessInstPicModal,
       AutoDesformDataFullScreen,
       BindBpm,
-      BindBpmShowMyTask,
-      BindBpmButton
+      BindBpmShowMyTask
     },
     props: {
       // 流程表单data
@@ -568,9 +567,9 @@ export default {
     },
     computed: {
       realTaskModule() {
-        console.log('加载动态审批组件', this.formData.customTaskModule)
-        if (this.formData.customTaskModule) {
-          return () => import(`@/views/${this.formData.customTaskModule}.vue`)
+        console.log('加载动态审批组件', this.innerFormData.customTaskModule)
+        if (this.innerFormData.customTaskModule) {
+          return () => import(`@/views/${this.innerFormData.customTaskModule}.vue`)
         }
         return 'TaskModule'
       },

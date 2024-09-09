@@ -46,7 +46,7 @@ export default {
       path: 'modules/bpm/task/form/FormLoading',
       taskId: '',
       myTaskList: null,
-      formData: {},
+      innerFormData: {},
       // 流程编码前缀
       flowCodePre: 'onl_',
       flowCodePreDesign: 'desform_',
@@ -86,7 +86,7 @@ export default {
      */
     async getFlowCode(record = {}) {
       console.log('getFlowCode', record, this.hasBpmStatus, this.isDesForm, this.desFormCode)
-      const dynamicCode = await this.getDynamicFlowCode(JSON.stringify(record) === '{}' ? this.formData : record)
+      const dynamicCode = await this.getDynamicFlowCode(JSON.stringify(record) === '{}' ? this.innerFormData : record)
       if (dynamicCode) {
         return dynamicCode
       }
@@ -106,7 +106,7 @@ export default {
      * online表单：自动根据 onl_表明 去请求数据库获取 processDefinitionId
      */
     async getProcessDefinitionId() {
-      console.log('getProcessDefinitionId', this.formData)
+      console.log('getProcessDefinitionId', this.innerFormData)
       const flowCode = await this.getFlowCode()
       if (!this.processDefinitionId) {
         // console.log('获取processDefinitionId', flowCode, this.currentTableName)
@@ -384,22 +384,22 @@ export default {
             onlineFormConfig: res.result.onlineFormConfig,
             onlineInitQueryParamGetter: res.result.onlineInitQueryParamGetter
           }
-          this.formData = data
+          this.innerFormData = data
           // update--begin--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
           console.log('获取流程节点表单URL', res.result.formUrl)
 
           let tempFormUrl = res.result.formUrl
           // 节点配置表单URL，VUE组件类型对应的拓展参数
-          this.formData['disabled'] = true
+          this.innerFormData['disabled'] = true
           if (tempFormUrl && tempFormUrl.indexOf('?') !== -1 && !isURL(tempFormUrl) && tempFormUrl.indexOf('{{DOMAIN_URL}}') === -1) {
             tempFormUrl = res.result.formUrl.split('?')[0]
             console.log('获取流程节点表单URL（去掉参数）', tempFormUrl)
             // update--begin--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
             let qv = getQueryVariable(res.result.formUrl)
-            this.formData.extendUrlParams = qv
+            this.innerFormData.extendUrlParams = qv
             // 设置表单可编辑
             if (qv.edit === '1' || qv.edit === 'true' || qv.edit === 1) {
-              this.formData['disabled'] = false
+              this.innerFormData['disabled'] = false
             }
             // update--end--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
           }
@@ -419,7 +419,7 @@ export default {
 
           // update--end--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
 
-          console.log('获取流程节点信息', this.formData, this.path)
+          console.log('获取流程节点信息', this.innerFormData, this.path)
           this.$refs.bindBpm.$refs.taskDealModal.deal(record)
           this.$refs.bindBpm.$refs.taskDealModal.title = '流程办理'
         }
@@ -439,7 +439,7 @@ export default {
             vars: res.result.records,
             formType: record.formType
           }
-          this.formData = data
+          this.innerFormData = data
           // update--begin--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
           console.log('获取流程节点表单URL ', res.result.formUrl)
 
@@ -448,12 +448,12 @@ export default {
           if (tempFormUrl && tempFormUrl.indexOf('?') !== -1 && !isURL(tempFormUrl) && tempFormUrl.indexOf('{{DOMAIN_URL}}') === -1) {
             tempFormUrl = res.result.formUrl.split('?')[0]
             console.log('获取流程节点表单URL（去掉参数）', tempFormUrl)
-            this.formData.extendUrlParams = getQueryVariable(res.result.formUrl)
+            this.innerFormData.extendUrlParams = getQueryVariable(res.result.formUrl)
           }
           this.path = tempFormUrl
           // update--end--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
 
-          console.log('获取流程节点信息', this.formData, this.path)
+          console.log('获取流程节点信息', this.innerFormData, this.path)
           this.$refs.bindBpm.$refs.taskDealModal.deal(record)
           this.$refs.bindBpm.$refs.taskDealModal.title = '流程历史'
         }

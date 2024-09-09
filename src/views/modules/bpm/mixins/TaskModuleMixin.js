@@ -57,6 +57,19 @@ export const TaskModuleMixin = {
   },
   data() {
     return {
+      // 内置参数
+      innerFormData: {
+        // showReject:是否显示驳回按钮，默认不显示
+        showReject: false,
+        // showMessageHandle:是否显示处理意见框，默认显示
+        showMessageHandle: true,
+        taskId: '',
+        onlineFormConfig: {
+          initQueryParam: {}
+        }
+      },
+      // 内置提交参数
+      innerSaveForm: null,
       url: {
         getProcessTaskTransInfo: '/act/task/getProcessTaskTransInfo',
         processComplete: '/act/task/processComplete',
@@ -81,16 +94,28 @@ export const TaskModuleMixin = {
       checkedNext: false,
       fileList: [],
       loading: false,
-      remarksDictOptions: []
+      remarksDictOptions: [],
+      // 禁用props的初始化
+      disableInnerFormData: false
     }
   },
-  created() {
-    const token = Vue.ls.get(ACCESS_TOKEN)
-    this.headers = { 'X-Access-Token': token }
-    console.log('任务办理组件数据：', this.formData)
-    this.model.taskId = this.formData.taskId
-    this.getProcessTaskTransInfo(this.formData)
-    this.initDictConfig()
+  created() {},
+  watch: {
+    'formData.taskId': {
+      immediate: true,
+      handler(v) {
+        this.innerFormData = this.formData
+        this.innerSaveForm = this.saveForm
+      }
+    },
+    'innerFormData.taskId': {
+      immediate: true,
+      handler(v) {
+        if (!v || this.disableInnerFormData) return
+        this.getProcessTaskTransInfo(this.innerFormData)
+        this.initDictConfig()
+      }
+    }
   },
   methods: {
     initDictConfig() {
@@ -101,18 +126,28 @@ export const TaskModuleMixin = {
         }
       })
     },
-    getProcessTaskTransInfo(formData) {
-      console.log('getProcessTaskTransInfo', formData)
-      var params = { taskId: formData.taskId }// 查询条件
-      this.loading = true
-      getAction(this.url.getProcessTaskTransInfo, params).then((res) => {
-        if (res.success) {
-          console.log('流程流转信息', res)
-          this.resultObj = res.result
-        }
-        this.loading = false
-      }).finally(() => {
-        this.loading = false
+    async getProcessTaskTransInfo(innerFormData) {
+      console.log('getProcessTaskTransInfo', innerFormData)
+      const token = Vue.ls.get(ACCESS_TOKEN)
+      this.headers = { 'X-Access-Token': token }
+      console.log('任务办理组件数据：', this.innerFormData)
+      this.model.taskId = this.innerFormData.taskId
+      return new Promise((resolve, reject) => {
+        var params = { taskId: innerFormData.taskId }// 查询条件
+        this.loading = true
+        getAction(this.url.getProcessTaskTransInfo, params).then((res) => {
+          if (res.success) {
+            console.log('流程流转信息', res)
+            this.resultObj = res.result
+            resolve(res.result)
+          } else {
+            // this.$message.error(res.message)
+            reject(res.message)
+          }
+          this.loading = false
+        }).finally(() => {
+          this.loading = false
+        })
       })
     },
     handleManyProcessComplete() {
@@ -143,8 +178,8 @@ export const TaskModuleMixin = {
         onOk: async function () {
           // 预校验表单
           try {
-            if (that.model.processModel !== 3) {
-              await that.saveForm(null, buttonName)
+            if (that.model.processModel !== 3 && that.innerSaveForm) {
+              await that.innerSaveForm(null, buttonName)
             }
           } catch (e) {
             console.error('流程保存错误', e)
@@ -156,6 +191,7 @@ export const TaskModuleMixin = {
           httpAction(that.url.processComplete, that.model, method).then((res) => {
             if (res.success) {
               // that.$message.success(res.message)
+              that.loadData && that.loadData()
               that.$emit('complete')
             } else {
               // that.$message.error(res.message);
