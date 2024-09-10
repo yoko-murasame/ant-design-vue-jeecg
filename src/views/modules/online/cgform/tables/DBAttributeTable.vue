@@ -57,6 +57,7 @@ const MySQLKeywords = ['ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'AS
             placeholder: '请输入${title}',
             validateRules: [
               { required: true, message: '${title}不能为空' },
+              // FIXME 暂时关闭命名规则校验
               {
                 pattern: /^[a-zA-Z]{1}(?!_)[a-zA-Z0-9_\\$]+$/,
                 message: '命名规则:只能由字母、数字、下划线、$符号组成;必须以字母开头;不能以单个字母加下滑线开头'
