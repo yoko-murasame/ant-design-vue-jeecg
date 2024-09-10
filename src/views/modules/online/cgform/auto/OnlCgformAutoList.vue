@@ -321,7 +321,7 @@
         @saveAndSubmitBPM="saveAndSubmitBPM"
         :buttonSwitch="buttonSwitch"
         :currentTableName="currentTableName"
-        :default-data="onlineFormConfig.initQueryParam || {}"
+        :default-data="initQueryParam || {}"
         :hasBpmStatus="hasBpmStatus" />
 
       <!-- 自定义流程接入 -->
@@ -656,7 +656,7 @@ export default {
         this.showQueryBlock = false
         // Bug在这里，流程上文变量进来，需要判断是否是处于流程表单状态，不是才清空
         if (this.onlineFormData === null) {
-          this.$set(this.onlineFormConfig, 'initQueryParam', {})
+          // this.$set(this.onlineFormConfig, 'initQueryParam', {})
         }
         // 清空表单的默认初始化条件
         this.$set(this, 'initQueryParam', {})
@@ -678,10 +678,10 @@ export default {
         this.code = this.onlineFormConfig.code || this.$route.params.code
         this.showDealBlock = this.onlineFormConfig.showDealBlock
         this.showQueryBlock = this.onlineFormConfig.showQueryBlock
-        this.initQueryParam = this.onlineFormConfig.initQueryParam
+        this.initQueryParam = { ...this.initQueryParam, ...this.onlineFormConfig.initQueryParam }
         // 如果从流程配置中有定义，去加载覆盖
         if (this.onlineFormData && this.onlineFormData.onlineFormConfig) {
-          const extParams = this.onlineFormData.onlineFormConfig || {}
+          const extParams = { ...this.onlineFormData.onlineFormConfig } || {}
           this.code = extParams.hasOwnProperty('code') ? extParams.code : this.code
           this.showDealBlock = extParams.hasOwnProperty('showDealBlock') ? extParams.showDealBlock : this.showDealBlock
           this.showQueryBlock = extParams.hasOwnProperty('showQueryBlock') ? extParams.showQueryBlock : this.showQueryBlock
@@ -692,7 +692,7 @@ export default {
             //   this.initQueryParam = Object.assign(this.initQueryParam, JSON.parse(extParams.initQueryParam) || {})
             // }
             if (typeof extParams.initQueryParam === 'object') {
-              this.initQueryParam = Object.assign(this.initQueryParam, extParams.initQueryParam)
+              this.initQueryParam = Object.assign(this.initQueryParam, { ...extParams.initQueryParam })
               // console.log('优先注入流程节点定义的预定义参数', JSON.parse(JSON.stringify(this.initQueryParam)), JSON.parse(JSON.stringify(extParams)))
             }
           }
@@ -796,7 +796,7 @@ export default {
                   const getterParams = await func()
                   // FIXME 其实流程变量优先级更高，放前面，这里自己看情况调整吧
                   console.log('online列表合并流程变量', JSON.parse(JSON.stringify(this.initQueryParam)), JSON.parse(JSON.stringify(getterParams)))
-                  this.onlineFormConfig.initQueryParam = this.initQueryParam = Object.assign(getterParams || {}, this.initQueryParam)
+                  this.initQueryParam = Object.assign(getterParams || {}, this.initQueryParam)
                 } catch (e) {
                   this.$message.error('数据初始化JS增强：onlineInitQueryParamGetter，执行异常！')
                   console.error(e)
