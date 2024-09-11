@@ -163,7 +163,7 @@
     },
     methods: {
       getDictCode(item) {
-        console.log('item', item)
+        // console.log('item', item)
         if (item.dictTable && item.dictTable.length > 0) {
           return item.dictTable + ',' + item.dictText + ',' + item.dictCode
         } else {

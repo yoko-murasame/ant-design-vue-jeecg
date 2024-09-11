@@ -144,12 +144,12 @@ export default {
     }
   },
   watch: {
-    buttonSwitch: {
-      immediate: true,
-      handler(val) {
-        console.log('buttonSwitch', val)
-      }
-    },
+    // buttonSwitch: {
+    //   immediate: true,
+    //   handler(val) {
+    //     console.log('buttonSwitch', val)
+    //   }
+    // },
     defaultData: {
       immediate: true,
       handler(val) {

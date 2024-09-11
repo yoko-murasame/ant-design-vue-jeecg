@@ -503,18 +503,18 @@ export default {
      * 清空在线表单流程相关配置，在切换表单（路由改变）时触发
      */
     clearOnlineConfig() {
-      console.log('clearOnlineConfig')
+      console.log('清空在线表单流程相关配置')
       this.myTaskList = null
       this.processDefinitionId = null
     },
     endMethod() {}
-  },
-  // online表单监听路由改变时，重置流程相关数据
-  watch: {
-    '$route'() {
-      this.clearOnlineConfig()
-    }
   }
+  // online表单监听路由改变时，重置流程相关数据 FIXME 放到 OnlCgformAutoList.vue
+  // watch: {
+  //   '$route'() {
+  //     this.clearOnlineConfig()
+  //   }
+  // }
 }
 
 // 获取URL上参数

@@ -399,7 +399,7 @@ import BindBpmOnlineMixin from '@views/modules/bpm/mytask/BindBpmOnlineMixin'
 import BindBpmShowMyTask from '@views/modules/bpm/mytask/BindBpmShowMyTask'
 import TaskModule from '@views/modules/bpm/task/form/TaskModule'
 // eslint-disable-next-line camelcase
-import lodash_object from 'lodash'
+import lodash_object, { debounce } from 'lodash'
 import Vue from 'vue'
 import OnlCgformAutoModal from './OnlCgformAutoModal'
 
@@ -595,41 +595,56 @@ export default {
       }
     },
     created() {
+      this.initAll = debounce(this.initAll, 50)
     },
     watch: {
       // 卡片模式下才触发初始化
       'onlineFormConfig.code': {
         handler(v) {
           if (v && this.cardMode) {
-            console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::卡片模式::监听onlineFormConfig.code')
-            this.resetConfig()
-            this.initOnlineBpmData()
-            this.initAutoList()
+            console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::卡片模式::监听onlineFormConfig.code',
+              'code:',
+              v,
+              'onlineFormConfig:',
+              JSON.parse(JSON.stringify(this.onlineFormConfig)),
+              'initQueryParam:',
+              JSON.parse(JSON.stringify(this.initQueryParam)))
+            this.initAll()
           }
         },
         deep: false,
         immediate: true
       },
+      // 流程流转模式下的初始化，不受卡片配置影响
       onlineFormData: {
         handler(v) {
           if (v) {
-            console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听onlineFormData')
-            this.resetConfig()
-            this.initOnlineBpmData()
-            this.initAutoList()
+            console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听onlineFormData',
+              'onlineFormData:',
+              JSON.parse(JSON.stringify(v)),
+              'onlineFormConfig:',
+              JSON.parse(JSON.stringify(this.onlineFormConfig)),
+              'initQueryParam:',
+              JSON.parse(JSON.stringify(this.initQueryParam)))
+            this.initAll()
           }
         },
         deep: false,
         immediate: true
       },
+      // 监听路由参数变化，需要在非卡片模式下触发
       '$route': {
         handler() {
           // 刷新参数放到这里去触发，就可以刷新相同界面了
-          if (this.$route.params.code) {
-            this.resetConfig()
-            console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听$route::after', this.$route.params.code, JSON.stringify(this.onlineFormConfig), JSON.stringify(this.initQueryParam))
-            this.initOnlineBpmData()
-            this.initAutoList()
+          if (this.$route.params.code && !this.cardMode) {
+            console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听$route::after',
+              'code:',
+              this.$route.params.code,
+              'onlineFormConfig:',
+              JSON.parse(JSON.stringify(this.onlineFormConfig)),
+              'initQueryParam:',
+              JSON.parse(JSON.stringify(this.initQueryParam)))
+            this.initAll()
           }
         },
         immediate: true
@@ -767,6 +782,15 @@ export default {
       // TODO 放入后端配置JS增强，可自定义实现流转前保存事件
       async preSaveForm(flag, buttonName) {
         // TODO 流程按钮提交前会触发，表单自己实现相应的保存事件
+      },
+      /**
+       * 初始化Online列表入口
+       */
+      initAll() {
+        this.clearOnlineConfig()
+        this.resetConfig()
+        this.initOnlineBpmData()
+        this.initAutoList()
       },
       /**
        * 重置配置

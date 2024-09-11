@@ -37,7 +37,7 @@ export default {
     value: {
       immediate: true,
       handler(val) {
-        console.log('change value', val)
+        // console.log('change value', val)
         this.checked = val
       }
     }
