@@ -8,7 +8,7 @@
     :rowNumber="true"
     :rowSelection="true"
     :actionButton="actionButton"
-    :maxHeight="300"/>
+    :maxHeight="-1"/>
 
 </template>
 

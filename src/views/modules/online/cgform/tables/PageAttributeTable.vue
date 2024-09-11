@@ -6,7 +6,7 @@
     :columns="columns"
     :dataSource="dataSource"
     :rowNumber="true"
-    :maxHeight="319"
+    :maxHeight="-1"
     :disabledRows="{ dbFieldName:'id'}"/>
 
 </template>

@@ -25,7 +25,7 @@
     </template>
 
     <a-spin :spinning="confirmLoading">
-      <a-form :form="form" layout="inline" :class="{'online-config-cust':true }">
+      <a-form :form="form" layout="inline" :class="{'online-config-cust':true }" class="cgform-header-main">
         <a-list>
           <!-- 表名、表描述、表类型 -->
           <a-list-item>
@@ -72,13 +72,57 @@
                       </a-select>
                     </a-form-item>
                   </a-col>
+                  <a-col :span="24/3">
+                    <a-form-item
+                      style="width: 100%"
+                      :labelCol="threeCol.label"
+                      :wrapperCol="threeCol.wrapper"
+                      label="主键策略">
+                      <a-select v-decorator="[ 'idType', {initialValue: 'UUID'}]" @change="handleChangeInIdType">
+                        <a-select-option value="UUID">ID_WORKER(分布式自增)</a-select-option>
+                        <!--<a-select-option value="NATIVE">NATIVE(自增长方式)</a-select-option>
+                        <a-select-option value="SEQUENCE">SEQUENCE(序列方式)</a-select-option>-->
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <!--数据权限标识-->
+                  <a-col :span="24/3">
+                    <a-form-item
+                      style="width: 100%"
+                      :labelCol="threeCol.label"
+                      :wrapperCol="threeCol.wrapper">
+                      <span slot="label">
+                        <a-tooltip placement="bottom" :overlayStyle="{'min-width': '40vw'}">
+                          <span>数据权限标识</span>
+                          <span slot="title">
+                            1、当前Online表单的数据权限规则，在系统->菜单管理->新增数据权限菜单节点。<br/>
+                            2、配置后会自动应用该节点perms数据权限！<br/>
+                            3、比如父节点perms为：data:rule，子节点：data:rule:child1、data:rule:child2，选中父节点后将自动应用所有子节点权限！<br/>
+                            4、不配置数据权限规则将不生效！
+                          </span>
+                          <a-icon class="question-circle" type="question-circle-o"/>
+                        </a-tooltip>
+                      </span>
+                      <!--<a-input placeholder="请选择数据权限标识" v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"/>-->
+                      <j-search-select-tag
+                        v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"
+                        placeholder="请选择数据权限标识"
+                        dict="sys_permission,name,perms,menu_type=2"
+                        :async="true"
+                        :pageSize="50"
+                        mode="multiple"
+                      />
+                    </a-form-item>
+                  </a-col>
                 </a-row>
                 <!-- 映射类型、附表排序序号 -->
                 <a-row :gutter="gutter" style="width: 100%;" v-if="showRelationType">
                   <a-col :span="4" :push="17">
                     <a-form-item
                       style="width: 100%"
-                      :wrapperCol="{span:24}"
+                      :labelCol="{span:7}"
+                      :wrapperCol="{span:24-7}"
+                      label="附表关系类型"
                     >
                       <a-radio-group v-decorator="[ 'relationType', {initialValue:0}]">
                         <a-radio :value="0">一对多</a-radio>
@@ -97,155 +141,6 @@
                   </a-col>
                 </a-row>
               </a-col>
-            </a-row>
-          </a-list-item>
-          <!-- 表单分类、主键策略、序号名称 -->
-          <a-list-item>
-            <a-row :gutter="gutter" style="width: 100%;">
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="表单分类">
-                  <!-- <a-select v-decorator="[ 'formCategory', {initialValue: 'bdfl_include'}]">
-                    <a-select-option value="bdfl_include">导入表单</a-select-option>
-                    <a-select-option value="bdfl_ptbd">普通表单</a-select-option>
-                    <a-select-option value="bdfl_fzbd">复杂表单</a-select-option>
-                    <a-select-option value="bdfl_vipbd">VIP表单</a-select-option>
-                  </a-select>-->
-                  <j-dict-select-tag dict-code="ol_form_biz_type" v-decorator="[ 'formCategory', {initialValue: 'temp'}]" :trigger-change="true" placeholder="请选择"></j-dict-select-tag>
-                </a-form-item>
-              </a-col>
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="主键策略">
-                  <a-select v-decorator="[ 'idType', {initialValue: 'UUID'}]" @change="handleChangeInIdType">
-                    <a-select-option value="UUID">ID_WORKER(分布式自增)</a-select-option>
-                    <!--<a-select-option value="NATIVE">NATIVE(自增长方式)</a-select-option>
-                    <a-select-option value="SEQUENCE">SEQUENCE(序列方式)</a-select-option>-->
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <!--
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="使用表单设计">
-                  <a-select v-decorator="[ 'isDesForm', {initialValue: 'N'}]" @change="handleChangeInIsDesForm">
-                    <a-select-option value="Y">是</a-select-option>
-                    <a-select-option value="N">否</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col> -->
-
-              <a-col :span="24/3" v-if="showIdSequence">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="序号名称">
-                  <a-input placeholder="请输入序号名称" v-decorator="['idSequence', validatorRules.idSequence]"/>
-                </a-form-item>
-              </a-col>
-
-              <!--数据权限标识-->
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper">
-                  <span slot="label">
-                    <a-tooltip placement="bottom" :overlayStyle="{'min-width': '40vw'}">
-                      <span>数据权限标识</span>
-                      <span slot="title">
-                        1、当前Online表单的数据权限规则，在系统->菜单管理->新增数据权限菜单节点。<br/>
-                        2、配置后会自动应用该节点perms数据权限！<br/>
-                        3、比如父节点perms为：data:rule，子节点：data:rule:child1、data:rule:child2，选中父节点后将自动应用所有子节点权限！<br/>
-                        4、不配置数据权限规则将不生效！
-                      </span>
-                      <a-icon class="question-circle" type="question-circle-o"/>
-                    </a-tooltip>
-                  </span>
-                  <!--<a-input placeholder="请选择数据权限标识" v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"/>-->
-                  <j-search-select-tag
-                    v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"
-                    placeholder="请选择数据权限标识"
-                    dict="sys_permission,name,perms,menu_type=2"
-                    :async="true"
-                    :pageSize="50"
-                    mode="multiple"
-                  />
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-list-item>
-          <!-- PC表单风格、移动表单风格、查询模式 -->
-          <a-list-item>
-            <a-row :gutter="gutter" style="width: 100%;">
-
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="主题模板">
-                  <a-select placeholder="请选择主题模板" v-decorator="[ 'themeTemplate',{initialValue:'normal'}]" :disabled="templateFlag">
-                    <a-select-option value="normal">默认主题</a-select-option>
-                    <a-select-option value="erp">ERP主题(一对多)</a-select-option>
-                    <a-select-option value="innerTable">内嵌子表主题(一对多)</a-select-option>
-                    <a-select-option value="tab">TAB主题(一对多)</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="表单风格">
-                  <a-select placeholder="请选择PC表单风格" v-decorator="[ 'formTemplate',{initialValue:'1'}]">
-                    <a-select-option value="1">一列</a-select-option>
-                    <a-select-option value="2">两列</a-select-option>
-                    <a-select-option value="3">三列</a-select-option>
-                    <a-select-option value="4">四列</a-select-option>
-                    <!-- <a-select-option value="99">自适应</a-select-option>-->
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <!-- 暂时先隐藏 -->
-              <a-col :span="24/3" v-if="false">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="移动表单风格">
-                  <a-select placeholder="请选择移动表单风格" v-decorator="[ 'formTemplateMobile']">
-                    <a-select-option value="antdesign">AntDesign模板</a-select-option>
-                    <a-select-option value="bootstrap">Bootstrap模板</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="滚动条">
-                  <a-select v-decorator="[ 'scroll', {initialValue: 1}]">
-                    <a-select-option :value="1">有</a-select-option>
-                    <a-select-option :value="0">无</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
             </a-row>
           </a-list-item>
           <!-- 显示复选框、是否分页、是否树 -->
@@ -289,20 +184,9 @@
               </a-col>
             </a-row>
           </a-list-item>
-          <!--update--begin--autor:lvdandan-----date:20201023------for：online表单是否开启表单设计器-->
+          <!--JS增强-->
           <a-list-item>
             <a-row :gutter="gutter" style="width: 100%;">
-              <a-col :span="24/3" v-if="showDesFormCode">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="表单编码">
-                  <a-input
-                    placeholder="表单编码"
-                    v-decorator=" ['desFormCode', validatorRules.desFormCode]"/>
-                </a-form-item>
-              </a-col>
               <!--表单数据初始化增强-->
               <a-col :span="24/3">
                 <a-form-item
@@ -361,7 +245,92 @@
               </a-col>
             </a-row>
           </a-list-item>
-          <!--update--begin--autor:lvdandan-----date:20201023------for：online表单是否开启表单设计器-->
+          <!-- 表单分类、序号名称 -->
+          <a-list-item>
+            <a-row :gutter="gutter" style="width: 100%;">
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="表单分类">
+                  <!-- <a-select v-decorator="[ 'formCategory', {initialValue: 'bdfl_include'}]">
+                    <a-select-option value="bdfl_include">导入表单</a-select-option>
+                    <a-select-option value="bdfl_ptbd">普通表单</a-select-option>
+                    <a-select-option value="bdfl_fzbd">复杂表单</a-select-option>
+                    <a-select-option value="bdfl_vipbd">VIP表单</a-select-option>
+                  </a-select>-->
+                  <j-dict-select-tag dict-code="ol_form_biz_type" v-decorator="[ 'formCategory', {initialValue: 'temp'}]" :trigger-change="true" placeholder="请选择"></j-dict-select-tag>
+                </a-form-item>
+              </a-col>
+              <!--
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="使用表单设计">
+                  <a-select v-decorator="[ 'isDesForm', {initialValue: 'N'}]" @change="handleChangeInIsDesForm">
+                    <a-select-option value="Y">是</a-select-option>
+                    <a-select-option value="N">否</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col> -->
+
+              <a-col :span="24/3" v-if="showIdSequence">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="序号名称">
+                  <a-input placeholder="请输入序号名称" v-decorator="['idSequence', validatorRules.idSequence]"/>
+                </a-form-item>
+              </a-col>
+              <!-- PC表单风格、移动表单风格、查询模式 -->
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="主题模板">
+                  <a-select placeholder="请选择主题模板" v-decorator="[ 'themeTemplate',{initialValue:'normal'}]" :disabled="templateFlag">
+                    <a-select-option value="normal">默认主题</a-select-option>
+                    <a-select-option value="erp">ERP主题(一对多)</a-select-option>
+                    <a-select-option value="innerTable">内嵌子表主题(一对多)</a-select-option>
+                    <a-select-option value="tab">TAB主题(一对多)</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="表单风格">
+                  <a-select placeholder="请选择PC表单风格" v-decorator="[ 'formTemplate',{initialValue:'2'}]">
+                    <a-select-option value="1">一列</a-select-option>
+                    <a-select-option value="2">两列</a-select-option>
+                    <a-select-option value="3">三列</a-select-option>
+                    <a-select-option value="4">四列</a-select-option>
+                    <!-- <a-select-option value="99">自适应</a-select-option>-->
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <!-- 暂时先隐藏 -->
+              <a-col :span="24/3" v-if="false">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="移动表单风格">
+                  <a-select placeholder="请选择移动表单风格" v-decorator="[ 'formTemplateMobile']">
+                    <a-select-option value="antdesign">AntDesign模板</a-select-option>
+                    <a-select-option value="bootstrap">Bootstrap模板</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-list-item>
           <!-- 树型表单父ID、树开表单列 -->
           <a-list-item v-if="showTreeParentIdField">
             <a-row :gutter="gutter" style="width: 100%;">
@@ -399,6 +368,34 @@
                   <a-input
                     placeholder="请输入树开表单列字段名"
                     v-decorator=" ['treeFieldname', validatorRules.treeFieldname]"/>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-list-item>
+          <!--表单编码-->
+          <a-list-item>
+            <a-row :gutter="gutter" style="width: 100%;">
+              <a-col :span="24/3" v-if="showDesFormCode">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="表单编码">
+                  <a-input
+                    placeholder="表单编码"
+                    v-decorator=" ['desFormCode', validatorRules.desFormCode]"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="滚动条">
+                  <a-select v-decorator="[ 'scroll', {initialValue: 1}]">
+                    <a-select-option :value="1">有</a-select-option>
+                    <a-select-option :value="0">无</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -560,7 +557,7 @@ export default {
             }]
           },
           tableTxt: { rules: [{ required: true, message: '请输入表说明!' }] },
-          viewTable: { rules: [{ required: false, message: '请选择是否是视图!' }], initialValue: false },
+          viewTable: { rules: [{ required: false, message: '请选择是否是视图!' }], valuePropName: 'checked' },
           idSequence: { rules: [{ required: true, message: '请输入序号名称!' }] },
           dataRulePerms: { rules: [{ required: false, message: '请选择数据权限标识!' }] },
           treeParentIdField: { rules: [{ required: true, message: '请输入树表单父ID!' }] },
@@ -1107,4 +1104,8 @@ export default {
 <style scoped>
  .online-config-cust .has-feedback{display: block !important;}
  .input-table .thead .td span{width:100%}
+ .cgform-header-main {
+   max-height: 30vh;
+   overflow-y: auto;
+ }
 </style>

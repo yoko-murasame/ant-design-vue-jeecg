@@ -10,7 +10,7 @@
     :rowNumber="true"
     :rowSelection="true"
     :actionButton="actionButton"
-    :maxHeight="300"
+    :maxHeight="-1"
     :disabledRows="{ dbFieldName:'id'}"
     @added="handleAdded"
     @deleted="handleDeleted"
