@@ -743,7 +743,12 @@ export default {
         // 自定义序号列
         const that = this
         const customRender = (t, r, index) => {
-          // return parseInt(index) + 1;
+          // console.log('加载序号列', t, r, index)
+          // 如果是非分页模式，默认index
+          if (!that.table.pagination) {
+            return parseInt(index) + 1
+          }
+          // 分页下和总数计算
           return (that.table.pagination.current - 1) * that.table.pagination.pageSize + parseInt(index) + 1
         }
         // 处理列
