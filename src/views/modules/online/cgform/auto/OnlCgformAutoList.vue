@@ -1,305 +1,338 @@
 <template>
-  <a-card :bordered="false" style="height: 100%">
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline" @keyup.enter.native="searchByquery" v-if="showQueryBlock">
-        <a-row :gutter="24" v-if="queryInfo && queryInfo.length>0 || hasBpmStatus">
-          <template v-if="buttonSwitch.bind_bpm_show_my_task && processDefinitionId">
-            <a-col :xl="2" :lg="3" :md="4" :sm="24">
-              <bind-bpm-show-my-task v-model="queryParam.checked" :parent="vm"></bind-bpm-show-my-task>
+  <a-card v-bind="cartAttrs">
+
+    <!--查询插槽-->
+    <div class="table-page-search-wrapper" v-if="!cardMode || $slots.cardQuery || $scopedSlots.cardQuery">
+      <slot name="cardQuery" v-bind="getCardBindAttrs">
+        <a-form layout="inline" @keyup.enter.native="searchByquery" v-if="showQueryBlock">
+          <a-row :gutter="24" v-if="queryInfo && queryInfo.length>0 || hasBpmStatus">
+            <template v-if="buttonSwitch.bind_bpm_show_my_task && processDefinitionId">
+              <a-col :xl="2" :lg="3" :md="4" :sm="24">
+                <bind-bpm-show-my-task v-model="queryParam.checked" :parent="vm"></bind-bpm-show-my-task>
+              </a-col>
+            </template>
+            <template v-for="(item,index) in queryInfo">
+              <template v-if=" item.hidden==='1' ">
+                <a-col v-if="item.view ==='datetime' && 'single'!== item.mode" :md="12" :sm="16" :key=" 'query'+index " v-show="toggleSearchStatus">
+                  <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
+                </a-col>
+                <a-col v-else :md="6" :sm="8" :key=" 'query'+index " v-show="toggleSearchStatus">
+                  <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
+                </a-col>
+              </template>
+              <template v-else>
+                <a-col v-if="item.view === 'datetime' && 'single' !== item.mode" :md="12" :sm="16" :key=" 'query'+index ">
+                  <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
+                </a-col>
+                <a-col v-else :md="6" :sm="8" :key=" 'query'+index ">
+                  <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
+                </a-col>
+              </template>
+            </template>
+
+            <a-col :md="6" :sm="8">
+              <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+                <a-button type="primary" @click="searchByquery" icon="search">查询</a-button>
+                <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+                <a @click="handleToggleSearch" style="margin-left: 8px">
+                  {{ toggleSearchStatus ? '收起' : '展开' }}
+                  <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
+                </a>
+              </span>
             </a-col>
-          </template>
-          <template v-for="(item,index) in queryInfo">
-            <template v-if=" item.hidden==='1' ">
-              <a-col v-if="item.view ==='datetime' && 'single'!== item.mode" :md="12" :sm="16" :key=" 'query'+index " v-show="toggleSearchStatus">
-                <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
-              </a-col>
-              <a-col v-else :md="6" :sm="8" :key=" 'query'+index " v-show="toggleSearchStatus">
-                <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
-              </a-col>
-            </template>
-            <template v-else>
-              <a-col v-if="item.view === 'datetime' && 'single' !== item.mode" :md="12" :sm="16" :key=" 'query'+index ">
-                <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
-              </a-col>
-              <a-col v-else :md="6" :sm="8" :key=" 'query'+index ">
-                <online-query-form-item :queryParam="queryParam" :item="item" :dictOptions="dictOptions"></online-query-form-item>
-              </a-col>
-            </template>
-          </template>
 
-          <a-col :md="6" :sm="8">
-            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-              <a-button type="primary" @click="searchByquery" icon="search">查询</a-button>
-              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px">
-                {{ toggleSearchStatus ? '收起' : '展开' }}
-                <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
-              </a>
-            </span>
-          </a-col>
-
-        </a-row>
-      </a-form>
+          </a-row>
+        </a-form>
+      </slot>
     </div>
 
-    <!-- 操作按钮区域 -->
-    <div class="table-operator">
-      <a-button v-if="buttonSwitch.add" :disabled="buttonSwitch.disableAdd" @click="handleAdd" type="primary" icon="plus">{{ onlineFormConfig.addButtonName || '新增' }}</a-button>
-      <a-button v-if="buttonSwitch.import" :disabled="buttonSwitch.disableAdd" @click="handleImportXls" type="primary" icon="upload">导入</a-button>
-      <a-button v-if="buttonSwitch.export" @click="handleExportXls" type="primary" icon="download">导出</a-button>
-      <template v-if="cgButtonList && cgButtonList.length>0" v-for="(item,index) in cgButtonList">
-        <a-button
-          v-if=" item.optType === 'js' "
-          :key=" 'cgbtn'+index "
-          @click="cgButtonJsHandler(item.buttonCode)"
-          type="primary"
-          :icon="item.buttonIcon">
-          {{ item.buttonName }}
-        </a-button>
-        <a-button
-          v-else-if=" item.optType === 'action' "
-          :key=" 'cgbtn'+index "
-          @click="cgButtonActionHandler(item.buttonCode)"
-          type="primary"
-          :icon="item.buttonIcon">
-          {{ item.buttonName }}
-        </a-button>
-      </template>
-
-      <!-- 高级查询 -->
-      <j-super-query
-        v-if="buttonSwitch.super_query"
-        ref="superQuery"
-        :fieldList="superQuery.fieldList"
-        :saveCode="$route.fullPath"
-        :loading="table.loading"
-        @handleSuperQuery="handleSuperQuery"/>
-
-      <a-button
-        v-if="buttonSwitch.batch_delete"
-        :disabled="buttonSwitch.disableDelete"
-        @click="handleDelBatch"
-        v-show="table.selectedRowKeys.length > 0"
-        ghost
-        type="primary"
-        icon="delete">批量删除</a-button>
+    <!--卡片模式-标题插槽 title部分-->
+    <span slot="title" v-if="cardMode && ($slots.cardTitle || $scopedSlots.cardTitle)">
+      <slot name="cardTitle">
+        <span>这是标题</span>
+      </slot>
+    </span>
+    <!--卡片模式-标题栏右侧按钮-->
+    <div slot="extra" class="d-flex df-jc-center df-ai-center" v-if="cardMode && ($slots.cardExtra || $scopedSlots.cardExtra)">
+      <slot name="cardExtra" v-bind="getCardBindAttrs">
+        <a-checkbox>
+          收起
+        </a-checkbox>
+      </slot>
     </div>
 
-    <div>
-      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
-        <i class="anticon anticon-info-circle ant-alert-icon"></i>
-        已选择&nbsp;<a style="font-weight: 600">{{ table.selectedRowKeys.length }}</a>项&nbsp;&nbsp;
-        <a style="margin-left: 24px" @click="onClearSelected">清空</a>
-        <span style="float:right;">
-          <a-popover :overlayStyle="{maxWidth:'500px'}" title="自定义列" trigger="click" placement="leftBottom" @visibleChange="popVisibleChange">
-            <a><a-icon type="setting"/></a>
-            <template slot="content">
-              <a-checkbox-group v-model="settingColumns">
-                <a-row>
-                  <template v-for="(item,index) in defColumns">
-                    <template v-if="item.key!=='rowIndex'&& item.dataIndex!=='action'">
-                      <a-col :span="12" :key="index">
-                        <a-checkbox :value="item.dataIndex">{{ item.title }}</a-checkbox>
-                      </a-col>
-                    </template>
-                  </template>
-                </a-row>
-              </a-checkbox-group>
-            </template>
-          </a-popover>
-        </span>
-      </div>
-
-      <a-table
-        ref="cgformAutoList"
-        bordered
-        size="middle"
-        rowKey="id"
-        :columns="tableColumn"
-        :dataSource="table.dataSource"
-        :pagination="table.pagination"
-        :loading="table.loading"
-        :rowSelection="rowSelectionConfig"
-        @change="handleTableChange"
-        :scroll="tableScroll"
-        :class="{'j-table-force-nowrap': enableScrollBar}"
-        style="min-height: 300px">
-
-        <template slot="dateSlot" slot-scope="text">
-          <span>{{ getFormatDate(text) }}</span>
-        </template>
-
-        <template slot="htmlSlot" slot-scope="text">
-          <div v-html="text"></div>
-        </template>
-
-        <template slot="pcaSlot" slot-scope="text">
-          <div>{{ getPcaText(text) }}</div>
-        </template>
-
-        <template slot="imgSlot" slot-scope="text">
-          <span v-if="!text" style="font-size: 12px;font-style: italic;">无图片</span>
-          <img v-else :src="getImgView(text)" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>
-        </template>
-
-        <template slot="fileSlot" slot-scope="text">
-          <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
+    <!-- 非卡片模式-操作按钮区域 -->
+    <div class="table-operator" v-if="!cardMode || $slots.cardButton || $scopedSlots.cardButton">
+      <slot name="cardButton" v-bind="getCardBindAttrs">
+        <a-button v-if="buttonSwitch.add" :disabled="buttonSwitch.disableAdd" @click="handleAdd" type="primary" icon="plus">{{ onlineFormConfig.addButtonName || '新增' }}</a-button>
+        <a-button v-if="buttonSwitch.import" :disabled="buttonSwitch.disableAdd" @click="handleImportXls" type="primary" icon="upload">导入</a-button>
+        <a-button v-if="buttonSwitch.export" @click="handleExportXls" type="primary" icon="download">导出</a-button>
+        <template v-if="cgButtonList && cgButtonList.length>0" v-for="(item,index) in cgButtonList">
           <a-button
-            v-else
-            :ghost="true"
+            v-if=" item.optType === 'js' "
+            :key=" 'cgbtn'+index "
+            @click="cgButtonJsHandler(item.buttonCode)"
             type="primary"
-            icon="download"
-            size="small"
-            @click="downloadRowFile(text)">
-            下载
+            :icon="item.buttonIcon">
+            {{ item.buttonName }}
+          </a-button>
+          <a-button
+            v-else-if=" item.optType === 'action' "
+            :key=" 'cgbtn'+index "
+            @click="cgButtonActionHandler(item.buttonCode)"
+            type="primary"
+            :icon="item.buttonIcon">
+            {{ item.buttonName }}
           </a-button>
         </template>
 
-        <span slot="action" slot-scope="text, record">
-          <!--流程-->
-          <template v-if="hasBpmStatus">
-            <!--流程未发起、或者已结束并且配置了可循环发起-->
-            <template v-if="(record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null) ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
-              <template v-if="buttonSwitch.update">
-                <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">编辑</a>
-                <a-divider type="vertical"/>
+        <!-- 高级查询 -->
+        <j-super-query
+          v-if="buttonSwitch.super_query"
+          ref="superQuery"
+          :fieldList="superQuery.fieldList"
+          :saveCode="$route.fullPath"
+          :loading="table.loading"
+          @handleSuperQuery="handleSuperQuery"/>
+
+        <a-button
+          v-if="buttonSwitch.batch_delete"
+          :disabled="buttonSwitch.disableDelete"
+          @click="handleDelBatch"
+          v-show="table.selectedRowKeys.length > 0"
+          ghost
+          type="primary"
+          icon="delete">批量删除</a-button>
+      </slot>
+    </div>
+
+    <div>
+
+      <!--非卡片模式-选择区域插槽-->
+      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;" v-if="!cardMode || $slots.cardRowSelector || $scopedSlots.cardRowSelector">
+        <slot name="cardRowSelector" v-bind="getCardBindAttrs">
+          <i class="anticon anticon-info-circle ant-alert-icon"></i>
+          已选择&nbsp;<a style="font-weight: 600">{{ table.selectedRowKeys.length }}</a>项&nbsp;&nbsp;
+          <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+          <span style="float:right;">
+            <a-popover :overlayStyle="{maxWidth:'500px'}" title="自定义列" trigger="click" placement="leftBottom" @visibleChange="popVisibleChange">
+              <a><a-icon type="setting"/></a>
+              <template slot="content">
+                <a-checkbox-group v-model="settingColumns">
+                  <a-row>
+                    <template v-for="(item,index) in defColumns">
+                      <template v-if="item.key!=='rowIndex'&& item.dataIndex!=='action'">
+                        <a-col :span="12" :key="index">
+                          <a-checkbox :value="item.dataIndex">{{ item.title }}</a-checkbox>
+                        </a-col>
+                      </template>
+                    </template>
+                  </a-row>
+                </a-checkbox-group>
               </template>
-              <!--新版本审批进度功能-->
-              <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
-                <a @click="handleTrack(record)">{{ record[bpmStatusFieldName] === '3' ? trackHisName : trackName }}</a>
-                <a-divider type="vertical" />
-              </template>
-            </template>
-            <!--流程过程中或流程结束-->
-            <template v-else>
-              <template v-if="buttonSwitch.detail">
-                <a href="javascript:;" @click="handleDetail(record)">详情</a>
-                <a-divider type="vertical"/>
-              </template>
-              <!--新版本审批进度功能-->
-              <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
-                <a @click="handleTrack(record)">{{ record[bpmStatusFieldName] === '3' ? trackHisName : trackName }}</a>
-                <a-divider type="vertical" />
-              </template>
-              <!--新版本审批功能-->
-              <template v-if="buttonSwitch.bpm_handle && record[bpmStatusFieldName] === '2' && record.bpmData">
-                <template v-if="(record.bpmData.taskAssigneeName || '').trim()">
-                  <a @click="handleProcess(record)">
-                    办理
-                  </a>
-                  <!--<a-divider type="vertical" />-->
-                  <!--<a @click="selectEntruster(record)">委托</a>-->
-                </template>
-                <template v-else>
-                  <a @click="handleClaim(record)" >签收</a>
-                </template>
-                <a-divider type="vertical" />
-              </template>
-            </template>
+            </a-popover>
+          </span>
+        </slot>
+      </div>
+
+      <!--表格插槽，这里不传入插槽就显示默认的-->
+      <slot name="cardTable" v-bind="getCardBindAttrs">
+        <a-table
+          ref="cgformAutoList"
+          bordered
+          size="middle"
+          rowKey="id"
+          :columns="tableColumn"
+          :dataSource="table.dataSource"
+          :pagination="table.pagination"
+          :loading="table.loading"
+          :rowSelection="rowSelectionConfig"
+          @change="handleTableChange"
+          :scroll="tableScroll"
+          :class="{'j-table-force-nowrap': enableScrollBar}"
+          style="min-height: 300px">
+
+          <slot name="cardTableColumnRender" v-bind="getCardBindAttrs"></slot>
+
+          <template slot="dateSlot" slot-scope="text">
+            <span>{{ getFormatDate(text) }}</span>
           </template>
-          <!--非流程-->
-          <template v-else>
-            <template v-if="buttonSwitch.update">
-              <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">编辑</a>
-              <a-divider type="vertical"/>
-            </template>
+
+          <template slot="htmlSlot" slot-scope="text">
+            <div v-html="text"></div>
           </template>
-          <a-dropdown>
-            <a class="ant-dropdown-link">
-              更多 <a-icon type="down" />
-            </a>
-            <a-menu slot="overlay">
+
+          <template slot="pcaSlot" slot-scope="text">
+            <div>{{ getPcaText(text) }}</div>
+          </template>
+
+          <template slot="imgSlot" slot-scope="text">
+            <span v-if="!text" style="font-size: 12px;font-style: italic;">无图片</span>
+            <img v-else :src="getImgView(text)" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>
+          </template>
+
+          <template slot="fileSlot" slot-scope="text">
+            <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
+            <a-button
+              v-else
+              :ghost="true"
+              type="primary"
+              icon="download"
+              size="small"
+              @click="downloadRowFile(text)">
+              下载
+            </a-button>
+          </template>
+
+          <!--表格按钮插槽-->
+          <span slot="action" slot-scope="text, record">
+            <slot name="cardTableAction" v-bind="{ ...getCardBindAttrs, record, text }">
               <!--流程-->
               <template v-if="hasBpmStatus">
-                <template v-if="record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
-                  <a-menu-item v-if="buttonSwitch.bpm">
-                    <a href="javascript:;" @click="startProcess(record)">提交流程</a>
-                  </a-menu-item>
-                  <a-menu-item v-if="buttonSwitch.delete">
-                    <a-popconfirm :disabled="buttonSwitch.disableDelete" title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
-                      <a :disabled="buttonSwitch.disableDelete">删除</a>
-                    </a-popconfirm>
-                  </a-menu-item>
+                <!--流程未发起、或者已结束并且配置了可循环发起-->
+                <template v-if="(record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null) ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
+                  <template v-if="buttonSwitch.update">
+                    <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">编辑</a>
+                    <a-divider type="vertical"/>
+                  </template>
+                  <!--新版本审批进度功能-->
+                  <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
+                    <a @click="handleTrack(record)">{{ record[bpmStatusFieldName] === '3' ? trackHisName : trackName }}</a>
+                    <a-divider type="vertical" />
+                  </template>
                 </template>
-                <!--原先的审批进度功能不用了，展示信息太少-->
-                <!--<template v-if="record[bpmStatusFieldName] === '3'&& buttonSwitch.bpm">-->
-                <!--  <a-menu-item @click="handlePreviewPic(record)">审批进度</a-menu-item>-->
-                <!--</template>-->
-                <!--委托-->
-                <template v-if="buttonSwitch.bpm_entrusted">
-                  <a-menu-item v-if="record[bpmStatusFieldName] === '2' && record.bpmData && record.bpmData.taskAssigneeName">
-                    <a-popconfirm title="确定要委托给别人处理吗?" @confirm="selectEntruster(record)">
-                      <a>委托</a>
-                    </a-popconfirm>
-                  </a-menu-item>
-                </template>
-                <!--完成流程-->
-                <template v-if="buttonSwitch.bpm_finish">
-                  <a-menu-item v-if="record[bpmStatusFieldName] === '2' ">
-                    <a-popconfirm title="确定要完成流程吗?" @confirm="() => finishProcess(record)">
-                      <a>完成流程</a>
-                    </a-popconfirm>
-                  </a-menu-item>
-                </template>
-                <!--取回流程-->
-                <template v-if="buttonSwitch.bpm_callback">
-                  <a-menu-item v-if="record[bpmStatusFieldName] === '2' ">
-                    <a-popconfirm title="确定要取回流程吗?" @confirm="() => callBackProcess(record)">
-                      <a>取回流程</a>
-                    </a-popconfirm>
-                  </a-menu-item>
-                </template>
-                <!--管理员编辑-->
-                <template v-if="buttonSwitch.bpm_admin_edit">
-                  <a-menu-item>
-                    <a @click="handleEdit(record)">编辑(管理员)</a>
-                  </a-menu-item>
-                </template>
-                <!--管理员删除-->
-                <template v-if="buttonSwitch.bpm_admin_delete">
-                  <a-menu-item>
-                    <a-popconfirm title="确定要删除吗?" @confirm="() => handleDeleteOne(record)">
-                      <a>删除(管理员)</a>
-                    </a-popconfirm>
-                  </a-menu-item>
+                <!--流程过程中或流程结束-->
+                <template v-else>
+                  <template v-if="buttonSwitch.detail">
+                    <a href="javascript:;" @click="handleDetail(record)">详情</a>
+                    <a-divider type="vertical"/>
+                  </template>
+                  <!--新版本审批进度功能-->
+                  <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
+                    <a @click="handleTrack(record)">{{ record[bpmStatusFieldName] === '3' ? trackHisName : trackName }}</a>
+                    <a-divider type="vertical" />
+                  </template>
+                  <!--新版本审批功能-->
+                  <template v-if="buttonSwitch.bpm_handle && record[bpmStatusFieldName] === '2' && record.bpmData">
+                    <template v-if="(record.bpmData.taskAssigneeName || '').trim()">
+                      <a @click="handleProcess(record)">
+                        办理
+                      </a>
+                    <!--<a-divider type="vertical" />-->
+                    <!--<a @click="selectEntruster(record)">委托</a>-->
+                    </template>
+                    <template v-else>
+                      <a @click="handleClaim(record)" >签收</a>
+                    </template>
+                    <a-divider type="vertical" />
+                  </template>
                 </template>
               </template>
               <!--非流程-->
               <template v-else>
-                <a-menu-item v-if="buttonSwitch.detail">
-                  <a href="javascript:;" @click="handleDetail(record)">详情</a>
-                </a-menu-item>
-                <a-menu-item v-if="buttonSwitch.delete">
-                  <a-popconfirm :disabled="buttonSwitch.disableDelete" title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
-                    <a :disabled="buttonSwitch.disableDelete">删除</a>
-                  </a-popconfirm>
-                </a-menu-item>
+                <template v-if="buttonSwitch.update">
+                  <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">编辑</a>
+                  <a-divider type="vertical"/>
+                </template>
               </template>
-              <!--自定义JS增强按钮-->
-              <template v-if="cgButtonLinkList && cgButtonLinkList.length>0" v-for="(btnItem,btnIndex) in cgButtonLinkList">
-                <a-menu-item :key=" 'cgbtnLink'+btnIndex " v-if="showLinkButton(btnItem,record)">
-                  <template v-if="btnItem.optType === 'js-confirm'">
-                    <a-popconfirm
-                      :title="`确定${btnItem.buttonName}?`"
-                      @confirm="() => cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
-                      <a href="javascript:void(0);">
-                        <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
-                        {{ btnItem.buttonName }}
-                      </a>
-                    </a-popconfirm>
+              <a-dropdown>
+                <a class="ant-dropdown-link">
+                  更多 <a-icon type="down" />
+                </a>
+                <a-menu slot="overlay">
+                  <!--流程-->
+                  <template v-if="hasBpmStatus">
+                    <template v-if="record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
+                      <a-menu-item v-if="buttonSwitch.bpm">
+                        <a href="javascript:;" @click="startProcess(record)">提交流程</a>
+                      </a-menu-item>
+                      <a-menu-item v-if="buttonSwitch.delete">
+                        <a-popconfirm :disabled="buttonSwitch.disableDelete" title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
+                          <a :disabled="buttonSwitch.disableDelete">删除</a>
+                        </a-popconfirm>
+                      </a-menu-item>
+                    </template>
+                    <!--原先的审批进度功能不用了，展示信息太少-->
+                    <!--<template v-if="record[bpmStatusFieldName] === '3'&& buttonSwitch.bpm">-->
+                    <!--  <a-menu-item @click="handlePreviewPic(record)">审批进度</a-menu-item>-->
+                    <!--</template>-->
+                    <!--委托-->
+                    <template v-if="buttonSwitch.bpm_entrusted">
+                      <a-menu-item v-if="record[bpmStatusFieldName] === '2' && record.bpmData && record.bpmData.taskAssigneeName">
+                        <a-popconfirm title="确定要委托给别人处理吗?" @confirm="selectEntruster(record)">
+                          <a>委托</a>
+                        </a-popconfirm>
+                      </a-menu-item>
+                    </template>
+                    <!--完成流程-->
+                    <template v-if="buttonSwitch.bpm_finish">
+                      <a-menu-item v-if="record[bpmStatusFieldName] === '2' ">
+                        <a-popconfirm title="确定要完成流程吗?" @confirm="() => finishProcess(record)">
+                          <a>完成流程</a>
+                        </a-popconfirm>
+                      </a-menu-item>
+                    </template>
+                    <!--取回流程-->
+                    <template v-if="buttonSwitch.bpm_callback">
+                      <a-menu-item v-if="record[bpmStatusFieldName] === '2' ">
+                        <a-popconfirm title="确定要取回流程吗?" @confirm="() => callBackProcess(record)">
+                          <a>取回流程</a>
+                        </a-popconfirm>
+                      </a-menu-item>
+                    </template>
+                    <!--管理员编辑-->
+                    <template v-if="buttonSwitch.bpm_admin_edit">
+                      <a-menu-item>
+                        <a @click="handleEdit(record)">编辑(管理员)</a>
+                      </a-menu-item>
+                    </template>
+                    <!--管理员删除-->
+                    <template v-if="buttonSwitch.bpm_admin_delete">
+                      <a-menu-item>
+                        <a-popconfirm title="确定要删除吗?" @confirm="() => handleDeleteOne(record)">
+                          <a>删除(管理员)</a>
+                        </a-popconfirm>
+                      </a-menu-item>
+                    </template>
                   </template>
+                  <!--非流程-->
                   <template v-else>
-                    <a href="javascript:void(0);" @click="cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
-                      <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
-                      {{ btnItem.buttonName }}
-                    </a>
+                    <a-menu-item v-if="buttonSwitch.detail">
+                      <a href="javascript:;" @click="handleDetail(record)">详情</a>
+                    </a-menu-item>
+                    <a-menu-item v-if="buttonSwitch.delete">
+                      <a-popconfirm :disabled="buttonSwitch.disableDelete" title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
+                        <a :disabled="buttonSwitch.disableDelete">删除</a>
+                      </a-popconfirm>
+                    </a-menu-item>
                   </template>
-                </a-menu-item>
-              </template>
-            </a-menu>
-          </a-dropdown>
-        </span>
-      </a-table>
+                  <!--自定义JS增强按钮-->
+                  <template v-if="cgButtonLinkList && cgButtonLinkList.length>0" v-for="(btnItem,btnIndex) in cgButtonLinkList">
+                    <a-menu-item :key=" 'cgbtnLink'+btnIndex " v-if="showLinkButton(btnItem,record)">
+                      <template v-if="btnItem.optType === 'js-confirm'">
+                        <a-popconfirm
+                          :title="`确定${btnItem.buttonName}?`"
+                          @confirm="() => cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
+                          <a href="javascript:void(0);">
+                            <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
+                            {{ btnItem.buttonName }}
+                          </a>
+                        </a-popconfirm>
+                      </template>
+                      <template v-else>
+                        <a href="javascript:void(0);" @click="cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
+                          <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
+                          {{ btnItem.buttonName }}
+                        </a>
+                      </template>
+                    </a-menu-item>
+                  </template>
+                </a-menu>
+              </a-dropdown>
+            </slot>
+          </span>
+        </a-table>
+      </slot>
 
       <!--原始的Online渲染表单-->
       <onl-cgform-auto-modal v-if="isOnlineForm" @success="handleFormSuccess" ref="modal" :code="code" @schema="handleGetSchema" />
@@ -336,6 +369,13 @@
         :formData="onlineFormData"
         @complete="$emit('complete')" />
     </div>
+
+    <!--卡片模式-Card底部按钮部分插槽-->
+    <template slot="actions" v-if="cardMode && ($slots.cardBottomButton || $scopedSlots.cardBottomButton)">
+      <slot name="cardBottomButton" v-bind="getCardBindAttrs">
+        <a-button @click="handleTrack" type="primary" style="margin-right: 1vh"><a-icon key="team" type="team" /> 审批进度</a-button>
+      </slot>
+    </template>
   </a-card>
 </template>
 
@@ -376,6 +416,23 @@ export default {
       BindBpmShowMyTask
     },
     props: {
+      // 卡片模式，卡片模式下，支持slot渲染
+      cardMode: {
+        type: Boolean,
+        default: false,
+        required: false
+      },
+      // 卡片属性
+      cartAttrs: {
+        type: Object,
+        default() {
+          return {
+            'bordered': false,
+            'style': { 'height': '100%' }
+          }
+        },
+        required: false
+      },
       // 流程表单data
       onlineFormData: {
         type: Object,
@@ -540,6 +597,19 @@ export default {
     created() {
     },
     watch: {
+      // 卡片模式下才触发初始化
+      'onlineFormConfig.code': {
+        handler(v) {
+          if (v && this.cardMode) {
+            console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::卡片模式::监听onlineFormConfig.code')
+            this.resetConfig()
+            this.initOnlineBpmData()
+            this.initAutoList()
+          }
+        },
+        deep: false,
+        immediate: true
+      },
       onlineFormData: {
         handler(v) {
           if (v) {
@@ -566,6 +636,58 @@ export default {
       }
     },
     computed: {
+      // 获取slot绑定属性
+      getCardBindAttrs() {
+        // console.log('获取slot绑定属性', this.$slots, this.$scopedSlots)
+        return {
+          table: this.table,
+          columns: this.tableColumn,
+          dataSource: this.table.dataSource,
+          pagination: this.table.pagination,
+          loading: this.table.loading,
+          rowSelection: this.rowSelectionConfig,
+          handleTableChange: this.handleTableChange,
+          scroll: this.tableScroll,
+          getFormatDate: this.getFormatDate,
+          getPcaText: this.getPcaText,
+          getImgView: this.getImgView,
+          downloadRowFile: this.downloadRowFile,
+          handleEdit: this.handleEdit,
+          handleTrack: this.handleTrack,
+          handleDetail: this.handleDetail,
+          handleProcess: this.handleProcess,
+          handleClaim: this.handleClaim,
+          startProcess: this.startProcess,
+          handleDeleteOne: this.handleDeleteOne,
+          selectEntruster: this.selectEntruster,
+          finishProcess: this.finishProcess,
+          callBackProcess: this.callBackProcess,
+          showLinkButton: this.showLinkButton,
+          cgButtonLinkHandler: this.cgButtonLinkHandler,
+          onClearSelected: this.onClearSelected,
+          popVisibleChange: this.popVisibleChange,
+          settingColumns: this.settingColumns,
+          defColumns: this.defColumns,
+          handleAdd: this.handleAdd,
+          handleImportXls: this.handleImportXls,
+          handleExportXls: this.handleExportXls,
+          cgButtonList: this.cgButtonList,
+          cgButtonJsHandler: this.cgButtonJsHandler,
+          cgButtonActionHandler: this.cgButtonActionHandler,
+          superQuery: this.superQuery,
+          handleSuperQuery: this.handleSuperQuery,
+          handleDelBatch: this.handleDelBatch,
+          queryParam: this.queryParam,
+          searchByquery: this.searchByquery,
+          queryInfo: this.queryInfo,
+          buttonSwitch: this.buttonSwitch,
+          dictOptions: this.dictOptions,
+          toggleSearchStatus: this.toggleSearchStatus,
+          bpmStatusFieldName: this.bpmStatusFieldName,
+          hasBpmStatus: this.hasBpmStatus,
+          cgButtonLinkList: this.cgButtonLinkList
+        }
+      },
       realTaskModule() {
         console.log('加载动态审批组件', this.innerFormData.customTaskModule)
         if (this.innerFormData.customTaskModule) {
@@ -651,13 +773,11 @@ export default {
        * 主要搜索参数会互相影响
        */
       resetConfig() {
-        this.code = ''
-        this.showDealBlock = false
-        this.showQueryBlock = false
         // Bug在这里，流程上文变量进来，需要判断是否是处于流程表单状态，不是才清空
-        if (this.onlineFormData === null) {
-          // this.$set(this.onlineFormConfig, 'initQueryParam', {})
-        }
+        // 统一只使用 this.initQueryParam 作为最终的配置，就不再改变 onlineFormConfig.initQueryParam
+        // if (this.onlineFormData === null) {
+        //   this.$set(this.onlineFormConfig, 'initQueryParam', {})
+        // }
         // 清空表单的默认初始化条件
         this.$set(this, 'initQueryParam', {})
         this.$set(this, 'queryParam', {})
@@ -668,6 +788,10 @@ export default {
         this.isOnlineForm = ''
         this.isDesForm = ''
         this.desFormCode = ''
+        // 清空表单编码
+        this.code = ''
+        this.showDealBlock = false
+        this.showQueryBlock = false
       },
       /**
        * 初始化Online流程展示列表
@@ -913,7 +1037,8 @@ export default {
           }
           this.table.loading = true
           let params = this.getQueryParams()// 查询条件
-          params['needList'] = 'id'
+          // needList作用：配置在这里的字段，会参与后端条件和数据返回，默认需要加上id字段供流程流转数据合并
+          params['needList'] = params['needList'] ? params['needList'].split(',').includes('id') ? params['needList'] : params['needList'] + ',id' : 'id'
           console.log('--onlineList-查询条件-->', params)
           getAction(`${this.url.getData}${this.code}`, params).then((res) => {
             console.log('--onlineList-列表数据', res)
