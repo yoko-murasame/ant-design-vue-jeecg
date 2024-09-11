@@ -152,7 +152,12 @@
           :class="{'j-table-force-nowrap': enableScrollBar}"
           style="min-height: 300px">
 
-          <slot name="cardTableColumnRender" v-bind="getCardBindAttrs"></slot>
+          <!--动态渲染slot，card模式下，由父组件向下传递同名配置的插槽-->
+          <template v-if="customScopedSlots && customScopedSlots.length" v-for="sName in customScopedSlots" v-slot:[sName]="text, record">
+            <slot :name="sName" v-bind="{ ...getCardBindAttrs, text, record }">
+              {{ text }}
+            </slot>
+          </template>
 
           <template slot="dateSlot" slot-scope="text">
             <span>{{ getFormatDate(text) }}</span>
@@ -578,6 +583,17 @@ export default {
         scrollFlag: 0,
         settingColumns: [],
         defColumns: [],
+        // 自定义插槽，card模式下，子组件传递
+        customScopedSlots: [],
+        // 目前已存在的插槽
+        existTableSlot: [
+          'dateSlot',
+          'htmlSlot',
+          'pcaSlot',
+          'imgSlot',
+          'fileSlot',
+          'action'
+        ],
         // 接受URL参数
         acceptHrefParams: {},
         // 是否是online表单
@@ -756,6 +772,12 @@ export default {
           return this.defColumns
         } else {
           const cols = this.defColumns.filter(item => {
+            // 处理自定义 scopedSlots: { customRender: 'xxx' } 渲染列
+            if (item.scopedSlots && item.scopedSlots.customRender && !that.existTableSlot.includes(item.scopedSlots.customRender)) {
+              that.customScopedSlots.push(item.scopedSlots.customRender)
+              item.slots = { title: item.scopedSlots.customRender }
+              console.log('加载customScopedSlots', that.customScopedSlots, item)
+            }
             // 自定义序号字段
             if (item.key === 'rowIndex' || item.dataIndex === 'action') {
               if (item.key === 'rowIndex') {
@@ -807,6 +829,7 @@ export default {
         // if (this.onlineFormData === null) {
         //   this.$set(this.onlineFormConfig, 'initQueryParam', {})
         // }
+        this.customScopedSlots = []
         // 清空表单的默认初始化条件
         this.$set(this, 'initQueryParam', {})
         this.$set(this, 'queryParam', {})

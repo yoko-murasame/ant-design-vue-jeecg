@@ -55,7 +55,7 @@
                       style="width: 100%"
                       :labelCol="threeCol.label"
                       :wrapperCol="threeCol.wrapper"
-                      label="是否是视图">
+                      label="是否是数据库视图">
                       <a-switch v-decorator="['viewTable', validatorRules.viewTable ]" />
                     </a-form-item>
                   </a-col>
@@ -1105,7 +1105,7 @@ export default {
  .online-config-cust .has-feedback{display: block !important;}
  .input-table .thead .td span{width:100%}
  .cgform-header-main {
-   max-height: 30vh;
+   max-height: 40vh;
    overflow-y: auto;
  }
 </style>

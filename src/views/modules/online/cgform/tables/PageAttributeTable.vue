@@ -223,6 +223,14 @@ const commonPageOptions = [
             width: '160px',
             type: FormTypes.input,
             defaultValue: ''
+          },
+          {
+            title: '自定义scopedSlots',
+            key: 'scopedSlots',
+            // width: '15%',
+            width: '160px',
+            type: FormTypes.input,
+            defaultValue: ''
           }
         ]
       }
