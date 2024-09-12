@@ -460,7 +460,9 @@ export default {
             // 新增按钮文本
             addButtonName: '新增',
             // loadData触发debounce，0时就不延迟
-            loadDataDebounce: 0
+            loadDataDebounce: 0,
+            // action固定 'left', 'right'
+            actionFixed: ''
           }
         },
         required: false
@@ -542,7 +544,7 @@ export default {
           title: '操作',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
-          // fixed:"right",
+          fixed: '',
           align: 'center',
           width: 150
         },
@@ -755,7 +757,7 @@ export default {
       tableScroll() {
         // 移动端模式下无论如何都开启横向滚动条
         if (this.enableScrollBar) {
-          return undefined
+          return { x: true }
         } else {
           return this.table.scroll
         }
@@ -1064,6 +1066,7 @@ export default {
               this.handleColumnShowLength(column)
             })
             // this.defColumns = res.result.columns.concat([this.actionColumn])
+            this.actionColumn.fixed = this.onlineFormConfig.actionFixed
             this.defColumns = [this.rowIndexColumn, ...res.result.columns, this.actionColumn]
             this.settingColumnsHandler(res.result.columns)
             this.scrollFlag = res.result.scrollFlag
