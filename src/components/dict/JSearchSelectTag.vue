@@ -251,13 +251,11 @@ export default {
           console.warn('字典配置格式错误，请检查字典项配置')
           return
         }
-        // 看下字典是否含有占位符，有的话需要放入header
+        // 搜索条件统一放入header
         let headers = { 'X-FILTER-SQL': '' }
-        if (realDict.indexOf('#{') >= 0) {
-          if (dictArr.length === 4) {
-            headers['X-FILTER-SQL'] = dictArr.pop()
-            realDict = dictArr.join(',')
-          }
+        if (dictArr.length === 4) {
+          headers['X-FILTER-SQL'] = dictArr.pop()
+          realDict = dictArr.join(',')
         }
         getAction(`/sys/dict/loadDict/${realDict}`, { keyword: value, pageSize: this.pageSize }, headers).then(res => {
           this.loading = false
@@ -359,13 +357,11 @@ export default {
               console.warn('字典配置格式错误，请检查字典项配置')
               return
             }
-            // 看下字典是否含有占位符，有的话需要放入header
+            // 搜索条件统一放入header
             let headers = { 'X-FILTER-SQL': '' }
-            if (realDict.indexOf('#{') >= 0) {
-              if (dictArr.length === 4) {
-                headers['X-FILTER-SQL'] = dictArr.pop()
-                realDict = dictArr.join(',')
-              }
+            if (dictArr.length === 4) {
+              headers['X-FILTER-SQL'] = dictArr.pop()
+              realDict = dictArr.join(',')
             }
             getAction(`/sys/dict/loadDict/${realDict}`, { pageSize: this.pageSize, keyword: '' }, headers).then(res => {
               this.loading = false
