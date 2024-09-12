@@ -723,7 +723,10 @@ export default {
           toggleSearchStatus: this.toggleSearchStatus,
           bpmStatusFieldName: this.bpmStatusFieldName,
           hasBpmStatus: this.hasBpmStatus,
-          cgButtonLinkList: this.cgButtonLinkList
+          cgButtonLinkList: this.cgButtonLinkList,
+          openAnyForm: this.openAnyForm,
+          loadData: this.loadData,
+          searchReset: this.searchReset
         }
       },
       realTaskModule() {
@@ -930,7 +933,7 @@ export default {
           console.error('openAnyForm', message)
         }
         const { desFormCode } = result
-        this.$refs.desformModal.open(mode, desFormCode, id, title, false, code, defaultData)
+        this.$refs.desformModal.open(mode, desFormCode, id, title, false, code, { ...this.initQueryParam, ...defaultData })
       },
       hasBpmStatusFilter() {
         var columnObjs = this.defColumns
