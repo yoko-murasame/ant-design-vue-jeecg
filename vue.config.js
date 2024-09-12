@@ -77,20 +77,13 @@ module.exports = {
       // })
     }
 
-    // 配置 webpack 识别 markdown 为普通的文件
+    // 配置 webpack 识别 markdown、sql 为普通的文件
     config.module
-      .rule('markdown')
-      .test(/\.md$/)
+      .rule('markdown and sql')
+      .test(/\.(md|sql)$/)
       .use()
       .loader('file-loader')
       .end()
-
-    config.module
-    .rule('sql')
-    .test(/\.sql$/)
-    .use()
-    .loader('file-loader')
-    .end()
 
     // 编译vxe-table包里的es6代码，解决IE11兼容问题
     config.module
