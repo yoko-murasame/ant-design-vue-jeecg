@@ -244,8 +244,22 @@ export default {
         this.options = []
         this.loading = true
         // 字典code格式：table,text,code
-        const realDict = this.dict || this.dictCode
-        getAction(`/sys/dict/loadDict/${realDict}`, { keyword: value, pageSize: this.pageSize }).then(res => {
+        let realDict = this.dict || this.dictCode
+        // 非正确长度校验
+        const dictArr = realDict.split(',')
+        if (![1, 3, 4].includes(dictArr.length)) {
+          console.warn('字典配置格式错误，请检查字典项配置')
+          return
+        }
+        // 看下字典是否含有占位符，有的话需要放入header
+        let headers = { 'X-FILTER-SQL': '' }
+        if (realDict.indexOf('#{') >= 0) {
+          if (dictArr.length === 4) {
+            headers['X-FILTER-SQL'] = dictArr.pop()
+            realDict = dictArr.join(',')
+          }
+        }
+        getAction(`/sys/dict/loadDict/${realDict}`, { keyword: value, pageSize: this.pageSize }, headers).then(res => {
           this.loading = false
           if (res.success) {
             if (currentLoad !== this.lastLoad) {
@@ -303,7 +317,7 @@ export default {
         })
       },
       initDictData() {
-        const realDict = this.dict || this.dictCode
+        let realDict = this.dict || this.dictCode
         if (!this.async) {
           // 如果字典项集合有数据
           if (this.dictOptions && this.dictOptions.length > 0) {
@@ -339,7 +353,21 @@ export default {
           } else {
             // 异步一开始也加载一点数据
             this.loading = true
-            getAction(`/sys/dict/loadDict/${realDict}`, { pageSize: this.pageSize, keyword: '' }).then(res => {
+            // 非正确长度校验
+            const dictArr = realDict.split(',')
+            if (![1, 3, 4].includes(dictArr.length)) {
+              console.warn('字典配置格式错误，请检查字典项配置')
+              return
+            }
+            // 看下字典是否含有占位符，有的话需要放入header
+            let headers = { 'X-FILTER-SQL': '' }
+            if (realDict.indexOf('#{') >= 0) {
+              if (dictArr.length === 4) {
+                headers['X-FILTER-SQL'] = dictArr.pop()
+                realDict = dictArr.join(',')
+              }
+            }
+            getAction(`/sys/dict/loadDict/${realDict}`, { pageSize: this.pageSize, keyword: '' }, headers).then(res => {
               this.loading = false
               if (res.success) {
                 if (this.mode === 'multiple' || this.mode === 'tags') {
