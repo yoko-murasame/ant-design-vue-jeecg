@@ -458,7 +458,9 @@ export default {
             // 初始化筛选参数
             initQueryParam: {},
             // 新增按钮文本
-            addButtonName: '新增'
+            addButtonName: '新增',
+            // loadData触发debounce，0时就不延迟
+            loadDataDebounce: 0
           }
         },
         required: false
@@ -612,6 +614,9 @@ export default {
     },
     created() {
       this.initAll = debounce(this.initAll, 50)
+      if (this.onlineFormConfig.loadDataDebounce) {
+        this.loadData = debounce(this.loadData, Number(this.onlineFormConfig.loadDataDebounce) || 50)
+      }
     },
     watch: {
       // 卡片模式下才触发初始化
