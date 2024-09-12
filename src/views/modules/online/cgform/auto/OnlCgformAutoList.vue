@@ -106,7 +106,7 @@
       </slot>
     </div>
 
-    <div>
+    <div class="table-container">
 
       <!--非卡片模式-选择区域插槽-->
       <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;" v-if="!cardMode || $slots.cardRowSelector || $scopedSlots.cardRowSelector">
@@ -1137,10 +1137,11 @@ export default {
       },
       loadDataNoPage() {
         this.table.loading = true
-        let param = this.getQueryParams()// 查询条件
-        param['pageSize'] = -521
-        param['needList'] = 'id'
-        getAction(`${this.url.getData}${this.code}`, filterObj(param)).then((res) => {
+        let params = this.getQueryParams()// 查询条件
+        params['pageSize'] = -521
+        // needList作用：配置在这里的字段，会参与后端条件和数据返回，默认需要加上id字段供流程流转数据合并
+        params['needList'] = params['needList'] ? params['needList'].split(',').includes('id') ? params['needList'] : params['needList'] + ',id' : 'id'
+        getAction(`${this.url.getData}${this.code}`, filterObj(params)).then((res) => {
           console.log('--onlineList-列表数据', res)
           if (res.success) {
             let result = res.result
