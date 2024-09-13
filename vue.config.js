@@ -8,6 +8,8 @@ function resolve(dir) {
 
 // vue.config.js
 module.exports = {
+  // 是否使用包含运行时编译器的 Vue 构建版本。设置为 true 后你就可以在 Vue 组件中使用 template 选项了 https://cli.vuejs.org/zh/config/#runtimecompiler
+  runtimeCompiler: true,
   /*
     Vue-cli3:
     Crashed when using Webpack `import()` #2463

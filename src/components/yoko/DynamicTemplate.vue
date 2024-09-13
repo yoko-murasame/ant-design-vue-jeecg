@@ -2,9 +2,10 @@
   <div ref="markedContent"></div>
 </template>
 <script>
-import Vue from 'vue/dist/vue.esm.js'
-import Antd from 'ant-design-vue'
-Vue.use(Antd)
+import Vue from 'vue'
+// import Vue from 'vue/dist/vue.esm.js' // 参考 https://blog.csdn.net/C_ZhangSir/article/details/100989902
+// import Antd from 'ant-design-vue'
+// Vue.use(Antd)
 export default {
   name: 'DynamicTemplate',
   props: {
