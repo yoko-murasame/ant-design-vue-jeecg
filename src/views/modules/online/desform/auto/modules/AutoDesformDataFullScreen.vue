@@ -27,9 +27,11 @@
     @ok="handleSuccess"
     width="60%">
     <template slot="footer">
-      <cancel-button :disableSubmit="disableSubmit" key="back" @click="close" />
-      <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit">保存</a-button>
-      <a-button type="primary" @click="saveAndSubmitBPM" v-if="!disableSubmit && buttonSwitch.bpm&&hasBpmStatus">保存并提交流程</a-button>
+      <template v-if="buttonSwitch.modal_footer">
+        <cancel-button v-if="buttonSwitch.modal_cancel" :disableSubmit="disableSubmit" key="back" @click="close" />
+        <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit && buttonSwitch.modal_save">保存</a-button>
+        <a-button type="primary" @click="saveAndSubmitBPM" v-if="!disableSubmit && buttonSwitch.bpm && buttonSwitch.modal_submit && hasBpmStatus">保存并提交流程</a-button>
+      </template>
     </template>
     <desform-view
       class="desform-view"
@@ -55,8 +57,16 @@ export default {
   props: {
     buttonSwitch: {
       type: Object,
+      required: false,
       default() {
-        return {}
+        return {
+          bpm: false,
+          // 表单按钮控制，默认开放
+          modal_footer: true,
+          modal_save: true,
+          modal_submit: true,
+          modal_cancel: true
+        }
       }
     },
     hasBpmStatus: {
@@ -144,12 +154,6 @@ export default {
     }
   },
   watch: {
-    // buttonSwitch: {
-    //   immediate: true,
-    //   handler(val) {
-    //     console.log('buttonSwitch', val)
-    //   }
-    // },
     defaultData: {
       immediate: true,
       handler(val) {

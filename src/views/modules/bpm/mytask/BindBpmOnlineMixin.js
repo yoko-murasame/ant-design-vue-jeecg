@@ -182,7 +182,7 @@ export default {
      * @param btnText
      */
     async startProcess(record, auto = false, btnText = '提交流程') {
-      const flowCode = await this.getFlowCode(record)
+      const flowCode = record.flowCode || await this.getFlowCode(record)
       if (!flowCode) {
         throw new Error('请配置data.flowCode或复写getFlowCode()方法')
       }

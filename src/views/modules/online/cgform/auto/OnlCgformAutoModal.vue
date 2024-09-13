@@ -40,7 +40,7 @@
     </div>
 
     <template slot="footer">
-      <template v-if="!disableSubmit && hasOwnButton(2)" v-for="btn in cgButtonList">
+      <template v-if="buttonSwitch.modal_footer && !disableSubmit && hasOwnButton(2)" v-for="btn in cgButtonList">
         <a-button
           v-if="btn.optPosition == '2'"
           :key="btn.id"
@@ -51,8 +51,8 @@
         </a-button>
       </template>
 
-      <a-button v-if="!disableSubmit" key="submit" type="primary" @click="handleSubmit" :loading="submitLoading">确定</a-button>
-      <a-button key="back" @click="handleCancel">关闭</a-button>
+      <a-button v-if="buttonSwitch.modal_footer && buttonSwitch.modal_save && !disableSubmit" key="submit" type="primary" @click="handleSubmit" :loading="submitLoading">确定</a-button>
+      <a-button v-if="buttonSwitch.modal_footer && buttonSwitch.modal_cancel" key="back" @click="handleCancel">关闭</a-button>
     </template>
 
     <a-spin :spinning="confirmLoading">
@@ -113,7 +113,20 @@
         type: String,
         required: true,
         default:''
-      }
+      },
+      buttonSwitch: {
+        type: Object,
+        required: false,
+        default() {
+          return {
+            // 表单按钮控制，默认开放
+            modal_footer: true,
+            modal_save: true,
+            modal_submit: true,
+            modal_cancel: true
+          }
+        }
+      },
     },
     computed: {
       modalWidth() {

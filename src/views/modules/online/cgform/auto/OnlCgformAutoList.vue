@@ -573,9 +573,11 @@ export default {
         EnhanceJS: '',
         hideColumns: [],
         buttonSwitch: {
+          // 默认禁用行为，以disable为开头的默认取消禁止，其余按钮默认开放
           disableAdd: false,
           disableEdit: false,
           disableDelete: false,
+          // 默认开放行为
           add: true,
           update: true,
           delete: true,
@@ -592,7 +594,12 @@ export default {
           bpm_admin_edit: true,
           bpm_admin_delete: true,
           bpm_finish: true,
-          bpm_callback: true
+          bpm_callback: true,
+          // 表单按钮控制，默认开放
+          modal_footer: true,
+          modal_save: true,
+          modal_submit: true,
+          modal_cancel: true
         },
         hasBpmStatus: false,
         checkboxFlag: false,
