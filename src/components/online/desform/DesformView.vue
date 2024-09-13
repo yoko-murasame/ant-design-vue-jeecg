@@ -344,7 +344,7 @@ export default {
               }
               return res
             }).then(async res => {
-              const resData = { res, dataId: res.result }
+              const resData = { ...that.defaultValue, ...formData, formSaveResult: res, dataId: res.result }
               if (res.success) {
                 if (that.alert && !that.currentSavedResult) {
                   that.$message.success('保存成功')
