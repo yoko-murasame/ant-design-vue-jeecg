@@ -91,9 +91,9 @@ export const HrefJump = {
     /** 处理列中的 href 跳转和 dict 字典，使两者可以兼容存在 */
     handleColumnHrefAndDict(column = {}, fieldHrefSlotKeysMap = {}) {
       let { customRender, hrefSlotName } = column
-      if (!hrefSlotName && (column.scopedSlots && column.scopedSlots.customRender)) {
-        // hrefSlotName = column.scopedSlots.customRender
-      }
+      // if (!hrefSlotName && (column.scopedSlots && column.scopedSlots.customRender)) {
+      //   // hrefSlotName = column.scopedSlots.customRender
+      // }
       // 如果 customRender 有值则代表使用了字典
       // 如果 hrefSlotName 有值则代表使用了href跳转
       // 两者可以兼容。兼容的具体思路为：先获取到字典替换的值，再添加href链接跳转

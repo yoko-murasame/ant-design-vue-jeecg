@@ -34,7 +34,7 @@
               <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
                 <a-button type="primary" @click="searchByquery" icon="search">查询</a-button>
                 <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-                <a @click="handleToggleSearch" style="margin-left: 8px">
+                <a v-if="queryInfo.length > 3" @click="handleToggleSearch" style="margin-left: 8px">
                   {{ toggleSearchStatus ? '收起' : '展开' }}
                   <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
                 </a>
@@ -109,29 +109,31 @@
     <div class="table-container">
 
       <!--非卡片模式-选择区域插槽-->
-      <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;" v-if="!cardMode || $slots.cardRowSelector || $scopedSlots.cardRowSelector">
+      <div :class="{ 'ant-alert': checkboxFlag, 'ant-alert-info': checkboxFlag }" style="margin-bottom: 16px;" v-if="!cardMode || $slots.cardRowSelector || $scopedSlots.cardRowSelector">
         <slot name="cardRowSelector" v-bind="getCardBindAttrs">
-          <i class="anticon anticon-info-circle ant-alert-icon"></i>
-          已选择&nbsp;<a style="font-weight: 600">{{ table.selectedRowKeys.length }}</a>项&nbsp;&nbsp;
-          <a style="margin-left: 24px" @click="onClearSelected">清空</a>
-          <span style="float:right;">
-            <a-popover :overlayStyle="{maxWidth:'500px'}" title="自定义列" trigger="click" placement="leftBottom" @visibleChange="popVisibleChange">
-              <a><a-icon type="setting"/></a>
-              <template slot="content">
-                <a-checkbox-group v-model="settingColumns">
-                  <a-row>
-                    <template v-for="(item,index) in defColumns">
-                      <template v-if="item.key!=='rowIndex'&& item.dataIndex!=='action'">
-                        <a-col :span="12" :key="index">
-                          <a-checkbox :value="item.dataIndex">{{ item.title }}</a-checkbox>
-                        </a-col>
+          <template v-if="checkboxFlag">
+            <i class="anticon anticon-info-circle ant-alert-icon"></i>
+            已选择&nbsp;<a style="font-weight: 600">{{ table.selectedRowKeys.length }}</a>项&nbsp;&nbsp;
+            <a style="margin-left: 24px" @click="onClearSelected">清空</a>
+            <span style="float:right;">
+              <a-popover :overlayStyle="{maxWidth:'500px'}" title="自定义列" trigger="click" placement="leftBottom" @visibleChange="popVisibleChange">
+                <a><a-icon type="setting"/></a>
+                <template slot="content">
+                  <a-checkbox-group v-model="settingColumns">
+                    <a-row>
+                      <template v-for="(item,index) in defColumns">
+                        <template v-if="item.key!=='rowIndex'&& item.dataIndex!=='action'">
+                          <a-col :span="12" :key="index">
+                            <a-checkbox :value="item.dataIndex">{{ item.title }}</a-checkbox>
+                          </a-col>
+                        </template>
                       </template>
-                    </template>
-                  </a-row>
-                </a-checkbox-group>
-              </template>
-            </a-popover>
-          </span>
+                    </a-row>
+                  </a-checkbox-group>
+                </template>
+              </a-popover>
+            </span>
+          </template>
         </slot>
       </div>
 
@@ -152,9 +154,25 @@
           :class="{'j-table-force-nowrap': enableScrollBar}"
           style="min-height: 300px">
 
+          <!--动态渲染代码测试 tempText: `<a-tag @click="handleEdit(record)">{{ text + '-11111' }}</a-tag>` -->
+          <!--<template v-slot:fill_status="text, record">-->
+          <!--  <dynamic-template-->
+          <!--    v-bind="{ ...getCardBindAttrs, text, record }"-->
+          <!--    :template-content="tempText">-->
+          <!--  </dynamic-template>-->
+          <!--</template>-->
+
           <!--动态渲染slot，card模式下，由父组件向下传递同名配置的插槽-->
-          <template v-if="customScopedSlots && customScopedSlots.length" v-for="sName in customScopedSlots" v-slot:[sName]="text, record">
-            <slot :name="sName" v-bind="{ ...getCardBindAttrs, text, record }">
+          <template v-if="customScopedSlots && customScopedSlots.length" v-for="(sName, idx) in customScopedSlots" v-slot:[sName]="text, record">
+            <!--动态渲染组件代码，卡片模式时，子组件的slot优先级 > online列表配置的slot代码 > 默认文本-->
+            <dynamic-template
+              :key="'customScopedSlotsRenderCode'+idx"
+              v-if="customScopedSlotsRenderCode[idx] && !($slots[sName] || $scopedSlots[sName])"
+              v-bind="{ ...getCardBindAttrs, text, record }"
+              :template-content="customScopedSlotsRenderCode[idx]">
+            </dynamic-template>
+            <!--走默认代码slot渲染-->
+            <slot v-else :name="sName" v-bind="{ ...getCardBindAttrs, text, record }">
               {{ text }}
             </slot>
           </template>
@@ -407,6 +425,8 @@ import TaskModule from '@views/modules/bpm/task/form/TaskModule'
 import lodash_object, { debounce } from 'lodash'
 import Vue from 'vue'
 import OnlCgformAutoModal from './OnlCgformAutoModal'
+// 动态template
+import DynamicTemplate from '@comp/yoko/DynamicTemplate.vue'
 
 export default {
     name: 'OnlCgFormAutoList',
@@ -418,7 +438,8 @@ export default {
       // ProcessInstPicModal,
       AutoDesformDataFullScreen,
       BindBpm,
-      BindBpmShowMyTask
+      BindBpmShowMyTask,
+      DynamicTemplate
     },
     props: {
       // 卡片模式，卡片模式下，支持slot渲染
@@ -589,6 +610,8 @@ export default {
         defColumns: [],
         // 自定义插槽，card模式下，子组件传递
         customScopedSlots: [],
+        // 自定义 slot渲染Vue代码
+        customScopedSlotsRenderCode: [],
         // 目前已存在的插槽
         existTableSlot: [
           'dateSlot',
@@ -785,8 +808,10 @@ export default {
             // 处理自定义 scopedSlots: { customRender: 'xxx' } 渲染列
             if (item.scopedSlots && item.scopedSlots.customRender && !that.existTableSlot.includes(item.scopedSlots.customRender)) {
               that.customScopedSlots.push(item.scopedSlots.customRender)
-              item.slots = { title: item.scopedSlots.customRender }
-              console.log('加载customScopedSlots', that.customScopedSlots, item)
+              // item.slots = { title: item.scopedSlots.customRender }
+              // 自定义渲染slot代码，如果没有就放一个空的
+              that.customScopedSlotsRenderCode.push(item.scopedSlotsRenderCode || '')
+              console.log('加载customScopedSlots', item)
             }
             // 自定义序号字段
             if (item.key === 'rowIndex' || item.dataIndex === 'action') {
@@ -840,6 +865,7 @@ export default {
         //   this.$set(this.onlineFormConfig, 'initQueryParam', {})
         // }
         this.customScopedSlots = []
+        this.customScopedSlotsRenderCode = []
         // 清空表单的默认初始化条件
         this.$set(this, 'initQueryParam', {})
         this.$set(this, 'queryParam', {})
@@ -1069,8 +1095,13 @@ export default {
               this.handleColumnShowLength(column)
             })
             // this.defColumns = res.result.columns.concat([this.actionColumn])
-            this.actionColumn.fixed = this.onlineFormConfig.actionFixed
-            this.defColumns = [this.rowIndexColumn, ...res.result.columns, this.actionColumn]
+            this.defColumns = [this.rowIndexColumn, ...res.result.columns]
+            // 是否隐藏action列
+            if (!res.result.hideActionButton) {
+              this.actionColumn.fixed = this.onlineFormConfig.actionFixed
+              this.defColumns.push(this.actionColumn)
+            }
+            // 设置列配置列表
             this.settingColumnsHandler(res.result.columns)
             this.scrollFlag = res.result.scrollFlag
             // 检查是否是流程
@@ -1600,7 +1631,6 @@ export default {
           Vue.ls.set(this.localCode, this.settingColumns.join(','))
         }
       }
-
     }
   }
 </script>

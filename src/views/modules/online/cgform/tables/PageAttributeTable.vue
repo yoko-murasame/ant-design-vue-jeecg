@@ -231,6 +231,14 @@ const commonPageOptions = [
             width: '160px',
             type: FormTypes.input,
             defaultValue: ''
+          },
+          {
+            title: 'slot渲染Vue代码',
+            key: 'scopedSlotsRenderCode',
+            // width: '15%',
+            width: '160px',
+            type: FormTypes.input_pop,
+            defaultValue: ''
           }
         ]
       }

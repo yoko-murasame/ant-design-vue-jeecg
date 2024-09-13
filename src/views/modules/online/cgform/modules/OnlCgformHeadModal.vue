@@ -182,6 +182,15 @@
                   </a-select>
                 </a-form-item>
               </a-col>
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="是否隐藏action按钮">
+                  <a-switch v-decorator="['hideActionButton', validatorRules.hideActionButton ]" />
+                </a-form-item>
+              </a-col>
             </a-row>
           </a-list-item>
           <!--JS增强-->
@@ -558,6 +567,7 @@ export default {
           },
           tableTxt: { rules: [{ required: true, message: '请输入表说明!' }] },
           viewTable: { rules: [{ required: false, message: '请选择是否是视图!' }], valuePropName: 'checked' },
+          hideActionButton: { rules: [{ required: false, message: '请选择是否隐藏action按钮!' }], valuePropName: 'checked' },
           idSequence: { rules: [{ required: true, message: '请输入序号名称!' }] },
           dataRulePerms: { rules: [{ required: false, message: '请选择数据权限标识!' }] },
           treeParentIdField: { rules: [{ required: true, message: '请输入树表单父ID!' }] },
@@ -668,7 +678,7 @@ export default {
         this.treeFieldAdded = record.isTree == 'Y'
         let pickAfter = pick(this.model, 'themeTemplate', 'tableName', 'dataRulePerms', 'scroll',
           'tableType', 'tableVersion', 'tableTxt', 'viewTable', 'isCheckbox', 'isDbSynch',
-          'isPage', 'isTree', 'idSequence', 'idType', 'queryMode', 'relationType',
+          'isPage', 'isTree', 'hideActionButton', 'idSequence', 'idType', 'queryMode', 'relationType',
           'subTableStr', 'tabOrderNum', 'treeParentIdField', 'treeIdField', 'treeFieldname',
           'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode', 'onlineInitQueryParamGetter',
           'onlineVueWatchJsStr')
