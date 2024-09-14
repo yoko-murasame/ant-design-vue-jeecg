@@ -41,6 +41,18 @@ VOLUME $APP_2_PATH
 CMD echo \
       "server {  \
           listen $APP_1_PORT; \
+          server_name localhost; \
+          # ssl证书配置 \
+          ssl_certificate /etc/nginx/ssl/aa.bb.com.pem; \
+          ssl_certificate_key /etc/nginx/ssl/aa.bb.com.key; \
+          # ssl安全配置 \
+          ssl_session_timeout 5m; # 设置 SSL 会话的超时时间 \
+          ssl_session_cache shared:MozSSL:10m; # 在共享内存中分配 10MB 用于缓存 SSL 会话 \
+          ssl_session_tickets off; # 禁用 SSL 会话票据 \
+          ssl_protocols    TLSv1.2 TLSv1.3; # 只允许使用 TLS 1.2 和 TLS 1.3 协议，禁用了较旧且不安全的版本（如 TLS 1.0 和 TLS 1.1） \
+          ssl_prefer_server_ciphers off; # 不优先使用服务器端的首选算法，允许客户端选择密码套件。通常，客户端会选择它支持的最强密码套件。 \
+          # ssl_ciphers HIGH:!NULL:!aNULL:!MD5:!DES:!3DES; # 加密算法，在使用服务器端的首选算法时配置 \
+          error_page 497 301 https://\$host:\$server_port\$request_uri; #http重定向刀https \
           gzip on; \
           gzip_static on; \
           gzip_min_length 1k; \
@@ -93,6 +105,12 @@ CMD echo \
               proxy_connect_timeout 60s; \
               proxy_read_timeout 7200s; \
               proxy_send_timeout 60s; \
+              # 下面配置在反代到某些https网址，包含重定向等规则时使用 \
+              # proxy_redirect off; # proxy_redirect http://backend_server http://frontend_server; 将上游服务器返回的 Location 头部中的 URL 从 http://backend_server 替换为 http://frontend_server \
+              # proxy_ssl_server_name on; # 启用 SNI \
+              # proxy_ssl_name backend_server; # 可选：指定上游服务器的名称 \
+              # sub_filter cloud.sakurasep.club \$server_name; # 修改服务器返回给客户端的 HTML、CSS、JavaScript 等文件的内容 \
+              # sub_filter_once off; # 只修改一次 \
           } \
           # 先匹配非子应用，根目录访问 \
           location / { \
@@ -122,6 +140,17 @@ CMD echo \
       "server { \
           listen $APP_2_PORT; \
           server_name localhost; \
+          # ssl证书配置 \
+          ssl_certificate /etc/nginx/ssl/aa.bb.com.pem; \
+          ssl_certificate_key /etc/nginx/ssl/aa.bb.com.key; \
+          # ssl安全配置 \
+          ssl_session_timeout 5m; # 设置 SSL 会话的超时时间 \
+          ssl_session_cache shared:MozSSL:10m; # 在共享内存中分配 10MB 用于缓存 SSL 会话 \
+          ssl_session_tickets off; # 禁用 SSL 会话票据 \
+          ssl_protocols    TLSv1.2 TLSv1.3; # 只允许使用 TLS 1.2 和 TLS 1.3 协议，禁用了较旧且不安全的版本（如 TLS 1.0 和 TLS 1.1） \
+          ssl_prefer_server_ciphers off; # 不优先使用服务器端的首选算法，允许客户端选择密码套件。通常，客户端会选择它支持的最强密码套件。 \
+          # ssl_ciphers HIGH:!NULL:!aNULL:!MD5:!DES:!3DES; # 加密算法，在使用服务器端的首选算法时配置 \
+          error_page 497 301 https://\$host:\$server_port\$request_uri; #http重定向刀https \
           #index index.php index.html index.htm default.php default.htm default.html; \
           gzip on; \
           gzip_static on; \
@@ -175,6 +204,12 @@ CMD echo \
               proxy_connect_timeout 60s; \
               proxy_read_timeout 7200s; \
               proxy_send_timeout 60s; \
+              # 下面配置在反代到某些https网址，包含重定向等规则时使用 \
+              # proxy_redirect off; # proxy_redirect http://backend_server http://frontend_server; 将上游服务器返回的 Location 头部中的 URL 从 http://backend_server 替换为 http://frontend_server \
+              # proxy_ssl_server_name on; # 启用 SNI \
+              # proxy_ssl_name backend_server; # 可选：指定上游服务器的名称 \
+              # sub_filter cloud.sakurasep.club \$server_name; # 修改服务器返回给客户端的 HTML、CSS、JavaScript 等文件的内容 \
+              # sub_filter_once off; # 只修改一次 \
           } \
           # 先匹配非子应用，根目录访问 \
           location / { \
