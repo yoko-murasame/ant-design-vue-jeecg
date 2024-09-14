@@ -45,20 +45,28 @@ VOLUME $SSL_PATH
 
 CMD echo \
       "server {  \
-          listen $APP_1_PORT; \
           server_name $APP_HOST_NAME; \
-          # ssl证书配置 \
-          # server_name $APP_HOST_NAME ssl; \
-          # ssl_certificate /etc/nginx/ssl/aa.bb.com.pem; \
-          # ssl_certificate_key /etc/nginx/ssl/aa.bb.com.key; \
-          # ssl安全配置 \
-          # ssl_session_timeout 5m; # 设置 SSL 会话的超时时间 \
-          # ssl_session_cache shared:MozSSL:10m; # 在共享内存中分配 10MB 用于缓存 SSL 会话 \
-          # ssl_session_tickets off; # 禁用 SSL 会话票据 \
-          # ssl_protocols    TLSv1.2 TLSv1.3; # 只允许使用 TLS 1.2 和 TLS 1.3 协议，禁用了较旧且不安全的版本（如 TLS 1.0 和 TLS 1.1） \
-          # ssl_prefer_server_ciphers off; # 不优先使用服务器端的首选算法，允许客户端选择密码套件。通常，客户端会选择它支持的最强密码套件。 \
-          # ssl_ciphers HIGH:!NULL:!aNULL:!MD5:!DES:!3DES; # 加密算法，在使用服务器端的首选算法时配置 \
-          # error_page 497 301 https://$APP_HOST_NAME:$APP_1_PORT\$request_uri; #http重定向刀https \
+          listen $APP_1_PORT; \
+          # # ssl配置-ssl端口 \
+          # listen $APP_1_PORT ssl; \
+          # # ssl配置-ssl证书，crt和pem都可以 \
+          # ssl_certificate $SSL_PATH/$APP_HOST_NAME.pem; \
+          # # ssl配置-ssl证书，key \
+          # ssl_certificate_key $SSL_PATH/$APP_HOST_NAME.key; \
+          # # http重定向到https（务必开启） \
+          # error_page 497 https://$APP_HOST_NAME:$APP_1_PORT\$request_uri; \
+          # # SSL安全-设置 SSL 会话的超时时间 \
+          # ssl_session_timeout 5m; \
+          # # SSL安全-在共享内存中分配 10MB 用于缓存 SSL 会话 \
+          # ssl_session_cache shared:MozSSL:10m; \
+          # # SSL安全-禁用 SSL 会话票据，用于在不使用服务器端会话缓存的情况下恢复 SSL 会话。禁用它可以增加安全性，因为它避免了潜在的票据重用问题 \
+          # ssl_session_tickets off; \
+          # # SSL安全-只允许使用 TLS 1.2 和 TLS 1.3 协议，禁用了较旧且不安全的版本（如 TLS 1.0 和 TLS 1.1） \
+          # ssl_protocols    TLSv1.2 TLSv1.3; \
+          # # SSL安全-不优先使用服务器端的首选算法，允许客户端选择密码套件。通常，客户端会选择它支持的最强密码套件。 \
+          # ssl_prefer_server_ciphers off; \
+          # # SSL安全-加密算法，在启用服务器端的首选算法时配置 \
+          # # ssl_ciphers HIGH:!NULL:!aNULL:!MD5:!DES:!3DES; \
           gzip on; \
           gzip_static on; \
           gzip_min_length 1k; \
@@ -144,20 +152,28 @@ CMD echo \
           access_log  /var/log/nginx/access-app-1.log ; \
       } " > /etc/nginx/conf.d/default.conf && echo \
       "server { \
-          listen $APP_2_PORT; \
           server_name $APP_HOST_NAME; \
-          # ssl证书配置 \
-          # server_name $APP_HOST_NAME ssl; \
-          # ssl_certificate /etc/nginx/ssl/aa.bb.com.pem; \
-          # ssl_certificate_key /etc/nginx/ssl/aa.bb.com.key; \
-          # ssl安全配置 \
-          # ssl_session_timeout 5m; # 设置 SSL 会话的超时时间 \
-          # ssl_session_cache shared:MozSSL:10m; # 在共享内存中分配 10MB 用于缓存 SSL 会话 \
-          # ssl_session_tickets off; # 禁用 SSL 会话票据 \
-          # ssl_protocols    TLSv1.2 TLSv1.3; # 只允许使用 TLS 1.2 和 TLS 1.3 协议，禁用了较旧且不安全的版本（如 TLS 1.0 和 TLS 1.1） \
-          # ssl_prefer_server_ciphers off; # 不优先使用服务器端的首选算法，允许客户端选择密码套件。通常，客户端会选择它支持的最强密码套件。 \
-          # ssl_ciphers HIGH:!NULL:!aNULL:!MD5:!DES:!3DES; # 加密算法，在使用服务器端的首选算法时配置 \
-          # error_page 497 301 https://$APP_HOST_NAME:$APP_2_PORT\$request_uri; #http重定向刀https \
+          listen $APP_2_PORT; \
+          # # ssl配置-ssl端口 \
+          # listen $APP_2_PORT ssl; \
+          # # ssl配置-ssl证书，crt和pem都可以 \
+          # ssl_certificate $SSL_PATH/$APP_HOST_NAME.pem; \
+          # # ssl配置-ssl证书，key \
+          # ssl_certificate_key $SSL_PATH/$APP_HOST_NAME.key; \
+          # # http重定向到https（务必开启） \
+          # error_page 497 https://$APP_HOST_NAME:$APP_2_PORT\$request_uri; \
+          # # SSL安全-设置 SSL 会话的超时时间 \
+          # ssl_session_timeout 5m; \
+          # # SSL安全-在共享内存中分配 10MB 用于缓存 SSL 会话 \
+          # ssl_session_cache shared:MozSSL:10m; \
+          # # SSL安全-禁用 SSL 会话票据，用于在不使用服务器端会话缓存的情况下恢复 SSL 会话。禁用它可以增加安全性，因为它避免了潜在的票据重用问题 \
+          # ssl_session_tickets off; \
+          # # SSL安全-只允许使用 TLS 1.2 和 TLS 1.3 协议，禁用了较旧且不安全的版本（如 TLS 1.0 和 TLS 1.1） \
+          # ssl_protocols    TLSv1.2 TLSv1.3; \
+          # # SSL安全-不优先使用服务器端的首选算法，允许客户端选择密码套件。通常，客户端会选择它支持的最强密码套件。 \
+          # ssl_prefer_server_ciphers off; \
+          # # SSL安全-加密算法，在启用服务器端的首选算法时配置 \
+          # # ssl_ciphers HIGH:!NULL:!aNULL:!MD5:!DES:!3DES; \
           #index index.php index.html index.htm default.php default.htm default.html; \
           gzip on; \
           gzip_static on; \
