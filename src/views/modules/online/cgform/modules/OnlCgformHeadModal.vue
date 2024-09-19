@@ -92,13 +92,15 @@
                       :labelCol="threeCol.label"
                       :wrapperCol="threeCol.wrapper">
                       <span slot="label">
-                        <a-tooltip placement="bottom" :overlayStyle="{'min-width': '40vw'}">
+                        <a-tooltip placement="bottom" :overlayStyle="{'min-width': '32vw'}">
                           <span>数据权限标识</span>
                           <span slot="title">
                             1、当前Online表单的数据权限规则，在系统->菜单管理->新增数据权限菜单节点。<br/>
                             2、配置后会自动应用该节点perms数据权限！<br/>
-                            3、比如父节点perms为：data:rule，子节点：data:rule:child1、data:rule:child2，选中父节点后将自动应用所有子节点权限！<br/>
-                            4、不配置数据权限规则将不生效！
+                            3、比如父节点perms为：data:rule，子节点：data:rule:child1、data:rule:child2，<br/>
+                            注意：示例中命名就是右模糊匹配，如果父子节点命名无规则，则父节点勾选后无法应用孩子！<br/>
+                            在有规则的命名情况下，选中父节点后将自动应用所有子节点权限！<br/>
+                            4、不配置时，数据权限控制规则将不生效！
                           </span>
                           <a-icon class="question-circle" type="question-circle-o"/>
                         </a-tooltip>
@@ -212,7 +214,13 @@
                         3、如果是流程列表，将自动注入流程节点配置中返回的初始化参数，详见`initQueryParam`。<br/>
                         备注：<br/>
                         1、JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。<br/>
-                        2、如果需要使用到流程配置中返回的初始化变量，可通过`initQueryParam`获取。
+                        2、如果需要使用到流程配置中返回的初始化变量，可通过`initQueryParam`获取。<br/>
+                        注意：<br/>
+                        1、如果字段->列表显示未勾选，默认的列表数据接口将不会返回对应字段数据！<br/>
+                        特殊情况：针对于列表数据接口`getData`，若想要某些字段数据但是列表不展示，则：<br/>
+                        1.1、可通过在`initQueryParam`中添加属性`needList`，将需要的字段通过逗号拼接即可。<br/>
+                        1.2、还可以通过在`initQueryParam`中添加属性`queryAllColumn: '1'`，查询全部数据字段。<br/>
+                        2、如果字段->表单显示未勾选，默认的表单数据接口将不会返回对应字段数据！这里没有特殊方式控制，想要必须勾上！<br/>
                       </span>
                       <a-icon class="question-circle" type="question-circle-o"/>
                     </a-tooltip>
@@ -664,8 +672,37 @@ export default {
             setDataSource(table1, datas)
           }, 1)
         })
-        const onlineInitQueryParamGetter = `console.log('流程节点配置中返回的初始化参数', initQueryParam)\nreturn initQueryParam`
-        this.edit({ onlineInitQueryParamGetter }, 'add')
+        // getter示例
+        let onlineInitQueryParamGetter = `// needList获取列表不展示但需要的数据字段\n`
+        onlineInitQueryParamGetter += `// initQueryParam.needList = 'id,create_by'\n`
+        onlineInitQueryParamGetter += `// queryAllColumn获取列表所有字段的数据\n`
+        onlineInitQueryParamGetter += `// initQueryParam.queryAllColumn = '1'\n`
+        onlineInitQueryParamGetter += `console.log('流程节点配置中返回的初始化参数', initQueryParam)\n`
+        onlineInitQueryParamGetter += `return initQueryParam`
+        // 监听器示例
+        let onlineVueWatchJsStr = '// 监听器示例\n'
+        onlineVueWatchJsStr += `// 'queryParam.company': {\n`
+        onlineVueWatchJsStr += `//   deep: false,\n`
+        onlineVueWatchJsStr += `//   immediate: true,\n`
+        onlineVueWatchJsStr += `// 	handler(val) {\n`
+        onlineVueWatchJsStr += `// 		console.log('监听queryParam.company', val)\n`
+        onlineVueWatchJsStr += `//     if (val) {\n`
+        onlineVueWatchJsStr += `//       this.$message.info('获取store参数')\n`
+        onlineVueWatchJsStr += `//       const np = this.$store.getters.getCommonParams && this.$store.getters.getCommonParams(val) || {}\n`
+        onlineVueWatchJsStr += `//       console.log('当前数据', np, this.queryParam)\n`
+        onlineVueWatchJsStr += `//       // 更新搜索条件，必须拿$set做响应式数据更新\n`
+        onlineVueWatchJsStr += `//       Object.keys(np).forEach(key => {\n`
+        onlineVueWatchJsStr += `//         this.$set(this.queryParam, key, np[key])\n`
+        onlineVueWatchJsStr += `//         this.$set(this.initQueryParam || {}, key, np[key])\n`
+        onlineVueWatchJsStr += `//       })\n`
+        onlineVueWatchJsStr += `//       // 禁用新增、编辑、删除\n`
+        onlineVueWatchJsStr += `//       this.buttonSwitch.disableAdd = false\n`
+        onlineVueWatchJsStr += `//       this.buttonSwitch.disableEdit = false\n`
+        onlineVueWatchJsStr += `//       this.buttonSwitch.disableDelete = false\n`
+        onlineVueWatchJsStr += `//     }\n`
+        onlineVueWatchJsStr += `//   }\n`
+        onlineVueWatchJsStr += `// }\n`
+        this.edit({ onlineInitQueryParamGetter, onlineVueWatchJsStr }, 'add')
       },
       edit(record, caller = '') {
         this.metaTableName = ''
