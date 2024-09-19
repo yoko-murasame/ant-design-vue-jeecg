@@ -94,7 +94,8 @@ export default {
       }
     },
     data() {
-      this.loadData = debounce(this.loadData, 800)// 消抖
+      this.initDictData = debounce(this.initDictData, 200)
+      this.loadData = debounce(this.loadData, 200)// 消抖
       this.lastLoad = 0
       return {
         loading: false,
@@ -104,8 +105,7 @@ export default {
       }
     },
     created() {
-      this.initDictData = debounce(this.initDictData, 1000)
-      this.initDictData()
+      // this.initDictData()
     },
     watch: {
       'value': {
@@ -149,7 +149,7 @@ export default {
     },
     methods: {
       initSelectValue() {
-        const realDict = this.dict || this.dictCode
+        const realDict = this.dictCode || this.dict
         if (this.async) {
           if (!this.selectedAsyncValue || !this.selectedAsyncValue.key || this.selectedAsyncValue.key !== this.value) {
             console.log('这才请求后台')
@@ -244,7 +244,7 @@ export default {
         this.options = []
         this.loading = true
         // 字典code格式：table,text,code
-        let realDict = this.dict || this.dictCode
+        let realDict = this.dictCode || this.dict
         // 非正确长度校验
         const dictArr = realDict.split(',')
         if (![1, 3, 4].includes(dictArr.length)) {
@@ -315,7 +315,7 @@ export default {
         })
       },
       initDictData() {
-        let realDict = this.dict || this.dictCode
+        let realDict = this.dictCode || this.dict
         if (!this.async) {
           // 如果字典项集合有数据
           if (this.dictOptions && this.dictOptions.length > 0) {
