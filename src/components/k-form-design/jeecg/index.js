@@ -188,7 +188,8 @@ export const jeecgComponents = [
       placeholder: '请选择',
       mode: 'default', // default multiple
       dictType: 'static', // static dynamic
-      dict: '',
+      dict: '', // 这个属性不要用了
+      dictCode: '', // 用这个属性，和别的字典组件统一
       async: true, // 是否异步搜索
       pageSize: 50, // 异步加载的数量
       keepInput: false,

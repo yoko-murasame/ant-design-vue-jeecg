@@ -99,10 +99,10 @@ export default {
             const res = await createAsyncJsEnhanceFunction(
               that,
               funcStr,
-              ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
-                'hide', 'show', 'disable', 'enable', 'reset'],
-              [value, key, this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData, this.$refs.KFormBuild.setOptions,
-                this.$refs.KFormBuild.hide, this.$refs.KFormBuild.show, this.$refs.KFormBuild.disable, this.$refs.KFormBuild.enable, this.$refs.KFormBuild.reset])
+              ['value', 'key', 'data', 'getData', 'setData', 'setOptions', 'changeDict',
+                'hide', 'show', 'disable', 'enable', 'reset', 'formMeta'],
+              [value, key, this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData, this.$refs.KFormBuild.setOptions, this.$refs.KFormBuild.changeDict,
+                this.$refs.KFormBuild.hide, this.$refs.KFormBuild.show, this.$refs.KFormBuild.disable, this.$refs.KFormBuild.enable, this.$refs.KFormBuild.reset, this.$refs.KFormBuild.value])
             .call()
             return res
           } catch (e) {
@@ -136,10 +136,10 @@ export default {
             const res = await createAsyncJsEnhanceFunction(
               that,
               funcStr,
-              ['value', 'key', 'data', 'getData', 'setData', 'setOptions',
-                'hide', 'show', 'disable', 'enable', 'reset'],
-              [value, key, this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData, this.$refs.KFormBuild.setOptions,
-                this.$refs.KFormBuild.hide, this.$refs.KFormBuild.show, this.$refs.KFormBuild.disable, this.$refs.KFormBuild.enable, this.$refs.KFormBuild.reset])
+              ['value', 'key', 'data', 'getData', 'setData', 'setOptions', 'changeDict',
+                'hide', 'show', 'disable', 'enable', 'reset', 'formMeta'],
+              [value, key, this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData, this.$refs.KFormBuild.setOptions, this.$refs.KFormBuild.changeDict,
+                this.$refs.KFormBuild.hide, this.$refs.KFormBuild.show, this.$refs.KFormBuild.disable, this.$refs.KFormBuild.enable, this.$refs.KFormBuild.reset, this.$refs.KFormBuild.value])
             .call()
             return res
           } catch (e) {

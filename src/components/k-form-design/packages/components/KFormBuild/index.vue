@@ -154,10 +154,10 @@ export default {
         return createAsyncJsEnhanceFunction(
           this,
           afterSubmit,
-          ['data', 'formConfig', 'setData', 'getData', 'setOptions',
-            'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newDefaultData'],
-          [this.data, config, this.setData, this.getData, this.setOptions,
-            this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newDefaultData])
+          ['data', 'formConfig', 'setData', 'getData', 'setOptions', 'changeDict',
+            'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newDefaultData', 'formMeta'],
+          [this.data, config, this.setData, this.getData, this.setOptions, this.changeDict,
+            this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newDefaultData, this.value])
         .call()
       }
     },
@@ -175,10 +175,10 @@ export default {
         return createAsyncJsEnhanceFunction(
           this,
           beforeSubmit,
-          ['data', 'formConfig', 'setData', 'getData', 'setOptions',
-            'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData'],
-          [this.data, config, this.setData, this.getData, this.setOptions,
-            this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData])
+          ['data', 'formConfig', 'setData', 'getData', 'setOptions', 'changeDict',
+            'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData', 'formMeta'],
+          [this.data, config, this.setData, this.getData, this.setOptions, this.changeDict,
+            this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData, this.value])
         .call()
       }
     },
@@ -196,10 +196,10 @@ export default {
         return createAsyncJsEnhanceFunction(
             this,
             handleMounted,
-            ['data', 'formConfig', 'setData', 'getData', 'setOptions',
-              'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData'],
-            [this.data, config, this.setData, this.getData, this.setOptions,
-              this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData])
+            ['data', 'formConfig', 'setData', 'getData', 'setOptions', 'changeDict',
+              'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData', 'formMeta'],
+            [this.data, config, this.setData, this.getData, this.setOptions, this.changeDict,
+              this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData, this.value])
         .call()
       }
     },
@@ -217,10 +217,10 @@ export default {
         return createAsyncJsEnhanceFunction(
             this,
             handleSetData,
-            ['data', 'formConfig', 'setData', 'getData', 'setOptions',
-              'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData'],
-            [this.data, config, this.setData, this.getData, this.setOptions,
-              this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData])
+            ['data', 'formConfig', 'setData', 'getData', 'setOptions', 'changeDict',
+              'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData', 'formMeta'],
+            [this.data, config, this.setData, this.getData, this.setOptions, this.changeDict,
+              this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData, this.value])
         .call()
       }
     },
@@ -388,6 +388,11 @@ export default {
         })
       }
       traverse(this.value.list)
+    },
+    // 变更字典值
+    changeDict(fields, dictCode = '', dictOptions = []) {
+      dictCode && this.setOptions(fields, 'dictCode', dictCode)
+      dictOptions && this.setOptions(fields, 'dictOptions', dictOptions)
     },
     // 隐藏表单字段
     hide(fields) {

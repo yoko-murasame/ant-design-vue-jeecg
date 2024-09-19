@@ -126,14 +126,15 @@ if (captain_name) {
 
 **操作表单数据方法**
 
-* `setData`：设置表单数据
-* `getData`：获取表单数据，可传入参数1指定字段列表 ['字段A', '字段B']，参数2是否抛出异常 true/false
-* `hide`：隐藏表单字段
-* `show`：显示表单字段
-* `disable`：禁用表单字段
-* `enable`：启用表单字段
+* `setData`：设置表单数据，参数为：['fieldA', 'fieldB']（字段名称数组，下面同此）
+* `getData`：获取表单数据，参数为：参数1可选，若传入可限制字段列表['fieldA', 'fieldA']，参数2是否抛出异常：true/false
+* `hide`：隐藏表单字段，参数为：['fieldA', 'fieldB']
+* `show`：显示表单字段，参数为：['fieldA', 'fieldB']
+* `disable`：禁用表单字段，参数为：['fieldA', 'fieldB']
+* `enable`：启用表单字段，参数为：['fieldA', 'fieldB']
 * `reset`：重置表单，将清空所有表单数据
-* `setOptions`：批量设置某个option的值，不建议使用
+* `setOptions`：批量设置表单组件的option的值，参数为：['fieldA', 'fieldB']，optionName(配置属性名称)，optionsValue(配置属性值)
+* `changeDict`：变更字典（字典单选、多选、搜索组件生效），参数为：['fieldA', 'fieldB']，dictCode(字典Code)，dictOptions(字典数组)
 
 ```js
 // 注意不要申明成data，默认属性已经有data了
@@ -149,6 +150,12 @@ that.show(['fieldA', 'fieldB'])
 that.disable(['fieldA', 'fieldB'])
 that.enable(['fieldA', 'fieldB'])
 that.reset()
+// 批量设置组件的options，这里以改变 disabled 属性为例
+that.setOptions(['fieldA', 'fieldB'], 'disabled', true)
+// 批量设置组件的动态字典code
+that.changeDict(['fieldA', 'fieldB'], '系统里的字典code或者表字典')
+// 批量设置组件的静态字典选项
+that.changeDict(['fieldA', 'fieldB'], null, [{ text: '文本', value: '1' }])
 ```
 
 

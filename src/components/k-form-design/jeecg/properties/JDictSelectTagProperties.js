@@ -2,11 +2,11 @@ import { pluginManager } from '../../packages/utils/index'
 import KCheckbox from '@comp/k-form-design/packages/components/KCheckbox/index.vue'
 import KChangeOption from '@comp/k-form-design/packages/components/KChangeOption/index.vue'
 
-const Input = pluginManager.getComponent("input").component;
-const InputNumber = pluginManager.getComponent("number").component;
-const Radio = pluginManager.getComponent("radio").component;
-const RadioButton = pluginManager.getComponent("radioButton").component;
-const Rate = pluginManager.getComponent("rate").component;
+const Input = pluginManager.getComponent('input').component
+const InputNumber = pluginManager.getComponent('number').component
+const Radio = pluginManager.getComponent('radio').component
+const RadioButton = pluginManager.getComponent('radioButton').component
+const Rate = pluginManager.getComponent('rate').component
 
 /**
  * 封装JDictSelectTag的配置属性
@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     options() {
-      return this.selectItem.options || {};
+      return this.selectItem.options || {}
     }
   },
   watch: {
@@ -74,24 +74,24 @@ export default {
 
     return (
       <div style={{ display: 'contents' }}>
-        <a-form-item label={"组件类型"} help="">
+        <a-form-item label={'组件类型'} help="">
           <Radio buttonStyle="solid" v-model={options.type}>
-            <RadioButton value={"select"}>下拉框</RadioButton>
-            <RadioButton value={"radio"}>单选框</RadioButton>
+            <RadioButton value={'select'}>下拉框</RadioButton>
+            <RadioButton value={'radio'}>单选框</RadioButton>
           </Radio>
         </a-form-item>
-        <a-form-item label={'字典配置'} help="">
+        <a-form-item label={'字典配置(options|dictCode)'} help="">
           <Radio buttonStyle="solid" v-model={options.dictType}>
             <RadioButton value={'static'}>静态</RadioButton>
             <RadioButton value={'dynamic'}>动态</RadioButton>
           </Radio>
           {
-            options.dictType === 'dynamic' ?
-              (
+            options.dictType === 'dynamic'
+              ? (
                 <Input vModel={options.dictCode}
                        placeholder={'格式：dict_code 或 table_name,text_field,code_field,可选的查询条件'} />
-              ) :
-              (
+              )
+              : (
                 <KChangeOption v-model={options.options} />
               )
           }
@@ -103,9 +103,9 @@ export default {
         <div>系统日期"yyyy-MM-dd"：sys_date</div>
         <div>系统时间"yyyy-MM-dd HH:mm"：sys_time</div>
         <a-form-item label={'其他属性'} help="">
-          {/*<Input vModel={options.placeholder} placeholder={"placeholder"}/>*/}
-          <kCheckbox v-model={options.allowClear} label="可清除" />
-          <kCheckbox v-model={options.disabled} label="禁用" />
+          {/* <Input vModel={options.placeholder} placeholder={"placeholder"}/> */}
+          <kCheckbox v-model={options.allowClear} label="可清除(allowClear)" />
+          <kCheckbox v-model={options.disabled} label="禁用(disabled)" />
           <kCheckbox v-model={options.triggerChange} label="是否触发change事件" />
         </a-form-item>
       </div>
