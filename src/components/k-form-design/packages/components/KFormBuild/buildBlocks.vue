@@ -92,8 +92,11 @@
     </tr>
   </table>
 
-  <div v-else-if="!record.options.hidden">
+  <!--TODO 这里的隐藏状态是if，会影响数据保存字段，暂时去掉-->
+  <!--<div v-else-if="!record.options.hidden">-->
+  <div v-else>
     <KFormItem
+      v-show="!record.options.hidden"
       :disabled="disabled"
       v-if="record.type === 'subtable'"
       ref="nestedComponents"
@@ -106,7 +109,7 @@
       :formConfig="formConfig"
       :config="config" />
 
-    <j-form-container :disabled="disabled" v-else>
+    <j-form-container v-show="!record.options.hidden" :disabled="disabled" v-else>
       <KFormItem
         ref="nestedComponents"
         @handleReset="$emit('handleReset')"
