@@ -883,7 +883,8 @@ export default {
       syncAllOrderNumNow(oldIndex, newIndex) {
         this.getAllTable().then(tables => {
           tables.forEach((tab, idx) => {
-            if (idx > 0 && idx < 4) {
+            // 1-3：页面属性、校验字段、外键，5：查询配置
+            if (idx > 0 && idx < 4 || idx === 5) {
               tab.$refs.editableTable.rowResort(oldIndex, newIndex)
             }
           })
