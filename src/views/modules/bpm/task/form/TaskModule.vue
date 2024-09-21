@@ -2,7 +2,7 @@
   <div style="background: #ffffff">
     <!-- 步骤条 -->
     <a-spin :spinning="loading">
-      <a-card>
+      <a-card v-if="showSteps">
         <a-steps progressDot :current="stepIndex" style="padding: 10px" size="default">
           <template v-if="resultObj.bpmLogListCount >3">
             <a-step>
@@ -47,45 +47,47 @@
           </a-step>-->
         </a-steps>
       </a-card>
-      <a-card title="意见信息" :bodyStyle="{padding:'0 20px'}" size="default" style="margin-top:20px">
+      <a-card :title="formData.showMessageHandle ? '意见信息' : '流程办理'" :bodyStyle="{padding:'0 20px'}" size="default" style="margin-top:20px">
         <a-list itemLayout="vertical">
-
-          <a-list-item>
-            <div style="width: 100%;">
-              <div style="margin-bottom: 5px">
-                处理意见：
-                <a-select
-                  style="width: 300px"
-                  placeholder="常用审批语"
-                  :getPopupContainer="(target) => target.parentNode"
-                  @change="handleChangeSelect">
-                  <a-icon slot="suffixIcon" type="smile"/>
-                  <a-select-option v-for="(item, key) in remarksDictOptions" :key="key" :value="item.value">{{
-                    item.text
-                  }}
-                  </a-select-option>
-                </a-select>
-                <!--2022.07.20-添加流程处理意见暂存功能-->
-                <a-popconfirm title="确定要暂存处理意见吗?" @confirm="cacheMessage">
-                  <a-button type="primary">暂存处理意见</a-button>
-                </a-popconfirm>
-                <a-popconfirm title="确定要恢复暂存意见吗?" @confirm="reloadMessage">
-                  <a-button type="primary">恢复暂存意见</a-button>
-                </a-popconfirm>
+          <template v-if="formData.showMessageHandle">
+            <a-list-item>
+              <div style="width: 100%;">
+                <div style="margin-bottom: 5px">
+                  处理意见：
+                  <a-select
+                    style="width: 300px"
+                    placeholder="常用审批语"
+                    :getPopupContainer="(target) => target.parentNode"
+                    @change="handleChangeSelect">
+                    <a-icon slot="suffixIcon" type="smile"/>
+                    <a-select-option v-for="(item, key) in remarksDictOptions" :key="key" :value="item.value">{{
+                        item.text
+                      }}
+                    </a-select-option>
+                  </a-select>
+                  <!--2022.07.20-添加流程处理意见暂存功能-->
+                  <a-popconfirm title="确定要暂存处理意见吗?" @confirm="cacheMessage">
+                    <a-button type="primary">暂存处理意见</a-button>
+                  </a-popconfirm>
+                  <a-popconfirm title="确定要恢复暂存意见吗?" @confirm="reloadMessage">
+                    <a-button type="primary">恢复暂存意见</a-button>
+                  </a-popconfirm>
+                </div>
+                <a-textarea rows="3" v-model="model.reason"/>
               </div>
-              <a-textarea rows="3" v-model="model.reason"/>
-            </div>
-          </a-list-item>
-          <a-list-item>
-            <j-upload text="添加文件" v-model="fileList" :returnUrl="false"></j-upload>
-          </a-list-item>
+            </a-list-item>
+            <a-list-item>
+              <j-upload text="添加文件" v-model="fileList" :returnUrl="false"></j-upload>
+            </a-list-item>
+          </template>
           <a-list-item>
             <a-row>
               <a-col :span="24">
                 <a-radio-group v-model="model.processModel">
                   <a-radio :checked="true" :value="1">流转下一节点</a-radio>
                   <!-- <a-radio :value="2">多分支模式</a-radio> -->
-                  <a-radio :value="3" v-if="resultObj.histListSize>0">驳回</a-radio>
+                  <!--TODO 将驳回功能改成可配置化-->
+                  <a-radio :value="3" v-if="formData.showReject && resultObj.histListSize>0">驳回</a-radio>
                 </a-radio-group>
                 <span :hidden="this.model.processModel!==2">
                   <span style="color: red;">多分支模式默认执行所有分支：</span>
@@ -154,7 +156,7 @@
         <div style="margin-top:20px;text-align:center">
           <template v-if="model.processModel==1">
             <template v-for="(item,index) in resultObj.transitionList">
-              <a-button type="primary" @click="handleProcessComplete(item.nextnode)">{{ item.Transition }}</a-button>
+              <a-button type="primary" @click="handleProcessComplete(item.nextnode, item.Transition)">{{ item.Transition }}</a-button>
             </template>
           </template>
           <template v-else>
@@ -317,9 +319,8 @@
 </template>
 
 <script>
-import { getAction, getFileAccessHttpUrl, httpAction } from '@/api/manage'
-import { initDictOptions } from '@/components/dict/JDictSelectUtil'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { getFileAccessHttpUrl } from '@/api/manage'
+import { TaskModuleMixin } from '@views/modules/bpm/mixins/TaskModuleMixin'
 import AListItem from 'ant-design-vue/es/list/Item'
 import Vue from 'vue'
 import JEllipsis from '../../../../../components/jeecg/JEllipsis.vue'
@@ -327,6 +328,7 @@ import JUpload from '../../../../../components/jeecg/JUpload'
 import SelectUserModal from './SelectUserModal'
 
 export default {
+  mixins: [TaskModuleMixin],
   components: {
     JUpload,
     JEllipsis,
@@ -334,41 +336,16 @@ export default {
     SelectUserModal
   },
   name: 'TaskModule',
-  props: ['formData', 'saveForm'],
   data() {
     return {
       parent: null,
-      url: {
-        getProcessTaskTransInfo: '/act/task/getProcessTaskTransInfo',
-        processComplete: '/act/task/processComplete',
-        upload: window._CONFIG['domianURL'] + '/sys/common/upload'
-      },
-      headers: {},
-      resultObj: {},
-      checkedNext: false,
       transition: [],
       hqUserSelectList: [],
       ccUserSelectList: [],
-      remarksDictOptions: [],
-      model: {
-        taskId: '',
-        nextnode: '',
-        nextCodeCount: '',
-        reason: '已完成', // 修改默认处理意见
-        processModel: 1,
-        rejectModelNode: '',
-        nextUserName: '',
-        nextUserId: '',
-        ccUserIds: '',
-        ccUserRealNames: '',
-        fileList: ''
-      },
       bodyStyle: {
         padding: '10px'
       },
-      checkedCc: false,
-      fileList: [],
-      loading: false
+      checkedCc: false
     }
   },
   computed: {
@@ -377,33 +354,33 @@ export default {
     },
     stepIndex: function () {
       if (this.resultObj.bpmLogListCount > 3) {
-        return this.resultObj.bpmLogStepListCount + 1;
+        return this.resultObj.bpmLogStepListCount + 1
       }
-      return this.resultObj.bpmLogStepListCount;
+      return this.resultObj.bpmLogStepListCount
     },
     hqUserList: function () {
-      console.log('hq user select ', this.hqUserSelectList);
-      var names = [];
-      var ids = [];
+      console.log('hq user select ', this.hqUserSelectList)
+      var names = []
+      var ids = []
       for (var a = 0; a < this.hqUserSelectList.length; a++) {
-        names.push(this.hqUserSelectList[a].realname);
-        ids.push(this.hqUserSelectList[a].username);
+        names.push(this.hqUserSelectList[a].realname)
+        ids.push(this.hqUserSelectList[a].username)
       }
-      this.model.nextUserId = ids.join(',');
-      this.model.nextUserName = names.join(',');
-      return names;
+      this.model.nextUserId = ids.join(',')
+      this.model.nextUserName = names.join(',')
+      return names
     },
     ccUserList: function () {
-      console.log('cc user select ', this.ccUserSelectList);
-      var names = [];
-      var ids = [];
+      console.log('cc user select ', this.ccUserSelectList)
+      var names = []
+      var ids = []
       for (var a = 0; a < this.ccUserSelectList.length; a++) {
-        names.push(this.ccUserSelectList[a].realname);
-        ids.push(this.ccUserSelectList[a].username);
+        names.push(this.ccUserSelectList[a].realname)
+        ids.push(this.ccUserSelectList[a].username)
       }
-      this.model.ccUserIds = ids.join(',');
-      this.model.ccUserRealNames = names.join(',');
-      return names;
+      this.model.ccUserIds = ids.join(',')
+      this.model.ccUserRealNames = names.join(',')
+      return names
     }
   },
   methods: {
@@ -421,172 +398,37 @@ export default {
     },
     handleChangeSelect(value) {
       console.log('handleChangeSelect', value)
-      this.model.reason = value;
-    },
-    initDictConfig() {
-      // 初始化字典 - 性别
-      initDictOptions('approval_remarks').then((res) => {
-        if (res.success) {
-          this.remarksDictOptions = res.result;
-        }
-      });
+      this.model.reason = value
     },
     getFileDownloadUrl: function (path) {
-      return getFileAccessHttpUrl(path);
-    },
-    // 此方法已作废
-    handleChange2(info) {
-      this.fileList = [];
-      let fileList = info.fileList;
-      // fileList = fileList.slice(-2);
-      fileList = fileList.map((file) => {
-        if (file.response) {
-          file.url = file.response.message;
-        }
-        return file;
-      });
-      fileList = fileList.filter((file) => {
-        console.log('-----fileList response-----', file.response);
-        if (file.response) {
-          return file.response.success === true;
-        }
-        return false;
-      }).map((file) => {
-        var fileJson = {
-          fileName: file.name,
-          filePath: file.url,
-          fileSize: file.size
-        };
-        this.fileList.push(fileJson);
-      });
-      this.model.fileList = JSON.stringify(this.fileList)
-      console.log('-----fileList-----', this.model.fileList);
+      return getFileAccessHttpUrl(path)
     },
     handleCheckedNextChange(e) {
-      this.checkedNext = e.target.checked;
-      this.hqUserSelectReset();
+      this.checkedNext = e.target.checked
+      this.hqUserSelectReset()
     },
     handleCheckedCcChange(e) {
-      this.checkedCc = e.target.checked;
-      this.ccUserSelectReset();
-    },
-    getProcessTaskTransInfo(formData) {
-      console.log('getProcessTaskTransInfo', formData)
-      var params = { taskId: formData.taskId };// 查询条件
-      this.loading = true;
-      getAction(this.url.getProcessTaskTransInfo, params).then((res) => {
-        if (res.success) {
-          console.log('流程流转信息', res);
-          this.resultObj = res.result;
-        }
-        this.loading = false;
-      }).finally(() => {
-        this.loading = false;
-      })
-    },
-    async handleProcessComplete(nextnode) {
-      const that = this;
-      console.log('流程办理数据：', this.model);
-      if (!this.model.reason || this.model.reason.length == 0) {
-        this.$message.warning('请填写处理意见');
-        return
-      }
-      if (nextnode) {
-        this.model.nextnode = nextnode;
-      }
-      var method = 'post';
-      this.$confirm({
-        title: '提示',
-        content: '确认提交审批吗?',
-        onOk: async function () {
-          // 预校验表单
-          try {
-            if (that.model.processModel !== 3) {
-              await that.saveForm();
-            }
-          } catch (e) {
-            console.error('流程保存错误', e)
-            console.log('流转信息', that.resultObj)
-            return
-          }
-          that.loading = true;
-          that.model.fileList = JSON.stringify(that.fileList)
-          httpAction(that.url.processComplete, that.model, method).then((res) => {
-            if (res.success) {
-              that.$message.success(res.message);
-              that.$emit('complete');
-            } else {
-              // that.$message.error(res.message);
-              // 明显点的提示框
-              const h = that.$createElement;
-              let secondsToGo = 30;
-              const modal = that.$error({
-                title: '错误消息',
-                // content: `${res.message}\n该提示将在 ${secondsToGo} 秒后自动关闭`
-                content: h('div', {}, [
-                  h('p', res.message),
-                  h('div', `该提示将在 ${secondsToGo} 秒后自动关闭`)
-                ])
-              });
-              const interval = setInterval(() => {
-                secondsToGo -= 1;
-                modal.update({
-                  // content: `${res.message}\n该提示将在 ${secondsToGo} 秒后自动关闭`
-                  content: h('div', {}, [
-                    h('p', res.message),
-                    h('div', `该提示将在 ${secondsToGo} 秒后自动关闭`)
-                  ])
-                });
-              }, 1000);
-              setTimeout(() => {
-                clearInterval(interval);
-                modal.destroy();
-              }, secondsToGo * 1000);
-              // 自动勾选选人按钮
-              that.checkedNext = true;
-            }
-          }).finally(() => {
-            that.loading = false;
-            // that.close();
-          })
-        }
-      });
-    },
-    handleManyProcessComplete() {
-      if (this.model.processModel == 3) {
-        if (!this.model.rejectModelNode || this.model.rejectModelNode.length == 0) {
-          this.$message.warning('请选择驳回节点');
-          return
-        }
-      }
-      this.handleProcessComplete();
+      this.checkedCc = e.target.checked
+      this.ccUserSelectReset()
     },
     selectHqUserOK: function (data) {
-      this.hqUserSelectList = data;
+      this.hqUserSelectList = data
     },
     handleHqUserSelect: function () {
-      this.$refs.selectHqUserModal.add();
+      this.$refs.selectHqUserModal.add()
     },
     hqUserSelectReset() {
-      this.hqUserSelectList = [];
+      this.hqUserSelectList = []
     },
     selectCcUserOK: function (data) {
-      this.ccUserSelectList = data;
+      this.ccUserSelectList = data
     },
     handleCcUserSelect: function () {
-      this.$refs.selectCcUserModal.add();
+      this.$refs.selectCcUserModal.add()
     },
     ccUserSelectReset() {
-      this.ccUserSelectList = [];
+      this.ccUserSelectList = []
     }
-  },
-  created() {
-    const token = Vue.ls.get(ACCESS_TOKEN);
-    this.headers = { 'X-Access-Token': token };
-    console.log('任务办理组件数据：', this.formData);
-    this.model.taskId = this.formData.taskId;
-    this.getProcessTaskTransInfo(this.formData);
-    this.initDictConfig();
   }
 }
 </script>

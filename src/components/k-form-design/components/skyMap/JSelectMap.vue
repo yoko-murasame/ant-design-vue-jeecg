@@ -7,36 +7,38 @@
       readOnly
       unselectable="on"
       @click="openModal"
-    >
-      <!-- <a-button slot="enterButton" :disabled="disabled"  @click="openModal">定位</a-button> -->
-    </a-input>
-    <!-- <a-input @click="openModal" placeholder="请点击选择定位" v-model="coordinates" readOnly :disabled="disabled">
-
-      <a-icon slot="prefix" type="cluster" title="选择位置"/>
-      <a-icon v-if="coordinates" slot="suffix" type="close-circle" @click="handleEmpty" title="清空"/>
-    </a-input> -->
-
-    <map-loction ref="mapModal" :modal-width="modalWidth" :location="coordinates" @ok="handleOK" :mapUrl="mapUrl"/>
+    />
+    <map-loction
+      ref="mapModal"
+      :modal-width="modalWidth"
+      :mapUrl="mapUrl"
+      :mode="mode"
+      :lnglatSplitChar="lnglatSplitChar"
+      :lnglatArrSplitChar="lnglatArrSplitChar"
+      @ok="handleOK"
+    />
   </div>
 </template>
 
 <script>
-import mapLoction from './mapLoction'
+import mapLoction, { MODE_LINE, MODE_POINT, MODE_POLYGON } from './mapLoction'
+
 export default {
+  name: 'JSelectMap',
   components: {
-    mapLoction,
+    mapLoction
   },
   props: {
     modalWidth: {
       type: Number,
       default: 1000,
-      required: false,
+      required: false
     },
     // 保留精度
     precision: {
       type: Number,
       default: 4,
-      required: false,
+      required: false
     },
     record: {
       type: Object,
@@ -44,56 +46,124 @@ export default {
     },
     value: {
       type: String,
-      required: false,
+      required: false
     },
     disabled: {
       type: Boolean,
       required: false,
-      default: false,
+      default: false
     },
+    /**
+     * 地图应用地址（额外服务单独部署）
+     */
+    mapUrl: {
+      type: String,
+      required: false,
+      default: ''
+    },
+    /**
+     * 选择模式 point/line/polygon 点线面
+     */
+    mode: {
+      type: String,
+      required: false,
+      default: MODE_POINT
+    },
+    /**
+     * 经纬度之间的分隔符，默认逗号
+     */
+    lnglatSplitChar: {
+      type: String,
+      required: false,
+      default: ','
+    },
+    /**
+     * 多组经纬度间的分隔符，默认分号
+     */
+    lnglatArrSplitChar: {
+      type: String,
+      required: false,
+      default: ';'
+    }
   },
   data() {
     return {
       visible: false,
       confirmLoading: false,
-      coordinates: '',
-      mapUrl:""
+      coordinates: ''
     }
   },
-  mounted() {
+  created() {
     this.coordinates = this.value
-    this.mapUrl=this.record.options.mapUrl
-    // console.log("mapUrl",this.mapUrl, this.coordinates, this.value)
   },
-
   methods: {
-    formatCoordinates(coordinates, precision = 4) {
-      const [longitude, latitude] = coordinates.split(",");
-      const formattedLongitude = Number(longitude).toFixed(precision);
-      const formattedLatitude = Number(latitude).toFixed(precision);
-      return `${formattedLongitude},${formattedLatitude}`;
+    /**
+     * 获取正确的经纬度值
+     * @param val 原值，接受点线面的结果字符串
+     * @param format 是否格式化坐标精度
+     * @returns {string}
+     */
+    getCorrectValue(val, format = false) {
+      if (!val) {
+        return ''
+      }
+      const coords = val.split(this.lnglatArrSplitChar).map(e => format ? this.formatCoordinates(e, this.precision) : e)
+      switch (this.mode) {
+        case MODE_POINT:
+          return coords[0]
+        case MODE_LINE:
+          return coords.join(this.lnglatArrSplitChar)
+        case MODE_POLYGON:
+          return coords.join(this.lnglatArrSplitChar)
+        default:
+          console.warn('地图选择组件::不支持的模式: ', this.mode)
+          return val
+      }
     },
+    /**
+     * 格式化经纬度到指定精度
+     * @param coordinates 经纬度字符串坐标
+     * @param precision 精度
+     * @returns {string}
+     */
+    formatCoordinates(coordinates, precision = 4) {
+      const [longitude, latitude] = coordinates.split(this.lnglatSplitChar)
+      const formattedLongitude = Number(longitude).toFixed(precision)
+      const formattedLatitude = Number(latitude).toFixed(precision)
+      return `${formattedLongitude}${this.lnglatSplitChar}${formattedLatitude}`
+    },
+    /**
+     * 打开地图选择模态框
+     */
     openModal() {
-      this.$refs.mapModal.lnglatStr = this.value
+      this.$refs.mapModal.lnglatStr = this.getCorrectValue(this.value)
       this.$refs.mapModal.show()
     },
-    handleOK(rows, idstr) {
-      this.coordinates = this.formatCoordinates(rows, this.precision)
+    /**
+     * 选择回调
+     * @param result
+     */
+    handleOK(result = {}) {
+      const { lnglatStr, address } = result
+      this.coordinates = this.getCorrectValue(lnglatStr, true)
+      console.log('选择结果：', result, this.coordinates)
+      this.$emit('input', {
+        coordinates: this.coordinates,
+        address,
+        lnglatStr
+      })
       this.$emit('change', this.coordinates)
-    },
-    handleEmpty() {
-      this.handleOK('')
-    },
+    }
   },
   model: {
     prop: 'value',
-    event: 'change',
+    event: 'change'
   },
   watch: {
     value() {
       this.coordinates = this.value
-    },
-  },
+    }
+  }
 }
 </script>
 

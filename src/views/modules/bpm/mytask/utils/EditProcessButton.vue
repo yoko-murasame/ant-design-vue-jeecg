@@ -143,6 +143,7 @@ export default {
         content: '申请编辑权限需要提交审批流程，确认申请吗?',
         okText: '确认',
         okType: 'danger',
+        cancelText: '取消',
         onOk: async () => {
           const param = {
             flowCode: that.editApplyBpmFlowCode,

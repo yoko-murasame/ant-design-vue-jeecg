@@ -1,4 +1,5 @@
 <template>
+  <!--online列表的动态搜索组件-->
   <a-form-item v-if="item.view=='date'" :label="item.label">
     <template v-if="single_mode===item.mode">
       <j-date :placeholder=" '请选择'+item.label " v-model="queryParam[item.field]"></j-date>
@@ -33,6 +34,7 @@
   </a-form-item>
 
   <a-form-item v-else-if=" item.view=='list' || item.view=='radio' || item.view=='switch'" :label="item.label">
+    <!--FIXME 查看后端代码可知，item.config==='1' 这个代码配置生效时机：勾选“查询配置 -> 是否启用”，此时不会走online列表的字典渲染-->
     <j-dict-select-tag
       v-if="item.config==='1'"
       :placeholder=" '请选择'+item.label "
@@ -66,16 +68,17 @@
   </a-form-item>
 
   <a-form-item v-else-if=" item.view=='sel_search' " :label="item.label">
+    <!--请选择qq-->
     <j-search-select-tag
       v-if="item.config==='1'"
       v-model="queryParam[item.field]"
-      :placeholder=" '请选择qq'+item.label "
+      :placeholder="'请选择'+item.label "
       :dict="getDictCode(item)">
     </j-search-select-tag>
     <j-search-select-tag
       v-else
       v-model="queryParam[item.field]"
-      :placeholder=" '请选择'+item.label "
+      :placeholder="'请选择'+item.label "
       :dictOptions="dictOptions[item.field]"/>
   </a-form-item>
 
@@ -160,7 +163,7 @@
     },
     methods: {
       getDictCode(item) {
-        console.log('item', item)
+        // console.log('item', item)
         if (item.dictTable && item.dictTable.length > 0) {
           return item.dictTable + ',' + item.dictText + ',' + item.dictCode
         } else {

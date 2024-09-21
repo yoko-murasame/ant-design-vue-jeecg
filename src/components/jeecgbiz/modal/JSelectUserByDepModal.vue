@@ -93,11 +93,11 @@
 </template>
 
 <script>
-  import { pushIfNotExist, filterObj } from '@/utils/util'
-  import { queryDepartTreeList, getUserList, queryUserByDepId, queryDepartTreeSync } from '@/api/api'
-  import { getAction } from '@/api/manage'
+import { filterObj, pushIfNotExist } from '@/utils/util'
+import { queryDepartTreeSync, queryUserByDepId } from '@/api/api'
+import { getAction } from '@/api/manage'
 
-  export default {
+export default {
     name: 'JSelectUserByDepModal',
     components: {},
     props: ['modalWidth', 'multi', 'userIds', 'store', 'text'],
@@ -209,8 +209,13 @@
                 this.selectedRowKeys = this.selectedRowKeys.filter(item => item !== record.id)
                 this.selectionRows = this.selectionRows.filter(item => item.id !== record.id)
               } else {
-                this.selectedRowKeys.push(record.id)
-                this.selectionRows.push(record)
+                if (this.multi) {
+                  this.selectedRowKeys.push(record.id)
+                  this.selectionRows.push(record)
+                } else {
+                  this.selectedRowKeys = [record.id]
+                  this.selectionRows = [record]
+                }
               }
             }
           }
@@ -338,8 +343,14 @@
         }
       },
       onSelectChange(selectedRowKeys, selectionRows) {
-        this.selectedRowKeys = selectedRowKeys
-        selectionRows.forEach(row => pushIfNotExist(this.selectionRows, row, 'id'))
+        if (this.multi) {
+          this.selectedRowKeys = selectedRowKeys
+          selectionRows.forEach(row => pushIfNotExist(this.selectionRows, row, 'id'))
+        } else {
+          this.selectedRowKeys = selectedRowKeys
+          this.selectionRows = selectionRows
+        }
+        console.log(selectedRowKeys, selectionRows)
       },
       onSearch() {
         this.loadData(1)

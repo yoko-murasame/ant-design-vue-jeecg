@@ -87,3 +87,39 @@
 .df-jc-sb {
   justify-content: space-between;
 }
+
+/* 示例：mixin带参，字体加粗 */
+.font-bold(@color: #000000; @bold: bold) {
+  color: @color;
+  font-weight: @bold;
+}
+
+.text-align(@align: left) {
+  text-align: @align;
+}
+
+/*示例：map字典，颜色字典，使用：@colors[dark-blue]*/
+@colors: {
+  whire: #FFFFFF;
+  black: #000000;
+}
+
+/*map也可以这么写，这是mixin混入写法，支持用点访问属性，注意这种map无法参与each函数遍历，学习：https://blog.csdn.net/weixin_62277266/article/details/124558523*/
+/*
+#colors() {
+  red: #E34D59;
+  blue: #0088FF;
+  green: #008D57;
+  dark-blue: #255EA1;
+}
+*/
+
+/*示例：遍历颜色字典，生成样式类，FIXME each函数写在单文件里，会编译异常，应该是版本不够导致的*/
+/*
+each(@colors,.(@v, @k, @i) {
+  .my-color-@{k} {
+    !*调用mixin*!
+    .font-bold(@v, bold);
+  }
+})
+*/

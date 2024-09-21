@@ -95,7 +95,7 @@
     <!-- table区域-end -->
 
     <!-- 表单区域 -->
-    <extActProcessNode-modal ref="modalForm" @ok="modalFormOk"></extActProcessNode-modal>
+    <extActProcessNode-modal v-if="currentNode" ref="modalForm" @ok="modalFormOk" @close="modalFormClose"></extActProcessNode-modal>
     <ext-act-process-node-permission-list ref="extActProcessNodePermissionList"></ext-act-process-node-permission-list>
   </a-card>
 </template>
@@ -181,11 +181,30 @@
           list: '/act/process/extActProcessNode/list',
           delete: '/act/process/extActProcessNode/delete',
           deleteBatch: '/act/process/extActProcessNode/deleteBatch'
-        }
+        },
+        currentNode: null
 
       }
     },
     methods: {
+      modalFormClose() {
+        this.currentNode = null
+      },
+      modalFormOk() {
+        this.currentNode = null
+        // 新增/修改 成功时，重载列表
+        this.loadData()
+        // 清空列表选中
+        this.onClearSelected()
+      },
+      handleEdit: function (record) {
+        this.currentNode = record
+        this.$nextTick(() => {
+          this.$refs.modalForm.edit(record)
+          this.$refs.modalForm.title = '编辑'
+          this.$refs.modalForm.disableSubmit = false
+        })
+      },
       getQueryParams() {
         var param = Object.assign({}, this.queryParam, this.isorter);
         param.field = this.getQueryField();
@@ -195,8 +214,11 @@
         return filterObj(param);
       },
       handleAdd: function () {
-        this.$refs.modalForm.add(this.processId);
-        this.$refs.modalForm.title = '新增';
+        this.currentNode = {}
+        this.$nextTick(() => {
+          this.$refs.modalForm.add(this.processId);
+          this.$refs.modalForm.title = '新增';
+        })
       },
       // 打开权限设置
       handleRule(record) {

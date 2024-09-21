@@ -1,6 +1,8 @@
-import { getAction, deleteAction, putAction, postAction, httpAction } from '@/api/manage'
+import { deleteAction, getAction, httpAction, postAction, putAction } from '@/api/manage'
 import Vue from 'vue'
 import { UI_CACHE_DB_DICT_DATA } from '@/store/mutation-types'
+import signMd5Utils from '@/utils/encryption/signMd5Utils'
+import { axios } from '@/utils/request'
 
 // 角色管理
 const addRole = (params) => postAction('/sys/role/add', params)
@@ -64,7 +66,24 @@ const addDictItem = (params) => postAction('/sys/dictItem/add', params)
 const editDictItem = (params) => putAction('/sys/dictItem/edit', params)
 
 // 字典标签专用（通过code获取字典数组）
-export const ajaxGetDictItems = (code, params) => getAction(`/sys/dict/getDictItems/${code}`, params)
+export const ajaxGetDictItems = (code, params) => {
+  // 20240816 功能扩展：支持系统全局变量（比如#{sys_user_code}可在后端处理成当前用户名）
+  const arr = (code || '').split(',')
+  if (arr.length === 4 && !~arr.indexOf('#{')) {
+    const filterSql = arr.pop();
+    const url = `/sys/dict/getDictItems/${arr.join(',')}`
+    let sign = signMd5Utils.getSign(url, params)
+    let headers = { 'X-Sign': sign, 'X-TIMESTAMP': signMd5Utils.getTimestamp(), 'X-FILTER-SQL': filterSql }
+    return axios({
+      method: 'get',
+      url,
+      params,
+      headers
+    })
+  } else {
+    return getAction(`/sys/dict/getDictItems/${code}`, params)
+  }
+}
 // 从缓存中获取字典配置
 function getDictItemsFromCache(dictCode) {
   if (Vue.ls.get(UI_CACHE_DB_DICT_DATA) && Vue.ls.get(UI_CACHE_DB_DICT_DATA)[dictCode]) {

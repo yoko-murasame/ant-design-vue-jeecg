@@ -6,7 +6,7 @@
     :columns="columns"
     :dataSource="dataSource"
     :rowNumber="true"
-    :maxHeight="340"
+    :maxHeight="-1"
     :disabledRows="{ dbFieldName:'id'}"/>
 
 </template>
@@ -84,6 +84,15 @@
             title: '校验必填',
             key: 'fieldMustInput',
             // width: '7%',
+            width: '80px',
+            type: FormTypes.checkbox,
+            customValue: ['1', '0'],
+            defaultChecked: false
+          },
+          {
+            title: '字典懒加载',
+            key: 'dictLazyLoad',
+            // width: '5%',
             width: '80px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],

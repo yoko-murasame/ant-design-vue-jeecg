@@ -59,9 +59,9 @@ export default {
       },
       columns: [
         {
-          title: '#',
+          title: '序号',
           rowKey: (record, index) => index,
-          width: 40,
+          width: 60,
           customRender(t, r, index) {
             return parseInt(index) + 1
           }

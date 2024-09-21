@@ -59,14 +59,14 @@
 </template>
 
 <script>
-  import { getAction } from '@/api/manage'
-  import Ellipsis from '@/components/Ellipsis'
-  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import { pushIfNotExist } from '@/utils/util'
-  import JSelectBizQueryItem from './JSelectBizQueryItem'
-  import { cloneDeep } from 'lodash'
+import { getAction } from '@/api/manage'
+import Ellipsis from '@/components/Ellipsis'
+import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import { pushIfNotExist } from '@/utils/util'
+import JSelectBizQueryItem from './JSelectBizQueryItem'
+import { cloneDeep } from 'lodash'
 
-  export default {
+export default {
     name: 'JSelectBizComponentModal',
     mixins: [JeecgListMixin],
     components: { Ellipsis, JSelectBizQueryItem },
@@ -172,7 +172,7 @@
         },
         options: [],
         dataSourceMap: {},
-        showMoreQueryItems: false
+        showMoreQueryItems: true
       }
     },
     computed: {

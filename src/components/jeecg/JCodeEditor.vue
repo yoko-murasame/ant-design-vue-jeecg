@@ -3,7 +3,7 @@
     <a-icon v-if="fullScreen" class="full-screen-icon" :type="iconType" @click="()=>fullCoder=!fullCoder"/>
 
     <div class="code-editor-cust full-screen-child">
-      <textarea ref="textarea"></textarea>
+      <textarea ref="textarea" :id="uniqueId"></textarea>
       <span @click="nullTipClick" class="null-tip" :class="{'null-tip-hidden':hasCode}" :style="nullTipStyle">{{ placeholderShow }}</span>
       <template v-if="languageChange">
         <a-select v-model="mode" size="small" class="code-mode-select" @change="changeMode" placeholder="请选择主题">
@@ -21,34 +21,33 @@
 </template>
 
 <script type="text/ecmascript-6">
-  // 引入全局实例
-  import _CodeMirror from 'codemirror'
+import { isIE, isIE11 } from '@/utils/browser'
+// 引入全局实例
+import _CodeMirror from 'codemirror'
 
-  // 核心样式
-  import 'codemirror/lib/codemirror.css'
-  // 引入主题后还需要在 options 中指定主题才会生效 darcula  gruvbox-dark hopscotch  monokai
-  import 'codemirror/theme/panda-syntax.css'
-  // 提示css
-  import 'codemirror/addon/hint/show-hint.css'
+// 核心样式
+import 'codemirror/lib/codemirror.css'
+// 引入主题后还需要在 options 中指定主题才会生效 darcula  gruvbox-dark hopscotch  monokai
+import 'codemirror/theme/panda-syntax.css'
+// 提示css
+import 'codemirror/addon/hint/show-hint.css'
 
-  // 需要引入具体的语法高亮库才会有对应的语法高亮效果
-  // codemirror 官方其实支持通过 /addon/mode/loadmode.js 和 /mode/meta.js 来实现动态加载对应语法高亮库
-  // 但 vue 貌似没有无法在实例初始化后再动态加载对应 JS ，所以此处才把对应的 JS 提前引入
-  import 'codemirror/mode/javascript/javascript.js'
-  import 'codemirror/mode/css/css.js'
-  import 'codemirror/mode/xml/xml.js'
-  import 'codemirror/mode/clike/clike.js'
-  import 'codemirror/mode/markdown/markdown.js'
-  import 'codemirror/mode/python/python.js'
-  import 'codemirror/mode/r/r.js'
-  import 'codemirror/mode/shell/shell.js'
-  import 'codemirror/mode/sql/sql.js'
-  import 'codemirror/mode/swift/swift.js'
-  import 'codemirror/mode/vue/vue.js'
+// 需要引入具体的语法高亮库才会有对应的语法高亮效果
+// codemirror 官方其实支持通过 /addon/mode/loadmode.js 和 /mode/meta.js 来实现动态加载对应语法高亮库
+// 但 vue 貌似没有无法在实例初始化后再动态加载对应 JS ，所以此处才把对应的 JS 提前引入
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/css/css.js'
+import 'codemirror/mode/xml/xml.js'
+import 'codemirror/mode/clike/clike.js'
+import 'codemirror/mode/markdown/markdown.js'
+import 'codemirror/mode/python/python.js'
+import 'codemirror/mode/r/r.js'
+import 'codemirror/mode/shell/shell.js'
+import 'codemirror/mode/sql/sql.js'
+import 'codemirror/mode/swift/swift.js'
+import 'codemirror/mode/vue/vue.js'
 
-  import { isIE11, isIE } from '@/utils/browser'
-
-  // 尝试获取全局实例
+// 尝试获取全局实例
   const CodeMirror = window.CodeMirror || _CodeMirror
 
   export default {
@@ -168,7 +167,8 @@
           label: 'Markdown'
         }],
         // code 编辑器 是否全屏
-        fullCoder: false
+        fullCoder: false,
+        uniqueId: 'code-editor-' + Math.random().toString(36).substr(2, 9)
       }
     },
     watch: {
@@ -181,14 +181,35 @@
           }
         }
       },
-      // value: {
-      //   immediate: false,
-      //   handler(value) {
-      //     this._getCoder().then(() => {
-      //       this.coder.setValue(value)
-      //     })
-      //   }
-      // },
+      value: {
+        immediate: true,
+        handler(value) {
+          // await this._getCoder()
+          // this.code = value
+          // 初始化
+          if (!this.coder) {
+            this.code = value
+          } else {
+            console.log('value变化', value)
+            if (value) {
+              this.hasCode = true
+              this.code = value
+              this.coder.setValue(value)
+            } else {
+              this.hasCode = false
+              this.code = ''
+              this.coder.setValue('')
+            }
+          }
+          // this.coder && this.coder.setValue(value)
+          // value && this._getCoder().then(() => {
+          //   if (!this.code) {
+          //     this.code = value
+          //     this.coder.setValue(value)
+          //   }
+          // })
+        }
+      },
       language: {
         immediate: true,
         handler(language) {
@@ -263,22 +284,36 @@
         return props
       }
     },
-    mounted () {
-      // 初始化
-      this._initialize()
+    model: {
+      prop: 'value',
+      event: 'change'
+    },
+    created () {
+      this.init()
     },
     methods: {
-      // 初始化
-      _initialize () {
+      init() {
+        this._getTextarea().then((textarea) => {
+          this.coder = CodeMirror.fromTextArea(textarea, this.coderOptions)
+          this._getCoder().then(() => {
+            this._initializeValue()
+          })
+        })
+      },
+      // 初始化Value和On
+      _initializeValue () {
+        console.log('初始化_initialize', this.value, this.code)
         // 初始化编辑器实例，传入需要被实例化的文本域对象和默认配置
-        this.coder = CodeMirror.fromTextArea(this.$refs.textarea, this.coderOptions)
+        // this.coder = CodeMirror.fromTextArea(this.$refs.textarea, this.coderOptions)
         // 编辑器赋值
         if (this.value || this.code) {
-          this.hasCode = true
+          this.code = this.code || this.value
           // this.coder.setValue(this.value || this.code)
-          this.setCodeContent(this.value || this.code)
+          this.setCodeContent(this.code)
+          this.hasCode = true
         } else {
-          this.coder.setValue('')
+          // this.coder.setValue('')
+          this.setCodeContent('')
           this.hasCode = false
         }
         // 支持双向绑定
@@ -302,8 +337,12 @@
           } else {
             this.hasCode = false
           }
+          this.$emit('change', this.code)
         })
 
+       // 首次初始化触发一下emit
+       //  this.$emit('change', this.code || this.value)
+       //  this.$emit('input', this.code || this.value)
        /* this.coder.on('cursorActivity',()=>{
           this.coder.showHint()
         }) */
@@ -318,7 +357,7 @@
           } else {
             this.coder.setValue(val)
           }
-        }, 300)
+        }, 200)
       },
       // 获取当前语法类型
       _getLanguage (language) {
@@ -339,6 +378,20 @@
           (function get() {
             if (_this.coder) {
               resolve(_this.coder)
+            } else {
+              setTimeout(get, 10)
+            }
+          })()
+        })
+      },
+      _getTextarea() {
+        let _this = this
+        return new Promise((resolve) => {
+          (function get() {
+            const target = document.getElementById(_this.uniqueId)
+            // if (_this.$refs.textarea) {
+            if (target) {
+              resolve(target)
             } else {
               setTimeout(get, 10)
             }

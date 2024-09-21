@@ -117,7 +117,7 @@
               <!-- tr 只加载可见的和预加载的总共十条数据 -->
               <div
                 v-if="
-                maxHeight == null ||
+                (maxHeight == null || maxHeight <= 0) ||
                 (rowIndex >= parseInt(`${(scrollTop-rowHeight) / rowHeight}`) &&
                   (parseInt(`${scrollTop / rowHeight}`) + maxShowLines) > rowIndex)
               "

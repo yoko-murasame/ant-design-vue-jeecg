@@ -54,11 +54,11 @@ export function putAction(url, parameter) {
 }
 
 // get
-export function getAction(url, parameter) {
+export function getAction(url, parameter, headers = {}) {
   let sign = signMd5Utils.getSign(url, parameter)
   // 将签名和时间戳，添加在请求接口 Header
   // update-begin--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
-  let signHeader = { 'X-Sign': sign, 'X-TIMESTAMP': signMd5Utils.getTimestamp() }
+  let signHeader = { 'X-Sign': sign, 'X-TIMESTAMP': signMd5Utils.getTimestamp(), ...headers }
   // update-end--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
 
   return axios({

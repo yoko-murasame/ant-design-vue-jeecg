@@ -26,6 +26,7 @@
           <a-form-item label="页面风格" :labelCol="labelCol" :wrapperCol="wrapperCol">
             <a-select v-decorator="['jspMode']">
               <a-select-option v-for="(item,index) in jspModeList" :value="item.code" :key="index">{{ item.note }}</a-select-option>
+              <!--<a-select-option value="yoko" key="yoko">{{ 'Yoko改造' }}</a-select-option>-->
             </a-select>
           </a-form-item>
         </a-col>

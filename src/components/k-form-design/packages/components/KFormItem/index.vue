@@ -17,7 +17,7 @@
     v-else
     :label-col="
       formConfig.layout === 'horizontal' &&
-      isShowLabel(record.options.showLabel)
+        isShowLabel(record.options.showLabel)
         ? formConfig.labelLayout === 'flex'
           ? { style: `width:${formConfig.labelWidth}px` }
           : formConfig.labelCol
@@ -25,7 +25,7 @@
     "
     :wrapper-col="
       formConfig.layout === 'horizontal' &&
-      isShowLabel(record.options.showLabel)
+        isShowLabel(record.options.showLabel)
         ? formConfig.labelLayout === 'flex'
           ? { style: 'width:auto;flex:1' }
           : formConfig.wrapperCol
@@ -33,8 +33,8 @@
     "
     :style="
       formConfig.layout === 'horizontal' &&
-      formConfig.labelLayout === 'flex' &&
-      isShowLabel(record.options.showLabel)
+        formConfig.labelLayout === 'flex' &&
+        isShowLabel(record.options.showLabel)
         ? { display: 'flex' }
         : {}
     "
@@ -56,6 +56,7 @@
       @hook:mounted="childMounted"
       ref="inputItem"
       @change="handleChange"
+      @input="handleMyInput"
       v-decorator="[
         record.model, // input 的 name
         {
@@ -72,12 +73,12 @@
  * author kcz
  * date 2019-11-20
  */
-import { pluginManager, lazyLoadTick } from "../../utils/index";
-const _ = require("lodash/object");
-const ComponentArray = pluginManager.getComponents();
+import { pluginManager, lazyLoadTick } from '../../utils/index'
+const _ = require('lodash/object')
+const ComponentArray = pluginManager.getComponents()
 
 export default {
-  name: "KFormItem",
+  name: 'KFormItem',
   props: {
     // 表单数组
     record: {
@@ -111,7 +112,7 @@ export default {
      * 计算组件props
      */
     getComponentProps() {
-      const record = this.record;
+      const record = this.record
 
       const componentProps = {
         record,
@@ -120,74 +121,74 @@ export default {
         disabled: this.disabled || record.options.disabled,
         parentDisabled: this.disabled || record.options.disabled,
         allowClear: record.options.allowClear || record.options.clearable,
-        mode: record.options.mode || (record.options.multiple ? "multiple" : ""),
+        mode: record.options.mode || (record.options.multiple ? 'multiple' : ''),
         style: `width:${record.options.width}`,
         height:
-          typeof record.options.height !== "undefined"
+          typeof record.options.height !== 'undefined'
             ? record.options.height
-            : "",
+            : '',
         dynamicData: this.dynamicData,
         options: !record.options.dynamic
           ? record.options.options
           : this.dynamicData[record.options.dynamicKey]
           ? this.dynamicData[record.options.dynamicKey]
           : []
-      };
+      }
 
-      if (this.record.type === "textarea") {
+      if (this.record.type === 'textarea') {
         componentProps.autoSize = {
           minRows: record.options.minRows,
           maxRows: record.options.maxRows
-        };
+        }
       }
 
-      if (this.record.type === "alert") {
-        componentProps.message = record.label;
+      if (this.record.type === 'alert') {
+        componentProps.message = record.label
       }
 
-      if (this.record.type === "treeSelect") {
+      if (this.record.type === 'treeSelect') {
         componentProps.treeData = !record.options.dynamic
           ? record.options.options
           : this.dynamicData[record.options.dynamicKey]
           ? this.dynamicData[record.options.dynamicKey]
-          : [];
+          : []
       }
 
-      if (this.record.type === "number") {
+      if (this.record.type === 'number') {
         componentProps.min =
           record.options.min || record.options.min === 0
             ? record.options.min
-            : -Infinity;
+            : -Infinity
 
         componentProps.max =
           record.options.max || record.options.max === 0
             ? record.options.max
-            : Infinity;
+            : Infinity
 
         componentProps.precision =
           record.options.precision > 50 ||
           (!record.options.precision && record.options.precision !== 0)
             ? null
-            : record.options.precision;
+            : record.options.precision
       }
 
-      if (this.record.type === "select") {
+      if (this.record.type === 'select') {
         componentProps.filterOption = record.options.showSearch
           ? (inputValue, option) => {
               return (
                 option.componentOptions.children[0].text
                   .toLowerCase()
                   .indexOf(inputValue.toLowerCase()) >= 0
-              );
+              )
             }
-          : false;
+          : false
       }
 
-      if (this.record.type === "button") {
-        componentProps.onHandleReset = () => this.$emit("handleReset");
+      if (this.record.type === 'button') {
+        componentProps.onHandleReset = () => this.$emit('handleReset')
       }
 
-      return componentProps;
+      return componentProps
     },
     /**
      * @description: 输出对应组件
@@ -196,46 +197,51 @@ export default {
      */
 
     componentItem() {
-      return ComponentArray[this.record.type].component;
+      return ComponentArray[this.record.type].component
     },
     componentOption() {
       // 移除相应字段
-      const options = _.omit(this.record.options, ["defaultValue", "disabled"]);
-      return options;
+      const options = _.omit(this.record.options, ['defaultValue', 'disabled'])
+      return options
     }
   },
   methods: {
     // 判断isShowLabel === false兼容低版本处理
     isShowLabel(v) {
-      return String(v) !== "false";
+      return String(v) !== 'false'
     },
     validationSubform() {
       // 验证动态表格
-      if (["batch", "subtable", "selectInputList"].includes(this.record.type)) {
-        if (!this.$refs.inputItem) return true;
-        return this.$refs.inputItem.validationSubform();
+      if (['batch', 'subtable', 'selectInputList'].includes(this.record.type)) {
+        if (!this.$refs.inputItem) return true
+        return this.$refs.inputItem.validationSubform()
       }
 
-      return true;
+      return true
     },
     handleChange(e) {
-      let value = e;
+      // console.log('handleChange', e)
+      let value = e
       if (e && e.target) {
-        value = e.target.value;
+        value = e.target.value
       }
       // 传递change事件
-      this.$emit("change", value, this.record.model);
+      this.$emit('change', value, this.record.model)
+    },
+    handleMyInput(e) {
+      // console.log('KFormItem::handleMyInput', e, this.record.model)
+      this.$emit('myInput', e, this.record.model)
     },
     childMounted() {
       // 记录已加载组件
       this.$nextTick(() => {
-        lazyLoadTick.countLoaded(this.record.type);
-      });
+        lazyLoadTick.countLoaded(this.record.type)
+      })
     }
   },
   created() {
     // 记录待加载组件
-    lazyLoadTick.countlazyLoad(this.record.type);
+    lazyLoadTick.countlazyLoad(this.record.type)
   }
-};
+}
 </script>

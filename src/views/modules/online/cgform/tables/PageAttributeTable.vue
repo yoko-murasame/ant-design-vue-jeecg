@@ -6,17 +6,17 @@
     :columns="columns"
     :dataSource="dataSource"
     :rowNumber="true"
-    :maxHeight="319"
+    :maxHeight="-1"
     :disabledRows="{ dbFieldName:'id'}"/>
 
 </template>
 
 <script>
 
-  import { FormTypes } from '@/utils/JEditableTableUtil'
-  import { syncAllTable } from '../util/TableUtils'
+import { FormTypes } from '@/utils/JEditableTableUtil'
+import { syncAllTable } from '../util/TableUtils'
 
-  const commonPageOptions = [
+const commonPageOptions = [
     { title: '文本框', value: 'text' },
     { title: '密码', value: 'password' },
     { title: '下拉框', value: 'list' },
@@ -89,19 +89,19 @@
             props: { 'disabled': true }
           },
           {
-            title: '表单显示',
+            title: '表单显示(可控制导入列)',
             key: 'isShowForm',
             // width: '3%',
-            width: '40px',
+            width: '100px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],
             defaultChecked: true
           },
           {
-            title: '列表显示', // 多选框、默认true
+            title: '列表显示(可控制导出列)', // 多选框、默认true
             key: 'isShowList',
             // width: '3%',
-            width: '40px',
+            width: '100px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],
             defaultChecked: true
@@ -149,7 +149,7 @@
                         callback(false, '当控件类型类型为时间时,数据库属性里的字段类型必须是String！')
                       }
                       // 当控件类型类型为日期时，数据库类型必须是Date类型
-                      else if ((value === 'date' || value === 'datetime') && dbType !== 'Date') {
+                      else if ((value === 'date' || value === 'datetime') && (dbType !== 'Date' && dbType !== 'Datetime')) {
                         callback(false, '当控件类型类型为日期时，数据库属性里的字段类型必须是Date！')
                       } else {
                         callback(true)
@@ -222,6 +222,22 @@
             // width: '15%',
             width: '160px',
             type: FormTypes.input,
+            defaultValue: ''
+          },
+          {
+            title: '自定义scopedSlots',
+            key: 'scopedSlots',
+            // width: '15%',
+            width: '160px',
+            type: FormTypes.input,
+            defaultValue: ''
+          },
+          {
+            title: 'slot渲染Vue代码',
+            key: 'scopedSlotsRenderCode',
+            // width: '15%',
+            width: '160px',
+            type: FormTypes.input_pop,
             defaultValue: ''
           }
         ]

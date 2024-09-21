@@ -39,6 +39,7 @@
 </template>
 
 <script>
+  import BindBpmFormMixin from '@views/modules/bpm/mytask/BindBpmFormMixin'
   import OnlineFormItem from './OnlineFormItem.vue'
   import OnlineSubForm from './OnlineSubForm.vue'
   import FormProperty from './model/FormProperty'
@@ -50,6 +51,7 @@
 
   export default {
     name: 'OnlineDfComp',
+    mixins: [BindBpmFormMixin],
     components: {
       OnlineFormItem, OnlineSubForm
     },
@@ -101,10 +103,10 @@
     created() {
       this.$bus.$on('popupCallbackMinitor', (row) => {
         this.form.setFieldsValue(row)
-      });
+      })
     },
     beforeDestroy () {
-      this.$bus.$off('popupCallbackMinitor');
+      this.$bus.$off('popupCallbackMinitor')
     },
     mounted() {
       console.log('表单的formschema1', this.formSchema)
@@ -113,14 +115,14 @@
     watch: {
       formSchema: {
         handler() {
-          this.createRootProperties();
+          this.createRootProperties()
         },
         deep: true
       }
     },
     methods: {
       createRootProperties() {
-        const properties = this.formSchema.properties;
+        const properties = this.formSchema.properties
         if (!properties) {
           console.error('表单formSchema.properties不存在')
           return false
@@ -139,7 +141,7 @@
         this.online_form_disabled = !this.showFooter
         let subDataSourceKeys = []
         Object.keys(properties).map((key) => {
-          const item = properties[key];
+          const item = properties[key]
           if (item.view == 'tab') {
             subInfo.push(item)
             console.log(item)
@@ -153,30 +155,30 @@
             this.$set(this.sh, key + '_load', true)
             rootProperties.push(new FormProperty(key, item, wdattr, this.formSchema.required, formTemplate))
           }
-        });
+        })
         this.subDataSource = {}
         subDataSourceKeys.sort((one, next) => one.order - next.order).forEach(item => {
           this.$set(this.subDataSource, item.key, [])
         })
         if (subInfo.length > 0) {
           this.hasTab = true
-          subInfo.sort((one, next) => { return one.order - next.order; })
+          subInfo.sort((one, next) => { return one.order - next.order })
           this.subTabInfo = [...subInfo]
         } else {
           this.hasTab = false
           this.subTabInfo = []
         }
-        console.log('this.subDataSource', this.subDataSource);
-        console.log('this.subTabInfo', this.subTabInfo);
-        rootProperties.sort((one, next) => { return one.formSchema.order - next.formSchema.order; })
+        console.log('this.subDataSource', this.subDataSource)
+        console.log('this.subTabInfo', this.subTabInfo)
+        rootProperties.sort((one, next) => { return one.formSchema.order - next.formSchema.order })
         this.rootProperties = rootProperties
-        console.log('this.rootProperties', this.rootProperties);
+        console.log('this.rootProperties', this.rootProperties)
       },
       clearForm() {
-        this.form.resetFields();
-        this.model = '';
-        this.showFields = [];
-        this.fileFields = [];
+        this.form.resetFields()
+        this.model = ''
+        this.showFields = []
+        this.fileFields = []
         this.subActiveKey = 0
         // this.subTabInfo=[];
         // this.subDataSource={}
@@ -184,17 +186,17 @@
       },
       show() {
        // this.clearForm()
-        this.form.resetFields();
-        this.model = '';
-        this.showFields = [];
-        this.fileFields = [];
+        this.form.resetFields()
+        this.model = ''
+        this.showFields = []
+        this.fileFields = []
 
         this.url = this.formSchema.url
         this.submitMethod = this.formSchema.method
-        let currFormShowFields = []; let currFileFields = [];
-        const properties = this.formSchema.properties;
+        let currFormShowFields = []; let currFileFields = []
+        const properties = this.formSchema.properties
         Object.keys(properties).forEach(function(key) {
-          const item = properties[key];
+          const item = properties[key]
           if (item.view.indexOf('upload') >= 0 || item.view.indexOf('file') >= 0 || item.view.indexOf('image') >= 0) {
             currFileFields.push(key)
           } else if (!item.hidden) {
@@ -208,11 +210,11 @@
         console.log('show', this.showFields, this.fileFields)
       },
       edit(record) {
-        this.show();
-        this.model = Object.assign({}, record);
+        this.show()
+        this.model = Object.assign({}, record)
         console.log('<<<<<====================>>>>>')
-        console.log(this.showFields);
-        console.log(this.model);
+        console.log(this.showFields)
+        console.log(this.model)
         console.log('<<<<<====================>>>>>')
         this.$nextTick(() => {
           this.form.setFieldsValue(pick(this.model, ...this.showFields))
@@ -220,104 +222,114 @@
           console.log('123', this.subDataSource)
           Object.keys(this.subDataSource).forEach(key => {
             this.subDataSource[key] = this.model[key]
-          });
+          })
           console.log('this.subDataSource123===>>>', this.subDataSource)
-        });
+        })
       },
 
       initFileFieldsValue(record) {
         if (this.fileFields && this.fileFields.length > 0) {
           for (var a = 0; a < this.fileFields.length; a++) {
-            let fieldKey = this.fileFields[a];
+            let fieldKey = this.fileFields[a]
             let fileVal = {}
             fileVal[fieldKey] = getUploadFileList(record[fieldKey])
-            this.form.setFieldsValue(fileVal);
+            this.form.setFieldsValue(fileVal)
           }
         }
       },
       transFileListToString(values) {
         if (this.fileFields && this.fileFields.length > 0) {
           for (var a = 0; a < this.fileFields.length; a++) {
-            let fieldKey = this.fileFields[a];
+            let fieldKey = this.fileFields[a]
             let path = getFilePaths(values[fieldKey])
             values[fieldKey] = path
           }
         }
       },
       detail(record) {
-        this.show();
-        this.model = Object.assign({}, record);
+        this.show()
+        this.model = Object.assign({}, record)
         this.$nextTick(() => {
           this.form.setFieldsValue(pick(this.model, ...this.showFields))
           this.initFileFieldsValue(record)
-        });
+        })
       },
       handleApplyRequest(formData) {
         this.submiting = true
-        httpAction(this.url, formData, this.submitMethod).then((res) => {
-          console.log(res)
-          this.submiting = false
-          if (res.success) {
-            this.$emit('onSuccess', formData)
-            this.$message.success(res.message)
-          } else {
-            this.$message.warning(res.message)
-          }
+        return new Promise((resolve, reject) => {
+          httpAction(this.url, formData, this.submitMethod).then((res) => {
+            console.log(res)
+            this.submiting = false
+            if (res.success) {
+              this.$emit('onSuccess', formData)
+              this.$message.success(res.message)
+              resolve(res.message)
+            } else {
+              this.$message.warning(res.message)
+              reject(res.message)
+            }
+          })
         })
       },
       handleOne2ManySubmit() {
         // 校验主表和一对多
-        this.getAllSubFormOrTable().then(tables => {
-          let arr = this.getHandleRefs(tables)
-          if (arr && arr.length > 0) {
-            return validateFormAndTables(this.form, arr)
-          } else {
-            return new Promise((resolve, reject) => {
-              this.form.validateFields((err, values) => {
-                err ? reject() : resolve({ 'formValue': values })
+        // eslint-disable-next-line promise/param-names
+        return new Promise((rootRes, rootRej) => {
+          this.getAllSubFormOrTable().then(tables => {
+            let arr = this.getHandleRefs(tables)
+            if (arr && arr.length > 0) {
+              return validateFormAndTables(this.form, arr)
+            } else {
+              return new Promise((resolve, reject) => {
+                this.form.validateFields((err, values) => {
+                  err ? reject() : resolve({ 'formValue': values })
+                })
               })
+            }
+          }).then(allValues => {
+            let formData = Object.assign({}, this.model, allValues.formValue)
+            this.transFileListToString(formData)
+            if (allValues.tablesValue) {
+              let keys = Object.keys(this.subDataSource)
+              for (let a = 0; a < keys.length; a++) {
+                formData[keys[a]] = allValues.tablesValue[a].values
+              }
+            }
+            return Promise.resolve(formData)
+          }).then((formData) => {
+            // 校验一对一
+            this.getAllSubFormOrTable(1).then(forms => {
+              let needForms = this.getHandleRefs(forms)
+              if (needForms && needForms.length > 0) {
+                return this.validFormsCust(needForms, formData)
+              } else {
+                return Promise.resolve(formData)
+              }
+            }).then(async formData => {
+              console.log('----提交的表单数据为----', formData)
+              await this.handleApplyRequest(formData)
+              rootRes('保存成功')
+            }).catch((e) => {
+              // 校验失败，捕获一下异常，防止控制台报错
+              rootRej(e)
             })
-          }
-        }).then(allValues => {
-          let formData = Object.assign({}, this.model, allValues.formValue)
-          this.transFileListToString(formData)
-          if (allValues.tablesValue) {
-            let keys = Object.keys(this.subDataSource);
-            for (let a = 0; a < keys.length; a++) {
-              formData[keys[a]] = allValues.tablesValue[a].values
-            }
-          }
-          return Promise.resolve(formData)
-        }).then((formData) => {
-          // 校验一对一
-          this.getAllSubFormOrTable(1).then(forms => {
-            let needForms = this.getHandleRefs(forms)
-            if (needForms && needForms.length > 0) {
-              return this.validFormsCust(needForms, formData)
+          }).catch(e => {
+            if (e && e.error === VALIDATE_NO_PASSED) {
+              if (typeof e.index === 'number') {
+                this.subActiveKey = e.paneKey || e.index
+                console.warn(`Online第个${e.index + 1}子表未校验通过`)
+              } else {
+                console.warn('Online主表未校验通过')
+              }
             } else {
-              return Promise.resolve(formData)
+              console.error(e)
             }
-          }).then(formData => {
-            console.log('----提交的表单数据为----', formData)
-            this.handleApplyRequest(formData)
-          }).catch((e) => {
-            // 校验失败，捕获一下异常，防止控制台报错
+            rootRej(e)
           })
-        }).catch(e => {
-          if (e && e.error === VALIDATE_NO_PASSED) {
-            if (typeof e.index === 'number') {
-              this.subActiveKey = e.paneKey || e.index
-              console.warn(`Online第个${e.index + 1}子表未校验通过`)
-            } else {
-              console.warn('Online主表未校验通过')
-            }
-          } else {
-            console.error(e)
-          }
         })
       },
       validFormsCust(formRefs, formdata) {
-        let _this = this;
+        let _this = this
         return new Promise((resolve, reject) => {
           let index = 0;
           (function next() {
@@ -344,7 +356,7 @@
       },
       // 获取所有的一对一表单或一对多行编辑
       getAllSubFormOrTable(arg) {
-        let arr = [];
+        let arr = []
         const that = this
         for (let i of that.subTabInfo) {
           if (arg == 1) {
@@ -375,29 +387,50 @@
         return arr2
       },
       handleSingleSubmit() {
-        this.form.validateFields((err, values) => {
-          if (!err) {
-            this.transFileListToString(values)
-            let formData = Object.assign(this.model, values)
-            console.log('提交的表单数据为', formData)
-            this.handleApplyRequest(formData)
+        return new Promise((resolve, reject) => {
+          this.form.validateFields(async (err, values) => {
+            if (!err) {
+              this.transFileListToString(values)
+              let formData = Object.assign(this.model, values)
+              console.log('提交的表单数据为', formData)
+              try {
+                await this.handleApplyRequest(formData)
+                resolve()
+                return
+              } catch (e) {
+                reject(e)
+                return
+              }
+            }
+            reject('表单数据未完成')
+          })
+        })
+      },
+      /**
+       * online表单提交入口
+       * @returns {Promise<void>}
+       */
+      handleSubmit() {
+        return new Promise(async(resolve, reject) => {
+          try {
+            if (this.single) {
+              await this.handleSingleSubmit()
+            } else {
+              await this.handleOne2ManySubmit()
+            }
+            resolve('保存成功')
+          } catch (e) {
+            reject(e)
           }
         })
       },
-      handleSubmit() {
-        if (this.single) {
-          this.handleSingleSubmit()
-        } else {
-          this.handleOne2ManySubmit()
-        }
-      },
       getAllTable() {
-        let arr = [];
+        let arr = []
         const that = this
         Object.keys(that.subDataSource).forEach(key => {
           arr.push(getRefPromise(that, key))
-        });
-        console.log(arr);
+        })
+        console.log(arr)
         return Promise.all(arr)
       },
 
@@ -406,15 +439,15 @@
         let subProperties = []
         let showOrHidden = {}
         Object.keys(formSchema.properties).map((key) => {
-          const item = formSchema.properties[key];
+          const item = formSchema.properties[key]
           showOrHidden[key] = true
           showOrHidden[key + '_load'] = true
           let fp = new FormProperty(key, item, '', formSchema.required, formTemplate)
           fp.subKey = tbname
           subProperties.push(fp)
-        });
+        })
         this.$set(this.sh, tbname, showOrHidden)
-        subProperties.sort((one, next) => { return one.formSchema.order - next.formSchema.order; })
+        subProperties.sort((one, next) => { return one.formSchema.order - next.formSchema.order })
         this.subProperties[tbname] = subProperties
         this.aaaca = [...subProperties]
       }

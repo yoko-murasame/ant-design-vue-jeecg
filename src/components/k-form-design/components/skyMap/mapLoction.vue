@@ -1,33 +1,55 @@
 <template>
-  <j-modal title="选择位置" :width="modalWidth" :visible="visible" :confirmLoading="confirmLoading" @ok="handleSubmit"
-           @cancel="handleCancel" wrapClassName="j-depart-select-modal" switchFullscreen cancelText="关闭">
+  <j-modal
+    title="选择位置"
+    :width="modalWidth"
+    :visible="visible"
+    :confirmLoading="confirmLoading"
+    @ok="handleSubmit"
+    @cancel="handleCancel"
+    wrapClassName="j-depart-select-modal"
+    switchFullscreen
+    cancelText="关闭">
     <a-spin tip="Loading..." :spinning="false">
       <iframe :src="iframeUrl" name="iframe" frameborder="0" class="mapIframe"></iframe>
-      <!-- <a-input-search placeholder="搜索位置" enter-button="搜索" size="large" @search="onSearch" />
-      <div id="map" class="map"></div> -->
-      <a-input placeholder="获取地图经纬度" type="text" onkeyup="value=value.replace(/[^0-9.,]/g,'')"
-               v-model="lnglatStr" class="mapInput"/>
+      <a-input
+        placeholder="获取地图经纬度"
+        type="text"
+        onkeyup="value=value.replace(/[^0-9.,]/g,'')"
+        v-model="lnglatStr"
+        class="mapInput"/>
     </a-spin>
   </j-modal>
 </template>
 
 <script>
-// import MapInit from "./map.js"
 import { debounce } from 'lodash'
 
+/**
+ * 点模式
+ * @type {string}
+ */
+export const MODE_POINT = 'point'
+/**
+ * 线模式
+ * @type {string}
+ */
+export const MODE_LINE = 'line'
+/**
+ * 面模式
+ * @type {string}
+ */
+export const MODE_POLYGON = 'polygon'
+
 export default {
-  name: 'mapLoction',
-  props: ['modalWidth', 'multi', 'rootOpened', 'mapUrl'],
+  name: 'MapLoction',
+  props: ['modalWidth', 'mapUrl', 'mode', 'lnglatSplitChar', 'lnglatArrSplitChar'],
   data() {
     return {
       visible: false,
       confirmLoading: false,
-      searchValue: "",
-      T: null,
-      map: null,
-      localsearch: null,
       iframeUrl: '',
-      lnglatStr: ''
+      lnglatStr: '',
+      address: ''
     }
   },
   watch: {
@@ -37,76 +59,50 @@ export default {
       immediate: true
     }
   },
+  created() {
+    this.dbounceHandleMessage = debounce(this.handleMessage, 300)
+    window.removeEventListener('message', this.dbounceHandleMessage)
+  },
   methods: {
     initMap() {
-      let baseUrl = process.env.VUE_APP_API_MAP_URL
+      let baseUrl = `${process.env.BASE_URL || '/'}map.html#/?mode=${this.mode}`
       if (this.mapUrl) {
-        baseUrl = this.mapUrl
+        baseUrl = this.mapUrl + `?mode=${this.mode}`
       }
-      // console.log('initMap', baseUrl, this.lnglatStr)
-      //温州天地图
-      if (this.lnglatStr) {
-        this.iframeUrl = `${baseUrl}?lat=${this.lnglatStr.split(',')[1]}&lng=${this.lnglatStr.split(',')[0]}`
-      } else {
-        this.iframeUrl = baseUrl
-      }
-      window.addEventListener('message', debounce(this.handleMessage, 300), '*')
-
-    },
-    //地图点击获取经纬度
-    getLngLat(e) {
-      let lng = e.lnglat.getLng();
-      let lat = e.lnglat.getLat()
-      this.lnglatStr = `${lng},${lat}`;
-      this.map.clearOverLays();
-      var marker = new T.Marker(new T.LngLat(lng, lat));
-      this.map.addOverLay(marker);
-
-    },
-
-    //使用地理编码接口获得坐标信息
-    searchResult(result) {
-      if (result.getStatus() == 0) {
-        let location = result.getLocationPoint()
-        this.map.panTo(location, 16);
-        //创建标注对象
-        var marker = new T.Marker(location);
-        //向地图上添加标注
-        this.map.addOverLay(marker);
-        this.lnglatStr = `${location.lng},${location.lat}`
-      } else {
-        this.$message(result.getMsg());
-      }
-
-    },
-    onSearch(value) {
-      console.log(value);
-      let geocoder = new T.Geocoder();
-      geocoder.getPoint(value, this.searchResult);
-
+      // 温州天地图
+      this.iframeUrl = baseUrl
+      window.addEventListener('message', this.dbounceHandleMessage, '*')
     },
     show() {
       this.visible = true
     },
-
     handleSubmit() {
-      this.$emit("ok", this.lnglatStr)
+      this.$emit('ok', {
+        lnglatStr: this.lnglatStr,
+        address: this.address
+      })
       this.visible = false
     },
     handleCancel() {
       this.visible = false
     },
-    handleMessage(e) {
-      // console.log('handleMessage', e)
-      if (e.data) {
-        let loc = e.data[0]
-        if (loc && loc.hasOwnProperty('lng')) {
-          this.lnglatStr = `${loc.lng},${loc.lat}`
-        }
-        // 判断是不是数组，数组形式的拼接经纬度
-        if (Array.isArray(loc) && loc.length === 2) {
-          this.lnglatStr = `${loc[0]},${loc[1]}`
-        }
+    /**
+     * 接收地图经纬度
+     *
+     * @param { data }
+     * {
+     *   lnglatStr: '拼接后的经纬度字符串',
+     *   address: '地名地址'
+     * }
+     */
+    handleMessage({ data }) {
+      if (!data) {
+        return
+      }
+      console.log('接受Iframe消息', data)
+      if (data.lnglatStr) {
+        this.lnglatStr = data.lnglatStr
+        this.address = data.address
       }
     }
   }
@@ -114,13 +110,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.map {
-  width: 100%;
-  height: 100%;
-  min-height: 100px;
-  margin: 20px 0 20px 0;
-}
-
 .mapIframe {
   width: 100%;
   height: 500%;

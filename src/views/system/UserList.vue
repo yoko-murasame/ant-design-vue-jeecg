@@ -65,6 +65,7 @@
     <!-- 操作按钮区域 -->
     <div class="table-operator" style="border-top: 5px">
       <a-button @click="handleAdd" type="primary" icon="plus" >添加用户</a-button>
+      <a-button @click="handleSyncUser" type="primary" icon="plus">同步流程</a-button>
       <a-button type="primary" icon="download" @click="handleExportXls('用户信息')">导出</a-button>
       <a-upload
         name="file"
@@ -182,18 +183,18 @@
 </template>
 
 <script>
-  import UserModal from './modules/UserModal'
-  import PasswordModal from './modules/PasswordModal'
-  import { putAction, getFileAccessHttpUrl } from '@/api/manage'
-  import { frozenBatch } from '@/api/api'
-  import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-  import SysUserAgentModal from './modules/SysUserAgentModal'
-  import JInput from '@/components/jeecg/JInput'
-  import UserRecycleBinModal from './modules/UserRecycleBinModal'
-  import JSuperQuery from '@/components/jeecg/JSuperQuery'
-  import JThirdAppButton from '@/components/jeecgbiz/thirdApp/JThirdAppButton'
+import UserModal from './modules/UserModal'
+import PasswordModal from './modules/PasswordModal'
+import { getFileAccessHttpUrl, putAction } from '@/api/manage'
+import { frozenBatch } from '@/api/api'
+import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+import SysUserAgentModal from './modules/SysUserAgentModal'
+import JInput from '@/components/jeecg/JInput'
+import UserRecycleBinModal from './modules/UserRecycleBinModal'
+import JSuperQuery from '@/components/jeecg/JSuperQuery'
+import JThirdAppButton from '@/components/jeecgbiz/thirdApp/JThirdAppButton'
 
-  export default {
+export default {
     name: 'UserList',
     mixins: [JeecgListMixin],
     components: {
@@ -386,7 +387,17 @@
         if (isToLocal) {
           this.loadData()
         }
-      }
+      },
+      handleSyncUser() {
+        var that = this;
+        putAction(that.url.syncUser, {}).then((res) => {
+          if (res.success) {
+            that.$message.success(res.message);
+          } else {
+            that.$message.warning(res.message);
+          }
+        })
+      },
     }
 
   }

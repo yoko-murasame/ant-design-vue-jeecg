@@ -20,7 +20,7 @@ export default {
     },
     url: {
       type: String,
-      default: '/static/表单设计器JS增强说明.md'
+      default: (process.env.BASE_URL || '/') + 'static/表单设计器JS增强说明.md'
     }
   },
   data() {

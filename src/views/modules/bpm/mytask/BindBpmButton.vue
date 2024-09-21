@@ -25,7 +25,7 @@
     <!--流程提交 BEGIN-->
     <div style="display: inline-block" v-if="formData.bpmStatus === '1' || formData.bpmStatus === 1">
       <template v-if="fullPermission || (limitCreatorCanSubmit ? formData.createBy === $store.getters.userInfo.username : true)">
-        <a @click="startProcess">提交流程</a>
+        <a @click="startProcess">{{ startButtonText }}</a>
         <!--<a-popconfirm title="确定要提交流程吗?" @confirm="startProcess">-->
         <!--  <a>提交流程</a>-->
         <!--</a-popconfirm>-->
@@ -146,6 +146,10 @@ export default {
       type: [String, Array],
       required: false,
       default: 'admin:delete'
+    },
+    startButtonText: {
+      type: String,
+      default: '提交流程'
     }
   },
   methods: {
@@ -174,8 +178,8 @@ export default {
     },
     startProcess() {
       const formData = this.formData
-      this.parent && this.parent.startProcess && this.parent.startProcess(formData)
-      !this.parent && this.$emit('startProcess', formData)
+      this.parent && this.parent.startProcess && this.parent.startProcess(formData, false, this.startButtonText)
+      !this.parent && this.$emit('startProcess', formData, false, this.startButtonText)
     },
     selectEntruster() {
       const formData = this.formData

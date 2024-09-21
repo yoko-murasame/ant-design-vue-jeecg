@@ -3,7 +3,8 @@ import axios from 'axios'
 import Vue from 'vue'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import moment from 'moment'
-import { getAction, postAction, putAction, httpAction } from '@api/manage'
+import { getAction, httpAction, postAction, putAction } from '@api/manage'
+
 let apiBaseUrl = window._CONFIG['domianURL'] || '/jeecg-boot';
 
 /**
@@ -73,6 +74,28 @@ export const getCurrentDepartment = async () => {
  */
 export const getCurrentDate = (format = 'YYYY-MM-DD') => {
   return Promise.resolve(moment().format(format))
+}
+
+/**
+ * 获取在线表单列表数据，同online列表接口，支持搜索参数和分页
+ * @param onlineCode online表单配置地址的code
+ * @param params 搜索参数，如：{name:'张三'}，分页也在这里
+ * @returns {Promise<*>}
+ */
+export const getOnlineDataList = async (onlineCode, params = {}) => {
+  if (!onlineCode) {
+    throw new Error('onlineCode不能为空')
+  }
+  params.needList = 'id'
+  params.pageSize = params.pageSize || 10
+  params.pageNo = params.pageNo || 1
+  // 默认查询全部字段
+  if (!params.hasOwnProperty('queryAllColumn')) {
+    params.queryAllColumn = '1'
+  }
+  const { result, success, message } = await getAction('/online/cgform/api/getData/' + onlineCode, params)
+  !success && Vue.prototype.$message.error(message)
+  return result
 }
 
 /**
@@ -173,13 +196,164 @@ export const generateCodeByRule = async (ruleCode, formData = {}) => {
 }
 
 /**
+ * 保存业务几何数据到超图空间表
+ * @param mode 模式(point、line、polygon)
+ * @param formData 业务表单数据
+ * @param businessIdField 业务主键字段
+ * @param businessIdFieldInSupermap 空间表关联的业务主键字段
+ * @param iserverFeaturesUrl 空间表服务地址，e.g. http://localhost:8090/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/region_test/features
+ * @param coordinatesStr 坐标串（来自天地图组件的返回结果）
+ * @param debug 调试模式，默认false
+ * @param throwError 抛出错误，默认false
+ * @param lnglatSplitChar 坐标串经纬度分隔符，默认逗号
+ * @param lnglatArrSplitChar 坐标串经纬度数组分隔符，默认分号
+ * @returns {Promise<void>}
+ */
+export const saveBusinessGeometryDataToSupermapFeatures = async (
+  {
+    mode,
+    formData,
+    businessIdField,
+    businessIdFieldInSupermap,
+    iserverFeaturesUrl,
+    coordinatesStr,
+    debug,
+    throwError,
+    lnglatSplitChar,
+    lnglatArrSplitChar
+  }
+) => {
+  // 参数预处理
+  if (!mode) {
+    throw new Error('模式(mode)为空（point、line、polygon），请检查！')
+  }
+  if (!formData) {
+    throw new Error('表单数据(formData)为空，请检查！')
+  }
+  businessIdField = businessIdField || 'id'
+  const businessId = formData[businessIdField]
+  if (!businessId) {
+    throw new Error(`表单数据(formData)中没有${businessIdField}字段，或者业务主键值为空，请检查！`)
+  }
+  if (!businessIdFieldInSupermap) {
+    throw new Error('超图空间表关联的业务主键字段(businessIdFieldInSupermap)为空，请检查！')
+  }
+  businessIdFieldInSupermap = businessIdFieldInSupermap.toUpperCase()
+  if (!iserverFeaturesUrl) {
+    throw new Error('超图空间表服务地址(iserverFeaturesUrl)为空，请检查！备注：精确到features')
+  }
+  if (!coordinatesStr) {
+    throw new Error('坐标串(coordinatesStr)为空，请检查！')
+  }
+  debug = debug || false
+  throwError = throwError || false
+  lnglatSplitChar = lnglatSplitChar || ','
+  lnglatArrSplitChar = lnglatArrSplitChar || ';'
+  // url处理
+  if (!~iserverFeaturesUrl.lastIndexOf('json')) {
+    if (!~iserverFeaturesUrl.lastIndexOf('features')) {
+      throw new Error('超图空间表服务地址(iserverFeaturesUrl)格式错误，请检查！示例：' +
+        'http://localhost:8090/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/region_test/features')
+    }
+    iserverFeaturesUrl = iserverFeaturesUrl + '.rjson'
+  }
+  const deleteUrl = `${iserverFeaturesUrl}?_method=DELETE&deleteMode=SQL`
+  const addUrl = `${iserverFeaturesUrl}`
+
+  try { // 先删除对应关联的空间数据
+    const delRes = await myRequest({
+      baseURL: '',
+      url: deleteUrl,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json;charset=utf-8' },
+      data: { 'attributeFilter': `${businessIdFieldInSupermap} like '${businessId}'` } // 这个根据业务主键删除，需要和超图空间表协商
+    })
+    debug && console.log('删除超图空间表数据结果：', delRes)
+    if (!delRes.succeed) {
+      Vue.prototype.$message.error('删除超图空间数据失败，请检查超图配置！')
+      return
+    }
+    // 处理业务数据字段
+    const fieldNames = []
+    const fieldValues = []
+    Object.keys(formData).forEach((key) => {
+      if (key === businessIdField) {
+        fieldNames.push(businessIdFieldInSupermap)
+        fieldValues.push(businessId)
+      } else {
+        fieldNames.push(key.toUpperCase())
+        fieldValues.push(formData[key])
+      }
+    })
+    // 处理空间数据
+    const points = coordinatesStr.split(lnglatArrSplitChar).map(coord => {
+      let [x, y] = coord.split(lnglatSplitChar)
+      x = Number.parseFloat(x)
+      y = Number.parseFloat(y)
+      return { x, y }
+    })
+    const geometry = {
+      type: mode === 'point' ? 'POINT' : (mode === 'line' ? 'LINE' : 'REGION'),
+      points
+    }
+    // 新增的数据结构
+    const geometryResult = [
+      {
+        fieldNames,
+        fieldValues,
+        geometry
+      }
+    ]
+    // 新增
+    const addRes = await myRequest({
+      baseURL: '',
+      url: addUrl,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json;charset=utf-8' },
+      data: geometryResult
+    })
+    debug && console.log('超图新增孔家数据', geometryResult, addRes)
+    if (!addRes.succeed) {
+      Vue.prototype.$message.error('超图服务空间数据添加失败，请检查超图配置！')
+      return
+    }
+    Vue.prototype.$message.success('超图服务空间数据添加成功！')
+  } catch (e) {
+    if (throwError) {
+      throw e
+    } else {
+      console.error(e)
+    }
+  }
+}
+
+/**
+ * 根据用户名获取用户信息
+ * @param username
+ */
+export const getUserByUsername = (username) => {
+  return getAction('/sys/api/getUserByName', { username })
+}
+
+/**
  * 自定义方法名称
  * @type {string[]}
  */
-export const methodsFunc = [getCurrentRealname, getDepartmentByOrgCode, getCurrentDepartment,
-  getCurrentDate, myRequest, getFullFormData, updateFormData, sendTemplateAnnouncement, generateCodeByRule]
-export const methodsNames = ['getCurrentRealname', 'getDepartmentByOrgCode', 'getCurrentDepartment',
-  'getCurrentDate', 'myRequest', 'getFullFormData', 'updateFormData', 'sendTemplateAnnouncement', 'generateCodeByRule']
+export const methodsFunc = [
+  getCurrentRealname, getDepartmentByOrgCode, getCurrentDepartment,
+  getCurrentDate, myRequest, getFullFormData, getOnlineDataList,
+  updateFormData, sendTemplateAnnouncement, generateCodeByRule,
+  saveBusinessGeometryDataToSupermapFeatures,
+  getUserByUsername
+]
+
+export const methodsNames = [
+  'getCurrentRealname', 'getDepartmentByOrgCode', 'getCurrentDepartment',
+  'getCurrentDate', 'myRequest', 'getFullFormData', 'getOnlineDataList',
+  'updateFormData', 'sendTemplateAnnouncement', 'generateCodeByRule',
+  'saveBusinessGeometryDataToSupermapFeatures',
+  'getUserByUsername'
+]
 
 /**
  * 创建异步函数
@@ -209,6 +383,10 @@ export const createAsyncJsEnhanceFunction = (ref, funStr, customArgsName = [], c
       const paramStr = argsText.reduce((str, arg, index) => {
         return `${str}let ${arg} = _arguments[${index}];\n`;
       }, '\n');
+      if (!funStr || !funStr.trim()) {
+        return Promise.reject('JS增强代码不能为空')
+      }
+      // eslint-disable-next-line no-eval
       return eval(`(async function(_arguments) {${paramStr}${funStr}\n}).call(ref, _arguments)`);
     } catch (e) {
       Vue.prototype.$message.error('JS增强代码执行失败 ' + e)
@@ -216,6 +394,69 @@ export const createAsyncJsEnhanceFunction = (ref, funStr, customArgsName = [], c
     }
   }
   return myFunc.bind(ref, ...argsBind)
+}
+
+/**
+ * 初始化js增强的监听器
+ * @param watcherJsStr Vue2的监听属性里怎么写就怎么写
+ * @param code 表单code
+ * @param cacheMap 缓存的监听器Map<code, Array<UnWatchedApi>>
+ * @param vm vue对象
+ */
+export const createVue2Watcher = (watcherJsStr, code, cacheMap, vm) => {
+  if (!watcherJsStr) {
+    return
+  }
+  try {
+    // eslint-disable-next-line no-eval
+    const WatcherFun = eval(`(function(){return {${watcherJsStr}}})`)
+    const WatcherObject = new WatcherFun()
+
+    // 当前online表单存在的监听器先取消
+    Object.keys(cacheMap).forEach(key => {
+      const unWatchedApi = cacheMap[key]
+      if (unWatchedApi && unWatchedApi.length) {
+        unWatchedApi.forEach(func => func())
+      }
+    })
+    if (!cacheMap[code]) {
+      cacheMap[code] = []
+    }
+    // 依次注册到Vue
+    Object.keys(WatcherObject).forEach(key => {
+      const func = WatcherObject[key]
+      // 函数形式直接注册
+      if (typeof func === 'function') {
+        // 校验是否是当前online的监听器
+        const preCheckWrapper = `(async function(nv, ov){console.log('js增强监听器增强::判断是否执行监听,当前表单code:', this.code, '注册的code:', '${code}');if(this.code !== '${code}'){return}return await func.bind(vm)(nv, ov)})`
+        // eslint-disable-next-line no-eval
+        const wrapperFunc = eval(preCheckWrapper)
+        console.log('初始化监听器', key)
+        const unWatched = vm.$watch('queryParam.company', wrapperFunc)
+        cacheMap[code].push(unWatched)
+      }
+      if (typeof func === 'object') {
+        if (func.hasOwnProperty('handler')) {
+          const { handler, deep, immediate } = func
+          // 校验是否是当前online的监听器
+          const preCheckWrapper = `(async function(nv, ov){console.log('js增强监听器增强::判断是否执行监听,当前表单code:', this.code, '注册的code:', '${code}');if(this.code !== '${code}'){return}return await handler.bind(vm)(nv, ov)})`
+          // eslint-disable-next-line no-eval
+          const wrapperFunc = eval(preCheckWrapper)
+          console.log('初始化监听器', key)
+          const unWatched = vm.$watch(key, wrapperFunc, {
+            deep: deep || false,
+            immediate: immediate || false
+          })
+          cacheMap[code].push(unWatched)
+        } else {
+          throw new Error('JS增强监听器配置错误，handler属性必须存在！')
+        }
+      }
+    })
+  } catch (e) {
+    console.error('初始化监听器失败', e)
+    Vue.prototype.$message.error('初始化监听器失败，请检查js增强监听器配置是否正确！和Vue2写法相同！')
+  }
 }
 
 /**
@@ -232,6 +473,7 @@ const installer = {
       })
     }
     Vue.prototype.$createAsyncJsEnhanceFunction = createAsyncJsEnhanceFunction
+    Vue.prototype.$createVue2Watcher = createVue2Watcher
     // Vue.prototype.$getCurrentDepartment = getCurrentDepartment
     // Vue.prototype.$getCurrentRealname = getCurrentRealname
     // Vue.prototype.$getDepartmentByOrgCode = getDepartmentByOrgCode

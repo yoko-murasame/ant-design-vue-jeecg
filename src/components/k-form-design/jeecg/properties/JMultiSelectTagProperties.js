@@ -1,11 +1,11 @@
-import { pluginManager } from "../../packages/utils/index";
+import { pluginManager } from '../../packages/utils/index'
 import KCheckbox from '@comp/k-form-design/packages/components/KCheckbox/index.vue'
 import KChangeOption from '@comp/k-form-design/packages/components/KChangeOption/index.vue'
-const Input = pluginManager.getComponent("input").component;
-const InputNumber = pluginManager.getComponent("number").component;
-const Radio = pluginManager.getComponent("radio").component;
-const RadioButton = pluginManager.getComponent("radioButton").component;
-const Rate = pluginManager.getComponent("rate").component;
+const Input = pluginManager.getComponent('input').component
+const InputNumber = pluginManager.getComponent('number').component
+const Radio = pluginManager.getComponent('radio').component
+const RadioButton = pluginManager.getComponent('radioButton').component
+const Rate = pluginManager.getComponent('rate').component
 
 /**
  * 封装JMultiSelectTag的配置属性
@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     options() {
-      return this.selectItem.options || {};
+      return this.selectItem.options || {}
     }
   },
   watch: {
@@ -73,31 +73,31 @@ export default {
 
     return (
       <div style={{ display: 'contents' }}>
-        <a-form-item label={"组件类型"} help="">
+        <a-form-item label={'组件类型(type)'} help="">
           <Radio buttonStyle="solid" v-model={options.type}>
-            <RadioButton value={"select"}>下拉框</RadioButton>
-            <RadioButton value={"checkbox"}>多选框</RadioButton>
+            <RadioButton value={'select'}>下拉框</RadioButton>
+            <RadioButton value={'checkbox'}>多选框</RadioButton>
           </Radio>
         </a-form-item>
-        <a-form-item label={"字典配置"} help="">
+        <a-form-item label={'字典配置(options|dictCode)'} help="">
           <Radio buttonStyle="solid" v-model={options.dictType}>
-            <RadioButton value={"static"}>静态</RadioButton>
-            <RadioButton value={"dynamic"}>动态</RadioButton>
+            <RadioButton value={'static'}>静态</RadioButton>
+            <RadioButton value={'dynamic'}>动态</RadioButton>
           </Radio>
           {
-            options.dictType === 'dynamic' ?
-              (
-                <Input vModel={options.dictCode} placeholder={"格式：dict_code 或 table_name,code_field,text_field"}/>
-              ):
-              (
+            options.dictType === 'dynamic'
+              ? (
+                <Input vModel={options.dictCode} placeholder={'格式：dict_code 或 table_name,code_field,text_field'}/>
+              )
+              : (
                 <KChangeOption v-model={options.options} />
               )
           }
         </a-form-item>
-        <a-form-item label={"其他属性"} help="">
-          分隔符：<Input vModel={options.spliter} placeholder={"多个值的分隔符，默认逗号"}/>
-          <kCheckbox v-model={options.allowClear} label="可清除" />
-          <kCheckbox v-model={options.disabled} label="禁用" />
+        <a-form-item label={'其他属性'} help="">
+          分隔符：<Input vModel={options.spliter} placeholder={'多个值的分隔符，默认逗号'}/>
+          <kCheckbox v-model={options.allowClear} label="可清除(allowClear)" />
+          <kCheckbox v-model={options.disabled} label="禁用(disabled)" />
           <kCheckbox v-model={options.triggerChange} label="是否触发change事件" />
         </a-form-item>
       </div>

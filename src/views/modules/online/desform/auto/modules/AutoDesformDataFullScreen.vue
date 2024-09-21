@@ -14,16 +14,36 @@
     />
   </div> -->
 
-
-  <j-modal :title="title" :visible="visible" :bodyStyle="{ padding: '50' }" :maskClosable="false" :destroyOnClose="true"
-    :closable="true" :keyboard="false" :switch-fullscreen="true" @cancel="close" @ok="handleSuccess" width="60%">
+  <j-modal
+    :title="title"
+    :visible="visible"
+    :bodyStyle="{ padding: '50' }"
+    :maskClosable="false"
+    :destroyOnClose="true"
+    :closable="true"
+    :keyboard="false"
+    :switch-fullscreen="true"
+    @cancel="close"
+    @ok="handleSuccess"
+    width="60%">
     <template slot="footer">
-      <cancel-button :disableSubmit="disableSubmit" key="back" @click="close" />
-      <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit">保存</a-button>
-      <a-button type="primary" @click="saveAndSubmitBPM" v-if="!disableSubmit && buttonSwitch.bpm&&hasBpmStatus">保存并提交流程</a-button>
+      <template v-if="buttonSwitch.modal_footer">
+        <cancel-button v-if="buttonSwitch.modal_cancel" :disableSubmit="disableSubmit" key="back" @click="close" />
+        <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit && buttonSwitch.modal_save">保存</a-button>
+        <a-button type="primary" @click="saveAndSubmitBPM" v-if="!disableSubmit && buttonSwitch.bpm && buttonSwitch.modal_submit && hasBpmStatus">保存并提交流程</a-button>
+      </template>
     </template>
-    <desform-view class="desform-view" :mode="mode" :desformCode="desformCode" :dataId="dataId" :onlineTableId="tableId"
-      height="100vh" :innerDialog="true" @reload="handleReload" :isOnline="isOnline" :newDefaultData="newDefaultData"
+    <desform-view
+      class="desform-view"
+      :mode="mode"
+      :desformCode="desformCode"
+      :dataId="dataId"
+      :onlineTableId="tableId"
+      height="100vh"
+      :innerDialog="true"
+      @reload="handleReload"
+      :isOnline="isOnline"
+      :newDefaultData="newDefaultData"
       ref="desform" />
   </j-modal>
 </template>
@@ -34,7 +54,33 @@ import DesformView from '@/components/online/desform/DesformView'
 export default {
   name: 'AutoDesformDataFullScreen',
   components: { DesformView },
-  props: ["buttonSwitch","hasBpmStatus"],
+  props: {
+    buttonSwitch: {
+      type: Object,
+      required: false,
+      default() {
+        return {
+          bpm: false,
+          // 表单按钮控制，默认开放
+          modal_footer: true,
+          modal_save: true,
+          modal_submit: true,
+          modal_cancel: true
+        }
+      }
+    },
+    hasBpmStatus: {
+      type: Boolean,
+      default: false
+    },
+    // 默认数据,优先级较高
+    defaultData: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   data() {
     return {
       mode: 'add',
@@ -45,7 +91,7 @@ export default {
       bodyOverflow: null,
       bgColor: 'rgba(0,0,0,0.6)',
       isOnline: false,
-      tableId: "",
+      tableId: '',
       newDefaultData: {}
     }
   },
@@ -63,7 +109,7 @@ export default {
       this.dataId = dataId
       this.desformCode = desformCode
       this.tableId = tableId
-      this.newDefaultData = newDefaultData
+      this.newDefaultData = Object.assign(this.newDefaultData, newDefaultData, this.defaultData)
       this.visible = true
       // 禁止body滚动，防止滚动穿透
       // this.bodyOverflow = document.body.style.overflow
@@ -94,20 +140,26 @@ export default {
     handleReload() {
       this.$emit('ok')
     },
-    async saveAndSubmitBPM(){
-      const data = await this.$refs.desform.saveAndSubmitBPM()
-      // this.$refs.desform.handleGetData()
-      this.$emit('ok', data)
-      this.close()
+    saveAndSubmitBPM() {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const data = await this.$refs.desform.saveAndSubmitBPM(true)
+          this.$emit('saveAndSubmitBPM', data)
+          resolve(data)
+        } catch (e) {
+          // TODO 自己处理下错误
+          // reject(e)
+        }
+      })
     }
   },
-  watch:{
-    buttonSwitch: {
-        immediate: true,
-        handler(val) {
-          console.log("buttonSwitch",val)
-        }
-      },
+  watch: {
+    defaultData: {
+      immediate: true,
+      handler(val) {
+        this.newDefaultData = Object.assign(this.newDefaultData, val)
+      }
+    }
   }
 }
 </script>

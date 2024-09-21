@@ -17,10 +17,10 @@
     <a-form style="height: 100%;">
       <j-code-editor
         ref="codeEditor"
-        :value="cgJs"
+        v-model="cgJs"
         language="javascript"
         :fullScreen="true"
-        :lineNumbers="false"
+        :lineNumbers="true"
         @input="handleCodeChange"
         :min-height="240"
         :language-change="false"></j-code-editor>
@@ -181,7 +181,7 @@
       handleCodeChange(value) {
         if (this.cgJs != value) {
           this.codeChange = true
-          this.cgJs = value
+          // this.cgJs = value
         }
       }
     }

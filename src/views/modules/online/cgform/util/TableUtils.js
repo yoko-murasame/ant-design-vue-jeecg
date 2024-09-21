@@ -93,7 +93,7 @@ export function getMasterTableInitialData() {
     {
       dbFieldName: 'id',
       dbFieldTxt: '主键',
-      dbLength: 36,
+      dbLength: 64,
       dbPointLength: 0,
       dbDefaultVal: '',
       dbType: 'string',
@@ -111,7 +111,7 @@ export function getMasterTableInitialData() {
     {
       dbFieldName: 'create_by',
       dbFieldTxt: '创建人',
-      dbLength: 50,
+      dbLength: 64,
       dbPointLength: 0,
       dbDefaultVal: '',
       dbType: 'string',
@@ -145,7 +145,7 @@ export function getMasterTableInitialData() {
     {
       dbFieldName: 'update_by',
       dbFieldTxt: '更新人',
-      dbLength: 50,
+      dbLength: 64,
       dbPointLength: 0,
       dbDefaultVal: '',
       dbType: 'string',
@@ -175,7 +175,8 @@ export function getMasterTableInitialData() {
       fieldLength: '120',
       queryMode: 'single',
       orderNum: 5
-    }, {
+    },
+    {
       dbFieldName: 'sys_org_code',
       dbFieldTxt: '所属部门',
       dbLength: 64,
@@ -191,6 +192,52 @@ export function getMasterTableInitialData() {
       fieldLength: '120',
       queryMode: 'single',
       orderNum: 6
+    },
+    {
+      dbFieldName: 'del_flag',
+      dbFieldTxt: '软删',
+      dbLength: 10,
+      dbPointLength: 0,
+      dbDefaultVal: '0',
+      dbType: 'int',
+      dbIsKey: '0',
+      dbIsNull: '1',
+      // table2
+      isShowForm: '0',
+      isShowList: '0',
+      fieldShowType: 'text',
+      fieldLength: '120',
+      queryMode: 'single',
+      orderNum: 7
+    },
+    {
+      dbFieldName: 'bpm_status',
+      dbFieldTxt: '流程状态',
+      dbLength: 64,
+      dbPointLength: 0,
+      dbDefaultVal: '1',
+      dbType: 'string',
+      dbIsKey: '0',
+      dbIsNull: '1',
+      // table2
+      isShowForm: '1',
+      isShowList: '1',
+      fieldShowType: 'list', // 控件类型
+      fieldLength: '120',
+      isQuery: '1', // 是否查询
+      queryMode: 'single',
+      orderNum: 8,
+      // table3
+      fieldMustInput: '1', // 必填
+      dictTable: '',
+      dictField: 'del_flag', // 字典code
+      dictText: '',
+      // table4
+      queryShowType: 'list', // 控件类型
+      queryDictTable: '',
+      queryDictField: 'bpm_status', // 字典code
+      queryDictText: '',
+      queryConfigFlag: '1' // 是否启用
     }
     // {
     //   dbFieldName: 'sys_org_code',
@@ -213,7 +260,7 @@ export function getMasterTableInitialData() {
     // }, {
     //   dbFieldName: 'bpm_status',
     //   dbFieldTxt: '流程状态',
-    //   dbLength: 32,
+    //   dbLength: 64,
     //   dbPointLength: 0,
     //   dbDefaultVal: '',
     //   dbType: 'string',
@@ -227,7 +274,7 @@ export function getTreeNeedFields() {
   return [{
     dbFieldName: 'pid',
     dbFieldTxt: '父级节点',
-    dbLength: 32,
+    dbLength: 64,
     dbPointLength: 0,
     dbDefaultVal: '',
     dbType: 'string',

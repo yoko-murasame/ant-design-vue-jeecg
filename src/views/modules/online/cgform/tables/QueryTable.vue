@@ -6,7 +6,7 @@
     :columns="columns"
     :dataSource="dataSource"
     :rowNumber="true"
-    :maxHeight="340"
+    :maxHeight="-1"
     @valueChange="handleChange"
     :disabledRows="{ dbFieldName:'id'}"/>
 

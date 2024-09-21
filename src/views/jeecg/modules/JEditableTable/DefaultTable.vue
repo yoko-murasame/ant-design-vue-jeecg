@@ -155,7 +155,7 @@
             // width: '8%',
             width: '100px',
             type: FormTypes.inputNumber,
-            defaultValue: 32,
+            defaultValue: 64,
             placeholder: '${title}',
             // 是否是统计列，只有 inputNumber 才能设置统计列
             statistics: true,
@@ -176,7 +176,7 @@
             key: 'money',
             width: '320px',
             type: FormTypes.inputNumber,
-            defaultValue: '100.32',
+            defaultValue: '100.64',
             placeholder: '请选择${title}',
             validateRules: [{ required: true, message: '请选择${title}' }]
           },

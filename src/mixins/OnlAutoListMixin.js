@@ -91,15 +91,22 @@ export const HrefJump = {
     /** 处理列中的 href 跳转和 dict 字典，使两者可以兼容存在 */
     handleColumnHrefAndDict(column = {}, fieldHrefSlotKeysMap = {}) {
       let { customRender, hrefSlotName } = column
-      if (!hrefSlotName && (column.scopedSlots && column.scopedSlots.customRender)) {
-        // hrefSlotName = column.scopedSlots.customRender
-      }
+      // if (!hrefSlotName && (column.scopedSlots && column.scopedSlots.customRender)) {
+      //   // hrefSlotName = column.scopedSlots.customRender
+      // }
       // 如果 customRender 有值则代表使用了字典
       // 如果 hrefSlotName 有值则代表使用了href跳转
       // 两者可以兼容。兼容的具体思路为：先获取到字典替换的值，再添加href链接跳转
       if (customRender || hrefSlotName) {
+        console.log('渲染字典', customRender, column)
+        // 由于customRender的优先级比较高，因此如果存在自定义scopedSlots，就跳过 customRender
+        if (column.scopedSlots && column.scopedSlots.customRender && (this.$slots[column.scopedSlots.customRender] || this.$scopedSlots[column.scopedSlots.customRender])) {
+          delete column.customRender
+          return
+        }
         let dictCode = customRender
         let replaceFlag = '_replace_text_'
+        let dictTextFlag = '_dictText'
         column.customRender = (text, record) => {
           let value = text
           // 如果 dictCode 有值，就进行字典转换
@@ -107,6 +114,8 @@ export const HrefJump = {
             if (dictCode.startsWith(replaceFlag)) {
               let textFieldName = dictCode.replace(replaceFlag, '')
               value = record[textFieldName]
+            } else if (dictCode.endsWith(dictTextFlag)) {
+              value = record[dictCode]
             } else {
               value = this.$filterMultiDictText(this.dictOptions[dictCode], text)
             }

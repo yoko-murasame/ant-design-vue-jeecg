@@ -17,13 +17,13 @@
 </template>
 <script>
 
-  /*
-  * 异步树加载组件 通过传入表名 显示字段 存储字段 加载一个树控件
-  * <j-tree-select dict="aa_tree_test,aad,id" pid-field="pid" ></j-tree-select>
-  * */
-  import { getAction } from '@/api/manage'
+/*
+ * 异步树加载组件 通过传入表名 显示字段 存储字段 加载一个树控件
+ * <j-tree-select dict="aa_tree_test,aad,id" pid-field="pid" ></j-tree-select>
+ * */
+import { getAction } from '@/api/manage'
 
-  export default {
+export default {
     name: 'JTreeSelect',
     props: {
       value: {
@@ -74,6 +74,11 @@
         type: Boolean,
         default: false,
         required: false
+      },
+      viewCondition: {
+        type: String,
+        default: '',
+        required: false
       }
     },
     data () {
@@ -109,7 +114,8 @@
         if (!this.value || this.value == '0') {
           this.treeValue = null
         } else {
-          getAction(`${this.view}${this.dict}`, { key: this.value }).then(res => {
+          const url = this.viewCondition ? `${this.view}${this.dict}` : `${this.view}${this.tableName} where ${this.viewCondition},${this.text},${this.code}`
+          getAction(url, { key: this.value }).then(res => {
             if (res.success) {
               let values = this.value.split(',')
               this.treeValue = res.result.map((item, index) => ({

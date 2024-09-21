@@ -1,11 +1,11 @@
-import { pluginManager } from "../../packages/utils/index";
+import { pluginManager } from '../../packages/utils/index'
 import KCheckbox from '@comp/k-form-design/packages/components/KCheckbox/index.vue'
 import KChangeOption from '@comp/k-form-design/packages/components/KChangeOption/index.vue'
-const Input = pluginManager.getComponent("input").component;
-const InputNumber = pluginManager.getComponent("number").component;
-const Radio = pluginManager.getComponent("radio").component;
-const RadioButton = pluginManager.getComponent("radioButton").component;
-const Rate = pluginManager.getComponent("rate").component;
+const Input = pluginManager.getComponent('input').component
+const InputNumber = pluginManager.getComponent('number').component
+const Radio = pluginManager.getComponent('radio').component
+const RadioButton = pluginManager.getComponent('radioButton').component
+const Rate = pluginManager.getComponent('rate').component
 
 /**
  * 封装JSearchSelectTag的配置属性
@@ -34,10 +34,10 @@ export default {
   },
   computed: {
     options() {
-      return this.selectItem.options || {};
+      return this.selectItem.options || {}
     },
     disableAsync() {
-      if (this.options.dict && this.options.dict.split(',').length === 1) {
+      if (this.options.dictCode && this.options.dictCode.split(',').length === 1) {
         return true
       }
       return false
@@ -57,7 +57,7 @@ export default {
       }
     },
     // 系统字典、表字典时，对async的控制，防止报错
-    'selectItem.options.dict': {
+    'selectItem.options.dictCode': {
       immediate: true,
       handler(val) {
         if (val) {
@@ -104,48 +104,48 @@ export default {
 
     return (
       <div style={{ display: 'contents' }}>
-        <a-form-item label={"组件模式"} help="">
+        <a-form-item label={'组件模式(mode)'} help="">
           <Radio buttonStyle="solid" v-model={options.mode}>
-            <RadioButton value={"default"}>单选</RadioButton>
-            <RadioButton value={"multiple"}>多选</RadioButton>
-            {/*<RadioButton value={"tags"}>标签</RadioButton>*/}
-            {/*<RadioButton value={"combobox"}>组合</RadioButton>*/}
+            <RadioButton value={'default'}>单选</RadioButton>
+            <RadioButton value={'multiple'}>多选</RadioButton>
+            <RadioButton value={'tags'}>标签(保存输入的多选)</RadioButton>
+            {/* <RadioButton value={"combobox"}>组合</RadioButton> */}
           </Radio>
         </a-form-item>
-        <a-form-item label={"字典配置"} help="">
+        <a-form-item label={'字典配置(dictOptions|dictCode)'} help="">
           <Radio buttonStyle="solid" v-model={options.dictType}>
-            <RadioButton value={"static"}>静态</RadioButton>
-            <RadioButton value={"dynamic"}>动态</RadioButton>
+            <RadioButton value={'static'}>静态</RadioButton>
+            <RadioButton value={'dynamic'}>动态</RadioButton>
           </Radio>
           {
-            options.dictType === 'dynamic' ?
-              (
+            options.dictType === 'dynamic'
+              ? (
                 <div style={{ display: 'contents' }}>
                   <br/>字典配置：
-                  <Input vModel={options.dict} placeholder={"格式：dict_code 或 table_name,text_field,code_field"}/>
+                  <Input vModel={options.dictCode} placeholder={'格式：dict_code 或 table_name,text_field,code_field'}/>
                   <div>系统字典的格式：dict_code，<b>务必注意使用系统字典时勿开启异步</b></div>
                   <div>关联表字典的格式：表名,文本字段,值字段</div>
                   <div>带条件搜索的格式：表名,文本字段,值字段,其他字段='条件可用%模糊搜索'</div>
                   <kCheckbox disabled={disableAsync} v-model={options.async} label="是否异步（建议开启，防止数据量太大）" />
                   {
-                    options.async ?
-                      (
+                    options.async
+                      ? (
                         <div style={{ display: 'contents' }}>
                           <br/>异步搜索每页数量：
-                          <InputNumber step={1} min={1} max={1000} vModel={options.pageSize} placeholder={"异步搜索每页数量"}/>
+                          <InputNumber step={1} min={1} max={1000} vModel={options.pageSize} placeholder={'异步搜索每页数量'}/>
                         </div>
                       ) : undefined
                   }
                 </div>
-              ):
-              (
+              )
+              : (
                 <KChangeOption v-model={options.dictOptions} />
               )
           }
         </a-form-item>
-        <a-form-item label={"其他属性"} help="">
-          <kCheckbox v-model={options.keepInput} label="保留搜索结果的输入" />
-          <kCheckbox v-model={options.disabled} label="禁用" />
+        <a-form-item label={'其他属性'} help="">
+          <kCheckbox v-model={options.keepInput} label="保留搜索结果的输入(keepInput)" />
+          <kCheckbox v-model={options.disabled} label="禁用(disabled)" />
         </a-form-item>
       </div>
     )

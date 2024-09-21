@@ -25,7 +25,7 @@
     </template>
 
     <a-spin :spinning="confirmLoading">
-      <a-form :form="form" layout="inline" :class="{'online-config-cust':true }">
+      <a-form :form="form" layout="inline" :class="{'online-config-cust':true }" class="cgform-header-main">
         <a-list>
           <!-- 表名、表描述、表类型 -->
           <a-list-item>
@@ -55,6 +55,15 @@
                       style="width: 100%"
                       :labelCol="threeCol.label"
                       :wrapperCol="threeCol.wrapper"
+                      label="是否是数据库视图">
+                      <a-switch v-decorator="['viewTable', validatorRules.viewTable ]" />
+                    </a-form-item>
+                  </a-col>
+                  <a-col :span="24/3">
+                    <a-form-item
+                      style="width: 100%"
+                      :labelCol="threeCol.label"
+                      :wrapperCol="threeCol.wrapper"
                       label="表类型">
                       <a-select @change="handleChangeInTableType" v-decorator="[ 'tableType', {initialValue: 1}]">
                         <a-select-option :value="1">单表</a-select-option>
@@ -63,13 +72,59 @@
                       </a-select>
                     </a-form-item>
                   </a-col>
+                  <a-col :span="24/3">
+                    <a-form-item
+                      style="width: 100%"
+                      :labelCol="threeCol.label"
+                      :wrapperCol="threeCol.wrapper"
+                      label="主键策略">
+                      <a-select v-decorator="[ 'idType', {initialValue: 'UUID'}]" @change="handleChangeInIdType">
+                        <a-select-option value="UUID">ID_WORKER(分布式自增)</a-select-option>
+                        <!--<a-select-option value="NATIVE">NATIVE(自增长方式)</a-select-option>
+                        <a-select-option value="SEQUENCE">SEQUENCE(序列方式)</a-select-option>-->
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <!--数据权限标识-->
+                  <a-col :span="24/3">
+                    <a-form-item
+                      style="width: 100%"
+                      :labelCol="threeCol.label"
+                      :wrapperCol="threeCol.wrapper">
+                      <span slot="label">
+                        <a-tooltip placement="bottom" :overlayStyle="{'min-width': '32vw'}">
+                          <span>数据权限标识</span>
+                          <span slot="title">
+                            1、当前Online表单的数据权限规则，在系统->菜单管理->新增数据权限菜单节点。<br/>
+                            2、配置后会自动应用该节点perms数据权限！<br/>
+                            3、比如父节点perms为：data:rule，子节点：data:rule:child1、data:rule:child2，<br/>
+                            注意：示例中命名就是右模糊匹配，如果父子节点命名无规则，则父节点勾选后无法应用孩子！<br/>
+                            在有规则的命名情况下，选中父节点后将自动应用所有子节点权限！<br/>
+                            4、不配置时，数据权限控制规则将不生效！
+                          </span>
+                          <a-icon class="question-circle" type="question-circle-o"/>
+                        </a-tooltip>
+                      </span>
+                      <!--<a-input placeholder="请选择数据权限标识" v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"/>-->
+                      <j-search-select-tag
+                        v-decorator="['dataRulePerms', validatorRules.dataRulePerms]"
+                        placeholder="请选择数据权限标识"
+                        dict="sys_permission,name,perms,menu_type=2"
+                        :async="true"
+                        :pageSize="50"
+                        mode="multiple"
+                      />
+                    </a-form-item>
+                  </a-col>
                 </a-row>
                 <!-- 映射类型、附表排序序号 -->
                 <a-row :gutter="gutter" style="width: 100%;" v-if="showRelationType">
                   <a-col :span="4" :push="17">
                     <a-form-item
                       style="width: 100%"
-                      :wrapperCol="{span:24}"
+                      :labelCol="{span:7}"
+                      :wrapperCol="{span:24-7}"
+                      label="附表关系类型"
                     >
                       <a-radio-group v-decorator="[ 'relationType', {initialValue:0}]">
                         <a-radio :value="0">一对多</a-radio>
@@ -88,125 +143,6 @@
                   </a-col>
                 </a-row>
               </a-col>
-            </a-row>
-          </a-list-item>
-          <!-- 表单分类、主键策略、序号名称 -->
-          <a-list-item>
-            <a-row :gutter="gutter" style="width: 100%;">
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="表单分类">
-                  <!-- <a-select v-decorator="[ 'formCategory', {initialValue: 'bdfl_include'}]">
-                    <a-select-option value="bdfl_include">导入表单</a-select-option>
-                    <a-select-option value="bdfl_ptbd">普通表单</a-select-option>
-                    <a-select-option value="bdfl_fzbd">复杂表单</a-select-option>
-                    <a-select-option value="bdfl_vipbd">VIP表单</a-select-option>
-                  </a-select>-->
-                  <j-dict-select-tag dict-code="ol_form_biz_type" v-decorator="[ 'formCategory', {initialValue: 'temp'}]" :trigger-change="true" placeholder="请选择"></j-dict-select-tag>
-                </a-form-item>
-              </a-col>
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="主键策略">
-                  <a-select v-decorator="[ 'idType', {initialValue: 'UUID'}]" @change="handleChangeInIdType">
-                    <a-select-option value="UUID">ID_WORKER(分布式自增)</a-select-option>
-                    <!--<a-select-option value="NATIVE">NATIVE(自增长方式)</a-select-option>
-                    <a-select-option value="SEQUENCE">SEQUENCE(序列方式)</a-select-option>-->
-                  </a-select>
-                </a-form-item>
-              </a-col>
-<!-- 
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="使用表单设计">
-                  <a-select v-decorator="[ 'isDesForm', {initialValue: 'N'}]" @change="handleChangeInIsDesForm">
-                    <a-select-option value="Y">是</a-select-option>
-                    <a-select-option value="N">否</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col> -->
-
-              <a-col :span="24/3" v-if="showIdSequence">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="序号名称">
-                  <a-input placeholder="请输入序号名称" v-decorator="['idSequence', validatorRules.idSequence]"/>
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-list-item>
-          <!-- PC表单风格、移动表单风格、查询模式 -->
-          <a-list-item>
-            <a-row :gutter="gutter" style="width: 100%;">
-
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="主题模板">
-                  <a-select placeholder="请选择主题模板" v-decorator="[ 'themeTemplate',{initialValue:'normal'}]" :disabled="templateFlag">
-                    <a-select-option value="normal">默认主题</a-select-option>
-                    <a-select-option value="erp">ERP主题(一对多)</a-select-option>
-                    <a-select-option value="innerTable">内嵌子表主题(一对多)</a-select-option>
-                    <a-select-option value="tab">TAB主题(一对多)</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="表单风格">
-                  <a-select placeholder="请选择PC表单风格" v-decorator="[ 'formTemplate',{initialValue:'1'}]">
-                    <a-select-option value="1">一列</a-select-option>
-                    <a-select-option value="2">两列</a-select-option>
-                    <a-select-option value="3">三列</a-select-option>
-                    <a-select-option value="4">四列</a-select-option>
-                    <!-- <a-select-option value="99">自适应</a-select-option>-->
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <!-- 暂时先隐藏 -->
-              <a-col :span="24/3" v-if="false">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="移动表单风格">
-                  <a-select placeholder="请选择移动表单风格" v-decorator="[ 'formTemplateMobile']">
-                    <a-select-option value="antdesign">AntDesign模板</a-select-option>
-                    <a-select-option value="bootstrap">Bootstrap模板</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col :span="24/3">
-                <a-form-item
-                  style="width: 100%"
-                  :labelCol="threeCol.label"
-                  :wrapperCol="threeCol.wrapper"
-                  label="滚动条">
-                  <a-select v-decorator="[ 'scroll', {initialValue: 1}]">
-                    <a-select-option :value="1">有</a-select-option>
-                    <a-select-option :value="0">无</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
             </a-row>
           </a-list-item>
           <!-- 显示复选框、是否分页、是否树 -->
@@ -248,25 +184,170 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-            </a-row>
-          </a-list-item>
-          <!--update--begin--autor:lvdandan-----date:20201023------for：online表单是否开启表单设计器-->
-          <a-list-item>
-            <a-row :gutter="gutter" style="width: 100%;">
-              <a-col :span="24/3" v-if="showDesFormCode">
+              <a-col :span="24/3">
                 <a-form-item
                   style="width: 100%"
                   :labelCol="threeCol.label"
                   :wrapperCol="threeCol.wrapper"
-                  label="表单编码">
-                  <a-input
-                    placeholder="表单编码"
-                    v-decorator=" ['desFormCode', validatorRules.desFormCode]"/>
+                  label="是否隐藏action按钮">
+                  <a-switch v-decorator="['hideActionButton', validatorRules.hideActionButton ]" />
                 </a-form-item>
               </a-col>
             </a-row>
           </a-list-item>
-          <!--update--begin--autor:lvdandan-----date:20201023------for：online表单是否开启表单设计器-->
+          <!--JS增强-->
+          <a-list-item>
+            <a-row :gutter="gutter" style="width: 100%;">
+              <!--表单数据初始化增强-->
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper">
+                  <span slot="label">
+                    <a-tooltip :overlayStyle="{'min-width': '27vw'}">
+                      <span>数据初始化JS增强</span>
+                      <span slot="title">
+                        作用：<br/>
+                        1、Online列表初始化渲染时，自动将返回的参数对象与搜索参数合并，实现默认查询效果。<br/>
+                        2、返回的参数对象，还将作为KForm表单的默认值填充。<br/>
+                        3、如果是流程列表，将自动注入流程节点配置中返回的初始化参数，详见`initQueryParam`。<br/>
+                        备注：<br/>
+                        1、JS增强支持await语法，最后一行代码务必return 对象，如：`return {}`。<br/>
+                        2、如果需要使用到流程配置中返回的初始化变量，可通过`initQueryParam`获取。<br/>
+                        注意：<br/>
+                        1、如果字段->列表显示未勾选，默认的列表数据接口将不会返回对应字段数据！<br/>
+                        特殊情况：针对于列表数据接口`getData`，若想要某些字段数据但是列表不展示，则：<br/>
+                        1.1、可通过在`initQueryParam`中添加属性`needList`，将需要的字段通过逗号拼接即可。<br/>
+                        1.2、还可以通过在`initQueryParam`中添加属性`queryAllColumn: '1'`，查询全部数据字段。<br/>
+                        2、如果字段->表单显示未勾选，默认的表单数据接口将不会返回对应字段数据！这里没有特殊方式控制，想要必须勾上！<br/>
+                      </span>
+                      <a-icon class="question-circle" type="question-circle-o"/>
+                    </a-tooltip>
+                  </span>
+                  <j-code-editor
+                    :line-numbers="true"
+                    height="2vh"
+                    language="javascript"
+                    v-decorator="['onlineInitQueryParamGetter', validatorRules.onlineInitQueryParamGetter]"
+                    :fullScreen="true"
+                    style="min-height: 2vh"/>
+                </a-form-item>
+              </a-col>
+              <!--Vue2监听器JS增强-->
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper">
+                  <span slot="label">
+                    <a-tooltip :overlayStyle="{'min-width': '25vw'}">
+                      <span>Vue2监听器JS增强</span>
+                      <span slot="title">
+                        备注：<br/>
+                        1、可以监听任何参数，如：`$route.query`、`queryParam.name`等。<br/>
+                        2、Vue的watch监听器怎么写这里就怎么写！this指向当前Online列表组件！
+                      </span>
+                      <a-icon class="question-circle" type="question-circle-o"/>
+                    </a-tooltip>
+                  </span>
+                  <j-code-editor
+                    :line-numbers="true"
+                    height="2vh"
+                    language="javascript"
+                    v-decorator="['onlineVueWatchJsStr', validatorRules.onlineVueWatchJsStr]"
+                    :fullScreen="true"
+                    style="min-height: 2vh"/>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-list-item>
+          <!-- 表单分类、序号名称 -->
+          <a-list-item>
+            <a-row :gutter="gutter" style="width: 100%;">
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="表单分类">
+                  <!-- <a-select v-decorator="[ 'formCategory', {initialValue: 'bdfl_include'}]">
+                    <a-select-option value="bdfl_include">导入表单</a-select-option>
+                    <a-select-option value="bdfl_ptbd">普通表单</a-select-option>
+                    <a-select-option value="bdfl_fzbd">复杂表单</a-select-option>
+                    <a-select-option value="bdfl_vipbd">VIP表单</a-select-option>
+                  </a-select>-->
+                  <j-dict-select-tag dict-code="ol_form_biz_type" v-decorator="[ 'formCategory', {initialValue: 'temp'}]" :trigger-change="true" placeholder="请选择"></j-dict-select-tag>
+                </a-form-item>
+              </a-col>
+              <!--
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="使用表单设计">
+                  <a-select v-decorator="[ 'isDesForm', {initialValue: 'N'}]" @change="handleChangeInIsDesForm">
+                    <a-select-option value="Y">是</a-select-option>
+                    <a-select-option value="N">否</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col> -->
+
+              <a-col :span="24/3" v-if="showIdSequence">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="序号名称">
+                  <a-input placeholder="请输入序号名称" v-decorator="['idSequence', validatorRules.idSequence]"/>
+                </a-form-item>
+              </a-col>
+              <!-- PC表单风格、移动表单风格、查询模式 -->
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="主题模板">
+                  <a-select placeholder="请选择主题模板" v-decorator="[ 'themeTemplate',{initialValue:'normal'}]" :disabled="templateFlag">
+                    <a-select-option value="normal">默认主题</a-select-option>
+                    <a-select-option value="erp">ERP主题(一对多)</a-select-option>
+                    <a-select-option value="innerTable">内嵌子表主题(一对多)</a-select-option>
+                    <a-select-option value="tab">TAB主题(一对多)</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="表单风格">
+                  <a-select placeholder="请选择PC表单风格" v-decorator="[ 'formTemplate',{initialValue:'2'}]">
+                    <a-select-option value="1">一列</a-select-option>
+                    <a-select-option value="2">两列</a-select-option>
+                    <a-select-option value="3">三列</a-select-option>
+                    <a-select-option value="4">四列</a-select-option>
+                    <!-- <a-select-option value="99">自适应</a-select-option>-->
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <!-- 暂时先隐藏 -->
+              <a-col :span="24/3" v-if="false">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="移动表单风格">
+                  <a-select placeholder="请选择移动表单风格" v-decorator="[ 'formTemplateMobile']">
+                    <a-select-option value="antdesign">AntDesign模板</a-select-option>
+                    <a-select-option value="bootstrap">Bootstrap模板</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-list-item>
           <!-- 树型表单父ID、树开表单列 -->
           <a-list-item v-if="showTreeParentIdField">
             <a-row :gutter="gutter" style="width: 100%;">
@@ -304,6 +385,34 @@
                   <a-input
                     placeholder="请输入树开表单列字段名"
                     v-decorator=" ['treeFieldname', validatorRules.treeFieldname]"/>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-list-item>
+          <!--表单编码-->
+          <a-list-item>
+            <a-row :gutter="gutter" style="width: 100%;">
+              <a-col :span="24/3" v-if="showDesFormCode">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="表单编码">
+                  <a-input
+                    placeholder="表单编码"
+                    v-decorator=" ['desFormCode', validatorRules.desFormCode]"/>
+                </a-form-item>
+              </a-col>
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="滚动条">
+                  <a-select v-decorator="[ 'scroll', {initialValue: 1}]">
+                    <a-select-option :value="1">有</a-select-option>
+                    <a-select-option :value="0">无</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -394,31 +503,30 @@
 
 <script>
 
-  import DBAttributeTable from '../tables/DBAttributeTable'
-  import PageAttributeTable from '../tables/PageAttributeTable'
-  import CheckDictTable from '../tables/CheckDictTable'
-  import ForeignKeyTable from '../tables/ForeignKeyTable'
-  import IndexTable from '../tables/IndexTable'
-  import QueryTable from '../tables/QueryTable'
+import { getAction, httpAction } from '@/api/manage'
+import { VALIDATE_NO_PASSED, validateTables } from '@/utils/JEditableTableUtil'
+import { randomUUID, simpleDebounce } from '@/utils/util.js'
+import { AiTestOnlineMixin } from '@/views/modules/aitest/onlinetest.mixins'
+import pick from 'lodash.pick'
+import CheckDictTable from '../tables/CheckDictTable'
+import DBAttributeTable from '../tables/DBAttributeTable'
+import ForeignKeyTable from '../tables/ForeignKeyTable'
+import IndexTable from '../tables/IndexTable'
+import PageAttributeTable from '../tables/PageAttributeTable'
+import QueryTable from '../tables/QueryTable'
 
-  import { setDataSource, getMasterTableInitialData, getTreeNeedFields } from '../util/TableUtils'
-  import { validateTables, VALIDATE_NO_PASSED } from '@/utils/JEditableTableUtil'
+import { getMasterTableInitialData, getTreeNeedFields, setDataSource } from '../util/TableUtils'
 
-  import { getAction, httpAction } from '@/api/manage'
-  import pick from 'lodash.pick'
-  import { randomUUID, simpleDebounce } from '@/utils/util.js'
-  import { AiTestOnlineMixin } from '@/views/modules/aitest/onlinetest.mixins'
-
-  export default {
+export default {
     name: 'OnlCgformHeadModal',
     mixins: [AiTestOnlineMixin],
     components: {
       'db-attribute-table': DBAttributeTable,
       PageAttributeTable,
-CheckDictTable,
-ForeignKeyTable,
-IndexTable,
-QueryTable
+      CheckDictTable,
+      ForeignKeyTable,
+      IndexTable,
+      QueryTable
     },
     provide() {
       return {
@@ -466,7 +574,10 @@ QueryTable
             }]
           },
           tableTxt: { rules: [{ required: true, message: '请输入表说明!' }] },
+          viewTable: { rules: [{ required: false, message: '请选择是否是视图!' }], valuePropName: 'checked' },
+          hideActionButton: { rules: [{ required: false, message: '请选择是否隐藏action按钮!' }], valuePropName: 'checked' },
           idSequence: { rules: [{ required: true, message: '请输入序号名称!' }] },
+          dataRulePerms: { rules: [{ required: false, message: '请选择数据权限标识!' }] },
           treeParentIdField: { rules: [{ required: true, message: '请输入树表单父ID!' }] },
           treeFieldname: { rules: [{ required: true, message: '请输入树开表单列!' }] },
           treeIdField: { rules: [{ required: true, message: '请输入是否有子节点字段名!' }] },
@@ -474,7 +585,9 @@ QueryTable
             initialValue: 1,
             rules: [{ required: true, message: '请输入序号！' }]
           },
-          desFormCode: { rules: [{ required: true, message: '请输入表单设计器编码!' }] }
+          desFormCode: { rules: [{ required: true, message: '请输入表单设计器编码!' }] },
+          onlineInitQueryParamGetter: { rules: [{ required: false, message: '请编写数据初始化JS增强!' }] },
+          onlineVueWatchJsStr: { rules: [{ required: false, message: '请编写Vue2监听器JS增强!' }] }
         },
         url: {
           add: '/online/cgform/head/add',
@@ -559,8 +672,37 @@ QueryTable
             setDataSource(table1, datas)
           }, 1)
         })
-
-        this.edit({}, 'add')
+        // getter示例
+        let onlineInitQueryParamGetter = `// needList获取列表不展示但需要的数据字段\n`
+        onlineInitQueryParamGetter += `// initQueryParam.needList = 'id,create_by'\n`
+        onlineInitQueryParamGetter += `// queryAllColumn获取列表所有字段的数据\n`
+        onlineInitQueryParamGetter += `// initQueryParam.queryAllColumn = '1'\n`
+        onlineInitQueryParamGetter += `console.log('流程节点配置中返回的初始化参数', initQueryParam)\n`
+        onlineInitQueryParamGetter += `return initQueryParam`
+        // 监听器示例
+        let onlineVueWatchJsStr = '// 监听器示例\n'
+        onlineVueWatchJsStr += `// 'queryParam.company': {\n`
+        onlineVueWatchJsStr += `//   deep: false,\n`
+        onlineVueWatchJsStr += `//   immediate: true,\n`
+        onlineVueWatchJsStr += `// 	handler(val) {\n`
+        onlineVueWatchJsStr += `// 		console.log('监听queryParam.company', val)\n`
+        onlineVueWatchJsStr += `//     if (val) {\n`
+        onlineVueWatchJsStr += `//       this.$message.info('获取store参数')\n`
+        onlineVueWatchJsStr += `//       const np = this.$store.getters.getCommonParams && this.$store.getters.getCommonParams(val) || {}\n`
+        onlineVueWatchJsStr += `//       console.log('当前数据', np, this.queryParam)\n`
+        onlineVueWatchJsStr += `//       // 更新搜索条件，必须拿$set做响应式数据更新\n`
+        onlineVueWatchJsStr += `//       Object.keys(np).forEach(key => {\n`
+        onlineVueWatchJsStr += `//         this.$set(this.queryParam, key, np[key])\n`
+        onlineVueWatchJsStr += `//         this.$set(this.initQueryParam || {}, key, np[key])\n`
+        onlineVueWatchJsStr += `//       })\n`
+        onlineVueWatchJsStr += `//       // 禁用新增、编辑、删除\n`
+        onlineVueWatchJsStr += `//       this.buttonSwitch.disableAdd = false\n`
+        onlineVueWatchJsStr += `//       this.buttonSwitch.disableEdit = false\n`
+        onlineVueWatchJsStr += `//       this.buttonSwitch.disableDelete = false\n`
+        onlineVueWatchJsStr += `//     }\n`
+        onlineVueWatchJsStr += `//   }\n`
+        onlineVueWatchJsStr += `// }\n`
+        this.edit({ onlineInitQueryParamGetter, onlineVueWatchJsStr }, 'add')
       },
       edit(record, caller = '') {
         this.metaTableName = ''
@@ -571,7 +713,12 @@ QueryTable
         this.form.resetFields()
         this.model = Object.assign({}, record)
         this.treeFieldAdded = record.isTree == 'Y'
-        let pickAfter = pick(this.model, 'themeTemplate', 'tableName', 'scroll', 'tableType', 'tableVersion', 'tableTxt', 'isCheckbox', 'isDbSynch', 'isPage', 'isTree', 'idSequence', 'idType', 'queryMode', 'relationType', 'subTableStr', 'tabOrderNum', 'treeParentIdField', 'treeIdField', 'treeFieldname', 'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode')
+        let pickAfter = pick(this.model, 'themeTemplate', 'tableName', 'dataRulePerms', 'scroll',
+          'tableType', 'tableVersion', 'tableTxt', 'viewTable', 'isCheckbox', 'isDbSynch',
+          'isPage', 'isTree', 'hideActionButton', 'idSequence', 'idType', 'queryMode', 'relationType',
+          'subTableStr', 'tabOrderNum', 'treeParentIdField', 'treeIdField', 'treeFieldname',
+          'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode', 'onlineInitQueryParamGetter',
+          'onlineVueWatchJsStr')
         this.tableJsonGetHelper(pickAfter)
         this.initialAllShowItem(pickAfter)
         this.$nextTick(() => {
@@ -736,7 +883,8 @@ QueryTable
       syncAllOrderNumNow(oldIndex, newIndex) {
         this.getAllTable().then(tables => {
           tables.forEach((tab, idx) => {
-            if (idx > 0 && idx < 4) {
+            // 1-3：页面属性、校验字段、外键，5：查询配置
+            if (idx > 0 && idx < 4 || idx === 5) {
               tab.$refs.editableTable.rowResort(oldIndex, newIndex)
             }
           })
@@ -814,11 +962,11 @@ QueryTable
         // update-begin-author:taoyan date:20190924 for:表字段转小写
         if (formData.fields && formData.fields.length > 0) {
           for (let i of formData.fields) {
-            i.dbFieldName = i.dbFieldName.toLowerCase();
+            i.dbFieldName = i.dbFieldName.toLowerCase()
           }
         }
         if (formData.head && formData.head.tableName) {
-          formData.head.tableName = formData.head.tableName.toLowerCase().trim();
+          formData.head.tableName = formData.head.tableName.toLowerCase().trim()
         }
         // update-end-author:taoyan date:20190924 for:表字段转小写
 
@@ -922,9 +1070,11 @@ QueryTable
         if (!value) {
           callback()
         } else {
-          var patt1 = new RegExp('^[a-zA-Z]{1}_.*');
+          var patt1 = new RegExp('^[a-zA-Z]{1}_.*')
           if (patt1.test(value)) {
-            callback('不能以单个字母加下划线开头')
+            // callback('不能以单个字母加下划线开头')
+            this.$message.warn('请注意：不能以单个字母加下划线开头！目前已放行！')
+            callback()
           } else if (new RegExp('^[0-9]*$').test(value)) {
             // 不能全部是数字
             callback('不能全部是数字')
@@ -932,11 +1082,11 @@ QueryTable
             var params = {
               id: !this.model.id ? '' : this.model.id,
               tbname: value
-            };
+            }
             getAction(this.url.checkOnlyTable, params).then(res => {
               if (res.success) {
                 if (res.result == -1) {
-                  callback('表名已存在！');
+                  callback('表名已存在！')
                 }
               }
               callback()
@@ -1002,4 +1152,8 @@ QueryTable
 <style scoped>
  .online-config-cust .has-feedback{display: block !important;}
  .input-table .thead .td span{width:100%}
+ .cgform-header-main {
+   max-height: 40vh;
+   overflow-y: auto;
+ }
 </style>

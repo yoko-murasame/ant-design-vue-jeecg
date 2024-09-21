@@ -21,6 +21,7 @@
 * `this`：指向当前表单vue实例，建议使用that
 * `that`：指向当前表单vue实例，一般和this指向相同（视调用高阶函数位置的传入参数而定）
 * `data`：当前编辑的数据对象
+* `newDefaultData`：来自流程或者online列表上文的默认数据
 * `formConfig`：当前设计器表单的配置对象
 * `formData`：表单保存后的完整数据对象，**仅在afterSubmit钩子中生效**
 
@@ -56,21 +57,31 @@ const myRequest = await myRequest({
 
 **默认工具API**
 
-* `getCurrentRealname`：获取当前用户真实姓名
-* `getDepartmentByOrgCode`：根据`orgCode`值获取多个部门信息
-* `getCurrentDepartment`：获取当前用户的部门信息
-* `getCurrentDate`：获取当前日期，默认format参数为：`YYYY-MM-DD`
-* `getFullFormData`：获取完整的表单数据，参数为：id 主键，tableName 表名
-* `updateFormData`：更新表单数据，参数为：code online表单的配置地址中的code，data 需要更新的表单数据（必须包含id字段且有值）
-* `sendTemplateAnnouncement`：发送模板消息，参数为：
-  * fromUser 发送人
-  * toUser 接收人
-  * title 消息标题
-  * templateCode 模板编码
-  * formData 模板参数
-  * THIRD_APP_TYPE 第三方消息推送类型，可选值： DINGTALK、WECHAT_ENTERPRISE、ALL，不传都不推送
-  * msgAbstract 消息摘要，可选
-* `generateCodeByRule`：根据规则生成编码，参数为：ruleCode 规则编码（系统配置），formData 表单数据（可选）
+> `getCurrentRealname`：获取当前用户真实姓名
+
+> `getDepartmentByOrgCode`：根据`orgCode`值获取多个部门信息
+
+> `getCurrentDepartment`：获取当前用户的部门信息
+
+> `getCurrentDate`：获取当前日期，默认format参数为：`YYYY-MM-DD`
+
+> `getOnlineDataList`：获取在线表单列表数据，同online列表接口，支持搜索参数和分页，参数为：onlineCode：online表单配置地址的code；params 搜索参数，如：{name:'张三'}，分页也在这里
+
+> `getFullFormData`：获取完整的表单数据，参数为：id 主键，tableName 表名
+
+> `updateFormData`：更新表单数据，参数为：code online表单的配置地址中的code，data 需要更新的表单数据（必须包含id字段且有值）
+
+> `sendTemplateAnnouncement`：发送模板消息，参数为：
+
+* fromUser 发送人
+* toUser 接收人
+* title 消息标题
+* templateCode 模板编码
+* formData 模板参数
+* THIRD_APP_TYPE 第三方消息推送类型，可选值： DINGTALK、WECHAT_ENTERPRISE、ALL，不传都不推送
+* msgAbstract 消息摘要，可选
+
+> `generateCodeByRule`：根据规则生成编码，参数为：ruleCode 规则编码（系统配置），formData 表单数据（可选）
 
 ```js
 const realname = await getCurrentRealname()
@@ -78,32 +89,60 @@ const depts = await getDepartmentByOrgCode('A01,A01A01')
 const dept = await getCurrentDepartment()
 const dateStr = await getCurrentDate()
 const timeStr = await getCurrentDate('YYYY-MM-DD HH:mm:ss')
+const onlineDataList = await getOnlineDataList('online表单配置地址的code', {}) // 查询条件和分页都放这里
 const fullData = await getFullFormData('id', 'table_name')
 const updateId = await updateFormData('code', { id: '1', name: 'yoko' })
 await sendTemplateAnnouncement('yoko', 'yoko,admin', '模板消息标题', 'template_code', { name: 'yoko', text: '随便写点什么' }, 'DINGTALK', '请查收消息！')
 const code = await generateCodeByRule('rule_code', {})
-console.log('默认工具', realname, depts, dept, dateStr, timeStr, fullData, updateId, code)
+console.log('默认工具', realname, depts, dept, dateStr, timeStr, onlineDataList, fullData, updateId, code)
 ```
 
+> `saveBusinessGeometryDataToSupermapFeatures`：保存业务几何数据到超图空间表，参数为（使用请参考下文“天地图-点、线、面模式”）：
+
+* mode 模式(point、line、polygon)
+* formData 业务表单数据
+* businessIdField 业务主键字段
+* businessIdFieldInSupermap 空间表关联的业务主键字段
+* iserverFeaturesUrl 空间表服务地址，e.g. http://localhost:8090/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/region_test/features
+* coordinatesStr 坐标串（来自天地图组件的返回结果）
+* debug 调试模式，默认false
+* throwError 抛出错误，默认false
+* lnglatSplitChar 坐标串经纬度分隔符，默认逗号
+* lnglatArrSplitChar 坐标串经纬度数组分隔符，默认分号
+
+> `getUserByUsername`：根据用户名获取用户信息，参数为：username
+
+```js
+// 这个示例，通过获取用户名，去填充关联的手机号，在字段onChange时触发
+const nowData = await getData(['captain_name'])
+const {captain_name} = nowData
+if (captain_name) {
+  const {phone}= await getUserByUsername(captain_name)
+  console.log('选择用户后自动填充手机号：', captain_name, phone)
+  setData({captain_phone: phone})
+}
+```
 
 
 **操作表单数据方法**
 
-* `setData`：设置表单数据
-* `getData`：获取表单数据
-* `hide`：隐藏表单字段
-* `show`：显示表单字段
-* `disable`：禁用表单字段
-* `enable`：启用表单字段
+* `setData`：设置表单数据，参数为：['fieldA', 'fieldB']（字段名称数组，下面同此）
+* `getData`：获取表单数据，参数为：参数1可选，若传入可限制字段列表['fieldA', 'fieldA']，参数2是否抛出异常：true/false
+* `hide`：隐藏表单字段，参数为：['fieldA', 'fieldB']
+* `show`：显示表单字段，参数为：['fieldA', 'fieldB']
+* `disable`：禁用表单字段，参数为：['fieldA', 'fieldB']
+* `enable`：启用表单字段，参数为：['fieldA', 'fieldB']
 * `reset`：重置表单，将清空所有表单数据
-* `setOptions`：批量设置某个option的值，不建议使用
+* `setOptions`：批量设置表单组件的option的值，参数为：['fieldA', 'fieldB']，optionName(配置属性名称)，optionsValue(配置属性值)
+* `changeDict`：变更字典（字典单选、多选、搜索组件生效），参数为：['fieldA', 'fieldB']，dictCode(字典Code)，dictOptions(字典数组)
 
 ```js
 // 注意不要申明成data，默认属性已经有data了
 const newData = { id: '1', name: 'yoko' }
 const flag = await setData(newData)
-const nowData = await getData()
-console.log('nowData', flag, nowData)
+const nowData = await getData() // 支持
+const nowDataWithFields = await getData(['name', 'sex'], false) // 支持, 参数false表示字段为空时不抛异常
+console.log('nowData', flag, nowData, nowDataWithFields)
 
 // 操作表单字段的方法是非异步的
 that.hide(['fieldA', 'fieldB'])
@@ -111,6 +150,12 @@ that.show(['fieldA', 'fieldB'])
 that.disable(['fieldA', 'fieldB'])
 that.enable(['fieldA', 'fieldB'])
 that.reset()
+// 批量设置组件的options，这里以改变 disabled 属性为例
+that.setOptions(['fieldA', 'fieldB'], 'disabled', true)
+// 批量设置组件的动态字典code
+that.changeDict(['fieldA', 'fieldB'], '系统里的字典code或者表字典')
+// 批量设置组件的静态字典选项
+that.changeDict(['fieldA', 'fieldB'], null, [{ text: '文本', value: '1' }])
 ```
 
 
@@ -216,3 +261,35 @@ if (!code) {
 ```
 
 3）现在每次新增表单时，都会自动生成编码了
+
+# 使用示例三：地图选择组件保存数据到超图
+
+1）去系统 `在线开发 -> online表单开发` 模块里新增测试表
+
+2）点击 `设计表单` 按钮，在表单里添加一个地图选择组件（左边 -> 自定义组件 -> 天地图）
+
+3）在设计界面右下角 `表单JS-afterSubmit-表单提交后调用` 模块加入增强JS代码
+
+3.1）**天地图-点、线、面模式**——参考JS增强代码：
+
+```js
+const iserverUrl = ''
+const addPolygonFunc = async () => {
+  // 超图-服务地址-这里需要注意跨域，留空是为了走代理
+  const params = {
+    mode: 'polygon', // 模式：point（点）、line（线）、polygon（面）
+    formData: formData, // 表单数据
+    businessIdField: 'id', // 业务id字段
+    businessIdFieldInSupermap: 'BUSS_ID', // 业务id字段在超图空间表中的字段名
+    iserverFeaturesUrl: `${iserverUrl}/iserver/services/data-GJDW/rest/data/datasources/GJDW/datasets/region_test/features`, // 服务地址，需要区分点线面的服务地址
+    coordinatesStr: formData['new_one'], // 从业务表单数据中取出天地图组件返回的坐标串数据
+    debug: false, // 调试模式，默认是false
+    throwError: false, // 抛出错误，默认是false
+    lnglatSplitChar: ',', // 坐标串中经纬度分隔符，默认是逗号（不建议修改）
+    lnglatArrSplitChar: ';' // 坐标串中经纬度数组分隔符，默认是分号（不建议修改）
+  }
+  // 执行-保存业务几何数据到超图空间表
+  await saveBusinessGeometryDataToSupermapFeatures(params)
+}
+await addPolygonFunc()
+```
