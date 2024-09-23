@@ -13,18 +13,18 @@
           <!--    <a-input v-decorator="['title', validatorRules.title]" placeholder="请输入片段标题" ></a-input>-->
           <!--  </a-form-item>-->
           <!--</a-col>-->
-          <a-col :span="24">
-            <a-form-item label="标签" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <!--<j-multi-select-tag type="list_multi" v-decorator="['tags']" :trigger-change="true" dictCode="sakuga_content_tags" placeholder="请选择标签" />-->
-              <j-editor
-                v-decorator="['tags']"
-                :default-height="500"
-                plugins="lists image link media table textcolor wordcount contextmenu fullscreen"
-                toolbar="undo redo |  formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | lists link unlink image media table | removeformat | fullscreen"
-                :trigger-change="true">
-              </j-editor>
-            </a-form-item>
-          </a-col>
+          <!--<a-col :span="24">-->
+          <!--  <a-form-item label="标签" :labelCol="labelCol" :wrapperCol="wrapperCol">-->
+          <!--    &lt;!&ndash;<j-multi-select-tag type="list_multi" v-decorator="['tags']" :trigger-change="true" dictCode="sakuga_content_tags" placeholder="请选择标签" />&ndash;&gt;-->
+          <!--    <j-editor-->
+          <!--      v-decorator="['tags']"-->
+          <!--      :default-height="500"-->
+          <!--      plugins="lists image link media table textcolor wordcount contextmenu fullscreen"-->
+          <!--      toolbar="undo redo |  formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | lists link unlink image media table | removeformat | fullscreen"-->
+          <!--      :trigger-change="true">-->
+          <!--    </j-editor>-->
+          <!--  </a-form-item>-->
+          <!--</a-col>-->
           <a-col :span="24" v-if='isDev'>
             <a-form-item label="知识库测试" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <!--<j-image-upload isMultiple biz-path="picture" v-decorator="['picture']" ></j-image-upload>-->
@@ -122,7 +122,7 @@
 
 <script>
 
-import { httpAction, getAction } from '@/api/manage'
+import { getAction, httpAction } from '@/api/manage'
 import pick from 'lodash.pick'
 
 export default {
