@@ -61,8 +61,8 @@ module.exports = {
           bypassOnDebug: true // webpack@3.x
         })
         .end()
-      // 优化moment.js, 忽略/moment/locale下的所有文件
-      config.plugin('ignorePlugin').use(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/))
+      // 优化moment.js, 忽略/moment/locale下的所有文件，这里会影响到datepicker组件的国际化，可以参考这里优化：https://blog.csdn.net/qq_17175013/article/details/86845624
+      // config.plugin('ignorePlugin').use(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/))
       // 开启js\css压缩
       config.plugin('compressionPlugin').use(new CompressionPlugin({
         test: /\.(js|ts|css|less|scss)$/, // 匹配文件名
