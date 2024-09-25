@@ -88,6 +88,48 @@
   justify-content: space-between;
 }
 
+
+// 取消ant-card-body的padding
+.none-card-body-padding {
+  /deep/ .ant-card-body {
+    padding: 0 !important;
+  }
+}
+.none-card-body-left-padding {
+  /deep/ .ant-card-body {
+    padding-left: 0 !important;
+  }
+}
+.none-card-body-right-padding {
+  /deep/ .ant-card-body {
+    padding-right: 0 !important;
+  }
+}
+.none-card-body-top-padding {
+  /deep/ .ant-card-body {
+    padding-top: 0 !important;
+  }
+}
+.none-card-body-bottom-padding {
+  /deep/ .ant-card-body {
+    padding-bottom: 0 !important;
+  }
+}
+
+// 取消table的最低高度（默认300px）
+.none-ant-table-wrapper-min-height {
+  /deep/ .ant-table-wrapper {
+    min-height: 0 !important;
+  }
+}
+
+// 取消ant-empty-normal的margin（默认32px 0）
+.none-ant-empty-normal-margin {
+  /deep/ .ant-empty {
+    margin: 0 !important;
+  }
+}
+
 /* 示例：mixin带参，字体加粗 */
 .font-bold(@color: #000000; @bold: bold) {
   color: @color;

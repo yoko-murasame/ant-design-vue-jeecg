@@ -92,7 +92,7 @@ export default {
     computed: {
       // 一些未处理的参数或特殊处理的参数绑定到 a-modal 上
       _attrs() {
-        let attrs = { ...this.$attrs }
+        let attrs = { ...this.$attrs, class: undefined, style: undefined }
         // 如果全屏就将宽度设为 100%
         if (this.innerFullscreen) {
           attrs['width'] = '100%'
