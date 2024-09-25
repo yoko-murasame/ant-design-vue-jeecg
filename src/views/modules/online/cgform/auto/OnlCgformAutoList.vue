@@ -1,5 +1,5 @@
 <template>
-  <a-card v-bind="cartAttrs">
+  <a-card v-bind="getPropsCardAttrs">
 
     <!--查询插槽-->
     <div class="table-page-search-wrapper" v-if="!cardMode || $slots.cardQuery || $scopedSlots.cardQuery">
@@ -454,7 +454,8 @@ export default {
         default() {
           return {
             'bordered': false,
-            'style': { 'height': '100%' }
+            'style': { 'height': '100%' },
+            'class': 'none-ant-table-wrapper-min-height none-ant-empty-normal-margin'
           }
         },
         required: false
@@ -704,6 +705,14 @@ export default {
       }
     },
     computed: {
+      getPropsCardAttrs() {
+        const className = this.cartAttrs.class || ''
+        return {
+          ...this.cartAttrs,
+          // 分页模式下，隐藏底部padding
+          'class': className + (this.table.pagination && this.table.dataSource.length ? ' none-card-body-bottom-padding' : '')
+        }
+      },
       // 获取slot绑定属性
       getCardBindAttrs() {
         // console.log('获取slot绑定属性', this.$slots, this.$scopedSlots)
@@ -1641,10 +1650,10 @@ export default {
     }
   }
 </script>
-<style scoped>
+<style scoped lang="less">
   @import '~@assets/less/common.less';
 </style>
-<style scoped>
+<style scoped lang="less">
   .ant-card-body .table-operator{
     margin-bottom: 18px;
   }
