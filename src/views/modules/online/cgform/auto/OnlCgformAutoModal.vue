@@ -3,7 +3,7 @@
     :title="titleText"
     :width="modalWidth"
     :style="modalStyle"
-    :class="'jeecg-online-modal'"
+    :class="'jeecg-online-modal none-modal-bottom-padding'"
     :visible="visible"
     :confirmLoading="confirmLoading"
     :okButtonProps="{ props: {disabled: disableSubmit} }"
@@ -282,6 +282,7 @@
 </script>
 
 <style scoped >
+  @import '~@assets/less/modal-common.less';
   .avatar-uploader > .ant-upload {
     width:104px;
     height:104px;

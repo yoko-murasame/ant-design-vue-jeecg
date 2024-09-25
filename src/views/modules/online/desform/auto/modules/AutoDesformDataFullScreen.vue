@@ -25,6 +25,7 @@
     :switch-fullscreen="true"
     @cancel="close"
     @ok="handleSuccess"
+    class="none-modal-bottom-padding"
     width="60%">
     <template slot="footer">
       <template v-if="buttonSwitch.modal_footer">
@@ -163,7 +164,9 @@ export default {
   }
 }
 </script>
-
+<style lang="less">
+@import '~@assets/less/modal-common.less';
+</style>
 <style lang="less" scoped>
 .j-auto-desform-data-full-screen {
   position: fixed;
