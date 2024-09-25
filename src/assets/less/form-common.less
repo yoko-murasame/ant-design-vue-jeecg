@@ -90,3 +90,22 @@
   font-weight: bold;
   margin-bottom: 1vh;
 }
+
+// 去除card的padding
+.none-card-body-padding {
+  /deep/ .ant-card-body {
+    padding: 0 !important;
+  }
+}
+.none-card-body-left-right-padding {
+  /deep/ .ant-card-body {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+.none-card-body-top-bottom-padding {
+  /deep/ .ant-card-body {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
