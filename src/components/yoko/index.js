@@ -4,6 +4,7 @@ import DisableBlock from '@/components/yoko/DisableBlock'
 import JUploadKnowledge from '@/components/yoko/JUploadKnowledge'
 import StepsTab from '@/components/yoko/StepsTab'
 import VuePdfAppModal from '@/components/yoko/VuePdfAppModal'
+import EditableCell from '@/components/yoko/EditableCell'
 
 // 注册动态表单组件（要不流程中不会显示）
 import DynamicForm from '@/components/online/autoform/index'
@@ -38,6 +39,7 @@ export default {
     Vue.component('StepsTab', StepsTab)
     Vue.component('VuePdfAppModal', VuePdfAppModal)
     Vue.component('ESign', ESign)
+    Vue.component('EditableCell', EditableCell)
     // 动态表单
     Vue.use(DynamicForm)
     // 表单验证
