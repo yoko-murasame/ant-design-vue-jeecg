@@ -520,21 +520,6 @@ export default {
       }
     },
     data() {
-      // 注册页面按钮
-      const buttonSwitch = {
-        // 默认禁用行为，以disable为开头的默认取消禁止，其余按钮默认开放
-        disableAdd: false,
-        disableEdit: false,
-        disableDelete: false
-      }
-      // 注册按钮别名
-      const buttonAlias = {}
-      fixedButton.forEach(item => {
-        buttonSwitch[item.code] = true
-        buttonAlias[item.code] = item.alias
-      })
-
-      // 其他data数据
       return {
         // 表单code
         code: '',
@@ -617,8 +602,16 @@ export default {
         formTemplate: '99',
         EnhanceJS: '',
         hideColumns: [],
-        buttonSwitch,
-        buttonAlias,
+        // 注册页面按钮
+        buttonSwitch: {
+          // 默认禁用行为，以disable为开头的默认取消禁止，其余按钮默认开放
+          disableAdd: false,
+          disableEdit: false,
+          disableDelete: false
+          // 会自动填充动态的页面表达按钮控制code，见方法：initButtonSwitch
+        },
+        // 注册按钮别名
+        buttonAlias: {},
         hasBpmStatus: false,
         checkboxFlag: false,
         // 高级查询
@@ -1114,8 +1107,8 @@ export default {
             // 创建vue2监听器
             createVue2Watcher(res.result.onlineVueWatchJsStr, this.code, this.cachedUnWatchMap, this)
             await this.initCgEnhanceJs(res.result.enhanceJs)
-            this.initButtonSwitch(res.result.hideColumns)
-            this.buttonAlias = Object.assign(this.buttonAlias, res.result.buttonAlias || {})
+            // 初始化按钮显隐+按钮文本
+            this.initButtonSwitch(res.result.hideColumns, res.result.buttonAlias)
             res.result.columns.forEach(column => {
               Object.keys(column).map(key => {
                 // 删掉空值的字段（不删除 空字符串('') 或 数字 0 ）
@@ -1622,7 +1615,15 @@ export default {
           })
         }
       },
-      initButtonSwitch(hideColumns) {
+      initButtonSwitch(hideColumns, buttonAlias) {
+        // 重置按钮显隐和文本
+        fixedButton.forEach(item => {
+          this.buttonSwitch[item.code] = true
+          this.buttonAlias[item.code] = item.alias
+        })
+        // 填充按钮别名
+        this.buttonAlias = Object.assign(this.buttonAlias, buttonAlias || {})
+        // 判断按钮显隐
         Object.keys(this.buttonSwitch).forEach(key => {
           // 以disable为开头的默认取消禁止，其余按钮默认开放
           this.buttonSwitch[key] = !key.startsWith('disable')
