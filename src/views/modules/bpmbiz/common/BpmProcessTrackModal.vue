@@ -24,6 +24,13 @@
       <a-tabs defaultActiveKey="1" tabPosition="left">
         <a-tab-pane key="1">
           <span slot="tab">
+            <a-icon type="sliders"/>
+            <span>流程跟踪</span>
+          </span>
+          <biz-process-module :formData="formData"></biz-process-module>
+        </a-tab-pane>
+        <a-tab-pane key="2">
+          <span slot="tab">
             <a-icon type="file-text"/>
             <span>{{ title || '审批记录' }}</span>
           </span>
@@ -32,14 +39,6 @@
           <biz-his-task-module :formData="formData"></biz-his-task-module>
           <br>
         </a-tab-pane>
-        <a-tab-pane key="2">
-          <span slot="tab">
-            <a-icon type="sliders"/>
-            <span>流程跟踪</span>
-          </span>
-          <biz-process-module :formData="formData"></biz-process-module>
-        </a-tab-pane>
-
       </a-tabs>
     </a-spin>
   </j-modal>

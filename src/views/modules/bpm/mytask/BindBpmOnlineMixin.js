@@ -168,7 +168,7 @@ export default {
       const flowCode = await this.getFlowCode(record)
       // 查询条件 可循环发起时，查询历史就不报错误了
       const params = { flowCode, dataId: record.id, throwEx: !this.bpmCirculate }
-      this.$refs.bindBpm.$refs.bpmProcessTrackModal.title = record[this.bpmStatusFieldName] === '3' ? this.trackHisName : this.trackName
+      this.$refs.bindBpm.$refs.bpmProcessTrackModal.title = this.getRealTrackName(record)
       this.$refs.bindBpm.$refs.bpmProcessTrackModal.handleTrack(params)
     },
     /**
@@ -509,6 +509,14 @@ export default {
       console.log('清空在线表单流程相关配置')
       this.myTaskList = null
       this.processDefinitionId = null
+    },
+    /**
+     * 获取审批历史、审批进度按钮文本
+     * @param record
+     * @returns {string|*|string}
+     */
+    getRealTrackName(record) {
+      return record[this.bpmStatusFieldName] === '3' ? (this.buttonAlias.bpm_track || this.trackHisName).replace('进度', '历史') : (this.buttonAlias.bpm_track || this.trackName)
     },
     endMethod() {}
   }

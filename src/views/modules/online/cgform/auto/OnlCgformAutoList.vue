@@ -242,7 +242,7 @@
                   <!--新版本审批进度功能-->
                   <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
                     <a @click="handleTrack(record)">
-                      {{ record[bpmStatusFieldName] === '3' ? (buttonAlias.bpm_track || trackHisName).replace('进度', '历史') : (buttonAlias.bpm_track || trackName) }}
+                      {{ getRealTrackName(record) }}
                     </a>
                     <a-divider type="vertical" />
                   </template>
@@ -256,7 +256,7 @@
                   <!--新版本审批进度功能-->
                   <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
                     <a @click="handleTrack(record)">
-                      {{ record[bpmStatusFieldName] === '3' ? (buttonAlias.bpm_track || trackHisName).replace('进度', '历史') : (buttonAlias.bpm_track || trackName) }}
+                      {{ getRealTrackName(record) }}
                     </a>
                     <a-divider type="vertical" />
                   </template>
