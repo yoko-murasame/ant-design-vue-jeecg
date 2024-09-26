@@ -65,7 +65,7 @@ export default {
           }
         },
         {
-          title: '名称',
+          title: '任务名称',
           dataIndex: 'name',
           customRender: function (text) {
             if (text === 'start') {
@@ -82,7 +82,7 @@ export default {
         //   dataIndex: 'processInstanceId'
         // },
         {
-          title: '流程任务ID',
+          title: '任务ID',
           dataIndex: 'id'
         },
         {
@@ -99,7 +99,7 @@ export default {
           dataIndex: 'deleteReason'
         }, {
           title: '处理意见',
-          fixed: 'right',
+          // fixed: 'right',
           width: 350,
           dataIndex: 'remarks',
           scopedSlots: { customRender: 'remarks' }
