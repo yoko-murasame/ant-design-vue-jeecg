@@ -16,7 +16,7 @@
       v-on="$listeners"
     >
       <a-button v-bind="$attrs" @click.prevent>
-        关闭
+        {{ buttonText || '关闭' }}
       </a-button>
     </a-popconfirm>
   </div>
@@ -33,11 +33,15 @@ export default {
     title: {
       type: String,
       default: '数据未保存，确认关闭吗?'
+    },
+    buttonText: {
+      type: String,
+      default: '关闭'
     }
   },
   methods: {
     confirm() {
-      this.$emit('click');
+      this.$emit('click')
     },
     cancel() {
     }

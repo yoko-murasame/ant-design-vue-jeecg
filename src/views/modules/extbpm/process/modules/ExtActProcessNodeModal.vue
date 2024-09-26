@@ -309,7 +309,7 @@ export default {
             // 初始化筛选参数
             initQueryParam: {},
             // 新增按钮文本
-            addButtonName: '新增',
+            addButtonName: '',
             // byId接口
             queryById: '/当前主表表单的byId接口/get接口/queryById'
           }

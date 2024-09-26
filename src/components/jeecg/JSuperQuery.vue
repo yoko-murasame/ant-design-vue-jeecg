@@ -14,12 +14,12 @@
         <a-button-group>
           <a-button type="primary" @click="handleOpen">
             <a-icon type="appstore" theme="twoTone" spin/>
-            <span>高级查询</span>
+            <span>{{ buttonText }}</span>
           </a-button>
           <a-button v-if="izMobile" type="primary" icon="delete" @click="handleReset"/>
         </a-button-group>
       </a-tooltip>
-      <a-button v-else type="primary" icon="filter" @click="handleOpen">高级查询</a-button>
+      <a-button v-else type="primary" icon="filter" @click="handleOpen">{{ buttonText }}</a-button>
     </slot>
 
     <j-modal
@@ -273,6 +273,11 @@
       saveCode: {
         type: String,
         default: null
+      },
+      // 高级查询按钮文本
+      buttonText: {
+        type: String,
+        default: '高级查询'
       }
 
     },

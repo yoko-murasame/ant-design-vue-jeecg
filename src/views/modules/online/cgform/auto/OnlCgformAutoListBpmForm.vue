@@ -44,7 +44,7 @@ export default {
         // 初始化筛选参数
         initQueryParam: {},
         // 新增按钮文本
-        addButtonName: '填报队伍',
+        addButtonName: '',
         // byId接口 /warning/tbBisWarning/queryById
         queryById: ''
       },

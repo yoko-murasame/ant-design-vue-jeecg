@@ -8,7 +8,10 @@
           <a-row :gutter="24" v-if="queryInfo && queryInfo.length>0 || hasBpmStatus">
             <template v-if="buttonSwitch.bind_bpm_show_my_task && processDefinitionId">
               <a-col :xl="2" :lg="3" :md="4" :sm="24">
-                <bind-bpm-show-my-task v-model="queryParam.checked" :parent="vm"></bind-bpm-show-my-task>
+                <bind-bpm-show-my-task
+                  :label="buttonAlias.bind_bpm_show_my_task || '我的待办'"
+                  v-model="queryParam.checked"
+                  :parent="vm" />
               </a-col>
             </template>
             <template v-for="(item,index) in queryInfo">
@@ -31,9 +34,9 @@
             </template>
 
             <a-col :md="6" :sm="8">
-              <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
-                <a-button type="primary" @click="searchByquery" icon="search">查询</a-button>
-                <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+              <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons" v-if="buttonSwitch.list_search || buttonSwitch.list_reset">
+                <a-button type="primary" @click="searchByquery" icon="search">{{ buttonAlias.list_search || '查询' }}</a-button>
+                <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">{{ buttonAlias.list_reset || '重置' }}</a-button>
                 <a v-if="queryInfo.length > 3" @click="handleToggleSearch" style="margin-left: 8px">
                   {{ toggleSearchStatus ? '收起' : '展开' }}
                   <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
@@ -64,9 +67,23 @@
     <!-- 非卡片模式-操作按钮区域 -->
     <div class="table-operator" v-if="!cardMode || $slots.cardButton || $scopedSlots.cardButton">
       <slot name="cardButton" v-bind="getCardBindAttrs">
-        <a-button v-if="buttonSwitch.add" :disabled="buttonSwitch.disableAdd" @click="handleAdd" type="primary" icon="plus">{{ onlineFormConfig.addButtonName || '新增' }}</a-button>
-        <a-button v-if="buttonSwitch.import" :disabled="buttonSwitch.disableAdd" @click="handleImportXls" type="primary" icon="upload">导入</a-button>
-        <a-button v-if="buttonSwitch.export" @click="handleExportXls" type="primary" icon="download">导出</a-button>
+        <a-button
+          v-if="buttonSwitch.add"
+          :disabled="buttonSwitch.disableAdd"
+          @click="handleAdd"
+          type="primary"
+          icon="plus">{{ onlineFormConfig.addButtonName || buttonAlias.add || '新增' }}</a-button>
+        <a-button
+          v-if="buttonSwitch.import"
+          :disabled="buttonSwitch.disableAdd"
+          @click="handleImportXls"
+          type="primary"
+          icon="upload">{{ buttonAlias.import || '导入' }}</a-button>
+        <a-button
+          v-if="buttonSwitch.export"
+          @click="handleExportXls"
+          type="primary"
+          icon="download">{{ buttonAlias.export || '导出' }}</a-button>
         <template v-if="cgButtonList && cgButtonList.length>0" v-for="(item,index) in cgButtonList">
           <a-button
             v-if=" item.optType === 'js' "
@@ -74,7 +91,7 @@
             @click="cgButtonJsHandler(item.buttonCode)"
             type="primary"
             :icon="item.buttonIcon">
-            {{ item.buttonName }}
+            {{ buttonAlias[item.buttonCode] || item.buttonName }}
           </a-button>
           <a-button
             v-else-if=" item.optType === 'action' "
@@ -82,7 +99,7 @@
             @click="cgButtonActionHandler(item.buttonCode)"
             type="primary"
             :icon="item.buttonIcon">
-            {{ item.buttonName }}
+            {{ buttonAlias[item.buttonCode] || item.buttonName }}
           </a-button>
         </template>
 
@@ -93,6 +110,7 @@
           :fieldList="superQuery.fieldList"
           :saveCode="$route.fullPath"
           :loading="table.loading"
+          :button-text="buttonAlias.super_query || '高级查询'"
           @handleSuperQuery="handleSuperQuery"/>
 
         <a-button
@@ -102,22 +120,25 @@
           v-show="table.selectedRowKeys.length > 0"
           ghost
           type="primary"
-          icon="delete">批量删除</a-button>
+          icon="delete">{{ buttonAlias.batch_delete || '批量删除' }}</a-button>
       </slot>
     </div>
 
     <div class="table-container">
 
       <!--非卡片模式-选择区域插槽-->
-      <div :class="{ 'ant-alert': checkboxFlag, 'ant-alert-info': checkboxFlag }" style="margin-bottom: 16px;" v-if="!cardMode || $slots.cardRowSelector || $scopedSlots.cardRowSelector">
+      <div
+        :class="{ 'ant-alert': checkboxFlag, 'ant-alert-info': checkboxFlag }"
+        style="margin-bottom: 16px;"
+        v-if="(!cardMode && (buttonSwitch.list_multi_select || buttonSwitch.list_column_setting)) || $slots.cardRowSelector || $scopedSlots.cardRowSelector">
         <slot name="cardRowSelector" v-bind="getCardBindAttrs">
           <template v-if="checkboxFlag">
             <i class="anticon anticon-info-circle ant-alert-icon"></i>
             已选择&nbsp;<a style="font-weight: 600">{{ table.selectedRowKeys.length }}</a>项&nbsp;&nbsp;
-            <a style="margin-left: 24px" @click="onClearSelected">清空</a>
-            <span style="float:right;">
+            <a v-if="buttonSwitch.list_multi_select" style="margin-left: 24px" @click="onClearSelected">{{ buttonAlias.list_multi_select || '清空' }}</a>
+            <span style="float:right;" v-if="buttonSwitch.list_column_setting">
               <a-popover :overlayStyle="{maxWidth:'500px'}" title="自定义列" trigger="click" placement="leftBottom" @visibleChange="popVisibleChange">
-                <a><a-icon type="setting"/></a>
+                <a><a-icon :type="buttonAlias.list_column_setting || 'setting'"/></a>
                 <template slot="content">
                   <a-checkbox-group v-model="settingColumns">
                     <a-row>
@@ -215,31 +236,35 @@
                 <!--流程未发起、或者已结束并且配置了可循环发起-->
                 <template v-if="(record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null) ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
                   <template v-if="buttonSwitch.update">
-                    <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">编辑</a>
+                    <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">{{ buttonAlias.update || '编辑' }}</a>
                     <a-divider type="vertical"/>
                   </template>
                   <!--新版本审批进度功能-->
                   <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
-                    <a @click="handleTrack(record)">{{ record[bpmStatusFieldName] === '3' ? trackHisName : trackName }}</a>
+                    <a @click="handleTrack(record)">
+                      {{ record[bpmStatusFieldName] === '3' ? (buttonAlias.bpm_track || trackHisName).replace('进度', '历史') : (buttonAlias.bpm_track || trackName) }}
+                    </a>
                     <a-divider type="vertical" />
                   </template>
                 </template>
                 <!--流程过程中或流程结束-->
                 <template v-else>
                   <template v-if="buttonSwitch.detail">
-                    <a href="javascript:;" @click="handleDetail(record)">详情</a>
+                    <a href="javascript:;" @click="handleDetail(record)">{{ buttonAlias.detail || '详情' }}</a>
                     <a-divider type="vertical"/>
                   </template>
                   <!--新版本审批进度功能-->
                   <template v-if="buttonSwitch.bpm_track && record[bpmStatusFieldName] && record[bpmStatusFieldName] !== '1' && trackCondition">
-                    <a @click="handleTrack(record)">{{ record[bpmStatusFieldName] === '3' ? trackHisName : trackName }}</a>
+                    <a @click="handleTrack(record)">
+                      {{ record[bpmStatusFieldName] === '3' ? (buttonAlias.bpm_track || trackHisName).replace('进度', '历史') : (buttonAlias.bpm_track || trackName) }}
+                    </a>
                     <a-divider type="vertical" />
                   </template>
                   <!--新版本审批功能-->
                   <template v-if="buttonSwitch.bpm_handle && record[bpmStatusFieldName] === '2' && record.bpmData">
                     <template v-if="(record.bpmData.taskAssigneeName || '').trim()">
                       <a @click="handleProcess(record)">
-                        办理
+                        {{ buttonAlias.bpm_handle || '办理' }}
                       </a>
                     <!--<a-divider type="vertical" />-->
                     <!--<a @click="selectEntruster(record)">委托</a>-->
@@ -254,7 +279,7 @@
               <!--非流程-->
               <template v-else>
                 <template v-if="buttonSwitch.update">
-                  <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">编辑</a>
+                  <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">{{ buttonAlias.update || '编辑' }}</a>
                   <a-divider type="vertical"/>
                 </template>
               </template>
@@ -267,11 +292,11 @@
                   <template v-if="hasBpmStatus">
                     <template v-if="record[bpmStatusFieldName] === '1'||record[bpmStatusFieldName] === ''|| record[bpmStatusFieldName] == null ||(bpmCirculate && record[bpmStatusFieldName] === '3')">
                       <a-menu-item v-if="buttonSwitch.bpm">
-                        <a href="javascript:;" @click="startProcess(record)">提交流程</a>
+                        <a href="javascript:;" @click="startProcess(record)">{{ buttonAlias.bpm || '提交流程' }}</a>
                       </a-menu-item>
                       <a-menu-item v-if="buttonSwitch.delete">
-                        <a-popconfirm :disabled="buttonSwitch.disableDelete" title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
-                          <a :disabled="buttonSwitch.disableDelete">删除</a>
+                        <a-popconfirm :disabled="buttonSwitch.disableDelete" :title="`确定${buttonAlias.delete || '删除'}吗?`" @confirm="() => handleDeleteOne(record)">
+                          <a :disabled="buttonSwitch.disableDelete">{{ buttonAlias.delete || '删除' }}</a>
                         </a-popconfirm>
                       </a-menu-item>
                     </template>
@@ -282,38 +307,38 @@
                     <!--委托-->
                     <template v-if="buttonSwitch.bpm_entrusted">
                       <a-menu-item v-if="record[bpmStatusFieldName] === '2' && record.bpmData && record.bpmData.taskAssigneeName">
-                        <a-popconfirm title="确定要委托给别人处理吗?" @confirm="selectEntruster(record)">
-                          <a>委托</a>
+                        <a-popconfirm :title="`确定${buttonAlias.bpm_entrusted || '委托'}吗?`" @confirm="selectEntruster(record)">
+                          <a>{{ buttonAlias.bpm_entrusted || '委托' }}</a>
                         </a-popconfirm>
                       </a-menu-item>
                     </template>
                     <!--完成流程-->
                     <template v-if="buttonSwitch.bpm_finish">
                       <a-menu-item v-if="record[bpmStatusFieldName] === '2' ">
-                        <a-popconfirm title="确定要完成流程吗?" @confirm="() => finishProcess(record)">
-                          <a>完成流程</a>
+                        <a-popconfirm :title="`确定${buttonAlias.bpm_finish || '完成流程'}吗?`" @confirm="() => finishProcess(record)">
+                          <a>{{ buttonAlias.bpm_finish || '完成流程' }}</a>
                         </a-popconfirm>
                       </a-menu-item>
                     </template>
                     <!--取回流程-->
                     <template v-if="buttonSwitch.bpm_callback">
                       <a-menu-item v-if="record[bpmStatusFieldName] === '2' ">
-                        <a-popconfirm title="确定要取回流程吗?" @confirm="() => callBackProcess(record)">
-                          <a>取回流程</a>
+                        <a-popconfirm :title="`确定${buttonAlias.bpm_callback || '取回流程'}吗?`" @confirm="() => callBackProcess(record)">
+                          <a>{{ buttonAlias.bpm_callback || '取回流程' }}</a>
                         </a-popconfirm>
                       </a-menu-item>
                     </template>
                     <!--管理员编辑-->
                     <template v-if="buttonSwitch.bpm_admin_edit">
                       <a-menu-item>
-                        <a @click="handleEdit(record)">编辑(管理员)</a>
+                        <a @click="handleEdit(record)">{{ buttonAlias.bpm_admin_edit || '编辑(管理员)' }}</a>
                       </a-menu-item>
                     </template>
                     <!--管理员删除-->
                     <template v-if="buttonSwitch.bpm_admin_delete">
                       <a-menu-item>
-                        <a-popconfirm title="确定要删除吗?" @confirm="() => handleDeleteOne(record)">
-                          <a>删除(管理员)</a>
+                        <a-popconfirm :title="`确定${buttonAlias.bpm_admin_delete || '删除'}吗?`" @confirm="() => handleDeleteOne(record)">
+                          <a>{{ buttonAlias.bpm_admin_delete || '删除(管理员)' }}</a>
                         </a-popconfirm>
                       </a-menu-item>
                     </template>
@@ -321,11 +346,11 @@
                   <!--非流程-->
                   <template v-else>
                     <a-menu-item v-if="buttonSwitch.detail">
-                      <a href="javascript:;" @click="handleDetail(record)">详情</a>
+                      <a href="javascript:;" @click="handleDetail(record)">{{ buttonAlias.detail || '详情' }}</a>
                     </a-menu-item>
                     <a-menu-item v-if="buttonSwitch.delete">
-                      <a-popconfirm :disabled="buttonSwitch.disableDelete" title="确定删除吗?" @confirm="() => handleDeleteOne(record)">
-                        <a :disabled="buttonSwitch.disableDelete">删除</a>
+                      <a-popconfirm :disabled="buttonSwitch.disableDelete" :title="`确定${buttonAlias.delete || '删除'}吗?`" @confirm="() => handleDeleteOne(record)">
+                        <a :disabled="buttonSwitch.disableDelete">{{ buttonAlias.delete || '删除' }}</a>
                       </a-popconfirm>
                     </a-menu-item>
                   </template>
@@ -334,18 +359,18 @@
                     <a-menu-item :key=" 'cgbtnLink'+btnIndex " v-if="showLinkButton(btnItem,record)">
                       <template v-if="btnItem.optType === 'js-confirm'">
                         <a-popconfirm
-                          :title="`确定${btnItem.buttonName}?`"
+                          :title="`确定${buttonAlias[btnItem.buttonCode] || btnItem.buttonName}?`"
                           @confirm="() => cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
                           <a href="javascript:void(0);">
                             <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
-                            {{ btnItem.buttonName }}
+                            {{ buttonAlias[btnItem.buttonCode] || btnItem.buttonName }}
                           </a>
                         </a-popconfirm>
                       </template>
                       <template v-else>
                         <a href="javascript:void(0);" @click="cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
                           <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
-                          {{ btnItem.buttonName }}
+                          {{ buttonAlias[btnItem.buttonCode] || btnItem.buttonName }}
                         </a>
                       </template>
                     </a-menu-item>
@@ -375,7 +400,9 @@
         ref="desformModal"
         @ok="handleFormSuccess"
         @saveAndSubmitBPM="saveAndSubmitBPM"
+        :parent="vm"
         :buttonSwitch="buttonSwitch"
+        :button-alias="buttonAlias"
         :currentTableName="currentTableName"
         :default-data="initQueryParam || {}"
         :hasBpmStatus="hasBpmStatus" />
@@ -427,6 +454,8 @@ import Vue from 'vue'
 import OnlCgformAutoModal from './OnlCgformAutoModal'
 // 动态template
 import DynamicTemplate from '@comp/yoko/DynamicTemplate.vue'
+// 按钮数组
+import { fixedButton } from '@views/modules/online/cgform/auth/manager/AuthButtonConfig'
 
 export default {
     name: 'OnlCgFormAutoList',
@@ -480,7 +509,7 @@ export default {
             // 初始化筛选参数
             initQueryParam: {},
             // 新增按钮文本
-            addButtonName: '新增',
+            addButtonName: '',
             // loadData触发debounce，0时就不延迟
             loadDataDebounce: 0,
             // action固定 'left', 'right'
@@ -491,6 +520,21 @@ export default {
       }
     },
     data() {
+      // 注册页面按钮
+      const buttonSwitch = {
+        // 默认禁用行为，以disable为开头的默认取消禁止，其余按钮默认开放
+        disableAdd: false,
+        disableEdit: false,
+        disableDelete: false
+      }
+      // 注册按钮别名
+      const buttonAlias = {}
+      fixedButton.forEach(item => {
+        buttonSwitch[item.code] = true
+        buttonAlias[item.code] = item.alias
+      })
+
+      // 其他data数据
       return {
         // 表单code
         code: '',
@@ -573,35 +617,8 @@ export default {
         formTemplate: '99',
         EnhanceJS: '',
         hideColumns: [],
-        buttonSwitch: {
-          // 默认禁用行为，以disable为开头的默认取消禁止，其余按钮默认开放
-          disableAdd: false,
-          disableEdit: false,
-          disableDelete: false,
-          // 默认开放行为
-          add: true,
-          update: true,
-          delete: true,
-          batch_delete: true,
-          import: true,
-          export: true,
-          detail: true,
-          super_query: false,
-          bpm: true,
-          bind_bpm_show_my_task: true,
-          bpm_track: true,
-          bpm_handle: true,
-          bpm_entrusted: true,
-          bpm_admin_edit: true,
-          bpm_admin_delete: true,
-          bpm_finish: true,
-          bpm_callback: true,
-          // 表单按钮控制，默认开放
-          modal_footer: true,
-          modal_save: true,
-          modal_submit: true,
-          modal_cancel: true
-        },
+        buttonSwitch,
+        buttonAlias,
         hasBpmStatus: false,
         checkboxFlag: false,
         // 高级查询
@@ -1098,6 +1115,7 @@ export default {
             createVue2Watcher(res.result.onlineVueWatchJsStr, this.code, this.cachedUnWatchMap, this)
             await this.initCgEnhanceJs(res.result.enhanceJs)
             this.initButtonSwitch(res.result.hideColumns)
+            this.buttonAlias = Object.assign(this.buttonAlias, res.result.buttonAlias || {})
             res.result.columns.forEach(column => {
               Object.keys(column).map(key => {
                 // 删掉空值的字段（不删除 空字符串('') 或 数字 0 ）

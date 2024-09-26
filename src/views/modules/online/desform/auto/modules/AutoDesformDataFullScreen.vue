@@ -29,13 +29,24 @@
     width="60%">
     <template slot="footer">
       <template v-if="buttonSwitch.modal_footer">
-        <cancel-button v-if="buttonSwitch.modal_cancel" :disableSubmit="disableSubmit" key="back" @click="close" />
-        <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit && buttonSwitch.modal_save">保存</a-button>
-        <a-button type="primary" @click="saveAndSubmitBPM" v-if="!disableSubmit && buttonSwitch.bpm && buttonSwitch.modal_submit && hasBpmStatus">保存并提交流程</a-button>
+        <cancel-button
+          v-if="buttonSwitch.modal_cancel"
+          :disableSubmit="disableSubmit"
+          :button-text="buttonAlias.modal_cancel || '取消'"
+          key="back"
+          @click="close" />
+        <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit && buttonSwitch.modal_save">{{ buttonAlias.modal_save || '保存' }}</a-button>
+        <a-button
+          type="primary"
+          @click="saveAndSubmitBPM"
+          v-if="!disableSubmit && buttonSwitch.bpm && buttonSwitch.modal_submit && hasBpmStatus">
+          {{ buttonAlias.modal_submit || '保存并提交流程' }}
+        </a-button>
       </template>
     </template>
     <desform-view
       class="desform-view"
+      :parent="parent"
       :mode="mode"
       :desformCode="desformCode"
       :dataId="dataId"
@@ -56,6 +67,7 @@ export default {
   name: 'AutoDesformDataFullScreen',
   components: { DesformView },
   props: {
+    // 按钮显示控制
     buttonSwitch: {
       type: Object,
       required: false,
@@ -70,6 +82,14 @@ export default {
         }
       }
     },
+    // 按钮别名
+    buttonAlias: {
+      type: Object,
+      required: false,
+      default() {
+        return {}
+      }
+    },
     hasBpmStatus: {
       type: Boolean,
       default: false
@@ -80,6 +100,11 @@ export default {
       default() {
         return {}
       }
+    },
+    // 父列表组件
+    parent: {
+      type: Object,
+      default: null
     }
   },
   data() {

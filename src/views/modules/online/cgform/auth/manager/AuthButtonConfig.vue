@@ -30,27 +30,37 @@
 <script>
   import { getAction, postAction, putAction } from '@/api/manage'
 
+  // 定义online列表页面的所有按钮、modal弹窗按钮
   export const fixedButton = [
-    { code: 'add', title: '新增', status: 0 },
-    { code: 'update', title: '编辑', status: 0 },
-    { code: 'delete', title: '删除', status: 0 },
-    { code: 'batch_delete', title: '批量删除', status: 0 },
-    { code: 'export', title: '导出', status: 0 },
-    { code: 'import', title: '导入', status: 0 },
-    { code: 'super_query', title: '高级查询', status: 0 },
-    { code: 'bpm', title: '提交流程', status: 0 },
-    { code: 'bind_bpm_show_my_task', title: '流程-筛选我的代办', status: 0 },
-    { code: 'bpm_track', title: '流程-审批进度', status: 0 },
-    { code: 'bpm_handle', title: '流程-办理', status: 0 },
-    { code: 'bpm_entrusted', title: '流程-委托', status: 0 },
-    { code: 'bpm_admin_edit', title: '流程-管理员编辑', status: 1 },
-    { code: 'bpm_admin_delete', title: '流程-管理员删除', status: 1 },
-    { code: 'bpm_finish', title: '流程-完成流程', status: 1 },
-    { code: 'bpm_callback', title: '流程-取回流程', status: 1 },
-    { code: 'modal_footer', title: '弹窗-整个底部', status: 0 },
-    { code: 'modal_save', title: '弹窗-保存按钮', status: 0 },
-    { code: 'modal_submit', title: '弹窗-提交流程按钮', status: 0 },
-    { code: 'modal_cancel', title: '弹窗-取消按钮', status: 0 }
+    // 默认开放行为
+    { code: 'add', title: '新增', status: 0, alias: '新增' },
+    { code: 'update', title: '编辑', status: 0, alias: '编辑' },
+    { code: 'delete', title: '删除', status: 0, alias: '删除' },
+    { code: 'batch_delete', title: '批量删除', status: 0, alias: '批量删除' },
+    { code: 'export', title: '导出', status: 0, alias: '导出' },
+    { code: 'import', title: '导入', status: 0, alias: '导入' },
+    { code: 'detail', title: '详情', status: 0, alias: '详情' },
+    { code: 'super_query', title: '高级查询', status: 0, alias: '高级查询' },
+    { code: 'bpm', title: '提交流程', status: 0, alias: '提交流程' },
+    { code: 'bind_bpm_show_my_task', title: '流程-筛选我的待办', status: 0, alias: '我的待办' },
+    { code: 'bpm_track', title: '流程-审批进度', status: 0, alias: '审批进度' },
+    { code: 'bpm_handle', title: '流程-办理', status: 0, alias: '办理' },
+    { code: 'bpm_entrusted', title: '流程-委托', status: 0, alias: '委托' },
+    // 流程按钮控制，默认关闭
+    { code: 'bpm_admin_edit', title: '流程-管理员编辑', status: 1, alias: '管理员编辑' },
+    { code: 'bpm_admin_delete', title: '流程-管理员删除', status: 1, alias: '管理员删除' },
+    { code: 'bpm_finish', title: '流程-完成流程', status: 1, alias: '完成流程' },
+    { code: 'bpm_callback', title: '流程-取回流程', status: 1, alias: '取回流程' },
+    // 表单按钮控制，默认开放
+    { code: 'modal_footer', title: '弹窗-整个底部', status: 0, alias: '弹窗footer' },
+    { code: 'modal_save', title: '弹窗-保存按钮', status: 0, alias: '保存' },
+    { code: 'modal_submit', title: '弹窗-提交流程按钮', status: 0, alias: '保存并提交流程' },
+    { code: 'modal_cancel', title: '弹窗-取消按钮', status: 0, alias: '取消' },
+    // 列表搜索和重置
+    { code: 'list_search', title: '列表-搜索按钮', status: 0, alias: '查询' },
+    { code: 'list_reset', title: '列表-重置按钮', status: 0, alias: '重置' },
+    { code: 'list_multi_select', title: '列表-多选清空', status: 0, alias: '清空' },
+    { code: 'list_column_setting', title: '列表-自定义列(别名用于设置icon)', status: 0, alias: 'setting' }
   ]
   export default {
     name: 'AuthButtonConfig',
@@ -66,7 +76,7 @@
         immediate: true,
         handler() {
           this.cgformId = this.headId.split('?')[0]
-          this.loadButtons();
+          this.loadButtons()
         }
       }
     },
@@ -104,25 +114,21 @@
       }
     },
     methods: {
-      // 变更按钮别名
-      handleAliasChange(e) {
-        console.log('handleAliasChange', e)
-      },
       handleUpdateStatus(flag, rd) {
-        if (flag == true) {
-          this.enableAuthButton(rd)
+        if (flag) {
+          this.enableAuthButton(rd, 1)
         } else {
           this.stopAuthButton(rd.id)
         }
       },
-      enableAuthButton(rd) {
+      enableAuthButton(rd, status = 0) {
         let param = {
           code: rd.code,
           page: rd.page,
           cgformId: this.cgformId,
           type: this.pageType,
           control: 5,
-          status: 1,
+          status: status || rd.status,
           alias: rd.alias
         }
         if (rd.id) {
@@ -132,8 +138,8 @@
         postAction(`${this.url}`, param).then(res => {
           if (res.success) {
             this.dataSource.map(item => {
-              if (item.code == rd.code) {
-                item['status'] = 1
+              if (item.code === rd.code) {
+                item['status'] = res.result.status ? res.result.status - 0 : 0
                 item['id'] = res.result.id
               }
             })
@@ -145,7 +151,7 @@
         putAction(`${this.url}/${id}`).then(res => {
           if (res.success) {
             this.dataSource.map(item => {
-              if (item.id == id) {
+              if (item.id === id) {
                 item.status = 0
               }
             })

@@ -75,6 +75,11 @@ export default {
     enableLoading: {
       type: Boolean,
       default: true
+    },
+    // 父列表组件
+    parent: {
+      type: Object,
+      default: null
     }
   },
   data() {
