@@ -43,7 +43,7 @@ export default {
         '_t': Date.parse(new Date()) / 1000,
         'processInstanceId': this.formData.procInsId
       })
-      return `${window._CONFIG['domianURL']}/act/task/traceImage?${params}`;
+      return `${window._CONFIG['domianURL']}/act/task/traceImage?${params}`
     }
   },
   data() {
@@ -68,18 +68,24 @@ export default {
           title: '名称',
           dataIndex: 'name',
           customRender: function (text) {
-            if (text == 'start1') {
-              return '开始';
-            } else if (text == 'end') {
-              return '结束';
+            if (text === 'start') {
+              return '流程启动'
+            } else if (text === 'end') {
+              return '流程结束'
             } else {
-              return text;
+              return text
             }
           }
-        }, {
-          title: '流程实例ID',
-          dataIndex: 'processInstanceId'
-        }, {
+        },
+        // {
+        //   title: '流程实例ID',
+        //   dataIndex: 'processInstanceId'
+        // },
+        {
+          title: '流程任务ID',
+          dataIndex: 'id'
+        },
+        {
           title: '开始时间',
           dataIndex: 'startTime'
         }, {
@@ -104,8 +110,8 @@ export default {
   methods: {
     // 查询数据
     requestData() {
-      this.loading = true;
-      var params = { processInstanceId: this.formData.procInsId };// 查询条件
+      this.loading = true
+      var params = { processInstanceId: this.formData.procInsId }// 查询条件
       getAction(this.url.list, params).then(res => {
         if (res.success) {
           // console.log(res.result.records)
@@ -121,7 +127,7 @@ export default {
     },
     // 查询坐标信息数据
     getNodePositionInfoData() {
-      var params = { processInstanceId: this.formData.procInsId };// 查询条件
+      var params = { processInstanceId: this.formData.procInsId }// 查询条件
       getAction(this.url.getNodePositionInfo, params).then(res => {
         if (res.success) {
           this.nodePositionInfo = res.result
@@ -132,26 +138,26 @@ export default {
       })
     },
     showNodeInfo(data, taskId) {
-      this.$refs.nodeInfoModel.close();
-      this.$refs.nodeInfoModel.showInfo(data, taskId);
+      this.$refs.nodeInfoModel.close()
+      this.$refs.nodeInfoModel.showInfo(data, taskId)
     },
     getNodeInfo(record) {
       if (this.nodePositionInfo) {
-        var data = this.nodePositionInfo.hisTasks;
+        var data = this.nodePositionInfo.hisTasks
         if (data) {
           for (var item of data) {
             if (item.id == record.id) {
-              return item.remarks;
+              return item.remarks
             }
           }
         }
       }
-      return '';
+      return ''
     }
   },
   created() {
-    this.getNodePositionInfoData();
-    this.requestData();
+    this.getNodePositionInfoData()
+    this.requestData()
   }
 
 }
