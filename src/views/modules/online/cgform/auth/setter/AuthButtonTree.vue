@@ -21,29 +21,7 @@
 
 <script>
   import { getAction, postAction } from '@api/manage'
-  const fixedButton = [
-    { code: 'add', title: '新增', status: 0 },
-    { code: 'update', title: '编辑', status: 0 },
-    { code: 'delete', title: '删除', status: 0 },
-    { code: 'batch_delete', title: '批量删除', status: 0 },
-    { code: 'export', title: '导出', status: 0 },
-    { code: 'import', title: '导入', status: 0 },
-    { code: 'super_query', title: '高级查询', status: 0 },
-    // { code: 'super_query', title: '高级查询', status: 0 },
-    { code: 'bpm', title: '提交流程', status: 0 },
-    { code: 'bind_bpm_show_my_task', title: '流程-筛选我的代办', status: 0 },
-    { code: 'bpm_track', title: '流程-审批进度', status: 0 },
-    { code: 'bpm_handle', title: '流程-办理', status: 0 },
-    { code: 'bpm_entrusted', title: '流程-委托', status: 0 },
-    { code: 'bpm_admin_edit', title: '流程-管理员编辑', status: 1 },
-    { code: 'bpm_admin_delete', title: '流程-管理员删除', status: 1 },
-    { code: 'bpm_finish', title: '流程-完成流程', status: 1 },
-    { code: 'bpm_callback', title: '流程-取回流程', status: 1 },
-    { code: 'modal_footer', title: '弹窗-整个底部', status: 0 },
-    { code: 'modal_save', title: '弹窗-保存按钮', status: 0 },
-    { code: 'modal_submit', title: '弹窗-提交流程按钮', status: 0 },
-    { code: 'modal_cancel', title: '弹窗-取消按钮', status: 0 }
-  ]
+  import { fixedButton } from '@views/modules/online/cgform/auth/manager/AuthButtonConfig'
 
   export default {
     name: 'AuthButtonTree',

@@ -16,6 +16,13 @@
         可见
       </template>
 
+      <template slot="alias" slot-scope="text, record">
+        <!--可编辑控件-->
+        <editable-cell v-model="record.alias" @ok="enableAuthButton(record)">
+          {{ record.alias }}
+        </editable-cell>
+      </template>
+
     </a-table>
   </div>
 </template>
@@ -23,7 +30,7 @@
 <script>
   import { getAction, postAction, putAction } from '@/api/manage'
 
-  const fixedButton = [
+  export const fixedButton = [
     { code: 'add', title: '新增', status: 0 },
     { code: 'update', title: '编辑', status: 0 },
     { code: 'delete', title: '删除', status: 0 },
@@ -91,11 +98,16 @@
             dataIndex: 'code',
             align: 'center'
           },
-          { title: '权限控制', key: 'control', scopedSlots: { customRender: 'control' }, width: 180 }
+          { title: '权限控制', key: 'control', scopedSlots: { customRender: 'control' }, width: 180 },
+          { title: '按钮别名', key: 'alias', scopedSlots: { customRender: 'alias' }, width: 180 }
         ]
       }
     },
     methods: {
+      // 变更按钮别名
+      handleAliasChange(e) {
+        console.log('handleAliasChange', e)
+      },
       handleUpdateStatus(flag, rd) {
         if (flag == true) {
           this.enableAuthButton(rd)
@@ -110,7 +122,8 @@
           cgformId: this.cgformId,
           type: this.pageType,
           control: 5,
-          status: 1
+          status: 1,
+          alias: rd.alias
         }
         if (rd.id) {
           param['id'] = rd.id
@@ -175,7 +188,7 @@
       initCustomButton(authList, buttonList, arr) {
         for (let b of buttonList) {
           let auth = authList.filter(i => {
-            return i.code == b.buttonCode
+            return i.code === b.buttonCode
           })
           let obj = {
             code: b.buttonCode,
