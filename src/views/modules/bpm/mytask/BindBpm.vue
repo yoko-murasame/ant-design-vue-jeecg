@@ -1,8 +1,8 @@
 <template>
   <div>
-    <task-deal-modal ref="taskDealModal" :path="parent.path" :formData="parent.innerFormData" @ok="parent.handleTaskDealOK"></task-deal-modal>
-    <select-entruster-modal ref="selectEntrusterModal" @selectFinished="parent.handleEntruster"></select-entruster-modal>
-    <bpm-process-track-modal ref="bpmProcessTrackModal"></bpm-process-track-modal>
+    <task-deal-modal v-bind="$attrs" ref="taskDealModal" :path="parent.path" :formData="parent.innerFormData" @ok="parent.handleTaskDealOK"></task-deal-modal>
+    <select-entruster-modal v-bind="$attrs" ref="selectEntrusterModal" @selectFinished="parent.handleEntruster"></select-entruster-modal>
+    <bpm-process-track-modal v-bind="$attrs" ref="bpmProcessTrackModal"></bpm-process-track-modal>
   </div>
 </template>
 

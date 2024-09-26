@@ -47,12 +47,19 @@ export default {
       taskId: '',
       myTaskList: null,
       innerFormData: {},
-      // 代码生成后需手动设置流程编码，这里用正则默认匹配到：dev_模块名称转蛇形去List_001
-      flowCode: this.$options.name.replace(/\B([A-Z])/g, '_$1').toLowerCase().replace(/(.*?)_list/, 'dev_$1_001'),
+      // 流程状态字段名
+      bpmStatusFieldName: 'bpmStatus',
+      // 流程跟踪过程的特殊条件 TODO 加入online列表可配置化
+      trackCondition: true,
       // 当前表名
       currentTableName: '',
       // 流程跟踪过程的按钮展示文本
-      trackName: '审批进度'
+      trackName: '审批进度',
+      trackHisName: '审批历史',
+      // 初始化参数，也会自动注入发起时的流程变量
+      initQueryParam: {},
+      // 代码生成后需手动设置流程编码，这里用正则默认匹配到：dev_模块名称转蛇形去List_001
+      flowCode: this.$options.name.replace(/\B([A-Z])/g, '_$1').toLowerCase().replace(/(.*?)_list/, 'dev_$1_001')
     }
   },
   created() {
@@ -79,12 +86,12 @@ export default {
      * @param record
      */
     async getFlowCode(record = {}) {
-      console.log('getFlowCode', record)
+      // console.log('getFlowCode', record)
       const dynamicCode = await this.getDynamicFlowCode(JSON.stringify(record) === '{}' ? this.innerFormData : record)
       if (dynamicCode) {
         return dynamicCode
       }
-      return dynamicCode || this.flowCode
+      return this.flowCode
     },
     /**
      * 获取动态流程编码，如果是多流程列表,可能需要复写此方法
@@ -107,7 +114,7 @@ export default {
         const { result, success, message } = await getAction(this.url.getExtActProcess, {
             relationCode: flowCode,
             formTableName: this.currentTableName
-          })
+        })
         if (!success) {
           // this.$message.error(message)
           console.error(message)
@@ -160,9 +167,10 @@ export default {
      */
     async handleTrack(record) {
       const flowCode = await this.getFlowCode(record)
-      const params = { flowCode, dataId: record.id }// 查询条件
+      // 查询条件
+      const params = { flowCode, dataId: record.id }
+      this.$refs.bindBpm.$refs.bpmProcessTrackModal.title = record[this.bpmStatusFieldName] === '3' ? this.trackHisName : this.trackName
       this.$refs.bindBpm.$refs.bpmProcessTrackModal.handleTrack(params)
-      this.$refs.bindBpm.$refs.bpmProcessTrackModal.title = this.trackName
     },
     /**
      * 发起流程
@@ -171,7 +179,7 @@ export default {
      * @param btnText
      */
     async startProcess(record, auto = false, btnText = '提交流程') {
-      const flowCode = await this.getFlowCode(record)
+      const flowCode = record.flowCode || await this.getFlowCode(record)
       if (!flowCode) {
         throw new Error('请配置data.flowCode或复写getFlowCode()方法')
       }
@@ -184,7 +192,8 @@ export default {
           flowCode,
           id: record.id,
           formUrl: that.formUrl,
-          formUrlMobile: that.formUrlMobile
+          formUrlMobile: that.formUrlMobile,
+          bpmVariables: that.initQueryParam || {}
         }
         postAction(that.url.startProcess, params).then(async res => {
           if (res.success) {

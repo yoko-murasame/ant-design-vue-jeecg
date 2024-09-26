@@ -25,7 +25,7 @@
         <a-tab-pane key="1">
           <span slot="tab">
             <a-icon type="file-text"/>
-            <span>审批记录</span>
+            <span>{{ title || '审批记录' }}</span>
           </span>
           <br>
           <br>
@@ -65,7 +65,7 @@ export default {
   data() {
     return {
       loading: false,
-      title: '流程',
+      title: '审批记录',
       visible: false,
       confirmLoading: false,
       bodyStyle: {

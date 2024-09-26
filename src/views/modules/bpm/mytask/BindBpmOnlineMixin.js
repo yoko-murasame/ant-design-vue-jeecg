@@ -47,6 +47,17 @@ export default {
       taskId: '',
       myTaskList: null,
       innerFormData: {},
+      // 流程状态字段名
+      bpmStatusFieldName: 'bpm_status',
+      // 流程跟踪过程的特殊条件 TODO 加入online列表可配置化
+      trackCondition: true,
+      // 当前表名
+      currentTableName: '',
+      // 流程跟踪过程的按钮展示文本
+      trackName: '审批进度',
+      trackHisName: '审批历史',
+      // 初始化参数，也会自动注入发起时的流程变量
+      initQueryParam: {},
       // 流程编码前缀
       flowCodePre: 'onl_',
       flowCodePreDesign: 'desform_',
@@ -59,18 +70,7 @@ export default {
       // kForm设计器表单保存后，会自动生成的表单编码
       desFormCode: '',
       // 是否循环发起流程
-      bpmCirculate: false,
-      // 流程状态字段名
-      bpmStatusFieldName: 'bpm_status',
-      // 流程跟踪过程的特殊条件 TODO 加入online列表可配置化
-      trackCondition: true,
-      // 当前表名
-      currentTableName: '',
-      // 流程跟踪过程的按钮展示文本
-      trackName: '审批进度',
-      trackHisName: '审批历史',
-      // 初始化参数，也会自动注入发起时的流程变量
-      initQueryParam: {}
+      bpmCirculate: false
     }
   },
   created() {
@@ -85,7 +85,7 @@ export default {
      * @param record
      */
     async getFlowCode(record = {}) {
-      console.log('getFlowCode', record, this.hasBpmStatus, this.isDesForm, this.desFormCode)
+      // console.log('getFlowCode', record, this.hasBpmStatus, this.isDesForm, this.desFormCode)
       const dynamicCode = await this.getDynamicFlowCode(JSON.stringify(record) === '{}' ? this.innerFormData : record)
       if (dynamicCode) {
         return dynamicCode
@@ -166,14 +166,10 @@ export default {
      */
     async handleTrack(record) {
       const flowCode = await this.getFlowCode(record)
-      // 查询条件
-      const params = {
-        flowCode,
-        dataId: record.id,
-        throwEx: !this.bpmCirculate // 可循环发起时，查询历史就不报错误了
-      }
-      this.$refs.bindBpm.$refs.bpmProcessTrackModal.handleTrack(params)
+      // 查询条件 可循环发起时，查询历史就不报错误了
+      const params = { flowCode, dataId: record.id, throwEx: !this.bpmCirculate }
       this.$refs.bindBpm.$refs.bpmProcessTrackModal.title = record[this.bpmStatusFieldName] === '3' ? this.trackHisName : this.trackName
+      this.$refs.bindBpm.$refs.bpmProcessTrackModal.handleTrack(params)
     },
     /**
      * 发起流程
@@ -359,70 +355,77 @@ export default {
       await this.fetchBpmDataList()
       this.loadData()
     },
-    getProcessNodeInfo(record) {
+    getProcessNodeInfo(record, showModal = true) {
       let params = { taskId: record.id }// 查询条件
-      getAction(this.url.getProcessNodeInfo, params).then((res) => {
-        if (res.success) {
-          console.log('获取流程节点信息', res)
-          let data = {
-            dataId: res.result.dataId,
-            taskId: record.id,
-            taskDefKey: record.taskId,
-            procInsId: record.processInstanceId,
-            tableName: res.result.tableName,
-            permissionList: res.result.permissionList,
-            vars: res.result.records,
-            formType: record.formType,
-            // 配置来的参数
-            modelAndViewType: res.result.modelAndViewType,
-            showTask: res.result.showTask,
-            showProcess: res.result.showProcess,
-            showReject: res.result.showReject,
-            customTaskModule: res.result.customTaskModule,
-            showMessageHandle: res.result.showMessageHandle,
-            onlineCode: res.result.onlineCode,
-            onlineFormConfig: res.result.onlineFormConfig,
-            onlineInitQueryParamGetter: res.result.onlineInitQueryParamGetter
-          }
-          this.innerFormData = data
-          // update--begin--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
-          console.log('获取流程节点表单URL', res.result.formUrl)
-
-          let tempFormUrl = res.result.formUrl
-          // 节点配置表单URL，VUE组件类型对应的拓展参数
-          this.innerFormData['disabled'] = true
-          if (tempFormUrl && tempFormUrl.indexOf('?') !== -1 && !isURL(tempFormUrl) && tempFormUrl.indexOf('{{DOMAIN_URL}}') === -1) {
-            tempFormUrl = res.result.formUrl.split('?')[0]
-            console.log('获取流程节点表单URL（去掉参数）', tempFormUrl)
-            // update--begin--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
-            let qv = getQueryVariable(res.result.formUrl)
-            this.innerFormData.extendUrlParams = qv
-            // 设置表单可编辑
-            if (qv.edit === '1' || qv.edit === 'true' || qv.edit === 1) {
-              this.innerFormData['disabled'] = false
+      return new Promise((resolve, reject) => {
+        getAction(this.url.getProcessNodeInfo, params).then((res) => {
+          if (res.success) {
+            console.log('获取流程节点信息', res)
+            let data = {
+              dataId: res.result.dataId,
+              taskId: record.id,
+              taskDefKey: record.taskId,
+              procInsId: record.processInstanceId,
+              tableName: res.result.tableName,
+              permissionList: res.result.permissionList,
+              vars: res.result.records,
+              formType: record.formType,
+              // 配置来的参数
+              modelAndViewType: res.result.modelAndViewType,
+              showTask: res.result.showTask,
+              showProcess: res.result.showProcess,
+              showReject: res.result.showReject,
+              customTaskModule: res.result.customTaskModule,
+              showMessageHandle: res.result.showMessageHandle,
+              onlineCode: res.result.onlineCode,
+              onlineFormConfig: res.result.onlineFormConfig,
+              onlineInitQueryParamGetter: res.result.onlineInitQueryParamGetter
             }
-            // update--end--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
-          }
+            this.innerFormData = data
+            // update--begin--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
+            console.log('获取流程节点表单URL', res.result.formUrl)
 
-          // update--begin--autor:scott-----date:20191005------for：节点配置设计器表单的URL，需要参数传递taskid，用于节点表单权限------
-          // 如果没有taskId参数，程序自动追加，用于设计器表单节点权限
-          if (tempFormUrl != null && tempFormUrl.indexOf('{{DOMAIN_URL}}/desform/') !== -1 && tempFormUrl.indexOf('taskId') === -1) {
-            tempFormUrl = tempFormUrl.trim()
-            if (tempFormUrl.endsWith('?')) {
-              tempFormUrl = tempFormUrl + 'taskId=' + record.taskId
-            } else {
-              tempFormUrl = tempFormUrl + '&taskId=' + record.taskId
+            let tempFormUrl = res.result.formUrl
+            // 节点配置表单URL，VUE组件类型对应的拓展参数
+            this.innerFormData['disabled'] = true
+            if (tempFormUrl && tempFormUrl.indexOf('?') !== -1 && !isURL(tempFormUrl) && tempFormUrl.indexOf('{{DOMAIN_URL}}') === -1) {
+              tempFormUrl = res.result.formUrl.split('?')[0]
+              console.log('获取流程节点表单URL（去掉参数）', tempFormUrl)
+              // update--begin--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
+              let qv = getQueryVariable(res.result.formUrl)
+              this.innerFormData.extendUrlParams = qv
+              // 设置表单可编辑
+              if (qv.edit === '1' || qv.edit === 'true' || qv.edit === 1) {
+                this.innerFormData['disabled'] = false
+              }
+              // update--end--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
             }
+
+            // update--begin--autor:scott-----date:20191005------for：节点配置设计器表单的URL，需要参数传递taskid，用于节点表单权限------
+            // 如果没有taskId参数，程序自动追加，用于设计器表单节点权限
+            if (tempFormUrl != null && tempFormUrl.indexOf('{{DOMAIN_URL}}/desform/') !== -1 && tempFormUrl.indexOf('taskId') === -1) {
+              tempFormUrl = tempFormUrl.trim()
+              if (tempFormUrl.endsWith('?')) {
+                tempFormUrl = tempFormUrl + 'taskId=' + record.taskId
+              } else {
+                tempFormUrl = tempFormUrl + '&taskId=' + record.taskId
+              }
+            }
+            this.path = tempFormUrl
+            // update--end--autor:scott-----date:20191005------for：节点配置设计器表单的URL，需要参数taskid，用于节点表单权限-----
+
+            // update--end--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
+
+            console.log('获取流程节点信息', this.innerFormData, this.path)
+            if (showModal && this.$refs.bindBpm) {
+              this.$refs.bindBpm.$refs.taskDealModal.deal(record)
+              this.$refs.bindBpm.$refs.taskDealModal.title = '流程办理'
+            }
+            resolve(res.result)
+          } else {
+            reject(res.message)
           }
-          this.path = tempFormUrl
-          // update--end--autor:scott-----date:20191005------for：节点配置设计器表单的URL，需要参数taskid，用于节点表单权限-----
-
-          // update--end--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
-
-          console.log('获取流程节点信息', this.innerFormData, this.path)
-          this.$refs.bindBpm.$refs.taskDealModal.deal(record)
-          this.$refs.bindBpm.$refs.taskDealModal.title = '流程办理'
-        }
+        })
       })
     },
     getHisProcessNodeInfo(record) {
