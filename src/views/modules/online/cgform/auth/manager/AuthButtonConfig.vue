@@ -62,6 +62,23 @@
     { code: 'list_multi_select', title: '列表-多选清空', status: 0, alias: '清空' },
     { code: 'list_column_setting', title: '列表-自定义列(别名用于设置icon)', status: 0, alias: 'setting' }
   ]
+
+  // 获取默认初始化的按钮显隐对象
+  export const getDefaultButtonSwitch = () => {
+    return fixedButton.reduce((prev, next) => {
+      prev[next.code] = true
+      return prev
+    }, {})
+  }
+
+  // 获取默认初始化的按钮显隐对象
+  export const getDefaultButtonAlias = () => {
+    return fixedButton.reduce((prev, next) => {
+      prev[next.code] = next.alias
+      return prev
+    }, {})
+  }
+
   export default {
     name: 'AuthButtonConfig',
     props: {

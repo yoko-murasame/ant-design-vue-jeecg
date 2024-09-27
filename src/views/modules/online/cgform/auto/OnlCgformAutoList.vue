@@ -401,7 +401,7 @@
         @ok="handleFormSuccess"
         @saveAndSubmitBPM="saveAndSubmitBPM"
         :parent="vm"
-        :buttonSwitch="buttonSwitch"
+        :button-switch="buttonSwitch"
         :button-alias="buttonAlias"
         :currentTableName="currentTableName"
         :default-data="initQueryParam || {}"
@@ -455,7 +455,7 @@ import OnlCgformAutoModal from './OnlCgformAutoModal'
 // 动态template
 import DynamicTemplate from '@comp/yoko/DynamicTemplate.vue'
 // 按钮数组
-import { fixedButton } from '@views/modules/online/cgform/auth/manager/AuthButtonConfig'
+import { fixedButton, getDefaultButtonSwitch, getDefaultButtonAlias } from '@views/modules/online/cgform/auth/manager/AuthButtonConfig'
 
 export default {
     name: 'OnlCgFormAutoList',
@@ -607,11 +607,12 @@ export default {
           // 默认禁用行为，以disable为开头的默认取消禁止，其余按钮默认开放
           disableAdd: false,
           disableEdit: false,
-          disableDelete: false
-          // 会自动填充动态的页面表达按钮控制code，见方法：initButtonSwitch
+          disableDelete: false,
+          // 会自动填充动态的页面表达按钮控制code，见方法：initButtonSwitch，必须先注册下面属性到data对象，要不响应式会出问题
+          ...getDefaultButtonSwitch()
         },
         // 注册按钮别名
-        buttonAlias: {},
+        buttonAlias: getDefaultButtonAlias(),
         hasBpmStatus: false,
         checkboxFlag: false,
         // 高级查询
@@ -1615,19 +1616,20 @@ export default {
           })
         }
       },
-      initButtonSwitch(hideColumns, buttonAlias) {
+      initButtonSwitch(hideColumns, buttonAlias = {}) {
         // 重置按钮显隐和文本
         fixedButton.forEach(item => {
+          // 默认全部显示
           this.buttonSwitch[item.code] = true
-          this.buttonAlias[item.code] = item.alias
+          // 填充按钮别名
+          this.buttonAlias[item.code] = buttonAlias[item.code] || item.alias
         })
-        // 填充按钮别名
-        this.buttonAlias = Object.assign(this.buttonAlias, buttonAlias || {})
         // 判断按钮显隐
         Object.keys(this.buttonSwitch).forEach(key => {
           // 以disable为开头的默认取消禁止，其余按钮默认开放
           this.buttonSwitch[key] = !key.startsWith('disable')
         })
+        // 无权限的按钮隐藏
         if (hideColumns && hideColumns.length > 0) {
           Object.keys(this.buttonSwitch).forEach(key => {
             if (hideColumns.indexOf(key) >= 0) {

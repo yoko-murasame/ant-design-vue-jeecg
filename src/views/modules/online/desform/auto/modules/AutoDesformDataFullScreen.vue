@@ -27,22 +27,20 @@
     @ok="handleSuccess"
     class="none-modal-bottom-padding"
     width="60%">
-    <template slot="footer">
-      <template v-if="buttonSwitch.modal_footer">
-        <cancel-button
-          v-if="buttonSwitch.modal_cancel"
-          :disableSubmit="disableSubmit"
-          :button-text="buttonAlias.modal_cancel || '取消'"
-          key="back"
-          @click="close" />
-        <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit && buttonSwitch.modal_save">{{ buttonAlias.modal_save || '保存' }}</a-button>
-        <a-button
-          type="primary"
-          @click="saveAndSubmitBPM"
-          v-if="!disableSubmit && buttonSwitch.bpm && buttonSwitch.modal_submit && hasBpmStatus">
-          {{ buttonAlias.modal_submit || '保存并提交流程' }}
-        </a-button>
-      </template>
+    <template v-if="buttonSwitch.modal_footer" slot="footer">
+      <cancel-button
+        v-if="buttonSwitch.modal_cancel"
+        :disableSubmit="disableSubmit"
+        :button-text="buttonAlias.modal_cancel || '取消'"
+        key="back"
+        @click="close" />
+      <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit && buttonSwitch.modal_save">{{ buttonAlias.modal_save || '保存' }}</a-button>
+      <a-button
+        type="primary"
+        @click="saveAndSubmitBPM"
+        v-if="!disableSubmit && buttonSwitch.bpm && buttonSwitch.modal_submit && hasBpmStatus">
+        {{ buttonAlias.modal_submit || '保存并提交流程' }}
+      </a-button>
     </template>
     <desform-view
       class="desform-view"
