@@ -69,6 +69,7 @@
           <span>任务处理</span>
         </span>
         <component
+          ref="realTaskModule"
           :is="realTaskModule"
           :show-steps="true"
           :form-vm="$refs.realForm ? $refs.realForm : null"
@@ -224,6 +225,10 @@ export default {
             this.$message.error('表单未完成！')
             this.activeKey = '1'
             reject(e)
+          } finally {
+            if (this.$refs.realTaskModule) {
+              this.$refs.realTaskModule.loading = false
+            }
           }
         } else {
           reject('编码表单Form请引入组件：BindBpmFormMixin')
