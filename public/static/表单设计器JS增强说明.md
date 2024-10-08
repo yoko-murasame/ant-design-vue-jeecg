@@ -128,13 +128,16 @@ if (captain_name) {
 
 * `setData`：设置表单数据，参数为：['fieldA', 'fieldB']（字段名称数组，下面同此）
 * `getData`：获取表单数据，参数为：参数1可选，若传入可限制字段列表['fieldA', 'fieldA']，参数2是否抛出异常：true/false
-* `hide`：隐藏表单字段，参数为：['fieldA', 'fieldB']
+* `hide`：隐藏表单字段，参数为：['fieldA', 'fieldB']，**注：该API会自动调用`closeRequired`去关闭表单项的必填属性！**
 * `show`：显示表单字段，参数为：['fieldA', 'fieldB']
 * `disable`：禁用表单字段，参数为：['fieldA', 'fieldB']
 * `enable`：启用表单字段，参数为：['fieldA', 'fieldB']
 * `reset`：重置表单，将清空所有表单数据
 * `setOptions`：批量设置表单组件的option的值，参数为：['fieldA', 'fieldB']，optionName(配置属性名称)，optionsValue(配置属性值)
 * `changeDict`：变更字典（字典单选、多选、搜索组件生效），参数为：['fieldA', 'fieldB']，dictCode(字典Code)，dictOptions(字典数组)
+* `setRules`：批量设置表单组件的所有rules的值，参数为：['fieldA', 'fieldB']，key(属性名称)，value(属性值)
+* `openRequired`：开启表单项必填，**请注意预览模式下会更改表单项配置！务必先保存后预览！**，参数为：['fieldA', 'fieldB']
+* `closeRequired`：关闭表单项必填，**请注意预览模式下会更改表单项配置！务必先保存后预览！**，参数为：['fieldA', 'fieldB']
 
 ```js
 // 注意不要申明成data，默认属性已经有data了
@@ -156,6 +159,12 @@ that.setOptions(['fieldA', 'fieldB'], 'disabled', true)
 that.changeDict(['fieldA', 'fieldB'], '系统里的字典code或者表字典')
 // 批量设置组件的静态字典选项
 that.changeDict(['fieldA', 'fieldB'], null, [{ text: '文本', value: '1' }])
+// 批量设置组件的rules，这里以改变 required 属性为例
+that.setRules(['fieldA', 'fieldB'], 'required', true)
+// 开启表单项必填
+that.openRequired(['fieldA', 'fieldB'])
+// 关闭表单项必填
+that.closeRequired(['fieldA', 'fieldB'])
 ```
 
 

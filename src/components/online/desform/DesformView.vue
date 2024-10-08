@@ -453,9 +453,13 @@ export default {
             const res = await createAsyncJsEnhanceFunction(
               that,
               funcStr,
-              ['value', 'key', 'data', 'getData', 'setData', 'setOptions', 'changeDict',
+              ['value', 'key', 'data', 'getData', 'setData',
+                'setOptions', 'changeDict',
+                'setRules', 'openRequired', 'closeRequired',
                 'hide', 'show', 'disable', 'enable', 'reset', 'formMeta'],
-              [value, key, that.data, that.getData, that.setData, that.setOptions, that.changeDict,
+              [value, key, that.data, that.getData, that.setData,
+                that.setOptions, that.changeDict,
+                that.setRules, that.openRequired, that.closeRequired,
                 that.hide, that.show, that.disable, that.enable, that.reset, that.value])
             .call()
             return res
@@ -490,9 +494,13 @@ export default {
             const res = await createAsyncJsEnhanceFunction(
               that,
               funcStr,
-              ['value', 'key', 'data', 'getData', 'setData', 'setOptions', 'changeDict',
+              ['value', 'key', 'data', 'getData', 'setData',
+                'setOptions', 'changeDict',
+                'setRules', 'openRequired', 'closeRequired',
                 'hide', 'show', 'disable', 'enable', 'reset', 'formMeta'],
-              [value, key, that.data, that.getData, that.setData, that.setOptions, that.changeDict,
+              [value, key, that.data, that.getData, that.setData,
+                that.setOptions, that.changeDict,
+                that.setRules, that.openRequired, that.closeRequired,
                 that.hide, that.show, that.disable, that.enable, that.reset, that.value])
             .call()
             return res

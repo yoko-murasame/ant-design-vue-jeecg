@@ -154,9 +154,13 @@ export default {
         return createAsyncJsEnhanceFunction(
           this,
           afterSubmit,
-          ['data', 'formConfig', 'setData', 'getData', 'setOptions', 'changeDict',
+          ['data', 'formConfig', 'setData', 'getData',
+            'setOptions', 'changeDict',
+            'setRules', 'openRequired', 'closeRequired',
             'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newDefaultData', 'formMeta'],
-          [this.data, config, this.setData, this.getData, this.setOptions, this.changeDict,
+          [this.data, config, this.setData, this.getData,
+            this.setOptions, this.changeDict,
+            this.setRules, this.openRequired, this.closeRequired,
             this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newDefaultData, this.value])
         .call()
       }
@@ -175,9 +179,13 @@ export default {
         return createAsyncJsEnhanceFunction(
           this,
           beforeSubmit,
-          ['data', 'formConfig', 'setData', 'getData', 'setOptions', 'changeDict',
+          ['data', 'formConfig', 'setData', 'getData',
+            'setOptions', 'changeDict',
+            'setRules', 'openRequired', 'closeRequired',
             'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData', 'formMeta'],
-          [this.data, config, this.setData, this.getData, this.setOptions, this.changeDict,
+          [this.data, config, this.setData, this.getData,
+            this.setOptions, this.changeDict,
+            this.setRules, this.openRequired, this.closeRequired,
             this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData, this.value])
         .call()
       }
@@ -196,9 +204,13 @@ export default {
         return createAsyncJsEnhanceFunction(
             this,
             handleMounted,
-            ['data', 'formConfig', 'setData', 'getData', 'setOptions', 'changeDict',
+            ['data', 'formConfig', 'setData', 'getData',
+              'setOptions', 'changeDict',
+              'setRules', 'openRequired', 'closeRequired',
               'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData', 'formMeta'],
-            [this.data, config, this.setData, this.getData, this.setOptions, this.changeDict,
+            [this.data, config, this.setData, this.getData,
+              this.setOptions, this.changeDict,
+              this.setRules, this.openRequired, this.closeRequired,
               this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData, this.value])
         .call()
       }
@@ -217,9 +229,13 @@ export default {
         return createAsyncJsEnhanceFunction(
             this,
             handleSetData,
-            ['data', 'formConfig', 'setData', 'getData', 'setOptions', 'changeDict',
+            ['data', 'formConfig', 'setData', 'getData',
+              'setOptions', 'changeDict',
+              'setRules', 'openRequired', 'closeRequired',
               'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData', 'formMeta'],
-            [this.data, config, this.setData, this.getData, this.setOptions, this.changeDict,
+            [this.data, config, this.setData, this.getData,
+              this.setOptions, this.changeDict,
+              this.setRules, this.openRequired, this.closeRequired,
               this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData, this.value])
         .call()
       }
@@ -360,6 +376,44 @@ export default {
         // });
       })
     },
+    // 批量设置v-decorator的所有rules中的属性
+    setRules(fields, key, value) {
+      fields = new Set(fields)
+      // 递归遍历控件树
+      const traverse = array => {
+        array.forEach(element => {
+          if (fields.has(element.model)) {
+            // 设置所有rules的属性
+            element.rules && element.rules.forEach(rule => this.$set(rule, key, value))
+          }
+          if (element.type === 'grid' || element.type === 'tabs') {
+            // 栅格布局 and 标签页
+            element.columns.forEach(item => {
+              traverse(item.list)
+            })
+          } else if (element.type === 'card' || element.type === 'batch' || element.type === 'subtable') {
+            // 卡片布局 and  动态表格
+            traverse(element.list)
+          } else if (element.type === 'table') {
+            // 表格布局
+            element.trs.forEach(item => {
+              item.tds.forEach(val => {
+                traverse(val.list)
+              })
+            })
+          }
+        })
+      }
+      traverse(this.value.list)
+    },
+    // 开启必填
+    openRequired(fields) {
+      this.setRules(fields, 'required', true)
+    },
+    // 关闭必填
+    closeRequired(fields) {
+      this.setRules(fields, 'required', false)
+    },
     // 批量设置某个option的值
     setOptions(fields, optionName, value) {
       fields = new Set(fields)
@@ -396,7 +450,10 @@ export default {
     },
     // 隐藏表单字段
     hide(fields) {
+      // 设置v-show隐藏
       this.setOptions(fields, 'hidden', true)
+      // 设置取消必填
+      this.closeRequired(fields)
     },
     // 显示表单字段
     show(fields) {
