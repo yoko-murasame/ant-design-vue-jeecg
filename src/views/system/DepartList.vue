@@ -280,9 +280,15 @@
               let temp = res.result[i]
               that.treeData.push(temp)
               that.departTree.push(temp)
-              that.setThisExpandedKeys(temp)
+              // 取消默认全部展开
+              // that.setThisExpandedKeys(temp)
+              // 获取所有key
               that.getAllKeys(temp)
               // console.log(temp.id)
+            }
+            // 默认展开第一个节点
+            if (res.result && res.result.length) {
+              this.iExpandedKeys = [res.result[0].key]
             }
             this.loading = false
           }
