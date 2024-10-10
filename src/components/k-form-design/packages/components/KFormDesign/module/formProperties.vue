@@ -152,6 +152,16 @@
             style="min-height: 2vh"/>
           <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
         </a-form-item>
+        <a-form-item label="模态框JS-beforeModalClose-模态框关闭前触发" class="js-help">
+          <!--<a-textarea v-model="config.afterSubmit" label="afterSubmit" />-->
+          <j-code-editor
+            ref="codeEditor5"
+            language="javascript"
+            v-model="config.beforeModalClose"
+            :fullScreen="true"
+            style="min-height: 2vh"/>
+          <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
+        </a-form-item>
         <a-form-item label="提示">
           实际预览效果请点击预览查看
         </a-form-item>

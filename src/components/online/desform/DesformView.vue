@@ -11,6 +11,7 @@
       :output-string="false"
       @change="handleChange"
       @myInput="handleMyInput"
+      :parent="parent"
     />
   </a-spin>
 </template>

@@ -14,16 +14,22 @@
 
 * `afterSubmit`：在表单提交后执行，**如果是新增操作，仅在这个钩子中能够获取到数据id**
 
+* `自定义函数`：和Vue2中的`methods`中定义的方法一样，编写后的JS增强代码将注册到表单实例
+
+* `beforeModalClose`：在模态框close事件（关闭前）触发
 
 
-**默认属性**
+**表单数据对象**
 
 * `this`：指向当前表单vue实例，建议使用that
 * `that`：指向当前表单vue实例，一般和this指向相同（视调用高阶函数位置的传入参数而定）
 * `data`：当前编辑的数据对象
-* `newDefaultData`：来自流程或者online列表上文的默认数据
+* `newDefaultData`：来自流程或者online列表上文的默认数据，用于填充表单默认值（如：online列表的`openAnyForm`方法中的`defaultData`参数）
+* `formData`：表单保存后的完整数据（新增时，会包含由后端生成的新数据ID），**仅在afterSubmit钩子中生效**
+
+* `formMeta`：当前设计器表单的完整配置对象
 * `formConfig`：当前设计器表单的配置对象
-* `formData`：表单保存后的完整数据对象，**仅在afterSubmit钩子中生效**
+* `parent`：如果是online列表调用的，则指向online列表的vue实例，否则为null
 
 ```js
 console.log('默认属性', this, that, data, formConfig, formData)

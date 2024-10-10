@@ -93,6 +93,11 @@ export default {
     newDefaultData: {
       type: Object,
       default: () => ({})
+    },
+    // 父列表组件
+    parent: {
+      type: Object,
+      default: null
     }
   },
   components: {
@@ -121,6 +126,7 @@ export default {
       return ['data', 'formConfig', 'setData', 'getData',
         'setOptions', 'changeDict',
         'setRules', 'openRequired', 'closeRequired',
+        'parent',
         'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newDefaultData', 'formMeta']
     },
     /**
@@ -132,6 +138,7 @@ export default {
       return [this.data, this.value.config, this.setData, this.getData,
         this.setOptions, this.changeDict,
         this.setRules, this.openRequired, this.closeRequired,
+        this.parent,
         this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newDefaultData, this.value]
     },
     /**
@@ -163,6 +170,25 @@ export default {
       } catch (e) {
         console.error('初始化自定义函数失败', e)
         Vue.prototype.$message.error('初始化自定义函数失败，请检查js自定义函数配置是否正确！和Vue2写法相同！')
+      }
+    },
+    /**
+     * 模态框关闭前前钩子，这里交给外部modal组件触发
+     */
+    beforeModalClose() {
+      const { config } = this.value
+      if (!config) {
+        console.log('KFormBuild::beforeModalClose', 'config is undefined', this.value)
+        return
+      }
+      const { beforeModalClose } = config
+      if (beforeModalClose) {
+        return createAsyncJsEnhanceFunction(
+          this,
+          beforeModalClose,
+          this.getCustomArgsName(),
+          this.getCustomArgsObj())
+        .call()
       }
     },
     /**

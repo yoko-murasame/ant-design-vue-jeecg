@@ -147,7 +147,11 @@ export default {
       }, 150)
     },
     /** 完全关闭，并初始化所有的字段 */
-    closed() {
+    async closed() {
+      // 执行表单关闭钩子
+      if (this.$refs.desform && this.$refs.desform.$refs.kfb) {
+        await this.$refs.desform.$refs.kfb.beforeModalClose()
+      }
       this.visible = false
       this.$emit('close')
       this.bgColor = 'rgba(0,0,0,0.6)'
