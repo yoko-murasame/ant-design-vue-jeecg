@@ -244,9 +244,12 @@ export default {
     convertEmptyStringToNull(obj) {
       for (let key in obj) {
         if (typeof obj[key] === 'object' && obj[key] !== null) {
-          this.convertEmptyStringToNull(obj[key]) // 递归处理嵌套对象
+          // 递归处理嵌套对象
+          this.convertEmptyStringToNull(obj[key])
         } else if (obj[key] === '') {
-          obj[key] = null // 将空字符串转换为 null
+          // 将空字符串转换为 null
+          obj[key] = null
+          // console.log('处理空字符串到null', key, obj[key])
         }
       }
     },
@@ -489,6 +492,10 @@ export default {
       } catch (e) {
         that.$message.error('JS增强::handleMounted执行失败 ' + e)
         console.error('KFormBuild::handleMounted', e)
+      }
+      // 空字符转换成null，防止date等组件，空字符串保存导致后端报错
+      if (that.emptyStringToNull) {
+        that.convertEmptyStringToNull(that.defaultValue)
       }
       await that.setData(that.defaultValue)
       try {
