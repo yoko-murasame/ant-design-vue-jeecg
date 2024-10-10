@@ -18,7 +18,7 @@
         v-for="(record, index) in value.list"
         :record="record"
         :dynamicData="getDynamicData"
-        :config="config"
+        :config="compConfig"
         :formConfig="value.config"
         :validatorError="validatorError"
         :key="index"
@@ -54,18 +54,20 @@ export default {
   },
   // props: ["value", "dynamicData"],
   props: {
-    // 对应实际传入的当前表单页面的组件配置项
+    // 当前表单完整配置项
     value: {
       type: Object,
       required: true
     },
+    // 动态字典配置数据
     dynamicData: {
       type: Object,
       default: () => {
         return {}
       }
     },
-    config: {
+    // 传递给表单组件的config项，看了下代码没啥作用
+    compConfig: {
       type: Object,
       default: () => ({})
     },
@@ -82,7 +84,7 @@ export default {
       type: Boolean,
       default: true
     },
-    // 对应了实际传入的表单record对象
+    // 表单数据
     defaultValue: {
       type: Object,
       default: () => ({})
@@ -97,18 +99,41 @@ export default {
     buildBlocks
   },
   computed: {
+    // 动态字典配置数据
     getDynamicData() {
       return typeof this.dynamicData === 'object' &&
         Object.keys(this.dynamicData).length
         ? this.dynamicData
         : window.$kfb_dynamicData || {}
     },
+    // 表单数据
     data() {
       return this.defaultValue
     }
   },
   methods: {
     // moment
+    /**
+     * 获取自定义函数的参数名称
+     * @returns {string[]}
+     */
+    getCustomArgsName() {
+      return ['data', 'formConfig', 'setData', 'getData',
+        'setOptions', 'changeDict',
+        'setRules', 'openRequired', 'closeRequired',
+        'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newDefaultData', 'formMeta']
+    },
+    /**
+     * 获取自定义函数的参数对象
+     * @param formData
+     * @returns {(default.computed.defaultValue|*|(function(*): Promise<unknown>)|(function(*, boolean=): Promise<unknown>)|default.methods.setOptions)[]}
+     */
+    getCustomArgsObj(formData = {}) {
+      return [this.data, this.value.config, this.setData, this.getData,
+        this.setOptions, this.changeDict,
+        this.setRules, this.openRequired, this.closeRequired,
+        this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newDefaultData, this.value]
+    },
     /**
      * JS增强-为表单Form注册自定义函数
      */
@@ -154,14 +179,8 @@ export default {
         return createAsyncJsEnhanceFunction(
           this,
           afterSubmit,
-          ['data', 'formConfig', 'setData', 'getData',
-            'setOptions', 'changeDict',
-            'setRules', 'openRequired', 'closeRequired',
-            'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newDefaultData', 'formMeta'],
-          [this.data, config, this.setData, this.getData,
-            this.setOptions, this.changeDict,
-            this.setRules, this.openRequired, this.closeRequired,
-            this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newDefaultData, this.value])
+          this.getCustomArgsName(),
+          this.getCustomArgsObj(formData))
         .call()
       }
     },
@@ -179,14 +198,8 @@ export default {
         return createAsyncJsEnhanceFunction(
           this,
           beforeSubmit,
-          ['data', 'formConfig', 'setData', 'getData',
-            'setOptions', 'changeDict',
-            'setRules', 'openRequired', 'closeRequired',
-            'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData', 'formMeta'],
-          [this.data, config, this.setData, this.getData,
-            this.setOptions, this.changeDict,
-            this.setRules, this.openRequired, this.closeRequired,
-            this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData, this.value])
+          this.getCustomArgsName(),
+          this.getCustomArgsObj())
         .call()
       }
     },
@@ -202,16 +215,10 @@ export default {
       const { handleMounted } = config
       if (handleMounted) {
         return createAsyncJsEnhanceFunction(
-            this,
-            handleMounted,
-            ['data', 'formConfig', 'setData', 'getData',
-              'setOptions', 'changeDict',
-              'setRules', 'openRequired', 'closeRequired',
-              'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData', 'formMeta'],
-            [this.data, config, this.setData, this.getData,
-              this.setOptions, this.changeDict,
-              this.setRules, this.openRequired, this.closeRequired,
-              this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData, this.value])
+          this,
+          handleMounted,
+          this.getCustomArgsName(),
+          this.getCustomArgsObj())
         .call()
       }
     },
@@ -221,22 +228,16 @@ export default {
     handleSetData() {
       const { config } = this.value
       if (!config) {
-        console.log('KFormBuild::handleSetData', 'config is undefined', this.config, this.dynamicData, this.value)
+        console.log('KFormBuild::handleSetData', 'config is undefined', this.defaultValue, this.value)
         return
       }
       const { handleSetData } = config
       if (handleSetData) {
         return createAsyncJsEnhanceFunction(
-            this,
-            handleSetData,
-            ['data', 'formConfig', 'setData', 'getData',
-              'setOptions', 'changeDict',
-              'setRules', 'openRequired', 'closeRequired',
-              'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData', 'formMeta'],
-            [this.data, config, this.setData, this.getData,
-              this.setOptions, this.changeDict,
-              this.setRules, this.openRequired, this.closeRequired,
-              this.hide, this.show, this.disable, this.enable, this.reset, this.newDefaultData, this.value])
+          this,
+          handleSetData,
+          this.getCustomArgsName(),
+          this.getCustomArgsObj())
         .call()
       }
     },

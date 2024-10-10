@@ -143,21 +143,26 @@
  * date 2019-11-20
  */
 import KFormItem from '../KFormItem/index'
+
 export default {
   name: 'BuildBlocks',
   props: {
+    // 各个表单组件配置项
     record: {
       type: Object,
       required: true
     },
+    // form-item 宽度配置
     formConfig: {
       type: Object,
       required: true
     },
+    // 传递给表单组件的config项，目前没啥用
     config: {
       type: Object,
       default: () => ({})
     },
+    // 动态字典配置数据
     dynamicData: {
       type: Object,
       required: true
