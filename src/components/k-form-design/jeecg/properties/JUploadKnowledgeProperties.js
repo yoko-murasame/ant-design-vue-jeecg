@@ -86,7 +86,7 @@ export default {
         <a-form-item label={'文件数量限制'} help="">
           <InputNumber min={1} vModel={options.number} placeholder={'文件数量限制，最小为1'}/>
         </a-form-item>
-        <a-form-item label={'文件后缀名限制，如：.jpg,pdf'} help="">
+        <a-form-item label={'文件后缀限制: .jpg,.pdf; 或MIME类型: image/*,video/*,audio/*'} help="">
           <Input vModel={options.acceptType} placeholder={'文件后缀名限制'}/>
         </a-form-item>
         <a-form-item label={'是否返回Url'} help="">
