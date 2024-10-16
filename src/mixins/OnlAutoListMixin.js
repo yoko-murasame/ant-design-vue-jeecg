@@ -81,7 +81,7 @@ export const HrefJump = {
         column.customRender = (text) => {
           if (text && text.length > showLength) {
             // return text.substr(0, showLength)+''
-            return <span title={text}>{text.substr(0, showLength)}...</span>
+            return <a-tooltip><div slot={'title'} domProps={{ innerHTML: text }}></div><span title={text}>{text.substr(0, showLength)}...</span></a-tooltip>
           } else {
             return text;
           }
