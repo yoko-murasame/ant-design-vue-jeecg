@@ -16,6 +16,8 @@ ENV APP_1_PATH /var/www/html/
 ENV APP_2_PATH /var/www/custom/
 # SSL目录
 ENV SSL_PATH /var/ssl/
+# 自定义的Nginx location块配置
+ENV NGINX_LOCATION_CONF_PATH /var/conf/location
 
 # 接口上下文路径
 ENV API_CONTEXT_PATH jeecg-boot
@@ -31,11 +33,13 @@ ENV SUPERMAP_CONTEXT_PATH iserver
 ENV SUPERMAP_PROXY_PASS http://127.0.0.1:8090/iserver/
 
 # html为默认的dist输出应用入口；custom为外部映射目录
-RUN mkdir -p $APP_1_PATH $APP_2_PATH $SSL_PATH
+RUN mkdir -p $APP_1_PATH $APP_2_PATH $SSL_PATH $NGINX_LOCATION_CONF_PATH
 # 可选，不挂载目录时，直接打包进容器
 #ADD dist/ $APP_1_PATH
 #ADD dist2/ $APP_2_PATH
 #ADD ssl/ $SSL_PATH
+# 添加自定义location配置块
+ADD *.conf $NGINX_LOCATION_CONF_PATH/
 
 # 端口放行
 EXPOSE $APP_1_PORT
@@ -44,6 +48,7 @@ EXPOSE $APP_2_PORT
 VOLUME $APP_1_PATH
 VOLUME $APP_2_PATH
 VOLUME $SSL_PATH
+VOLUME $NGINX_LOCATION_CONF_PATH
 
 CMD echo \
       "server {  \
@@ -97,6 +102,8 @@ CMD echo \
           if (\$method = 'OPTIONS') { \
               return 204; \
           } \
+          # 引入自定义的location块配置 \
+          include $NGINX_LOCATION_CONF_PATH/*.conf; \
           # 超图代理 \
           location ^~ /$SUPERMAP_CONTEXT_PATH/ { \
               proxy_pass              $SUPERMAP_PROXY_PASS; \
@@ -134,14 +141,6 @@ CMD echo \
               index  index.html index.htm; \
               try_files \$uri \$uri/ \index.html; \
           } \
-          # 假设部署目录中有onemap的子应用，登录页重定向到子应用onemap的页面 \
-          # location = /sso/login { \
-          #     rewrite ^/sso/login\$ /onemap/ permanent; \
-          # } \
-          # 假设部署目录中有onemap的子应用，重定向根路径到子应用 \
-          # location = / { \
-          #     return 301 /onemap/; \
-          # } \
           # 再匹配子应用，解决Router(mode: 'history')模式下，刷新路由地址不能找到页面的问题 \
           location ~* ^/(.+?)(/.*)?\$ { \
               root   $APP_1_PATH; \
@@ -205,6 +204,8 @@ CMD echo \
           if (\$method = 'OPTIONS') { \
               return 204; \
           } \
+          # 引入自定义的location块配置 \
+          include $NGINX_LOCATION_CONF_PATH/*.conf; \
           # 超图代理 \
           location ^~ /$SUPERMAP_CONTEXT_PATH/ { \
               proxy_pass              $SUPERMAP_PROXY_PASS; \
@@ -242,14 +243,6 @@ CMD echo \
               index  index.html index.htm; \
               try_files \$uri \$uri/ \index.html; \
           } \
-          # 假设部署目录中有onemap的子应用，登录页重定向到子应用onemap的页面 \
-          # location = /sso/login { \
-          #     rewrite ^/sso/login\$ /onemap/ permanent; \
-          # } \
-          # 假设部署目录中有onemap的子应用，重定向根路径到子应用 \
-          # location = / { \
-          #     return 301 /onemap/; \
-          # } \
           # 再匹配子应用，解决Router(mode: 'history')模式下，刷新路由地址不能找到页面的问题 \
           location ~* ^/(.+?)(/.*)?\$ { \
               root   $APP_2_PATH; \
