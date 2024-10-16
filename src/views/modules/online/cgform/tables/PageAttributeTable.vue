@@ -7,7 +7,14 @@
     :dataSource="dataSource"
     :rowNumber="true"
     :maxHeight="-1"
-    :disabledRows="{ dbFieldName:'id'}"/>
+    :disabledRows="{ dbFieldName:'id'}">
+    <template v-slot:fieldExtendJson="props">
+      <!--<a-button @click="onCLick(props)">test</a-button>-->
+      <a-tooltip :title="props.column.placeholder">
+        <a-input :value="props.value" @input="e => onSetValue(props.rowId, {'fieldExtendJson': e.target.value})"></a-input>
+      </a-tooltip>
+    </template>
+  </j-editable-table>
 
 </template>
 
@@ -213,7 +220,9 @@ const commonPageOptions = [
             key: 'fieldExtendJson',
             // width: '15%',
             width: '160px',
-            type: FormTypes.input,
+            type: FormTypes.slot,
+            slotName: 'fieldExtendJson',
+            placeholder: `{"orderRule": "asc|desc", "showLength": "10"}\n详见:https://www.kancloud.cn/zhangdaiscott/jeecg-boot/2044137`,
             defaultValue: ''
           },
           {
@@ -244,6 +253,18 @@ const commonPageOptions = [
       }
     },
     methods: {
+
+      onSetValue(rowKey, values) {
+        console.log(rowKey, values)
+        this.$refs.editableTable.setValues([{
+          rowKey: rowKey,
+          values: values
+        }])
+      },
+
+      onCLick(props, record) {
+        console.log(props, record)
+      },
 
       /** 同步列表 */
       async syncTable(table1) {

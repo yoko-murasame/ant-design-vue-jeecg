@@ -441,6 +441,8 @@ import { onlUtil } from '@/mixins/OnlineCommonUtil'
 import { mixinDevice } from '@/utils/mixin'
 import { filterObj } from '@/utils/util'
 import AutoDesformDataFullScreen from '@/views/modules/online/desform/auto/modules/AutoDesformDataFullScreen'
+// 动态template
+import DynamicTemplate from '@comp/yoko/DynamicTemplate.vue'
 import { createAsyncJsEnhanceFunction, createVue2Watcher } from '@comp/yoko/kform/CustomMethods'
 // 流程处理接入
 import BindBpm from '@views/modules/bpm/mytask/BindBpm'
@@ -448,14 +450,18 @@ import BindBpm from '@views/modules/bpm/mytask/BindBpm'
 import BindBpmOnlineMixin from '@views/modules/bpm/mytask/BindBpmOnlineMixin'
 import BindBpmShowMyTask from '@views/modules/bpm/mytask/BindBpmShowMyTask'
 import TaskModule from '@views/modules/bpm/task/form/TaskModule'
+// 按钮数组
+import {
+  fixedButton,
+  getDefaultButtonAlias,
+  getDefaultButtonSwitch,
+} from '@views/modules/online/cgform/auth/manager/AuthButtonConfig'
 // eslint-disable-next-line camelcase
 import lodash_object, { debounce } from 'lodash'
+// 放入日期处理库
+import moment from 'moment'
 import Vue from 'vue'
 import OnlCgformAutoModal from './OnlCgformAutoModal'
-// 动态template
-import DynamicTemplate from '@comp/yoko/DynamicTemplate.vue'
-// 按钮数组
-import { fixedButton, getDefaultButtonSwitch, getDefaultButtonAlias } from '@views/modules/online/cgform/auth/manager/AuthButtonConfig'
 
 export default {
     name: 'OnlCgFormAutoList',
@@ -776,7 +782,8 @@ export default {
           cgButtonLinkList: this.cgButtonLinkList,
           openAnyForm: this.openAnyForm,
           loadData: this.loadData,
-          searchReset: this.searchReset
+          searchReset: this.searchReset,
+          moment: this.moment
         }
       },
       realTaskModule() {
@@ -868,6 +875,7 @@ export default {
       }
     },
     methods: {
+      moment,
       // TODO 放入后端配置JS增强，可自定义实现流转前保存事件
       async preSaveForm(flag, buttonName) {
         // TODO 流程按钮提交前会触发，表单自己实现相应的保存事件
