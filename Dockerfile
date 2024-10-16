@@ -12,10 +12,10 @@ ENV APP_PROTOCOL https
 ENV APP_1_PORT 80
 ENV APP_2_PORT 8888
 # APP目录
-ENV APP_1_PATH /var/www/html/
-ENV APP_2_PATH /var/www/custom/
+ENV APP_1_PATH /var/www/html
+ENV APP_2_PATH /var/www/custom
 # SSL目录
-ENV SSL_PATH /var/ssl/
+ENV SSL_PATH /var/ssl
 # 自定义的Nginx location块配置
 ENV NGINX_LOCATION_CONF_PATH /var/conf/location
 
