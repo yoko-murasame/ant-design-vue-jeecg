@@ -27,11 +27,6 @@ ENV API_PROXY_PASS http://127.0.0.1:8080/jeecg-boot/
 ENV API_GATEWAY_PROXY_PATH_APP_1 $APP_PROTOCOL://$APP_HOST_NAME:$APP_1_PORT/$API_CONTEXT_PATH/
 ENV API_GATEWAY_PROXY_PATH_APP_2 $APP_PROTOCOL://$APP_HOST_NAME:$APP_2_PORT/$API_CONTEXT_PATH/
 
-# 超图服务-上下文路径
-ENV SUPERMAP_CONTEXT_PATH iserver
-# 超图服务-接口代理地址
-ENV SUPERMAP_PROXY_PASS http://127.0.0.1:8090/iserver/
-
 # html为默认的dist输出应用入口；custom为外部映射目录
 RUN mkdir -p $APP_1_PATH $APP_2_PATH $SSL_PATH $NGINX_LOCATION_CONF_PATH
 # 可选，不挂载目录时，直接打包进容器
@@ -82,6 +77,7 @@ CMD echo \
           gzip_types text/plain text/xml text/css; \
           gzip_vary on; \
           gzip_disable \"MSIE [1-6]\\.(?!.*SV1)\"; \
+          client_max_body_size 1000m; \
           # add_header Access-Control-Allow-Origin *; \
           # add_header Access-Control-Allow-Headers X-Requested-With; \
           # add_header Access-Control-Allow-Methods GET,PUT,POST,DELETE,OPTIONS; \
@@ -104,17 +100,6 @@ CMD echo \
           } \
           # 引入自定义的location块配置 \
           include $NGINX_LOCATION_CONF_PATH/*.conf; \
-          # 超图代理 \
-          location ^~ /$SUPERMAP_CONTEXT_PATH/ { \
-              proxy_pass              $SUPERMAP_PROXY_PASS; \
-              # 有时候别人的网关会有Refer、Origin的校验，可以在这里去伪装 \
-              proxy_hide_header         Referer; \
-              proxy_set_header          Origin $SUPERMAP_PROXY_PASS; \
-              # Host头也经常会影响到代理 \
-              # proxy_set_header        Host \$host; \
-              proxy_set_header        X-Real-IP \$remote_addr; \
-              proxy_set_header        X-Forwarded-For \$proxy_add_x_forwarded_for; \
-          } \
           # 后端接口 \
           location ^~ /$API_CONTEXT_PATH/ { \
               proxy_pass              $API_PROXY_PASS; \
@@ -184,6 +169,7 @@ CMD echo \
           gzip_types text/plain text/xml text/css; \
           gzip_vary on; \
           gzip_disable \"MSIE [1-6]\\.(?!.*SV1)\"; \
+          client_max_body_size 1000m; \
           # add_header Access-Control-Allow-Origin *; \
           # add_header Access-Control-Allow-Headers X-Requested-With; \
           # add_header Access-Control-Allow-Methods GET,PUT,POST,DELETE,OPTIONS; \
@@ -206,17 +192,6 @@ CMD echo \
           } \
           # 引入自定义的location块配置 \
           include $NGINX_LOCATION_CONF_PATH/*.conf; \
-          # 超图代理 \
-          location ^~ /$SUPERMAP_CONTEXT_PATH/ { \
-              proxy_pass              $SUPERMAP_PROXY_PASS; \
-              # 有时候别人的网关会有Refer、Origin的校验，可以在这里去伪装 \
-              proxy_hide_header         Referer; \
-              proxy_set_header          Origin $SUPERMAP_PROXY_PASS; \
-              # Host头也经常会影响到代理 \
-              # proxy_set_header        Host \$host; \
-              proxy_set_header        X-Real-IP \$remote_addr; \
-              proxy_set_header        X-Forwarded-For \$proxy_add_x_forwarded_for; \
-          } \
           # 后端接口 \
           location ^~ /$API_CONTEXT_PATH/ { \
               proxy_pass              $API_PROXY_PASS; \
