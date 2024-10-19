@@ -432,7 +432,15 @@
 <script>
 
 import '@/assets/less/TableExpand.less'
-import { deleteAction, downFile, getAction, getFileAccessHttpUrl, postAction } from '@/api/manage'
+import {
+  deleteAction,
+  downFile,
+  getAction,
+  getFileAccessHttpUrl,
+  httpAction,
+  postAction,
+  putAction
+} from '@/api/manage'
 // import ProcessInstPicModal from '@/components/bpm/ProcessInstPicModal'
 import ButtonExpHandler from '@/components/online/autoform/model/ButtonExpHandler'
 import OnlineQueryFormItem from '@/components/online/autoform/OnlineQueryFormItem.vue'
@@ -780,7 +788,12 @@ export default {
           bpmStatusFieldName: this.bpmStatusFieldName,
           hasBpmStatus: this.hasBpmStatus,
           cgButtonLinkList: this.cgButtonLinkList,
+          getFullFormData: this.getFullFormData,
           openAnyForm: this.openAnyForm,
+          sendTemplateAnnouncement: this.sendTemplateAnnouncement,
+          setQueryOptions: this.setQueryOptions,
+          setQueryDict: this.setQueryDict,
+          getQueryItem: this.getQueryItem,
           loadData: this.loadData,
           searchReset: this.searchReset,
           moment: this.moment
@@ -1675,7 +1688,30 @@ export default {
         if (this.settingColumns && this.settingColumns.length > 0) {
           Vue.ls.set(this.localCode, this.settingColumns.join(','))
         }
-      }
+      },
+      // 动态变更搜索组件配置项
+      setQueryOptions(fields = [], options = {}) {
+        for (let item of this.queryInfo) {
+          if (fields.includes(item.field)) {
+            Object.keys(options).forEach(key => {
+              this.$set(item, key, options[key])
+            })
+          }
+        }
+      },
+      // 动态变更搜索组件字典配置项
+      setQueryDict(fields = [], dict = '') {
+        dict && this.setQueryOptions(fields, { dictCode: dict })
+      },
+      // 获取搜索组件项
+      getQueryItem(fields = []) {
+        return this.queryInfo.filter(item => fields.includes(item.field)) || []
+      },
+      getAction,
+      postAction,
+      putAction,
+      deleteAction,
+      httpAction
     }
   }
 </script>

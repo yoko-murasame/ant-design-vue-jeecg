@@ -97,6 +97,14 @@ async methodB (row, keys, rows) {
   * formData 模板参数
   * THIRD_APP_TYPE 第三方消息推送类型，可选值： DINGTALK、WECHAT_ENTERPRISE、ALL，不传都不推送
   * msgAbstract 消息摘要，可选
+* `setQueryOptions`：设置当前搜索组件配置项，参数为：
+  * fields 字段名数组
+  * options 配置对象
+* `setQueryDict`：设置当前搜索组件字典配置，参数为：
+  * fields 字段名数组
+  * dict 新的字典字符串
+* `getQueryItem`：获取搜索组件项，参数为：
+  * fields 字段名数组
 
 
 # 使用示例一：一对一关联表单填写
