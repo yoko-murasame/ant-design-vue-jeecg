@@ -165,6 +165,8 @@
         var that = this;
         var params = { taskId: record.id };// 查询条件
         this.$confirm({
+          okText: '确定',
+          cancelText: '取消',
           title: '确认签收吗',
           content: '是否签收该任务?',
           onOk: function() {
