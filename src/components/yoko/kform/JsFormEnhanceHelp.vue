@@ -4,7 +4,13 @@
     <a-modal v-model="visible" :title="title" @ok="handleOk" @cancel="handleCancel" width="50vw" >
       <div style="height: 70vh;">
         <!--<iframe :src="iframeSrc" frameborder="0" width="100%" height="100%"></iframe>-->
-        <j-markdown-editor v-model="markdownValue" :options="options" height="70vh" ref="markdownRef" :mode="'wysiwyg'" :show-pic="false"></j-markdown-editor>
+        <j-markdown-editor
+          v-model="markdownValue"
+          :options="options"
+          height="70vh"
+          ref="markdownRef"
+          :mode="'wysiwyg'"
+          :show-pic="false"></j-markdown-editor>
       </div>
     </a-modal>
   </div>
@@ -58,11 +64,11 @@ export default {
         ]
       },
       iframeSrc: '' // 用于加载HTML页面的URL
-    };
+    }
   },
   methods: {
     showModal() {
-      this.visible = true;
+      this.visible = true
       // this.iframeSrc = require('/表单设计器JS增强说明.html'); // 根据实际的HTML文件名修改路径
       // this.iframeSrc = '/表单设计器JS增强说明.html'
       axios.get(this.url).then(res => {
@@ -70,11 +76,11 @@ export default {
       })
     },
     handleOk() {
-      this.visible = false;
+      this.visible = false
     },
     handleCancel() {
-      this.visible = false;
+      this.visible = false
     }
   }
-};
+}
 </script>

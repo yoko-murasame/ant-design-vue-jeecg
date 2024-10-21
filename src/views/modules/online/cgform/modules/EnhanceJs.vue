@@ -46,7 +46,7 @@
     </template>
 
     <enhance-history ref="historyModal"></enhance-history>
-    <js-form-enhance-help ref="jsHelp" title="Online列表JS增强说明" url="/static/online列表JS增强说明.md"></js-form-enhance-help>
+    <js-form-enhance-help ref="jsHelp" title="Online列表JS增强说明" :url="helpUrl"></js-form-enhance-help>
   </a-modal>
 </template>
 
@@ -82,7 +82,8 @@
         validError: false,
         showHistory: false,
         codeChange: false,
-        tableName: ''
+        tableName: '',
+        helpUrl: (process.env.BASE_URL || '/') + 'static/online列表JS增强说明.md'
       }
     },
     methods: {
