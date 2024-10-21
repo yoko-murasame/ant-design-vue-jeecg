@@ -41,9 +41,35 @@ async methodB(row, keys, rows) {
 methodC(row, keys, rows) {
   console.log('methodC')
   return Promise.resolve(row)
-}
+},
 ```
 
+**几个可能用到的事件钩子**
+
+
+| 事件方法     | 功能描述                                      |
+| :----------- |:------------------------------------------|
+| beforeAdd    | 在新增之前调用,后续扩展after方法                       |
+| beforeEdit   | 在编辑之前调用,该方法可以携带一个参数row，表示当前记录，后续扩展after方法 |
+| beforeDelete | 在删除之前调用,该方法可以携带一个参数row，表示当前记录,后续扩展after方法 |
+| created      | 在对应页面vue钩子函数created中调用（实际在mounted后）       |
+
+```shell
+# 具体可定位这个源码类
+org.jeecg.modules.online.cgform.util.EnhanceJsUtil#enhanceJsButtonCode
+"beforeSubmit,beforeAdd,beforeEdit,afterAdd,afterEdit,beforeDelete,afterDelete,mounted,created,show,loaded";
+```
+
+JS增强的代码示例：（改造后均支持await、async）
+
+```js
+async created() {
+  // doSomething
+},
+async beforeAdd(row, keys, rows) {
+  // doSomething
+}
+```
 
 
 **默认属性**

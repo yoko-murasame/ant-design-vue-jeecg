@@ -1273,12 +1273,12 @@ export default {
         }
         this.loadData()
       },
-      handleAdd() {
+      async handleAdd() {
         console.log('code', this.isDesForm, this.code, this.desFormCode, this.formTemplate)
         if (this.isDesForm === 'Y') {
           this.$refs.desformModal.open('add', this.desFormCode, null, '新增数据', false, this.code)
         } else {
-          this.cgButtonJsHandler('beforeAdd')
+          await this.cgButtonJsHandler('beforeAdd')
           this.$refs.modal.add(this.formTemplate)
         }
       },
@@ -1327,12 +1327,12 @@ export default {
           }
         })
       },
-      handleEdit(record) {
+      async handleEdit(record) {
         console.log('handleEdit', record)
         if (this.isDesForm === 'Y') {
           this.$refs.desformModal.open('edit', this.desFormCode, record.id, '编辑数据', true, this.code)
         } else {
-          this.cgButtonLinkHandler(record, 'beforeEdit', 'js')
+          await this.cgButtonLinkHandler(record, 'beforeEdit', 'js')
           this.$refs.modal.edit(this.formTemplate, record.id)
         }
       },
@@ -1347,8 +1347,8 @@ export default {
           this.$refs.modal.detail(this.formTemplate, record.id)
         }
       },
-      handleDeleteOne(record) {
-        this.cgButtonLinkHandler(record, 'beforeDelete', 'js')
+      async handleDeleteOne(record) {
+        await this.cgButtonLinkHandler(record, 'beforeDelete', 'js')
         this.handleDelete(record.id)
       },
       handleDelete(id) {
@@ -1612,13 +1612,13 @@ export default {
           }
         })
       },
-      cgButtonLinkHandler(record, buttonCode, optType) {
+      async cgButtonLinkHandler(record, buttonCode, optType) {
         if (optType === 'js' || optType === 'js-confirm') {
           if (this.EnhanceJS[buttonCode]) {
             // this.EnhanceJS[buttonCode](this, record)
             const keys = this.table.selectedRowKeys
             const rows = this.table.selectionRows
-            this.EnhanceJS[buttonCode].bind(this)(record, keys, rows)
+            await this.EnhanceJS[buttonCode].bind(this)(record, keys, rows)
           }
         } else if (optType === 'action') {
           let params = {
