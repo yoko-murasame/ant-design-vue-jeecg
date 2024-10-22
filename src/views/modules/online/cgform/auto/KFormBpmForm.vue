@@ -15,7 +15,7 @@
     <!--嵌入流程审批组件-->
     <component
       :is="realTaskModule"
-      v-if="formBpm && ready && onlineFormConfig.showDealBlock"
+      v-if="formBpm && ready && onlineFormConfig.showDealBlock && !isCcOrHis"
       :show-steps="false"
       :form-vm="$refs.realForm ? $refs.realForm : null"
       :save-form="(throwEx, buttonName, showError) => saveAllData(true, buttonName, true)"
@@ -52,7 +52,7 @@ export default {
   computed: {
     // kForm表单的展示形式
     mode() {
-      return (this.formData && this.formData.disabled) ? 'detail' : 'edit'
+      return (this.formData && this.formData.disabled) ? 'detail' : (this.isCcOrHis ? 'detail' : 'edit')
     },
     realTaskModule() {
       console.log('加载动态审批组件', this.formData.customTaskModule)
@@ -60,6 +60,10 @@ export default {
         return () => import(`@/views/${this.formData.customTaskModule}.vue`)
       }
       return 'TaskModule'
+    },
+    // 是否抄送或历史任务
+    isCcOrHis() {
+      return this.formData && this.formData.ccOrHis
     }
   },
   data() {

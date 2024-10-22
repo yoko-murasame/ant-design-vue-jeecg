@@ -56,8 +56,8 @@
   import TaskModule from './form/TaskModule'
   import ProcessModule from './form/ProcessModule'
   import { getAction } from '@/api/manage'
-  import DynamicLink from './form/DynamicLink.vue';
-  import HisTaskModule from './form/HisTaskModule.vue';
+  import DynamicLink from './form/DynamicLink.vue'
+  import HisTaskModule from './form/HisTaskModule.vue'
   import { isURL } from '@/utils/validate'
 
   export default {
@@ -71,17 +71,19 @@
     props: ['path', 'formData'],
     computed: {
       isComp: function () {
-        console.log('isComp组件名称：', this.path);
-        var TOKEN = Vue.ls.get(ACCESS_TOKEN);
-        var DOMAIN_URL = window._CONFIG['domianURL'];
-        var TASKID = this.formData.taskDefKey;
+        console.log('isComp组件名称：', this.path)
+        var TOKEN = Vue.ls.get(ACCESS_TOKEN)
+        var DOMAIN_URL = window._CONFIG['domianURL']
+        var TASKID = this.formData.taskDefKey
+        // eslint-disable-next-line no-eval
         var URL = (this.path || '').replace(/{{([^}}]+)?}}/g, (s1, s2) => eval(s2)) // URL支持{{ window.xxx }}占位符变量
-        console.log('isComp组件名称：', URL);
+        console.log('isComp组件名称：', URL)
         if (isURL(URL)) {
-          this.iframeUrl = URL;
-          return false;
+          // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+          this.iframeUrl = URL
+          return false
         }
-        return true;
+        return true
       }
     },
     data() {
@@ -104,7 +106,7 @@
         this.visible = false
       },
       deal(record) {
-        this.visible = true;
+        this.visible = true
       }
 
     }
@@ -113,6 +115,11 @@
 </script>
 
 <style lang="less" scoped>
+//样式微调
+/deep/ .ant-tabs .ant-tabs-left-content {
+  padding: 0 24px !important;
+}
+
   .component_div{
     margin-top: 5px;
     margin-bottom: 5px;

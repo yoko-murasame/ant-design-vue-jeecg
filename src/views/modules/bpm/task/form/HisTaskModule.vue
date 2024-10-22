@@ -47,7 +47,7 @@
         </a-steps>
       </a-card>
       <!-- 意见 -->
-      <a-card title="意见信息——his" :bodyStyle="{padding:'0 20px'}" size="default" style="margin-top:20px">
+      <a-card title="意见信息——历史记录" :bodyStyle="{padding:'0 20px'}" size="default" style="margin-top:20px">
         <a-list itemLayout="vertical">
           <template v-for="(item,index) in resultObj.bpmLogList">
             <a-list-item >

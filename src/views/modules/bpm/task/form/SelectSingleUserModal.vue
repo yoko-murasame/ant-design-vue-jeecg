@@ -130,7 +130,7 @@
         // 表头
         columns1: [
           {
-            title: '#',
+            title: '序号',
             dataIndex: '',
             key: 'rowIndex',
             width: '10%',
