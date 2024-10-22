@@ -22,7 +22,8 @@ ENV NGINX_LOCATION_CONF_PATH /var/conf/location
 # 接口上下文路径
 ENV API_CONTEXT_PATH jeecg-boot
 # 接口代理地址（注意末尾的/）
-ENV API_PROXY_PASS http://127.0.0.1:8080/jeecg-boot/
+ENV API_PROXY_PASS_APP_1 http://127.0.0.1:8080/jeecg-boot/
+ENV API_PROXY_PASS_APP_2 http://127.0.0.1:8081/jeecg-boot/
 # 网关代理后的路径（会影响流程设计器等jsp页面）
 ENV API_GATEWAY_PROXY_PATH_APP_1 $APP_PROTOCOL://$APP_HOST_NAME:$APP_1_PORT/$API_CONTEXT_PATH/
 ENV API_GATEWAY_PROXY_PATH_APP_2 $APP_PROTOCOL://$APP_HOST_NAME:$APP_2_PORT/$API_CONTEXT_PATH/
@@ -102,7 +103,7 @@ CMD echo \
           include $NGINX_LOCATION_CONF_PATH/*.conf; \
           # 后端接口 \
           location ^~ /$API_CONTEXT_PATH/ { \
-              proxy_pass              $API_PROXY_PASS; \
+              proxy_pass              $API_PROXY_PASS_APP_1; \
               proxy_set_header        Host $APP_HOST_NAME:$APP_1_PORT; \
               proxy_set_header        API-GATEWAY-PROXY-PATH $API_GATEWAY_PROXY_PATH_APP_1; \
               proxy_set_header        X-Real-IP \$remote_addr; \
@@ -194,7 +195,7 @@ CMD echo \
           include $NGINX_LOCATION_CONF_PATH/*.conf; \
           # 后端接口 \
           location ^~ /$API_CONTEXT_PATH/ { \
-              proxy_pass              $API_PROXY_PASS; \
+              proxy_pass              $API_PROXY_PASS_APP_2; \
               proxy_set_header        Host $APP_HOST_NAME:$APP_2_PORT; \
               proxy_set_header        API-GATEWAY-PROXY-PATH $API_GATEWAY_PROXY_PATH_APP_2; \
               proxy_set_header        X-Real-IP \$remote_addr; \
