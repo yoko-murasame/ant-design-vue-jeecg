@@ -18,3 +18,4 @@ dist*
 /yarn-error.log
 /.fastRequest/
 *.local
+*_temp
