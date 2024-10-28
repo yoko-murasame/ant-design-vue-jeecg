@@ -6,7 +6,7 @@ ENV LANG en_US.UTF-8
 # 主机名orIP(一般写服务器对外域名orIP)
 ENV APP_HOST_NAME www.abc.com
 # 访问协议：http / https
-ENV APP_PROTOCOL https
+ENV APP_PROTOCOL http
 
 # APP端口(1pc端,2移动端)
 ENV APP_1_PORT 80
@@ -16,8 +16,12 @@ ENV APP_1_PATH /var/www/html
 ENV APP_2_PATH /var/www/custom
 # SSL目录
 ENV SSL_PATH /var/ssl
+# 自定义的Nginx块配置路径
+ENV NGINX_CONF_PATH /var/conf
 # 自定义的Nginx location块配置
-ENV NGINX_LOCATION_CONF_PATH /var/conf/location
+ENV NGINX_LOCATION_CONF_PATH $NGINX_CONF_PATH/location
+# 自定义的Nginx server块配置
+ENV NGINX_SERVER_CONF_PATH $NGINX_CONF_PATH/server
 
 # 接口上下文路径
 ENV API_CONTEXT_PATH jeecg-boot
@@ -29,13 +33,15 @@ ENV API_GATEWAY_PROXY_PATH_APP_1 $APP_PROTOCOL://$APP_HOST_NAME:$APP_1_PORT/$API
 ENV API_GATEWAY_PROXY_PATH_APP_2 $APP_PROTOCOL://$APP_HOST_NAME:$APP_2_PORT/$API_CONTEXT_PATH/
 
 # html为默认的dist输出应用入口；custom为外部映射目录
-RUN mkdir -p $APP_1_PATH $APP_2_PATH $SSL_PATH $NGINX_LOCATION_CONF_PATH
+RUN mkdir -p $APP_1_PATH $APP_2_PATH $SSL_PATH $NGINX_LOCATION_CONF_PATH $NGINX_SERVER_CONF_PATH
 # 可选，不挂载目录时，直接打包进容器
 #ADD dist/ $APP_1_PATH
 #ADD dist2/ $APP_2_PATH
 #ADD ssl/ $SSL_PATH
-# 添加自定义location配置块
-ADD *.conf $NGINX_LOCATION_CONF_PATH/
+# 自定义的Nginx块配置文件
+ADD nginx/ $NGINX_CONF_PATH/
+# 加载自定义NginxServer块
+RUN sed -i "/include \/etc\/nginx\/conf.d\/\*.conf;/a include $NGINX_SERVER_CONF_PATH/*.conf;" /etc/nginx/nginx.conf
 
 # 端口放行
 EXPOSE $APP_1_PORT
@@ -45,6 +51,7 @@ VOLUME $APP_1_PATH
 VOLUME $APP_2_PATH
 VOLUME $SSL_PATH
 VOLUME $NGINX_LOCATION_CONF_PATH
+VOLUME $NGINX_SERVER_CONF_PATH
 
 CMD echo \
       "server {  \

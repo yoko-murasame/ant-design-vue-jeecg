@@ -19,3 +19,4 @@ dist*
 /.fastRequest/
 *.local
 *_temp
+*_temp.*
