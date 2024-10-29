@@ -32,8 +32,8 @@ ENV API_PROXY_PASS_APP_2 http://127.0.0.1:8081/jeecg-boot/
 ENV API_GATEWAY_PROXY_PATH_APP_1 $APP_PROTOCOL://$APP_HOST_NAME:$APP_1_PORT/$API_CONTEXT_PATH/
 ENV API_GATEWAY_PROXY_PATH_APP_2 $APP_PROTOCOL://$APP_HOST_NAME:$APP_2_PORT/$API_CONTEXT_PATH/
 
-# html为默认的dist输出应用入口；custom为外部映射目录
-RUN mkdir -p $APP_1_PATH $APP_2_PATH $SSL_PATH $NGINX_LOCATION_CONF_PATH $NGINX_SERVER_CONF_PATH
+# html为默认的dist输出应用入口；custom为外部映射目录；目录`/etc/nginx/html`的作用是修复带变量的日志保存问题
+RUN mkdir -p $APP_1_PATH $APP_2_PATH $SSL_PATH $NGINX_LOCATION_CONF_PATH $NGINX_SERVER_CONF_PATH /etc/nginx/html
 # 打包文件-编译文件（可选）
 #ADD dist/ $APP_1_PATH
 #ADD dist2/ $APP_2_PATH
@@ -166,7 +166,7 @@ CMD echo \
               set \$index_path \$base_path/index.html; \
               try_files \$uri \$uri/ \$index_path; \
           } \
-          access_log  /var/log/nginx/access-\$host-\$logDate.log ; \
+          access_log  /var/log/nginx/access-\$host-\$server_port-\$logDate.log; \
           open_log_file_cache max=10; \
       } " > /etc/nginx/conf.d/default.conf && echo \
       "server { \
@@ -265,7 +265,7 @@ CMD echo \
               set \$index_path \$base_path/index.html; \
               try_files \$uri \$uri/ \$index_path; \
           } \
-          access_log  /var/log/nginx/access-\$host-\$logDate.log ; \
+          access_log  /var/log/nginx/access-\$host-\$server_port-\$logDate.log; \
           open_log_file_cache max=10; \
       }" \
     > /etc/nginx/conf.d/custom.conf && \
