@@ -3,12 +3,12 @@ MAINTAINER YOKO
 
 ENV LANG en_US.UTF-8
 
-# 主机名orIP(一般写服务器对外域名orIP)
+# 主机名orIP（一般写服务器对外域名orIP）
 ENV APP_HOST_NAME www.abc.com
 # 访问协议：http / https
 ENV APP_PROTOCOL http
 
-# APP端口(1pc端,2移动端)
+# APP端口（默认提供了两个端口用于区分不同环境，默认放开第一个应用的端口和目录映射）
 ENV APP_1_PORT 80
 ENV APP_2_PORT 8888
 # APP目录
@@ -34,25 +34,42 @@ ENV API_GATEWAY_PROXY_PATH_APP_2 $APP_PROTOCOL://$APP_HOST_NAME:$APP_2_PORT/$API
 
 # html为默认的dist输出应用入口；custom为外部映射目录
 RUN mkdir -p $APP_1_PATH $APP_2_PATH $SSL_PATH $NGINX_LOCATION_CONF_PATH $NGINX_SERVER_CONF_PATH
-# 可选，不挂载目录时，直接打包进容器
+# 打包文件-编译文件（可选）
 #ADD dist/ $APP_1_PATH
 #ADD dist2/ $APP_2_PATH
+# 打包文件-证书文件（可选）
 #ADD ssl/ $SSL_PATH
-# 自定义的Nginx块配置文件
+# 打包文件-自定义的Nginx配置文件
 ADD nginx/ $NGINX_CONF_PATH/
+# 以root用户身份启动，防止日志权限问题
+RUN sed -i 's/^user  nginx;/user  root;/' /etc/nginx/nginx.conf
+# 提供日志分片变量
+RUN sed -i '/include \/etc\/nginx\/conf.d\/\*.conf;/i \
+map $time_iso8601 $logDate { \
+"~^(?<ymd>\\d{4}-\\d{2}-\\d{2})" $ymd; \
+    default                       '\''default-date'\''; \
+}' /etc/nginx/nginx.conf
 # 加载自定义NginxServer块
 RUN sed -i "/include \/etc\/nginx\/conf.d\/\*.conf;/a include $NGINX_SERVER_CONF_PATH/*.conf;" /etc/nginx/nginx.conf
 
-# 端口放行
+# 端口放行-应用端口1
 EXPOSE $APP_1_PORT
+# 端口放行-应用端口2（可选）
 EXPOSE $APP_2_PORT
-# 目录挂载
+# 目录挂载-应用路径1
 VOLUME $APP_1_PATH
+# 目录挂载-应用路径2（可选）
 VOLUME $APP_2_PATH
+# 目录挂载-证书路径（可选）
 VOLUME $SSL_PATH
+# 目录挂载-自定义location块配置路径（可选）
 VOLUME $NGINX_LOCATION_CONF_PATH
+# 目录挂载-自定义server块配置路径（可选）
 VOLUME $NGINX_SERVER_CONF_PATH
+# 目录挂载-日志（可选）
+VOLUME /var/log/nginx
 
+# 启动入口
 CMD echo \
       "server {  \
           server_name $APP_HOST_NAME; \
@@ -128,6 +145,12 @@ CMD echo \
               # sub_filter cloud.sakurasep.club \$server_name; # 修改服务器返回给客户端的 HTML、CSS、JavaScript 等文件的内容 \
               # sub_filter_once off; # 只修改一次 \
           } \
+          # 忽略favicon.ico文件的错误日志 \
+          location ~* /favicon\\.ico\$ { \
+              log_not_found off; \
+              access_log off; \
+              try_files \$uri =204; \
+          } \
           # 先匹配非子应用，根目录访问 \
           location / { \
               root   $APP_1_PATH; \
@@ -143,7 +166,8 @@ CMD echo \
               set \$index_path \$base_path/index.html; \
               try_files \$uri \$uri/ \$index_path; \
           } \
-          access_log  /var/log/nginx/access-app-1.log ; \
+          access_log  /var/log/nginx/access-\$host-\$logDate.log ; \
+          open_log_file_cache max=10; \
       } " > /etc/nginx/conf.d/default.conf && echo \
       "server { \
           server_name $APP_HOST_NAME; \
@@ -220,6 +244,12 @@ CMD echo \
               # sub_filter cloud.sakurasep.club \$server_name; # 修改服务器返回给客户端的 HTML、CSS、JavaScript 等文件的内容 \
               # sub_filter_once off; # 只修改一次 \
           } \
+          # 忽略favicon.ico文件的错误日志 \
+          location ~* /favicon\\.ico\$ { \
+              log_not_found off; \
+              access_log off; \
+              try_files \$uri =204; \
+          } \
           # 先匹配非子应用，根目录访问 \
           location / { \
               root   $APP_2_PATH; \
@@ -235,7 +265,8 @@ CMD echo \
               set \$index_path \$base_path/index.html; \
               try_files \$uri \$uri/ \$index_path; \
           } \
-          access_log  /var/log/nginx/access-app-2.log ; \
+          access_log  /var/log/nginx/access-\$host-\$logDate.log ; \
+          open_log_file_cache max=10; \
       }" \
     > /etc/nginx/conf.d/custom.conf && \
     cat /etc/nginx/conf.d/default.conf && \
