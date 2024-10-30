@@ -96,7 +96,7 @@ const commonPageOptions = [
             props: { 'disabled': true }
           },
           {
-            title: '表单显示(可控制导入列)',
+            title: '表单显示(控制保存字段)',
             key: 'isShowForm',
             // width: '3%',
             width: '100px',
