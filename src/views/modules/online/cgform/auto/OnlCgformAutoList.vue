@@ -560,7 +560,8 @@ export default {
         },
         isorter: {
           column: 'id',
-          order: 'desc'
+          order: 'desc',
+          nullsOrder: 'last'
         },
         // dictOptions:{fieldName:[]}
         dictOptions: {
@@ -1104,11 +1105,14 @@ export default {
             }
 
           // 修正BUG：配置查询条件无效问题,仅取第一个设置了排序的字段
-          let sortFlieds = res.result.columns.filter(u => u.sorter)
-          if (sortFlieds.length > 0) {
+          let sortFields = res.result.columns.filter(u => u.sorter)
+          if (sortFields.length > 0) {
             this.isorter = {
-              column: sortFlieds[0]['dataIndex'],
-              order: sortFlieds[0]['sorterType'] ? sortFlieds[0]['sorterType'] : 'desc'
+              // column: sortFields[0]['dataIndex'],
+              // order:  sortFields[0]['sorterType'] || 'desc',
+              column: sortFields.map(e => e.dataIndex).join(','),
+              order: sortFields.map(e => e.sorterType || 'desc').join(','),
+              nullsOrder: 'last'
             }
           }
 
@@ -1267,6 +1271,7 @@ export default {
         if (Object.keys(sorter).length > 0) {
           this.isorter.column = sorter.field
           this.isorter.order = sorter.order === 'ascend' ? 'asc' : 'desc'
+          this.isorter.nullsOrder = 'last'
         }
         if (this.table.pagination) {
           this.table.pagination = pagination
