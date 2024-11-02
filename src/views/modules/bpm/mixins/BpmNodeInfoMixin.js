@@ -24,7 +24,7 @@ export const BpmNodeInfoMixin = {
       getAction(this.url.getProcessNodeInfo, params).then((res) => {
         if (res.success) {
           console.log('获取流程节点信息', res)
-          let data = {
+          let newFormData = {
             dataId: res.result.dataId,
             taskId: record.id,
             taskDefKey: record.taskId,
@@ -44,22 +44,22 @@ export const BpmNodeInfoMixin = {
             onlineFormConfig: res.result.onlineFormConfig,
             onlineInitQueryParamGetter: res.result.onlineInitQueryParamGetter
           }
-          this.formData = data
+          this.formData = {}
           // update--begin--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
           console.log('获取流程节点表单URL', res.result.formUrl)
 
           let tempFormUrl = res.result.formUrl
-          this.formData['disabled'] = true
+          newFormData['disabled'] = true
           // 节点配置表单URL，VUE组件类型对应的拓展参数
           if (tempFormUrl && tempFormUrl.indexOf('?') !== -1 && !isURL(tempFormUrl) && tempFormUrl.indexOf('{{DOMAIN_URL}}') === -1) {
             tempFormUrl = res.result.formUrl.split('?')[0]
             console.log('获取流程节点表单URL（去掉参数）', tempFormUrl)
             // update--begin--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
             let qv = getQueryVariable(res.result.formUrl)
-            this.formData.extendUrlParams = qv
+            newFormData.extendUrlParams = qv
             // 设置表单可编辑
             if (qv.edit === '1' || qv.edit === 'true' || qv.edit === 1) {
-              this.formData['disabled'] = false
+              newFormData['disabled'] = false
             }
             // update--end--autor:taoyan-----date:20200729------for：支持新版代码生成器，简易实现表单带button编辑效果------
           }
@@ -79,7 +79,8 @@ export const BpmNodeInfoMixin = {
 
           // update--end--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
 
-          console.log('获取流程节点信息', this.formData, this.path)
+          console.log('获取流程节点信息', newFormData, this.path)
+          this.formData = { ...newFormData }
           this.$refs.taskDealModal.deal(record)
           this.$refs.taskDealModal.title = '流程办理'
         }
@@ -90,7 +91,7 @@ export const BpmNodeInfoMixin = {
       getAction(this.url.getHisProcessNodeInfo, params).then((res) => {
         if (res.success) {
           console.log('获取流程节点信息', res)
-          var data = {
+          const newFormData = {
             dataId: res.result.dataId,
             taskId: record.id,
             taskDefKey: record.taskId,
@@ -100,7 +101,7 @@ export const BpmNodeInfoMixin = {
             formType: record.formType || res.result.formType,
             ccOrHis: res.result.ccOrHis
           }
-          this.formData = data
+          this.formData = {}
           // update--begin--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
           console.log('获取流程节点表单URL ', res.result.formUrl)
 
@@ -109,12 +110,13 @@ export const BpmNodeInfoMixin = {
           if (tempFormUrl && tempFormUrl.indexOf('?') !== -1 && !isURL(tempFormUrl) && tempFormUrl.indexOf('{{DOMAIN_URL}}') === -1) {
             tempFormUrl = res.result.formUrl.split('?')[0]
             console.log('获取流程节点表单URL（去掉参数）', tempFormUrl)
-            this.formData.extendUrlParams = getQueryVariable(res.result.formUrl)
+            newFormData.extendUrlParams = getQueryVariable(res.result.formUrl)
           }
           this.path = tempFormUrl
           // update--end--autor:scott-----date:20191005------for：流程节点配置组件URL的时候也支持传递参数了，解决TASK #3238流程节点无法与online的复制视图对接------
 
-          console.log('获取流程节点信息', this.formData, this.path)
+          console.log('获取流程节点信息', newFormData, this.path)
+          this.formData = { ...newFormData }
           this.$refs.taskDealModal.deal(record)
           this.$refs.taskDealModal.title = '流程历史'
         }

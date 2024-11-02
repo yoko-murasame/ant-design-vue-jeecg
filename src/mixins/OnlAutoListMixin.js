@@ -98,7 +98,7 @@ export const HrefJump = {
       // 如果 hrefSlotName 有值则代表使用了href跳转
       // 两者可以兼容。兼容的具体思路为：先获取到字典替换的值，再添加href链接跳转
       if (customRender || hrefSlotName) {
-        console.log('渲染字典', customRender, column)
+        // console.log('渲染字典', customRender, column)
         // 由于customRender的优先级比较高，因此如果存在自定义scopedSlots，就跳过 customRender
         if (column.scopedSlots && column.scopedSlots.customRender && (this.$slots[column.scopedSlots.customRender] || this.$scopedSlots[column.scopedSlots.customRender])) {
           delete column.customRender

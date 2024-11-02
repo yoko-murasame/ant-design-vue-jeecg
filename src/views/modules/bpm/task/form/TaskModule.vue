@@ -61,8 +61,8 @@
                     @change="handleChangeSelect">
                     <a-icon slot="suffixIcon" type="smile"/>
                     <a-select-option v-for="(item, key) in remarksDictOptions" :key="key" :value="item.value">{{
-                        item.text
-                      }}
+                      item.text
+                    }}
                     </a-select-option>
                   </a-select>
                   <!--2022.07.20-添加流程处理意见暂存功能-->
@@ -323,9 +323,9 @@ import { getFileAccessHttpUrl } from '@/api/manage'
 import { TaskModuleMixin } from '@views/modules/bpm/mixins/TaskModuleMixin'
 import AListItem from 'ant-design-vue/es/list/Item'
 import Vue from 'vue'
-import JEllipsis from '../../../../../components/jeecg/JEllipsis.vue'
-import JUpload from '../../../../../components/jeecg/JUpload'
-import SelectUserModal from './SelectUserModal'
+import JEllipsis from '@/components/jeecg/JEllipsis.vue'
+import JUpload from '@/components/jeecg/JUpload'
+import SelectUserModal from '@views/modules/bpm/task/form/SelectUserModal.vue'
 
 export default {
   mixins: [TaskModuleMixin],
@@ -366,7 +366,9 @@ export default {
         names.push(this.hqUserSelectList[a].realname)
         ids.push(this.hqUserSelectList[a].username)
       }
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.model.nextUserId = ids.join(',')
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.model.nextUserName = names.join(',')
       return names
     },
@@ -378,7 +380,9 @@ export default {
         names.push(this.ccUserSelectList[a].realname)
         ids.push(this.ccUserSelectList[a].username)
       }
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.model.ccUserIds = ids.join(',')
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.model.ccUserRealNames = names.join(',')
       return names
     }
