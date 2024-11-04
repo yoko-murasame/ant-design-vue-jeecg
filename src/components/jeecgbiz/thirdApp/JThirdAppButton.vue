@@ -99,6 +99,8 @@ export default {
       }
       return new Promise((resolve, reject) => {
         let model = this.$confirm({
+          okText: '确定',
+          cancelText: '取消',
           title: '同步',
           content,
           onOk: () => {

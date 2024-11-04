@@ -168,6 +168,8 @@ export const CityListMixin = {
         }
         var that = this
         this.$confirm({
+          okText: '确定',
+          cancelText: '取消',
           title: '确认删除',
           content: '是否删除选中数据?',
           onOk: function () {

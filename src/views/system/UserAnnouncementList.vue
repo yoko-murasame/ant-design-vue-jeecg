@@ -165,6 +165,8 @@
         that.$confirm({
           title: '确认操作',
           content: '是否全部标注已读?',
+          okText: '确定',
+          cancelText: '取消',
           onOk: function() {
             putAction(that.url.readAllMsg).then((res) => {
               if (res.success) {

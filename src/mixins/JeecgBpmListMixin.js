@@ -162,6 +162,8 @@ export const JeecgBpmListMixin = {
         }
         var that = this;
         this.$confirm({
+          okText: '确定',
+          cancelText: '取消',
           title: '确认删除',
           content: '是否删除选中数据?',
           onOk: function () {
@@ -304,6 +306,8 @@ export const JeecgBpmListMixin = {
     startProcess: function(record) {
       var that = this;
       this.$confirm({
+        okText: '确定',
+        cancelText: '取消',
         title: '提示',
         content: '确认提交流程吗?',
         onOk: function() {

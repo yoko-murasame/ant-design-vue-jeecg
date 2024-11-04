@@ -186,6 +186,8 @@
         const that = this
 
         this.$confirm({
+          okText: '确定',
+          cancelText: '取消',
           title: '提示',
           content: '真的要注销登录吗 ?',
           onOk() {

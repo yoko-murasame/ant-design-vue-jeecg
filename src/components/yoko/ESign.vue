@@ -113,6 +113,8 @@ export default {
         base64 = self.imageToBase64(image);
         // 弹个确认框出来
         self.$confirm({
+          okText: '确定',
+          cancelText: '取消',
           title: '确定要签名吗?',
           onOk() {
             self.$emit('change', base64)

@@ -213,6 +213,8 @@ export default {
         return
       }
       this.$confirm({
+        okText: '确定',
+        cancelText: '取消',
         title: '提示',
         content: '确定绘制完成了吗?',
         onOk: callbackOk,

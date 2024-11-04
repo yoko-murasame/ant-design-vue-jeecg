@@ -483,6 +483,8 @@
         let filterList = this.saveTreeData.filter(i => i.originTitle === value)
         if (filterList.length > 0) {
           this.$confirm({
+            okText: '确定',
+            cancelText: '取消',
             content: `${value} 已存在，是否覆盖？`,
             onOk: () => {
               this.prompt.visible = false
@@ -518,6 +520,8 @@
         event.stopPropagation()
 
         this.$confirm({
+          okText: '确定',
+          cancelText: '取消',
           content: '是否删除当前查询？',
           onOk: () => {
             let { eventKey } = vNode

@@ -27,6 +27,8 @@ export const MapHandler = (Map) => {
   Map.on('click', (e) => {
     if (window.IsClick) {
       Vue.prototype.$confirm({
+        okText: '确定',
+        cancelText: '取消',
         title: '提示',
         content: '确定定位在这里吗?',
         onOk () {
