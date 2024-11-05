@@ -86,7 +86,8 @@ export const getOnlineDataList = async (onlineCode, params = {}) => {
   if (!onlineCode) {
     throw new Error('onlineCode不能为空')
   }
-  params.needList = 'id'
+  // needList作用：配置在这里的字段，会参与后端条件和数据返回，默认需要加上id字段供流程流转数据合并
+  params['needList'] = params['needList'] ? params['needList'].split(',').includes('id') ? params['needList'] : params['needList'] + ',id' : 'id'
   params.pageSize = params.pageSize || 10
   params.pageNo = params.pageNo || 1
   // 默认查询全部字段
@@ -425,10 +426,11 @@ export const createVue2Watcher = (watcherJsStr, code, cacheMap, vm) => {
     // 依次注册到Vue
     Object.keys(WatcherObject).forEach(key => {
       const func = WatcherObject[key]
+      const debugLog = ['development', 'yoko', 'test'].includes(process.env.NODE_ENV) ? `console.debug('js增强监听器增强::判断是否执行监听,当前表单code:', this.code, '注册的code:', '${code}');` : ''
       // 函数形式直接注册
       if (typeof func === 'function') {
         // 校验是否是当前online的监听器
-        const preCheckWrapper = `(async function(nv, ov){console.log('js增强监听器增强::判断是否执行监听,当前表单code:', this.code, '注册的code:', '${code}');if(this.code !== '${code}'){return}return await func.bind(vm)(nv, ov)})`
+        const preCheckWrapper = `(async function(nv, ov){${debugLog}if(this.code !== '${code}'){return}return await func.bind(vm)(nv, ov)})`
         // eslint-disable-next-line no-eval
         const wrapperFunc = eval(preCheckWrapper)
         console.log('初始化监听器', key)
@@ -439,7 +441,7 @@ export const createVue2Watcher = (watcherJsStr, code, cacheMap, vm) => {
         if (func.hasOwnProperty('handler')) {
           const { handler, deep, immediate } = func
           // 校验是否是当前online的监听器
-          const preCheckWrapper = `(async function(nv, ov){console.log('js增强监听器增强::判断是否执行监听,当前表单code:', this.code, '注册的code:', '${code}');if(this.code !== '${code}'){return}return await handler.bind(vm)(nv, ov)})`
+          const preCheckWrapper = `(async function(nv, ov){${debugLog}if(this.code !== '${code}'){return}return await handler.bind(vm)(nv, ov)})`
           // eslint-disable-next-line no-eval
           const wrapperFunc = eval(preCheckWrapper)
           console.log('初始化监听器', key)
