@@ -16,6 +16,7 @@
         @handleReset="$emit('handleReset')"
         @change="handleChange"
         @myInput="handleMyInput"
+        @beforeOnlListSubReady="handleBeforeOnlListSubReady"
         v-for="item in tabItem.list"
         :disabled="disabled"
         :dynamicData="dynamicData"
@@ -34,6 +35,7 @@
         @handleReset="$emit('handleReset')"
         @change="handleChange"
         @myInput="handleMyInput"
+        @beforeOnlListSubReady="handleBeforeOnlListSubReady"
         v-for="item in colItem.list"
         :disabled="disabled"
         :dynamicData="dynamicData"
@@ -51,6 +53,7 @@
       @handleReset="$emit('handleReset')"
       @change="handleChange"
       @myInput="handleMyInput"
+      @beforeOnlListSubReady="handleBeforeOnlListSubReady"
       v-for="item in record.list"
       :disabled="disabled"
       :dynamicData="dynamicData"
@@ -84,6 +87,7 @@
           @handleReset="$emit('handleReset')"
           @change="handleChange"
           @myInput="handleMyInput"
+          @beforeOnlListSubReady="handleBeforeOnlListSubReady"
           v-for="item in tdItem.list"
           :disabled="disabled"
           :dynamicData="dynamicData"
@@ -107,6 +111,7 @@
       @handleReset="$emit('handleReset')"
       @change="handleChange"
       @myInput="handleMyInput"
+      @beforeOnlListSubReady="handleBeforeOnlListSubReady"
       :dynamicData="dynamicData"
       :formData="formData"
       :key="record.key"
@@ -120,6 +125,7 @@
         @handleReset="$emit('handleReset')"
         @change="handleChange"
         @myInput="handleMyInput"
+        @beforeOnlListSubReady="handleBeforeOnlListSubReady"
         :dynamicData="dynamicData"
         :formData="formData"
         :key="record.key"
@@ -136,6 +142,7 @@
     @handleReset="$emit('handleReset')"
     @change="handleChange"
     @myInput="handleMyInput"
+    @beforeOnlListSubReady="handleBeforeOnlListSubReady"
     :dynamicData="dynamicData"
     :formData="formData"
     :key="record.key"
@@ -222,6 +229,10 @@ export default {
     handleMyInput(value, key) {
       // console.log('buildBlocks::handleMyInput', value, key)
       this.$emit('myInput', value, key)
+    },
+    // online子表组件的初始化前事件
+    handleBeforeOnlListSubReady(e) {
+      this.$emit('beforeOnlListSubReady', e)
     }
   },
   watch: {

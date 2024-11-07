@@ -9,8 +9,9 @@
       :form-data="innerFormData"
       :new-form-data="newFormData"
       :output-string="false"
-      @change="handleChange"
-      @myInput="handleMyInput"
+      @change="(value, key) => handleChange(value, key, formDataJson, $refs.kfb)"
+      @myInput="(value, key) => handleMyInput(value, key, formDataJson, $refs.kfb)"
+      @beforeOnlListSubReady="e => handleBeforeOnlListSubReady(e, $refs.kfb)"
       :parent="parent"
     />
   </a-spin>
@@ -20,14 +21,16 @@
 import { httpAction, getAction, postAction } from '@/api/manage'
 import { randomString, cloneObject } from '@/utils/util'
 import { DESFORM_ROUTE_TYPE, DESFORM_ROUTE_DATA_ID } from '@/utils/desform/DesformRouteUtils'
-import { createAsyncJsEnhanceFunction } from '@/components/yoko/kform/CustomMethods'
 import BindBpmFormMixin from '@views/modules/bpm/mytask/BindBpmFormMixin'
 import { debounce } from 'lodash'
+import {
+  BeforeOnlListSubReadyMixins
+} from '@comp/k-form-design/packages/components/KFormPreview/BeforeOnlListSubReadyMixins'
 
 /* desform 动态表单页面 */
 export default {
   name: 'DesformView',
-  mixins: [BindBpmFormMixin],
+  mixins: [BindBpmFormMixin, BeforeOnlListSubReadyMixins],
   props: {
     // add = 新增，edit = 修改，detail = 只读查看
     mode: {
@@ -428,88 +431,6 @@ export default {
           reject(e)
         }
       })
-    },
-    /**
-     * 监听表单change 事件
-     * 正是渲染
-     * @param {*} value
-     * @param {*} key
-     */
-    async handleChange(value, key) {
-      // console.log(value, key)
-      // const formData = this.$refs.kfb.getData()
-      // formData[key] = value
-      // this.$refs.kfb.setData(formData)
-      const that = this.$refs.kfb
-      // 判断是否有配置js
-      const { config } = this.formDataJson
-      if (that && config.hasOwnProperty('afterDataChange')) {
-        let afterDataChange = config.afterDataChange
-        if (afterDataChange.hasOwnProperty(key)) {
-          let funcStr = afterDataChange[key]
-          if (!funcStr || funcStr.trim() === '') {
-            return Promise.resolve()
-          }
-          try {
-            const res = await createAsyncJsEnhanceFunction(
-              that,
-              funcStr,
-              ['value', 'key', 'data', 'getData', 'setData',
-                'setOptions', 'changeDict',
-                'setRules', 'openRequired', 'closeRequired',
-                'hide', 'show', 'disable', 'enable', 'reset', 'formMeta'],
-              [value, key, that.data, that.getData, that.setData,
-                that.setOptions, that.changeDict,
-                that.setRules, that.openRequired, that.closeRequired,
-                that.hide, that.show, that.disable, that.enable, that.reset, that.value])
-            .call()
-            return res
-          } catch (e) {
-            this.$message.error(e)
-          }
-        }
-      }
-    },
-    /**
-     * 监听表单Input 事件
-     * 正式渲染
-     * @param {*} value
-     * @param {*} key
-     */
-    async handleMyInput(value, key) {
-      // console.log(value, key)
-      // const formData = this.$refs.kfb.getData()
-      // formData[key] = value
-      // this.$refs.kfb.setData(formData)
-      const that = this.$refs.kfb
-      // 判断是否有配置js
-      const { config } = this.formDataJson
-      if (that && config.hasOwnProperty('afterDataInput')) {
-        let afterDataInput = config.afterDataInput
-        if (afterDataInput.hasOwnProperty(key)) {
-          let funcStr = afterDataInput[key]
-          if (!funcStr || funcStr.trim() === '') {
-            return Promise.resolve()
-          }
-          try {
-            const res = await createAsyncJsEnhanceFunction(
-              that,
-              funcStr,
-              ['value', 'key', 'data', 'getData', 'setData',
-                'setOptions', 'changeDict',
-                'setRules', 'openRequired', 'closeRequired',
-                'hide', 'show', 'disable', 'enable', 'reset', 'formMeta'],
-              [value, key, that.data, that.getData, that.setData,
-                that.setOptions, that.changeDict,
-                that.setRules, that.openRequired, that.closeRequired,
-                that.hide, that.show, that.disable, that.enable, that.reset, that.value])
-            .call()
-            return res
-          } catch (e) {
-            this.$message.error(e)
-          }
-        }
-      }
     }
   }
 }

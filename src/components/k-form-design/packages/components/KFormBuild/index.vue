@@ -25,6 +25,7 @@
         :key="index"
         @change="handleChange"
         @myInput="handleMyInput"
+        @beforeOnlListSubReady="handleBeforeOnlListSubReady"
         :disabled="disabled"/>
 
     </a-form>
@@ -506,6 +507,10 @@ export default {
       // console.log('KFormBuild::handleMyInput', value, key)
       // 触发input事件
       this.$emit('myInput', value, key)
+    },
+    // online子表组件的初始化前事件
+    handleBeforeOnlListSubReady(e) {
+      this.$emit('beforeOnlListSubReady', e)
     }
   },
   mounted() {

@@ -15,8 +15,11 @@
     :width="`${previewWidth}px`">
     <k-form-build
       :value="jsonData"
-      @myInput="handleMyInput"
-      @change="handleChange"
+      :form-data="innerFormData"
+      :new-form-data="{}"
+      @change="(value, key) => handleChange(value, key, jsonData, $refs.KFormBuild)"
+      @myInput="(value, key) => handleMyInput(value, key, jsonData, $refs.KFormBuild)"
+      @beforeOnlListSubReady="e => handleBeforeOnlListSubReady(e, $refs.KFormBuild)"
       @submit="handleSubmit"
       ref="KFormBuild" />
     <jsonModel ref="jsonModel" />
@@ -29,9 +32,12 @@
  */
 import jsonModel from '../KFormDesign/module/jsonModal'
 import { dialogStyle, bodyStyle } from '../../config/modal.js'
-import { createAsyncJsEnhanceFunction } from '@/components/yoko/kform/CustomMethods'
+import {
+  BeforeOnlListSubReadyMixins
+} from '@comp/k-form-design/packages/components/KFormPreview/BeforeOnlListSubReadyMixins'
 export default {
   name: 'KFormPreview',
+  mixins: [BeforeOnlListSubReadyMixins],
   data() {
     return {
       visible: false,
@@ -64,7 +70,7 @@ export default {
      * 手动验证获取表单数据
      */
     async handleGetData() {
-      this.$refs.KFormBuild.getData()
+      this.getData()
         .then(res => {
           console.log(res, '获取数据成功')
           this.$refs.jsonModel.jsonData = res
@@ -73,88 +79,6 @@ export default {
         .catch(err => {
           console.log(err, '获取数据失败')
         })
-    },
-    /**
-     * 监听表单change 事件
-     * 预览模式
-     * @param {*} value
-     * @param {*} key
-     */
-    async handleChange(value, key) {
-      // console.log('监听表单change 事件', value, key)
-      // const formData = await this.$refs.KFormBuild.getData()
-      // formData[key] = value
-      // this.$refs.KFormBuild.setData(formData)
-      const that = this.$refs.KFormBuild
-      // 判断是否有配置js
-      const { config } = this.jsonData
-      if (config.hasOwnProperty('afterDataChange')) {
-        let afterDataChange = config.afterDataChange
-        if (afterDataChange.hasOwnProperty(key)) {
-          let funcStr = afterDataChange[key]
-          if (!funcStr || funcStr.trim() === '') {
-            return Promise.resolve()
-          }
-          try {
-            const res = await createAsyncJsEnhanceFunction(
-              that,
-              funcStr,
-              ['value', 'key', 'data', 'getData', 'setData',
-                'setOptions', 'changeDict',
-                'setRules', 'openRequired', 'closeRequired',
-                'hide', 'show', 'disable', 'enable', 'reset', 'formMeta'],
-              [value, key, this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData,
-                this.$refs.KFormBuild.setOptions, this.$refs.KFormBuild.changeDict,
-                this.$refs.KFormBuild.setRules, this.$refs.KFormBuild.openRequired, this.$refs.KFormBuild.closeRequired,
-                this.$refs.KFormBuild.hide, this.$refs.KFormBuild.show, this.$refs.KFormBuild.disable, this.$refs.KFormBuild.enable, this.$refs.KFormBuild.reset, this.$refs.KFormBuild.value])
-            .call()
-            return res
-          } catch (e) {
-            this.$message.error(e)
-          }
-        }
-      }
-    },
-    /**
-     * 监听表单Input 事件
-     * 预览模式
-     * @param {*} value
-     * @param {*} key
-     */
-    async handleMyInput(value, key) {
-      // console.log('监听表单input 事件', value, key)
-      // const formData = await this.$refs.KFormBuild.getData()
-      // formData[key] = value
-      // this.$refs.KFormBuild.setData(formData)
-      const that = this.$refs.KFormBuild
-      // 判断是否有配置js
-      const { config } = this.jsonData
-      if (config.hasOwnProperty('afterDataInput')) {
-        let afterDataInput = config.afterDataInput
-        if (afterDataInput.hasOwnProperty(key)) {
-          let funcStr = afterDataInput[key]
-          if (!funcStr || funcStr.trim() === '') {
-            return Promise.resolve()
-          }
-          try {
-            const res = await createAsyncJsEnhanceFunction(
-              that,
-              funcStr,
-              ['value', 'key', 'data', 'getData', 'setData',
-                'setOptions', 'changeDict',
-                'setRules', 'openRequired', 'closeRequired',
-                'hide', 'show', 'disable', 'enable', 'reset', 'formMeta'],
-              [value, key, this.$refs.KFormBuild.data, this.$refs.KFormBuild.getData, this.$refs.KFormBuild.setData,
-                this.$refs.KFormBuild.setOptions, this.$refs.KFormBuild.changeDict,
-                this.$refs.KFormBuild.setRules, this.$refs.KFormBuild.openRequired, this.$refs.KFormBuild.closeRequired,
-                this.$refs.KFormBuild.hide, this.$refs.KFormBuild.show, this.$refs.KFormBuild.disable, this.$refs.KFormBuild.enable, this.$refs.KFormBuild.reset, this.$refs.KFormBuild.value])
-            .call()
-            return res
-          } catch (e) {
-            this.$message.error(e)
-          }
-        }
-      }
     },
     handleCancel() {
       this.visible = false

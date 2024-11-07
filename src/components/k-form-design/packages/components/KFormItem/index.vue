@@ -9,6 +9,9 @@
   <component
     v-if="record.options.noFormItem"
     v-bind="getComponentProps"
+    @change="handleChange"
+    @input="handleMyInput"
+    @beforeOnlListSubReady="handleBeforeOnlListSubReady"
     @hook:mounted="childMounted"
     :is="componentItem"
   ></component>
@@ -57,6 +60,7 @@
       ref="inputItem"
       @change="handleChange"
       @input="handleMyInput"
+      @beforeOnlListSubReady="handleBeforeOnlListSubReady"
       v-decorator="[
         record.model, // input 的 name
         {
@@ -238,6 +242,10 @@ export default {
     handleMyInput(e) {
       // console.log('KFormItem::handleMyInput', e, this.record.model)
       this.$emit('myInput', e, this.record.model)
+    },
+    // online子表组件的初始化前事件
+    handleBeforeOnlListSubReady(e) {
+      this.$emit('beforeOnlListSubReady', e)
     },
     childMounted() {
       // 记录已加载组件
