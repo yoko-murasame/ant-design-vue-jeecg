@@ -485,6 +485,12 @@ export default {
       DynamicTemplate
     },
     props: {
+      // online子表模式
+      onlineSubMode: {
+        type: Boolean,
+        default: false,
+        required: false
+      },
       // 卡片模式，卡片模式下，支持slot渲染
       cardMode: {
         type: Boolean,
@@ -686,10 +692,10 @@ export default {
       }
     },
     watch: {
-      // 卡片模式下才触发初始化
+      // 卡片模式下、online子表模式下 -> 触发初始化
       'onlineFormConfig.code': {
         handler(v) {
-          if (v && this.cardMode) {
+          if (v && (this.cardMode || this.onlineSubMode)) {
             console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::卡片模式::监听onlineFormConfig.code',
               'code:',
               v,
@@ -724,7 +730,7 @@ export default {
       '$route': {
         handler() {
           // 刷新参数放到这里去触发，就可以刷新相同界面了
-          if (this.$route.params.code && !this.cardMode) {
+          if (this.$route.params.code && !this.cardMode && !this.onlineSubMode) {
             console.log('Online自动列表加载::OnlCgformAutoList::initAutoList::监听$route::after',
               'code:',
               this.$route.params.code,
