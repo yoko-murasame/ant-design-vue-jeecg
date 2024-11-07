@@ -115,6 +115,11 @@ export default {
     formData: {
       type: Object,
       default: () => ({})
+    },
+    // 来自流程上下文的默认数据
+    newFormData: {
+      type: Object,
+      default: () => ({})
     }
   },
   computed: {
@@ -139,6 +144,7 @@ export default {
             : '',
         dynamicData: this.dynamicData,
         formData: this.formData,
+        newFormData: this.newFormData,
         options: !record.options.dynamic
           ? record.options.options
           : this.dynamicData[record.options.dynamicKey]

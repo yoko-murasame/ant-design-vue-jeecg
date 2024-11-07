@@ -59,6 +59,12 @@ export default {
       required: false,
       default: () => {}
     },
+    // 表单的动态数据
+    newFormData: {
+      type: Object,
+      required: false,
+      default: () => {}
+    },
     // 禁用状态
     disabled: {
       type: Boolean,
@@ -119,8 +125,9 @@ export default {
           showQueryBlock: false,
           // 初始化筛选参数
           initQueryParam: {
+            ...this.newFormData,
             [this.relIdField]: this.formData[this.mainIdField],
-            needList: `${this.mainIdField},${this.relIdField}`
+            needList: `${this.mainIdField},${this.relIdField}${this.newFormData['needList'] ? (',' + this.newFormData['needList']) : ''}`
           },
           // 新增按钮文本
           addButtonName: '新增',

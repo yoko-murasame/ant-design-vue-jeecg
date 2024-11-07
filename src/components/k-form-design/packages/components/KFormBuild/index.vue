@@ -18,6 +18,7 @@
         v-for="(record, index) in value.list"
         :record="record"
         :formData="formData"
+        :newFormData="newFormData"
         :dynamicData="getDynamicData"
         :config="compConfig"
         :formConfig="value.config"

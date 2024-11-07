@@ -21,6 +21,7 @@
         :disabled="disabled"
         :dynamicData="dynamicData"
         :formData="formData"
+        :newFormData="newFormData"
         :key="item.key"
         :record="item"
         :formConfig="formConfig"
@@ -40,6 +41,7 @@
         :disabled="disabled"
         :dynamicData="dynamicData"
         :formData="formData"
+        :newFormData="newFormData"
         :key="item.key"
         :record="item"
         :formConfig="formConfig"
@@ -58,6 +60,7 @@
       :disabled="disabled"
       :dynamicData="dynamicData"
       :formData="formData"
+      :newFormData="newFormData"
       :key="item.key"
       :record="item"
       :formConfig="formConfig"
@@ -92,6 +95,7 @@
           :disabled="disabled"
           :dynamicData="dynamicData"
           :formData="formData"
+          :newFormData="newFormData"
           :key="item.key"
           :record="item"
           :formConfig="formConfig"
@@ -114,6 +118,7 @@
       @beforeOnlListSubReady="handleBeforeOnlListSubReady"
       :dynamicData="dynamicData"
       :formData="formData"
+      :newFormData="newFormData"
       :key="record.key"
       :record="record"
       :formConfig="formConfig"
@@ -128,6 +133,7 @@
         @beforeOnlListSubReady="handleBeforeOnlListSubReady"
         :dynamicData="dynamicData"
         :formData="formData"
+        :newFormData="newFormData"
         :key="record.key"
         :record="record"
         :formConfig="formConfig"
@@ -145,6 +151,7 @@
     @beforeOnlListSubReady="handleBeforeOnlListSubReady"
     :dynamicData="dynamicData"
     :formData="formData"
+    :newFormData="newFormData"
     :key="record.key"
     :record="record"
     :formConfig="formConfig"
@@ -191,6 +198,11 @@ export default {
     },
     // 业务表单默认数据
     formData: {
+      type: Object,
+      default: () => ({})
+    },
+    // 来自流程上下文的默认数据
+    newFormData: {
       type: Object,
       default: () => ({})
     }
