@@ -47,9 +47,9 @@ export default {
             funcStr,
             // this.record才是配置
             ['config', 'dynamicData', 'data', 'setData', 'getData', 'setOptions',
-              'hide', 'show', 'disable', 'enable', 'reset', 'newDefaultData'],
+              'hide', 'show', 'disable', 'enable', 'reset', 'newFormData'],
             [this.record, this.dynamicData, that.data, that.setData, that.getData, that.setOptions,
-              that.hide, that.show, that.disable, that.enable, that.reset, that.newDefaultData])
+              that.hide, that.show, that.disable, that.enable, that.reset, that.newFormData])
           .call()
           return res
         } catch (e) {

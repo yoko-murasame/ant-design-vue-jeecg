@@ -50,7 +50,7 @@
           :value="formDataJson"
           @change="undefined && handleChange"
           ref="KFormBuild"
-          :default-value="currData"
+          :form-data="currData"
           slot="detail"/>
       </j-form-container>
     </a-modal>

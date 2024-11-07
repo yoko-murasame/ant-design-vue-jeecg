@@ -19,6 +19,7 @@
         v-for="item in tabItem.list"
         :disabled="disabled"
         :dynamicData="dynamicData"
+        :formData="formData"
         :key="item.key"
         :record="item"
         :formConfig="formConfig"
@@ -36,6 +37,7 @@
         v-for="item in colItem.list"
         :disabled="disabled"
         :dynamicData="dynamicData"
+        :formData="formData"
         :key="item.key"
         :record="item"
         :formConfig="formConfig"
@@ -52,6 +54,7 @@
       v-for="item in record.list"
       :disabled="disabled"
       :dynamicData="dynamicData"
+      :formData="formData"
       :key="item.key"
       :record="item"
       :formConfig="formConfig"
@@ -84,6 +87,7 @@
           v-for="item in tdItem.list"
           :disabled="disabled"
           :dynamicData="dynamicData"
+          :formData="formData"
           :key="item.key"
           :record="item"
           :formConfig="formConfig"
@@ -104,6 +108,7 @@
       @change="handleChange"
       @myInput="handleMyInput"
       :dynamicData="dynamicData"
+      :formData="formData"
       :key="record.key"
       :record="record"
       :formConfig="formConfig"
@@ -116,6 +121,7 @@
         @change="handleChange"
         @myInput="handleMyInput"
         :dynamicData="dynamicData"
+        :formData="formData"
         :key="record.key"
         :record="record"
         :formConfig="formConfig"
@@ -131,6 +137,7 @@
     @change="handleChange"
     @myInput="handleMyInput"
     :dynamicData="dynamicData"
+    :formData="formData"
     :key="record.key"
     :record="record"
     :formConfig="formConfig"
@@ -173,6 +180,11 @@ export default {
     },
     validatorError: {
       type: [Object, null],
+      default: () => ({})
+    },
+    // 业务表单默认数据
+    formData: {
+      type: Object,
       default: () => ({})
     }
   },

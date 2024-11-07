@@ -114,7 +114,7 @@ async methodB (row, keys, rows) {
   * id 主键
   * mode 模式 add | edit | detail
   * title 标题
-  * defaultData 携带的数据对象 {}
+  * newFormData 携带的数据对象 {}
 * `sendTemplateAnnouncement`：发送模板消息，参数为：
   * fromUser 发送人，留空自动获取当前用户名
   * toUser 接收人

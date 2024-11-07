@@ -404,7 +404,7 @@
         :button-switch="buttonSwitch"
         :button-alias="buttonAlias"
         :currentTableName="currentTableName"
-        :default-data="initQueryParam || {}"
+        :form-data="initQueryParam || {}"
         :hasBpmStatus="hasBpmStatus" />
 
       <!-- 自定义流程接入 -->
@@ -529,6 +529,14 @@ export default {
             // action固定 'left', 'right'
             actionFixed: ''
           }
+        },
+        required: false
+      },
+      // 组件表单数据加载前的回调, that指向组件实例
+      onLoadDataBefore: {
+        type: Function,
+        default() {
+          return async (that) => {}
         },
         required: false
       }
@@ -992,10 +1000,10 @@ export default {
        * @param id 主键
        * @param mode 模式 add | edit | detail
        * @param title 标题
-       * @param defaultData 携带的数据对象 {}
+       * @param newFormData 携带的数据对象 {}
        * @returns {Promise<void>}
        */
-      async openAnyForm(code, id, mode = 'add', title = '表单', defaultData = {}) {
+      async openAnyForm(code, id, mode = 'add', title = '表单', newFormData = {}) {
         if (mode !== 'add' && !id) {
           throw new Error('非新增模式（add）时，id不能为空！')
         }
@@ -1008,7 +1016,7 @@ export default {
           console.error('openAnyForm', message)
         }
         const { desFormCode } = result
-        this.$refs.desformModal.open(mode, desFormCode, id, title, false, code, { ...this.initQueryParam, ...defaultData })
+        this.$refs.desformModal.open(mode, desFormCode, id, title, false, code, { ...this.initQueryParam, ...newFormData })
       },
       hasBpmStatusFilter() {
         var columnObjs = this.defColumns
@@ -1161,6 +1169,8 @@ export default {
             this.hasBpmStatusFilter()
             // 初始化高级查询组件条件
             await this.initSuperQuery()
+            // 数据初始化前的钩子
+            await this.onLoadDataBefore(this)
             // 初始化查询条件，这里需要等待先加载
             await this.initQueryInfo(res.result.onlineInitQueryParamGetter)
             // 加载新路由，清空checkbox选中
@@ -1371,7 +1381,8 @@ export default {
         await this.startProcess(data, true)
         this.$refs.desformModal && this.$refs.desformModal.close()
       },
-      handleFormSuccess() {
+      handleFormSuccess(data) {
+        this.$emit('formSuccess', data)
         this.loadData()
       },
       // 高级查询，如果为默认online表单，会自动触发加载，但是kForm下，需要手动加载

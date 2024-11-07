@@ -8,7 +8,7 @@
       :dataId="formData.dataId"
       height="100vh"
       :enable-loading="true"
-      :new-default-data="newDefaultData"
+      :new-form-data="newFormData"
       @success="() => {}"
       ref="realForm"
     />
@@ -80,7 +80,7 @@ export default {
         whichButtonToUse: '确认提交'
       },
       ready: false,
-      newDefaultData: {},
+      newFormData: {},
       realCode: '',
       realUseButton: '确认提交'
     }
@@ -123,7 +123,7 @@ export default {
           }
         }
         this.onlineFormConfig = Object.assign(this.onlineFormConfig, onlineFormConfig)
-        this.newDefaultData = { ...this.onlineFormConfig.initQueryParam }
+        this.newFormData = { ...this.onlineFormConfig.initQueryParam }
         this.ready = true
         console.log('渲染流程::kForm表单组件::KFormBpmForm', this.formData, this.onlineFormConfig)
       }

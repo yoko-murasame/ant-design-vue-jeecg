@@ -94,6 +94,7 @@ export default {
       type: Object,
       default: () => ({})
     },
+    // 动态字典数据
     dynamicData: {
       type: Object,
       default: () => ({})
@@ -105,6 +106,11 @@ export default {
     disabledStatus: {
       type: Boolean,
       default: false
+    },
+    // 业务表单默认数据
+    formData: {
+      type: Object,
+      default: () => ({})
     }
   },
   computed: {
@@ -128,6 +134,7 @@ export default {
             ? record.options.height
             : '',
         dynamicData: this.dynamicData,
+        formData: this.formData,
         options: !record.options.dynamic
           ? record.options.options
           : this.dynamicData[record.options.dynamicKey]

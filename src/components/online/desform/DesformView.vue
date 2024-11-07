@@ -6,8 +6,8 @@
       v-if="!formDataLoading"
       :value="formDataJson"
       :disabled="formDisabled || currentSavedResult !== null"
-      :default-value="defaultValue"
-      :new-default-data="newDefaultData"
+      :form-data="innerFormData"
+      :new-form-data="newFormData"
       :output-string="false"
       @change="handleChange"
       @myInput="handleMyInput"
@@ -53,7 +53,7 @@ export default {
       default: null
     },
     // 新增时，默认携带的表单参数（自动注入到某些字段中）
-    newDefaultData: {
+    newFormData: {
       type: Object,
       default: () => ({})
     },
@@ -106,7 +106,7 @@ export default {
         getFormData: '/online/cgform/api/form/table_name'
       },
       formDataJson: {},
-      defaultValue: {},
+      innerFormData: {},
       // 产生异常使用，如果当前表单已保存用以判断
       currentSavedResult: null
     }
@@ -248,14 +248,14 @@ export default {
     async loadFormData() {
       if (!this.dataId) {
         console.info('没有dataId，不需要加载表单数据')
-        this.defaultValue = { ...this.newDefaultData }
+        this.innerFormData = { ...this.newFormData }
         return
       }
       // 有id即是编辑操作
       const res = await getAction(`${this.url.getFormData}/${this.innerDesformCode}/${this.dataId}`)
       // 编辑操作优先以拿回来的数据为准
-      this.defaultValue = { ...this.newDefaultData, ...res.result }
-      console.log('loadFormData', this.defaultValue)
+      this.innerFormData = { ...this.newFormData, ...res.result }
+      console.log('loadFormData', this.innerFormData, res.result)
     },
     reload() {
       this.show = false
@@ -350,7 +350,7 @@ export default {
               }
               return res
             }).then(async res => {
-              const resData = { ...that.defaultValue, ...formData, formSaveResult: res, dataId: res.result }
+              const resData = { ...that.innerFormData, ...formData, formSaveResult: res, dataId: res.result }
               if (res.success) {
                 if (that.alert && !that.currentSavedResult) {
                   that.$message.success('保存成功')

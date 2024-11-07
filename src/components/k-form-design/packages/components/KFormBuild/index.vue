@@ -17,6 +17,7 @@
         @handleReset="reset"
         v-for="(record, index) in value.list"
         :record="record"
+        :formData="formData"
         :dynamicData="getDynamicData"
         :config="compConfig"
         :formConfig="value.config"
@@ -85,12 +86,12 @@ export default {
       default: true
     },
     // 表单数据
-    defaultValue: {
+    formData: {
       type: Object,
       default: () => ({})
     },
     // 来自流程或者online列表上文的默认数据
-    newDefaultData: {
+    newFormData: {
       type: Object,
       default: () => ({})
     },
@@ -113,7 +114,7 @@ export default {
     },
     // 表单数据
     data() {
-      return this.defaultValue
+      return this.formData
     }
   },
   methods: {
@@ -127,19 +128,19 @@ export default {
         'setOptions', 'changeDict',
         'setRules', 'openRequired', 'closeRequired',
         'parent',
-        'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newDefaultData', 'formMeta']
+        'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newFormData', 'formMeta']
     },
     /**
      * 获取自定义函数的参数对象
      * @param formData
-     * @returns {(default.computed.defaultValue|*|(function(*): Promise<unknown>)|(function(*, boolean=): Promise<unknown>)|default.methods.setOptions)[]}
+     * @returns {(default.computed.formData|*|(function(*): Promise<unknown>)|(function(*, boolean=): Promise<unknown>)|default.methods.setOptions)[]}
      */
     getCustomArgsObj(formData = {}) {
       return [this.data, this.value.config, this.setData, this.getData,
         this.setOptions, this.changeDict,
         this.setRules, this.openRequired, this.closeRequired,
         this.parent,
-        this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newDefaultData, this.value]
+        this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newFormData, this.value]
     },
     /**
      * JS增强-为表单Form注册自定义函数
@@ -254,7 +255,7 @@ export default {
     handleSetData() {
       const { config } = this.value
       if (!config) {
-        console.log('KFormBuild::handleSetData', 'config is undefined', this.defaultValue, this.value)
+        console.log('KFormBuild::handleSetData', 'config is undefined', this.formData, this.value)
         return
       }
       const { handleSetData } = config
@@ -338,7 +339,7 @@ export default {
               return
             }
             // 需要预先合并一些不在表单设计器里的隐藏字段的值，要不都保存丢失了
-            const values = Object.assign({}, this.defaultValue, formValues)
+            const values = Object.assign({}, this.formData, formValues)
             console.log('获取数据', values)
             this.validatorError = {}
             this.$refs.buildBlocks.forEach(item => {
@@ -511,7 +512,7 @@ export default {
     const that = this
     // 等待所有组件加载完成，再执行mounted
     lazyLoadTick.nextTick(async () => {
-      console.log('KFormBuild::mounted', that.defaultValue)
+      console.log('KFormBuild::mounted', that.formData)
       that.reset()
       try {
         await that.handleMounted()
@@ -521,9 +522,9 @@ export default {
       }
       // 空字符转换成null，防止date等组件，空字符串保存导致后端报错
       if (that.emptyStringToNull) {
-        that.convertEmptyStringToNull(that.defaultValue)
+        that.convertEmptyStringToNull(that.formData)
       }
-      await that.setData(that.defaultValue)
+      await that.setData(that.formData)
       try {
         await that.handleSetData()
       } catch (e) {

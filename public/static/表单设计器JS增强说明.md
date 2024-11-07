@@ -24,7 +24,7 @@
 * `this`：指向当前表单vue实例，建议使用that
 * `that`：指向当前表单vue实例，一般和this指向相同（视调用高阶函数位置的传入参数而定）
 * `data`：当前编辑的数据对象
-* `newDefaultData`：来自流程或者online列表上文的默认数据，用于填充表单默认值（如：online列表的`openAnyForm`方法中的`defaultData`参数）
+* `newFormData`：来自流程或者online列表上文的默认数据，用于填充表单默认值（如：online列表的`openAnyForm`方法中的`newFormData`参数）
 * `formData`：表单保存后的完整数据（新增时，会包含由后端生成的新数据ID），**仅在afterSubmit钩子中生效**
 
 * `formMeta`：当前设计器表单的完整配置对象

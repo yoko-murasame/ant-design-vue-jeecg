@@ -53,7 +53,7 @@
       :innerDialog="true"
       @reload="handleReload"
       :isOnline="isOnline"
-      :newDefaultData="newDefaultData"
+      :new-form-data="innerNewFormData"
       ref="desform" />
   </j-modal>
 </template>
@@ -93,7 +93,7 @@ export default {
       default: false
     },
     // 默认数据,优先级较高
-    defaultData: {
+    formData: {
       type: Object,
       default() {
         return {}
@@ -116,7 +116,7 @@ export default {
       bgColor: 'rgba(0,0,0,0.6)',
       isOnline: false,
       tableId: '',
-      newDefaultData: {}
+      innerNewFormData: {}
     }
   },
   computed: {
@@ -126,14 +126,14 @@ export default {
   },
   methods: {
     /** 开启表单 */
-    open(mode, desformCode, dataId, title, isOnline, tableId, newDefaultData) {
+    open(mode, desformCode, dataId, title, isOnline, tableId, newFormData) {
       this.isOnline = isOnline
       this.mode = mode
       this.title = title
       this.dataId = dataId
       this.desformCode = desformCode
       this.tableId = tableId
-      this.newDefaultData = Object.assign(this.newDefaultData, newDefaultData, this.defaultData)
+      this.innerNewFormData = Object.assign(this.innerNewFormData, newFormData, this.formData)
       this.visible = true
       // 禁止body滚动，防止滚动穿透
       // this.bodyOverflow = document.body.style.overflow
@@ -182,10 +182,10 @@ export default {
     }
   },
   watch: {
-    defaultData: {
+    formData: {
       immediate: true,
       handler(val) {
-        this.newDefaultData = Object.assign(this.newDefaultData, val)
+        this.innerNewFormData = Object.assign(this.innerNewFormData, val)
       }
     }
   }
