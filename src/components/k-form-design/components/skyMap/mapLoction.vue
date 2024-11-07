@@ -99,7 +99,7 @@ export default {
       if (!data) {
         return
       }
-      console.log('接受Iframe消息', data)
+      // console.log('接受Iframe消息', data)
       if (data.lnglatStr) {
         this.lnglatStr = data.lnglatStr
         this.address = data.address

@@ -1,5 +1,3 @@
-// import DDict from './DDic/DDict.vue'
-import SkyMap from './skyMap/JSelectMap.vue'
 import DSubtable from './DSubTable/DSubtable.vue'
 
 import JSelectMultiUser from '../../jeecgbiz/JSelectMultiUser.vue'
@@ -10,6 +8,8 @@ import JSelectPosition from '../../jeecgbiz/JSelectPosition.vue'
 import { nodeSchema } from '../packages/utils'
 
 import { MODE_POINT } from '@/components/k-form-design/components/skyMap/mapLoction'
+import SkyMap from '@/components/k-form-design/components/skyMap/JSelectMap'
+import OnlListSub from '@comp/k-form-design/components/DSubTable/OnlListSub'
 
 /**
  * 自定义组件KForm配置
@@ -88,6 +88,22 @@ export const customComponents = [
       }
     ],
     help: ''
+  },
+  // 新版子表组件
+  {
+    type: 'OnlListSub', // 表单类型
+    label: 'Online子表', // 标题文字
+    icon: 'icon-gallery',
+    component: OnlListSub,
+    model: '',
+    options: {
+      onlineTable: true, // online子表标识
+      cardMode: true, // 是否卡片模式
+      onlineCode: '', // 关联表单编码
+      mainIdField: 'id', // 主表id字段
+      relIdField: '', // 子表关联字段
+      disabled: false // 是否禁用
+    }
   },
   {
     type: 'skyMap', // 表单类型

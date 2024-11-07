@@ -8,25 +8,34 @@
           <Input v-model="selectItem.label" placeholder="请输入" />
         </a-form-item>
 
-        <a-form-item v-if="!hideModel && isDefined(selectItem.model) && !isDefined(options.subtable)" label="数据字段">
+        <a-form-item v-if="!hideModel && isDefined(selectItem.model) && !isDefined(options.subtable) && !isDefined(options.onlineTable)" label="数据字段">
           <!-- <Input v-model="selectItem.model" placeholder="请输入" /> -->
           <a-select show-search v-model="selectItem.model" placeholder="选择">
             <a-select-option v-for="n in filedLists" :key="n.dbFieldName" :value="n.dbFieldName">{{
-                n.dbFieldTxt + `(${n.dbFieldName})`
-              }}
+              n.dbFieldTxt + `(${n.dbFieldName})`
+            }}
             </a-select-option>
           </a-select>
         </a-form-item>
 
+        <!-- online子表 -->
+        <a-form-item v-if="isDefined(options.onlineTable)" label="online子表单绑定">
+          <j-search-select-tag
+            v-model="options.onlineCode"
+            dict="onl_cgform_head,table_txt,id"
+            @change="subtableSelect"></j-search-select-tag>
+        </a-form-item>
+
         <!-- 子表设置开始 -->
         <a-form-item v-if="isDefined(options.subtable)" label="子表单绑定">
-          <j-search-select-tag v-model="selectItem.model" dict="onl_cgform_head,table_txt,table_name"
-                               @change="subtableSelect"></j-search-select-tag>
+          <j-search-select-tag
+            v-model="selectItem.model"
+            dict="onl_cgform_head,table_txt,table_name"
+            @change="subtableSelect"></j-search-select-tag>
         </a-form-item>
 
         <a-form-item v-if="isDefined(options.subtable)" label="显示内容">
           <a-table :dataSource="subtableShowDataSource" :columns="subtableShowColumns">
-
             <template slot="sort" slot-scope="text, row">
               <a-input-number v-model:value="row.sort" @change="filedShowChange" />
             </template>
@@ -48,8 +57,9 @@
           <Input v-model="options.type" placeholder="请输入" />
         </a-form-item>
         <!-- input type end -->
-        <a-form-item v-if="typeof options.rangePlaceholder !== 'undefined' && options.range
-          " label="占位内容">
+        <a-form-item
+          v-if="typeof options.rangePlaceholder !== 'undefined' && options.range"
+          label="占位内容">
           <Input placeholder="请输入" v-model="options.rangePlaceholder[0]" />
           <Input placeholder="请输入" v-model="options.rangePlaceholder[1]" />
         </a-form-item>
@@ -80,8 +90,10 @@
         <a-form-item v-if="isDefined(options.maxLength)" label="最大长度">
           <InputNumber v-model="options.maxLength" placeholder="请输入" />
         </a-form-item>
-        <a-form-item v-if="isDefined(options.minLimit) || ['batch'].includes(selectItem.type) || ['subtable'].includes(selectItem.type)
-          " label="最小行数">
+        <a-form-item
+          v-if="isDefined(options.minLimit) || ['batch'].includes(selectItem.type) || ['subtable'].includes(selectItem.type)
+          "
+          label="最小行数">
           <InputNumber v-model="options.minLimit" :min="0" placeholder="请输入" />
         </a-form-item>
         <a-form-item v-if="isDefined(options.tabBarGutter)" label="标签间距">
@@ -126,8 +138,9 @@
         </a-form-item>
         <!-- 选项配置及动态数据配置 end -->
         <!-- tabs配置 start -->
-        <a-form-item v-if="['tabs', 'selectInputList'].includes(selectItem.type)"
-                     :label="selectItem.type === 'tabs' ? '页签配置' : '列选项配置'">
+        <a-form-item
+          v-if="['tabs', 'selectInputList'].includes(selectItem.type)"
+          :label="selectItem.type === 'tabs' ? '页签配置' : '列选项配置'">
           <KChangeOption v-model="selectItem.columns" type="tab" />
         </a-form-item>
         <!-- tabs配置 end -->
@@ -142,15 +155,21 @@
           <ASwitch v-model="options.defaultValue" />
         </a-form-item>
         <a-form-item v-if="['number', 'slider'].indexOf(selectItem.type) >= 0" label="默认值">
-          <InputNumber :step="options.step" :min="options.min || -Infinity" :max="options.max || Infinity"
-                       v-model="options.defaultValue" />
+          <InputNumber
+            :step="options.step"
+            :min="options.min || -Infinity"
+            :max="options.max || Infinity"
+            v-model="options.defaultValue" />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'rate'" label="默认值">
           <Rate v-model="options.defaultValue" :allowHalf="options.allowHalf" :count="options.max" />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'select'" label="默认值">
-          <Select :options="options.options" v-model="options.defaultValue" :allowClear="options.clearable"
-                  :mode="options.multiple ? 'multiple' : ''" />
+          <Select
+            :options="options.options"
+            v-model="options.defaultValue"
+            :allowClear="options.clearable"
+            :mode="options.multiple ? 'multiple' : ''" />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'radio'" label="默认值">
           <Radio :options="options.options" v-model="options.defaultValue" />
@@ -160,26 +179,34 @@
         </a-form-item>
         <!-- 日期选择器默认值 start -->
         <a-form-item v-if="selectItem.type === 'date'" label="默认值">
-          <Input v-if="!options.range" v-model="options.defaultValue"
-                 :placeholder="!isDefined(options.format) ? '' : options.format" />
-          <Input v-if="options.range" v-model="options.rangeDefaultValue[0]"
-                 :placeholder="!isDefined(options.format) ? '' : options.format" />
-          <Input v-if="options.range" v-model="options.rangeDefaultValue[1]"
-                 :placeholder="!isDefined(options.format) ? '' : options.format" />
+          <Input
+            v-if="!options.range"
+            v-model="options.defaultValue"
+            :placeholder="!isDefined(options.format) ? '' : options.format" />
+          <Input
+            v-if="options.range"
+            v-model="options.rangeDefaultValue[0]"
+            :placeholder="!isDefined(options.format) ? '' : options.format" />
+          <Input
+            v-if="options.range"
+            v-model="options.rangeDefaultValue[1]"
+            :placeholder="!isDefined(options.format) ? '' : options.format" />
         </a-form-item>
         <!-- 日期选择器默认值 start -->
-        <a-form-item v-if="![
-          'number',
-          'radio',
-          'checkbox',
-          'date',
-          'rate',
-          'select',
-          'switch',
-          'slider',
-          'html'
-        ].includes(selectItem.type) && isDefined(options.defaultValue)
-          " label="默认值">
+        <a-form-item
+          v-if="![
+            'number',
+            'radio',
+            'checkbox',
+            'date',
+            'rate',
+            'select',
+            'switch',
+            'slider',
+            'html'
+          ].includes(selectItem.type) && isDefined(options.defaultValue)
+          "
+          label="默认值">
           <Input v-model="options.defaultValue" :placeholder="isDefined(options.format) ? '请输入' : options.format" />
         </a-form-item>
         <!-- 修改html -->
@@ -316,26 +343,32 @@
         <!-- 文字字体 -->
         <a-form-item v-if="selectItem.type === 'text'" label="字体属性设置">
           <ColorPicker v-model="options.color" />
-          <Select :options="familyOptions" v-model="options.fontFamily"
-                  style="width:36%;margin-left:2%;vertical-align:bottom;" />
-          <Select :options="sizeOptions" v-model="options.fontSize"
-                  style="width:35%;margin-left:2%;vertical-align:bottom;" />
+          <Select
+            :options="familyOptions"
+            v-model="options.fontFamily"
+            style="width:36%;margin-left:2%;vertical-align:bottom;" />
+          <Select
+            :options="sizeOptions"
+            v-model="options.fontSize"
+            style="width:35%;margin-left:2%;vertical-align:bottom;" />
         </a-form-item>
         <a-form-item v-if="selectItem.type === 'text'" label="操作属性">
           <kCheckbox v-model="options.showRequiredMark" label="显示必选标记" />
         </a-form-item>
 
-        <a-form-item v-if="typeof options.hidden !== 'undefined' ||
-          typeof options.disabled !== 'undefined' ||
-          typeof options.readonly !== 'undefined' ||
-          typeof options.clearable !== 'undefined' ||
-          typeof options.multiple !== 'undefined' ||
-          typeof options.range !== 'undefined' ||
-          typeof options.showTime !== 'undefined' ||
-          typeof options.allowHalf !== 'undefined' ||
-          typeof options.showInput !== 'undefined' ||
-          typeof options.animated !== 'undefined'
-          " label="操作属性">
+        <a-form-item
+          v-if="typeof options.hidden !== 'undefined' ||
+            typeof options.disabled !== 'undefined' ||
+            typeof options.readonly !== 'undefined' ||
+            typeof options.clearable !== 'undefined' ||
+            typeof options.multiple !== 'undefined' ||
+            typeof options.range !== 'undefined' ||
+            typeof options.showTime !== 'undefined' ||
+            typeof options.allowHalf !== 'undefined' ||
+            typeof options.showInput !== 'undefined' ||
+            typeof options.animated !== 'undefined'
+          "
+          label="操作属性">
           <kCheckbox v-if="isDefined(options.hidden)" v-model="options.hidden" label="隐藏" />
           <kCheckbox v-if="isDefined(options.disabled)" v-model="options.disabled" label="禁用" />
           <kCheckbox v-if="isDefined(options.readonly)" v-model="options.readonly" label="只读" />
@@ -352,8 +385,10 @@
           <kCheckbox v-if="isDefined(options.showSearch)" v-model="options.showSearch" label="可搜索" />
           <kCheckbox v-if="isDefined(options.treeCheckable)" v-model="options.treeCheckable" label="可勾选" />
           <kCheckbox v-if="isDefined(options.animated)" v-model="options.animated" label="动画切换" />
-          <kCheckbox title="勾选后移除FormItem嵌套且表单无法获取该组件数据" v-model="options.noFormItem"
-                     label="移除FormItem" />
+          <kCheckbox
+            title="勾选后移除FormItem嵌套且表单无法获取该组件数据"
+            v-model="options.noFormItem"
+            label="移除FormItem" />
         </a-form-item>
 
         <a-form-item v-if="isDefined(selectItem.rules) && selectItem.rules.length > 0" label="校验">
@@ -406,6 +441,8 @@
         <JSelectUserByDepProperties :select-item="selectItem"></JSelectUserByDepProperties>
         <!--JSelectMapProperties 地图选择组件-->
         <JSelectMapProperties :select-item="selectItem"></JSelectMapProperties>
+        <!--Online列表子表组件-->
+        <OnlListSubProperties :select-item="selectItem"></OnlListSubProperties>
 
         <!-- JS增强-数据值改变后调用 -->
         <a-form-item label="数据变更后调用。`value`：回调值，`key`：组件id" class="js-help">
@@ -454,6 +491,7 @@ import JMultiSelectTagProperties from '@comp/k-form-design/jeecg/properties/JMul
 import JSearchSelectTagProperties from '@comp/k-form-design/jeecg/properties/JSearchSelectTagProperties'
 import JSelectUserByDepProperties from '@comp/k-form-design/jeecg/properties/JSelectUserByDepProperties'
 import JSelectMapProperties from '@comp/k-form-design/components/properties/JSelectMapProperties'
+import OnlListSubProperties from '@comp/k-form-design/components/properties/OnlListSubProperties'
 
 const Input = pluginManager.getComponent('input').component
 const InputNumber = pluginManager.getComponent('number').component
@@ -468,7 +506,7 @@ const ColorPicker = pluginManager.getComponent('colorPicker').component
 const ASwitch = pluginManager.getComponent('switch').component
 
 export default {
-  name: 'formItemProperties',
+  name: 'FormItemProperties',
   components: {
     JsFormEnhanceHelp: () => import('@comp/yoko/kform/JsFormEnhanceHelp.vue'),
     KChangeOption,
@@ -491,7 +529,8 @@ export default {
     JMultiSelectTagProperties,
     JSearchSelectTagProperties,
     JSelectUserByDepProperties,
-    JSelectMapProperties
+    JSelectMapProperties,
+    OnlListSubProperties
   },
   data() {
     return {
@@ -527,7 +566,7 @@ export default {
         }
       ],
       sizeOptions: [
-        //字号选择设置
+        // 字号选择设置
         {
           value: '26pt',
           label: '一号'
@@ -644,7 +683,6 @@ export default {
       }
       let filedList = []
       result.forEach(item => {
-
         let columns = {
           title: item.dbFieldTxt,
           code: item.dbFieldName,
@@ -667,7 +705,6 @@ export default {
       }
     },
     filedShowChange() {
-
       console.log(this.subtableShowDataSource)
       if (!this.selectItem.options.showFileds[this.selectItem.model]) {
         this.selectItem.options.showFileds[this.selectItem.model] = []
