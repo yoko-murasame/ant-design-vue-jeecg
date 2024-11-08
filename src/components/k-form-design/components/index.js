@@ -97,12 +97,20 @@ export const customComponents = [
     component: OnlListSub,
     model: '',
     options: {
-      onlineTable: true, // online子表标识
-      cardMode: true, // 是否卡片模式
-      onlineCode: '', // 关联表单编码
-      mainIdField: 'id', // 主表id字段
-      relIdField: '', // 子表关联字段
-      disabled: false // 是否禁用
+      // 移除formItem
+      noFormItem: true,
+      // online子表标识
+      onlineTable: true,
+      // 是否卡片模式
+      cardMode: true,
+      // 关联表单编码
+      onlineCode: '',
+      // 主表id字段
+      mainIdField: 'id',
+      // 子表关联字段
+      relIdField: '',
+      // 是否禁用
+      disabled: false
     }
   },
   {

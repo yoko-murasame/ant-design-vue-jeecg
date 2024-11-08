@@ -19,12 +19,12 @@
         </a-form-item>
 
         <!-- online子表 -->
-        <a-form-item v-if="isDefined(options.onlineTable)" label="online子表单绑定">
-          <j-search-select-tag
-            v-model="options.onlineCode"
-            dict="onl_cgform_head,table_txt,id"
-            @change="subtableSelect"></j-search-select-tag>
-        </a-form-item>
+        <!--<a-form-item v-if="isDefined(options.onlineTable)" label="online子表单绑定">-->
+        <!--  <j-search-select-tag-->
+        <!--    v-model="options.onlineCode"-->
+        <!--    dict="onl_cgform_head,table_txt,id"-->
+        <!--    @change="subtableSelect"></j-search-select-tag>-->
+        <!--</a-form-item>-->
 
         <!-- 子表设置开始 -->
         <a-form-item v-if="isDefined(options.subtable)" label="子表单绑定">

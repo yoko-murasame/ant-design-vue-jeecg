@@ -1,6 +1,6 @@
-import { pluginManager } from '../../packages/utils/index'
-import KCheckbox from '@comp/k-form-design/packages/components/KCheckbox/index.vue'
 import KChangeOption from '@comp/k-form-design/packages/components/KChangeOption/index.vue'
+import KCheckbox from '@comp/k-form-design/packages/components/KCheckbox/index.vue'
+import { pluginManager } from '../../packages/utils/index'
 
 const Input = pluginManager.getComponent('input').component
 const InputNumber = pluginManager.getComponent('number').component
@@ -38,8 +38,7 @@ export default {
       return this.selectItem.options || {}
     }
   },
-  watch: {
-  },
+  watch: {},
   render() {
     const options = this.options
 
@@ -50,14 +49,23 @@ export default {
 
     return (
       <div style={{ display: 'contents' }}>
-        <a-form-item label={'Online表单编码'} help="">
-          <Input vModel={options.onlineCode} placeholder={'Online表单编码'}/>
+        <a-form-item label={'关联Online子表表单'} help="">
+          {/* <Input vModel={options.onlineCode} placeholder={'关联Online表单'}/> */}
+          <jSearchSelectTag
+            placeholder={'关联Online子表表单'}
+            vModel={options.onlineCode}
+            dict="onl_cgform_head,table_txt,id"/>
         </a-form-item>
-        <a-form-item label={'主表主键字段名'} help="">
-          <Input vModel={options.mainIdField} placeholder={'主表主键字段名'}/>
+        <a-form-item label={'online子表外键字段'} help="">
+          {/* <Input vModel={options.relIdField} placeholder={'子表外键字段名'}/> */}
+          <jSearchSelectTag
+            disabled={!options.onlineCode}
+            placeholder={'online子表外键字段'}
+            vModel={options.relIdField}
+            dict={"onl_cgform_field,db_field_txt,db_field_name,cgform_head_id='" + options.onlineCode + "'"}/>
         </a-form-item>
-        <a-form-item label={'子表外键字段名'} help="">
-          <Input vModel={options.relIdField} placeholder={'子表外键字段名'}/>
+        <a-form-item label={'online主表主键字段名'} help="">
+          <Input vModel={options.mainIdField} placeholder={'online主表主键字段名'}/>
         </a-form-item>
         <a-form-item label={'其他属性'} help="">
           <kCheckbox v-model={options.cardMode} label="卡片模式"/>
