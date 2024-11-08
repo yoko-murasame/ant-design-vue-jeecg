@@ -126,7 +126,11 @@ export const customComponents = [
       // 数据防抖延时
       loadDataDebounce: 50,
       // 操作列固定位置
-      actionFixed: 'right'
+      actionFixed: 'right',
+      // 图片slot最大宽度
+      imageSlotMaxWidth: 'auto',
+      // 图片slot最大数量
+      imageSlotMaxNum: 0
     }
   },
   {

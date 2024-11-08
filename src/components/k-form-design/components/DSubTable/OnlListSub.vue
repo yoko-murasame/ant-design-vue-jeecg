@@ -3,6 +3,8 @@
     <onl-cgform-auto-list
       v-if="isReady"
       v-bind="getOnlineListConfig"
+      :imageSlotMaxWidth="$attrs.imageSlotMaxWidth"
+      :imageSlotMaxNum="$attrs.imageSlotMaxNum"
       @formSuccess="onFormSuccess"
       @handleChangeInTableSelect="handleChangeInTableSelect"
     >

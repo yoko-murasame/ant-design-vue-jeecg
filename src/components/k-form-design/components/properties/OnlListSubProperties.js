@@ -87,6 +87,12 @@ export default {
         <a-form-item label={'数据防抖延时'} help="">
           <InputNumber min={0} vModel={options.loadDataDebounce} placeholder={'数据防抖延时'}/>
         </a-form-item>
+        <a-form-item label={'图片slot最大宽度(支持css单位,设置为auto为不限制)'} help="">
+          <Input vModel={options.imageSlotMaxWidth} placeholder={'图片slot最大宽度'}/>
+        </a-form-item>
+        <a-form-item label={'图片slot最大数量'} help="">
+          <InputNumber min={0} vModel={options.imageSlotMaxNum} placeholder={'图片slot最大数量'}/>
+        </a-form-item>
         <a-form-item label={'操作列固定位置'} help="">
           <Radio buttonStyle="solid" v-model={options.actionFixed}>
             <RadioButton value={'left'}>左边</RadioButton>

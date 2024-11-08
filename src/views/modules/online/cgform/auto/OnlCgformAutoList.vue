@@ -215,6 +215,17 @@
             <img v-else :src="getImgView(text)" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>
           </template>
 
+          <template slot="imgSlot" slot-scope="text">
+            <j-image-upload
+              :disabled="true"
+              :value="text"
+              :button-visible="false"
+              :visible-width="$attrs.imageSlotMaxWidth || 'auto'"
+              :visible-number="$attrs.imageSlotMaxNum || 10"
+              url-suffix="x-oss-process=image/resize,w_120">
+            </j-image-upload>
+          </template>
+
           <template slot="fileSlot" slot-scope="text">
             <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
             <a-button
