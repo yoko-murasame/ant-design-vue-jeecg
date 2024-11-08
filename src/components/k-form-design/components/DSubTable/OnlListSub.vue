@@ -164,6 +164,10 @@ export default {
      */
     async onLoadDataBefore(that) {
       console.log('online子表列表数据加载前钩子，在这里处理自定义逻辑~', that, JSON.parse(JSON.stringify(this.formData)), this, this.record)
+      // 禁用状态
+      that.buttonSwitch.disableAdd = false
+      that.buttonSwitch.disableEdit = this.disabled
+      that.buttonSwitch.disableDelete = this.disabled
     }
   }
 }
