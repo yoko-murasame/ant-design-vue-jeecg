@@ -228,15 +228,20 @@
 
           <template slot="fileSlot" slot-scope="text">
             <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
-            <a-button
+            <j-upload
               v-else
-              :ghost="true"
-              type="primary"
-              icon="download"
-              size="small"
-              @click="downloadRowFile(text)">
-              下载
-            </a-button>
+              biz-path="上传的路径"
+              text="按钮名称"
+              file-type="all"
+              accept-type="*"
+              split-char=","
+              :disabled="true"
+              :button-visible="false"
+              :trigger-change="true"
+              :return-url="true"
+              :number="10"
+              :value="text"
+            ></j-upload>
           </template>
 
           <!--表格按钮插槽-->
