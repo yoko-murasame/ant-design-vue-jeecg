@@ -81,6 +81,9 @@ export default {
         <a-form-item label={'新增按钮文本'} help="">
           <Input vModel={options.addButtonName} placeholder={'新增按钮文本'}/>
         </a-form-item>
+        <a-form-item label={'批量删除按钮文本'} help="">
+          <Input vModel={options.batchDeleteButtonName} placeholder={'批量删除按钮文本'}/>
+        </a-form-item>
         <a-form-item label={'数据防抖延时'} help="">
           <InputNumber min={0} vModel={options.loadDataDebounce} placeholder={'数据防抖延时'}/>
         </a-form-item>

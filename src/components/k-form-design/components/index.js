@@ -121,6 +121,8 @@ export const customComponents = [
       showQueryBlock: false,
       // 新增按钮文本
       addButtonName: '新增',
+      // 批量删除按钮文本
+      batchDeleteButtonName: '批量删除',
       // 数据防抖延时
       loadDataDebounce: 50,
       // 操作列固定位置

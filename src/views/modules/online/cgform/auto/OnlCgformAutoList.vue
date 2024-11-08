@@ -1281,6 +1281,7 @@ export default {
         this.table.selectedRowKeys = selectedRowKeys
         this.table.selectionRows = selectionRows
         this.selectedRowKeys = selectedRowKeys
+        this.$emit('handleChangeInTableSelect', selectedRowKeys, selectionRows)
       },
       handleTableChange(pagination, filters, sorter) {
         // TODO 筛选

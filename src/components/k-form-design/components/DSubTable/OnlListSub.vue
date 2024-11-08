@@ -4,9 +4,17 @@
       v-if="isReady"
       v-bind="getOnlineListConfig"
       @formSuccess="onFormSuccess"
+      @handleChangeInTableSelect="handleChangeInTableSelect"
     >
       <template #cardTitle="props" v-if="!disabled">
-        <a-button @click="props.handleAdd">{{ $attrs.addButtonName || '新增' }}</a-button>
+        <a-button @click="props.handleAdd" type="primary" icon="plus">{{ $attrs.addButtonName || '新增' }}</a-button>
+        <a-button
+          @click="props.handleDelBatch"
+          style="margin-left: 1vh"
+          v-show="selectedRowKeys.length > 0"
+          ghost
+          type="primary"
+          icon="delete">{{ $attrs.batchDeleteButtonName || '批量删除' }}</a-button>
       </template>
     </onl-cgform-auto-list>
     <div v-else class="d-flex df-jc-center df-ai-center">
@@ -84,6 +92,7 @@ export default {
   },
   data() {
     return {
+      selectedRowKeys: []
     }
   },
   created() {
@@ -92,10 +101,6 @@ export default {
     prop: 'value',
     event: 'change'
   },
-  watch: {
-    value() {
-    }
-  },
   mounted() {
     if (!this.isReady) {
       console.log('online子表列表组件尚未加载, 需要主表ID', this.formData)
@@ -103,6 +108,10 @@ export default {
     }
   },
   computed: {
+    /**
+     * 是否准备就绪
+     * @returns {""|*}
+     */
     isReady() {
       return this.onlineCode && this.relIdField && this.mainIdField && this.formData[this.mainIdField]
     },
@@ -150,6 +159,14 @@ export default {
   },
   methods: {
     /**
+     * 处理批量删除
+     * @param selectedRowKeys
+     * @param selectionRows
+     */
+    handleChangeInTableSelect(selectedRowKeys, selectionRows) {
+      this.selectedRowKeys = selectedRowKeys
+    },
+    /**
      * 表单提交成功回调
      * @param data
      */
@@ -165,7 +182,7 @@ export default {
     async onLoadDataBefore(that) {
       console.log('online子表列表数据加载前钩子，在这里处理自定义逻辑~', that, JSON.parse(JSON.stringify(this.formData)), this, this.record)
       // 禁用状态
-      that.buttonSwitch.disableAdd = false
+      that.buttonSwitch.disableAdd = this.disabled
       that.buttonSwitch.disableEdit = this.disabled
       that.buttonSwitch.disableDelete = this.disabled
     }
