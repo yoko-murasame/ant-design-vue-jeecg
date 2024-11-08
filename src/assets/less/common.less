@@ -130,6 +130,13 @@
   }
 }
 
+// 取消ant-card-head的padding
+.none-card-head-padding {
+  /deep/ .ant-card-head {
+    padding: 0 !important;
+  }
+}
+
 /* 示例：mixin带参，字体加粗 */
 .font-bold(@color: #000000; @bold: bold) {
   color: @color;

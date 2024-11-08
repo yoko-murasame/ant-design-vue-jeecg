@@ -69,6 +69,13 @@ export default {
         </a-form-item>
         <a-form-item label={'其他属性'} help="">
           <kCheckbox v-model={options.cardMode} label="卡片模式"/>
+          <kCheckbox v-model={options.bordered} label="边框"/>
+        </a-form-item>
+        <a-form-item label={'圆角值'} help="">
+          <Input vModel={options.borderRadius} placeholder={'圆角值'}/>
+        </a-form-item>
+        <a-form-item label={'卡片样式设置'} help="">
+          <Input vModel={options.cardStyle} placeholder={'卡片样式设置'}/>
         </a-form-item>
       </div>
     )

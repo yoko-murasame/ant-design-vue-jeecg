@@ -4,7 +4,12 @@
       v-if="isReady"
       v-bind="getOnlineListConfig"
       @formSuccess="onFormSuccess"
-    />
+    >
+      <template #cardTitle="props">
+
+        <a-button>新增</a-button>
+      </template>
+    </onl-cgform-auto-list>
     <div v-else class="d-flex df-jc-center df-ai-center">
       这是online列表子表组件哦~
     </div>
@@ -112,9 +117,11 @@ export default {
         // 卡片模式
         cardMode: this.cardMode,
         cartAttrs: {
-          'bordered': false,
-          'style': { 'border-radius': '1vh' },
-          'class': `none-ant-table-wrapper-min-height none-ant-empty-normal-margin${this.cardMode ? ' none-card-body-padding' : ''}`
+          'bordered': this.$attrs.bordered || false,
+          'style': { 'border-radius': this.$attrs.borderRadius || '1vh', ...JSON.parse(this.$attrs.cardStyle || '{}') },
+          'class': `none-ant-table-wrapper-min-height none-ant-empty-normal-margin${
+            this.cardMode ? ' none-card-body-padding none-card-head-padding' : ''
+          }`
         },
         onlineFormConfig: {
           // 表单code
@@ -155,7 +162,7 @@ export default {
      * @returns {Promise<void>}
      */
     async onLoadDataBefore(that) {
-      console.log('onLoadDataBefore', that, JSON.parse(JSON.stringify(this.formData)), this.record)
+      console.log('online子表列表数据加载前钩子，在这里处理自定义逻辑~', that, JSON.parse(JSON.stringify(this.formData)), this.record)
     }
   }
 }

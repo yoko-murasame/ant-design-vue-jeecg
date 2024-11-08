@@ -110,7 +110,13 @@ export const customComponents = [
       // 子表关联字段
       relIdField: '',
       // 是否禁用
-      disabled: false
+      disabled: false,
+      // 边框
+      bordered: false,
+      // 圆角值
+      borderRadius: '1vh',
+      // 卡片样式设置
+      cardStyle: '{"padding": "0 1vh 1vh 1vh"}'
     }
   },
   {

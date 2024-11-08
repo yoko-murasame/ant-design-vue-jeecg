@@ -51,7 +51,7 @@
 
     <!--卡片模式-标题插槽 title部分-->
     <span slot="title" v-if="cardMode && ($slots.cardTitle || $scopedSlots.cardTitle)">
-      <slot name="cardTitle">
+      <slot name="cardTitle" v-bind="getCardBindAttrs">
         <span>这是标题</span>
       </slot>
     </span>
