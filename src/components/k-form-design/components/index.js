@@ -114,9 +114,17 @@ export const customComponents = [
       // 边框
       bordered: false,
       // 圆角值
-      borderRadius: '1vh',
+      borderRadius: '5px',
       // 卡片样式设置
-      cardStyle: '{"padding": "0 1vh 1vh 1vh"}'
+      cardStyle: '{"padding": "0 1vh 1vh 1vh"}',
+      // 显示查询模块
+      showQueryBlock: false,
+      // 新增按钮文本
+      addButtonName: '新增',
+      // 数据防抖延时
+      loadDataDebounce: 50,
+      // 操作列固定位置
+      actionFixed: 'right'
     }
   },
   {

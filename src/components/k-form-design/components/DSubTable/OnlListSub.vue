@@ -5,9 +5,8 @@
       v-bind="getOnlineListConfig"
       @formSuccess="onFormSuccess"
     >
-      <template #cardTitle="props">
-
-        <a-button>新增</a-button>
+      <template #cardTitle="props" v-if="!disabled">
+        <a-button @click="props.handleAdd">{{ $attrs.addButtonName || '新增' }}</a-button>
       </template>
     </onl-cgform-auto-list>
     <div v-else class="d-flex df-jc-center df-ai-center">
@@ -129,7 +128,7 @@ export default {
           // 展示审批模块
           showDealBlock: false,
           // 展示查询模块
-          showQueryBlock: false,
+          showQueryBlock: this.$attrs.showQueryBlock || false,
           // 初始化筛选参数
           initQueryParam: {
             ...this.newFormData,
@@ -137,11 +136,13 @@ export default {
             needList: `${this.mainIdField},${this.relIdField}${this.newFormData['needList'] ? (',' + this.newFormData['needList']) : ''}`
           },
           // 新增按钮文本
-          addButtonName: '新增',
+          addButtonName: this.$attrs.addButtonName || '新增',
           // loadData触发debounce，0时就不延迟
-          loadDataDebounce: 200,
+          loadDataDebounce: this.$attrs.loadDataDebounce === null ? 50 : this.$attrs.loadDataDebounce,
           // action固定 'left', 'right'
-          actionFixed: 'right'
+          actionFixed: this.$attrs.actionFixed === null ? 'right' : this.$attrs.actionFixed,
+          // 禁用状态
+          disabled: this.disabled
         },
         onLoadDataBefore: this.onLoadDataBefore
       }
@@ -162,7 +163,7 @@ export default {
      * @returns {Promise<void>}
      */
     async onLoadDataBefore(that) {
-      console.log('online子表列表数据加载前钩子，在这里处理自定义逻辑~', that, JSON.parse(JSON.stringify(this.formData)), this.record)
+      console.log('online子表列表数据加载前钩子，在这里处理自定义逻辑~', that, JSON.parse(JSON.stringify(this.formData)), this, this.record)
     }
   }
 }

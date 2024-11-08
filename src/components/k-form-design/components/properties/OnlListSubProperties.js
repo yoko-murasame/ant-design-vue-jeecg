@@ -70,12 +70,26 @@ export default {
         <a-form-item label={'其他属性'} help="">
           <kCheckbox v-model={options.cardMode} label="卡片模式"/>
           <kCheckbox v-model={options.bordered} label="边框"/>
+          <kCheckbox v-model={options.showQueryBlock} label="显示查询模块(卡片模式下无效)"/>
         </a-form-item>
         <a-form-item label={'圆角值'} help="">
           <Input vModel={options.borderRadius} placeholder={'圆角值'}/>
         </a-form-item>
         <a-form-item label={'卡片样式设置'} help="">
           <Input vModel={options.cardStyle} placeholder={'卡片样式设置'}/>
+        </a-form-item>
+        <a-form-item label={'新增按钮文本'} help="">
+          <Input vModel={options.addButtonName} placeholder={'新增按钮文本'}/>
+        </a-form-item>
+        <a-form-item label={'数据防抖延时'} help="">
+          <InputNumber min={0} vModel={options.loadDataDebounce} placeholder={'数据防抖延时'}/>
+        </a-form-item>
+        <a-form-item label={'操作列固定位置'} help="">
+          <Radio buttonStyle="solid" v-model={options.actionFixed}>
+            <RadioButton value={'left'}>左边</RadioButton>
+            <RadioButton value={'right'}>右边</RadioButton>
+            <RadioButton value={''}>不固定</RadioButton>
+          </Radio>
         </a-form-item>
       </div>
     )
