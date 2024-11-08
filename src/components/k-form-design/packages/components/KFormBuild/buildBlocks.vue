@@ -127,6 +127,7 @@
     <j-form-container v-show="!record.options.hidden" :disabled="disabled" v-else>
       <KFormItem
         ref="nestedComponents"
+        :disabled="disabled"
         @handleReset="$emit('handleReset')"
         @change="handleChange"
         @myInput="handleMyInput"

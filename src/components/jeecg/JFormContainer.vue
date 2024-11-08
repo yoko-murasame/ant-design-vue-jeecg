@@ -47,9 +47,14 @@
     pointer-events: none;
   }
 
+  /*.none-ant-table-wrapper-min-height 开头的几个属性是online子表模式在详情页面需要排除的禁用状态*/
   .jeecg-form-container-disabled .ant-upload-select{display:none}
   .jeecg-form-container-disabled .ant-upload-list{cursor:grabbing}
   .jeecg-form-container-disabled fieldset[disabled] .ant-upload-list,
+  .jeecg-form-container-disabled fieldset[disabled] .none-ant-table-wrapper-min-height,
+  .jeecg-form-container-disabled fieldset[disabled] .none-ant-table-wrapper-min-height .ant-select,
+  .jeecg-form-container-disabled fieldset[disabled] .none-ant-table-wrapper-min-height .ant-pagination,
+  .jeecg-form-container-disabled fieldset[disabled] .none-ant-table-wrapper-min-height .ant-table ::-webkit-scrollbar,
   .jeecg-form-container-disabled fieldset[disabled] iframe{
     -ms-pointer-events: auto !important;
     pointer-events: auto !important;
