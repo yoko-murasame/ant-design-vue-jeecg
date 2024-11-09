@@ -187,6 +187,8 @@ export default {
       that.buttonSwitch.disableAdd = this.disabled
       that.buttonSwitch.disableEdit = this.disabled
       that.buttonSwitch.disableDelete = this.disabled
+      // 禁用时取消checkbox
+      that.checkboxFlag = !this.disabled
     }
   }
 }
