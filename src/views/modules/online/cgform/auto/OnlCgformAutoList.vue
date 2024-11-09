@@ -210,12 +210,7 @@
             <div>{{ getPcaText(text) }}</div>
           </template>
 
-          <template slot="imgSlot" slot-scope="text">
-            <span v-if="!text" style="font-size: 12px;font-style: italic;">无图片</span>
-            <img v-else :src="getImgView(text)" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>
-          </template>
-
-          <template slot="imgSlot" slot-scope="text">
+          <template v-if="onlineSubMode || cardMode" slot="imgSlot" slot-scope="text">
             <j-image-upload
               :disabled="true"
               :value="text"
@@ -225,8 +220,12 @@
               url-suffix="x-oss-process=image/resize,w_120">
             </j-image-upload>
           </template>
+          <template v-else slot="imgSlot" slot-scope="text">
+            <span v-if="!text" style="font-size: 12px;font-style: italic;">无图片</span>
+            <img v-else :src="getImgView(text)" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>
+          </template>
 
-          <template slot="fileSlot" slot-scope="text">
+          <template v-if="onlineSubMode || cardMode" slot="fileSlot" slot-scope="text">
             <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
             <j-upload
               v-else
@@ -242,6 +241,18 @@
               :number="10"
               :value="text"
             ></j-upload>
+          </template>
+          <template v-else slot="fileSlot" slot-scope="text">
+            <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
+            <a-button
+              v-else
+              :ghost="true"
+              type="primary"
+              icon="download"
+              size="small"
+              @click="downloadRowFile(text)">
+              下载
+            </a-button>
           </template>
 
           <!--表格按钮插槽-->
