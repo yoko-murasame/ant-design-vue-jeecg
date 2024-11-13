@@ -24,8 +24,8 @@
 
     </template>
 
-    <a-spin :spinning="confirmLoading">
-      <a-form :form="form" layout="inline" :class="{'online-config-cust':true }" class="cgform-header-main">
+    <a-spin :spinning="confirmLoading" class="fix-long-line">
+      <a-form :form="form" layout="inline" :class="{'online-config-cust':true }" class="upper cgform-header-main">
         <a-list>
           <!-- 表名、表描述、表类型 -->
           <a-list-item>
@@ -463,7 +463,7 @@
 
       </a-form>
 
-      <a-spin :spinning="tableLoading">
+      <a-spin :spinning="tableLoading" class="down">
         <a-tabs v-model="activeKey" @change="handleChangeInTabs">
           <!-- :forceRender="true" 必须为true-->
           <a-tab-pane tab="数据库属性" key="1" :forceRender="true">
@@ -1149,11 +1149,21 @@ export default {
   }
 </script>
 
-<style scoped>
+<style scoped lang="less">
  .online-config-cust .has-feedback{display: block !important;}
  .input-table .thead .td span{width:100%}
  .cgform-header-main {
    max-height: 40vh;
    overflow-y: auto;
+ }
+ .fix-long-line {
+   .upper {
+     max-height: 40vh;
+     overflow-y: auto;
+   }
+   .down {
+     overflow: auto;
+     max-height: 86vh;
+   }
  }
 </style>
