@@ -123,7 +123,8 @@ export const HrefJump = {
           // update-begin-author:taoyan date:20201204 for: 扩展参数设置列的内容长度
           if (column.showLength) {
             if (value && value.length > column.showLength) {
-              value = value.substr(0, column.showLength) + '...'
+              // value = value.substr(0, column.showLength) + '...'
+              value = <a-tooltip><div slot={'title'} domProps={{ innerHTML: value }}></div><span title={value}>{value.substr(0, column.showLength)}...</span></a-tooltip>
             }
           }
           // update-end-author:taoyan date:20201204 for: 扩展参数设置列的内容长度
