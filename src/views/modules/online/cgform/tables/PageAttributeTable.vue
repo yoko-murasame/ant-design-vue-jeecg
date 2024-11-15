@@ -10,8 +10,21 @@
     :disabledRows="{ dbFieldName:'id'}">
     <template v-slot:fieldExtendJson="props">
       <!--<a-button @click="onCLick(props)">test</a-button>-->
-      <a-tooltip :title="props.column.placeholder">
-        <a-input :value="props.value" @input="e => onSetValue(props.rowId, {'fieldExtendJson': e.target.value})"></a-input>
+      <a-tooltip>
+        <template v-slot:title>
+          <div>
+            <div><a href="https://www.kancloud.cn/zhangdaiscott/jeecg-boot/2044137" target="_blank">扩展参数配置</a></div>
+            <div>1. 限制文件上传数量(默认online表单): {"uploadnum":1}</div>
+            <div>2. <strong>限制大文本在列表页面的展示长度(online列表): {"showLength":20}</strong></div>
+            <div>3. 设置popup是否支持多选(默认online表单): {"popupMulti":false}</div>
+            <div>4. 设置部门组件 存储字段和展示字段(默认online表单): {"store": "orgCode"} 存储字段变更为部门编码</div>
+            <div>5. 设置用户组件 存储字段和展示字段(默认online表单): {"store":"id", "text":"username"} 存储字段变更为用户ID,展示字段变更为用户账号</div>
+            <div>6. 设置部门/用户组件 是否多选(默认online表单): {"multiSelect":false}</div>
+            <div>7. <strong>设置 查询排序规则(online列表): {"orderRule": "asc"} 正序asc、倒序desc</strong></div>
+            <div>8. 设置 校验提示的文本信息(默认online表单): {"validateError": "这是自定义的提示信息"} 正序asc、倒序desc</div>
+          </div>
+        </template>
+        <a-input v-bind="props.buildProps()" :value="props.value" @input="e => onSetValue(props.rowId, {'fieldExtendJson': e.target.value})"></a-input>
       </a-tooltip>
     </template>
   </j-editable-table>
@@ -83,7 +96,8 @@ const commonPageOptions = [
             type: FormTypes.input,
             defaultValue: '',
             placeholder: '',
-            props: { 'disabled': true }
+            props: { 'disabled': true },
+            tooltip: '字段名称(数据库字段名)'
           },
           {
             title: '字段备注', // 只读
@@ -93,25 +107,28 @@ const commonPageOptions = [
             type: FormTypes.input,
             defaultValue: '',
             placeholder: '',
-            props: { 'disabled': true }
+            props: { 'disabled': true },
+            tooltip: '字段备注(数据库字段备注)'
           },
           {
-            title: '表单显示(控制保存字段)',
+            title: '表单显示',
             key: 'isShowForm',
             // width: '3%',
-            width: '100px',
+            width: '40px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],
-            defaultChecked: true
+            defaultChecked: true,
+            tooltip: '是否表单显示(如果字段配置为否，则新增、编辑时将忽略该字段)'
           },
           {
-            title: '列表显示(可控制导出列)', // 多选框、默认true
+            title: '列表显示', // 多选框、默认true
             key: 'isShowList',
             // width: '3%',
-            width: '100px',
+            width: '40px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],
-            defaultChecked: true
+            defaultChecked: true,
+            tooltip: '是否列表显示(如果字段配置为否，则列表页面、Excel导出时将忽略该字段)'
           },
           {
             title: '是否排序',
@@ -119,7 +136,8 @@ const commonPageOptions = [
             width: '40px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],
-            defaultChecked: false
+            defaultChecked: false,
+            tooltip: '是否排序(多个字段将按照顺序从上到下依次排序，可在“扩展参数”中{"orderRule": "asc|desc"}指定顺序)'
           },
           {
             title: '是否只读',
@@ -128,7 +146,8 @@ const commonPageOptions = [
             width: '40px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],
-            defaultChecked: false
+            defaultChecked: false,
+            tooltip: '是否只读(仅在默认的online表单中生效，KForm设计器表单无效)'
           },
           {
             title: '控件类型',
@@ -171,7 +190,8 @@ const commonPageOptions = [
                 },
                 message: '${title}校验失败'
               }
-            ]
+            ],
+            tooltip: '控件类型'
           },
           {
             title: '控件长度', // 数值
@@ -181,7 +201,8 @@ const commonPageOptions = [
             type: FormTypes.inputNumber,
             defaultValue: '120',
             placeholder: '请输入${title}',
-            validateRules: [{ required: true, message: '${title}不能为空' }]
+            validateRules: [{ required: true, message: '${title}不能为空' }],
+            tooltip: '控件长度(默认的online表单中针对一对多子表作用较大，可自定义设置长度，适应行编辑页面效果；KForm设计器表单无效)'
           },
           {
             title: '是否查询',
@@ -190,7 +211,8 @@ const commonPageOptions = [
             width: '60px',
             type: FormTypes.checkbox,
             customValue: ['1', '0'],
-            defaultChecked: false
+            defaultChecked: false,
+            tooltip: '是否查询(控制列表页的查询项)'
           },
           {
             title: '查询类型',
@@ -205,7 +227,8 @@ const commonPageOptions = [
             ],
             defaultValue: 'single',
             placeholder: '请选择${title}',
-            validateRules: [{ required: true, message: '请选择${title}' }]
+            validateRules: [{ required: true, message: '请选择${title}' }],
+            tooltip: '查询类型(数值、日期类型时生效)'
           },
           {
             title: '控件默认值',
@@ -213,7 +236,8 @@ const commonPageOptions = [
             // width: '15%',
             width: '180px',
             type: FormTypes.input,
-            defaultValue: ''
+            defaultValue: '',
+            tooltip: '控件默认值'
           },
           {
             title: '扩展参数',
@@ -231,7 +255,8 @@ const commonPageOptions = [
             // width: '15%',
             width: '160px',
             type: FormTypes.input,
-            defaultValue: ''
+            defaultValue: '',
+            tooltip: '自定义转换器'
           },
           {
             title: '自定义scopedSlots',
@@ -239,7 +264,8 @@ const commonPageOptions = [
             // width: '15%',
             width: '160px',
             type: FormTypes.input,
-            defaultValue: ''
+            defaultValue: '',
+            tooltip: '自定义scopedSlots(online列表组件处于卡片模式时，将添加该自定义名插槽)'
           },
           {
             title: 'slot渲染Vue代码',
@@ -247,7 +273,8 @@ const commonPageOptions = [
             // width: '15%',
             width: '160px',
             type: FormTypes.input_pop,
-            defaultValue: ''
+            defaultValue: '',
+            tooltip: 'slot渲染Vue代码(需在“自定义scopedSlots”中先定义任意插槽名称，然后在此输入Vue代码)'
           }
         ]
       }
