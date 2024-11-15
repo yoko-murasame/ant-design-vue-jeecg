@@ -2,8 +2,8 @@
   <div v-bind="fullScreenParentProps">
     <a-icon v-if="fullScreen" class="full-screen-icon" :type="iconType" @click="()=>fullCoder=!fullCoder"/>
 
-    <div class="code-editor-cust full-screen-child">
-      <textarea ref="textarea" :id="uniqueId"></textarea>
+    <div class="code-editor-cust full-screen-child" :style="{ 'min-height': minHeight, 'max-height': maxHeight }">
+      <textarea ref="textarea" :id="uniqueId" :disabled="$attrs.disabled"></textarea>
       <span @click="nullTipClick" class="null-tip" :class="{'null-tip-hidden':hasCode}" :style="nullTipStyle">{{ placeholderShow }}</span>
       <template v-if="languageChange">
         <a-select v-model="mode" size="small" class="code-mode-select" @change="changeMode" placeholder="请选择主题">
@@ -100,6 +100,16 @@ import 'codemirror/mode/vue/vue.js'
       height: {
         type: [String, Number],
         default: '240px'
+      },
+      // 最小高度（有代码时）
+      minHeight: {
+        type: [String, Number],
+        default: '120px'
+      },
+      // 最大高度（有代码时）
+      maxHeight: {
+        type: [String, Number],
+        default: '120px' // 320px
       }
     },
     data () {
@@ -302,7 +312,7 @@ import 'codemirror/mode/vue/vue.js'
       },
       // 初始化Value和On
       _initializeValue () {
-        console.log('初始化_initialize', this.value, this.code)
+        // console.log('初始化_initialize', this.value, this.code)
         // 初始化编辑器实例，传入需要被实例化的文本域对象和默认配置
         // this.coder = CodeMirror.fromTextArea(this.$refs.textarea, this.coderOptions)
         // 编辑器赋值
