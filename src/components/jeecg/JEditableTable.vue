@@ -193,13 +193,15 @@
                     </label>
                     <!-- checkbox -->
                     <template v-else-if="col.type === formTypes.checkbox">
-                      <a-checkbox
-                        :key="i"
-                        :id="id"
-                        v-bind="buildProps(row,col)"
-                        :checked="checkboxValues[id]"
-                        @change="(e)=>handleChangeCheckboxCommon(e,row,col)"
-                      />
+                      <a-tooltip v-bind="buildTooltipProps(row, col, id)">
+                        <a-checkbox
+                          :key="i"
+                          :id="id"
+                          v-bind="buildProps(row,col)"
+                          :checked="checkboxValues[id]"
+                          @change="(e)=>handleChangeCheckboxCommon(e,row,col)"
+                        />
+                      </a-tooltip>
                     </template>
                     <!-- select -->
                     <template v-else-if="col.type === formTypes.select">
@@ -674,6 +676,7 @@
                           :text="slotValues[id]"
                           :value="slotValues[id]"
                           :column="col"
+                          :row="row"
                           :rowId="getCleanId(row.id)"
                           :getValue="()=>_getValueForSlot(row.id)"
                           :caseId="caseId"
@@ -682,6 +685,7 @@
                           :handleChange="(v)=>handleChangeSlotCommon(v,id,row,col)"
                           :isNotPass="notPassedIds.includes(col.key+row.id)"
                           :buildProps="()=>buildProps(row,col)"
+                          :buildTooltipProps="()=>buildTooltipProps(row, col, id)"
                         />
                       </a-tooltip>
                     </div>
@@ -2687,9 +2691,12 @@
             'j-check-failed': false
           },
         }
+        // console.log('buildTooltipProps', row, col)
         let isCheckFailed = notPassedIds.includes(id)
         if (isCheckFailed) {
           props.class['j-check-failed'] = true
+        } else if (col && col.tooltip) {
+          props.title = col.tooltip
         } else {
           props['visible'] = false
         }
