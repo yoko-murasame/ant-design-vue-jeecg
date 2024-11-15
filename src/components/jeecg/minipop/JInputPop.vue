@@ -11,7 +11,25 @@
       <a-icon slot="suffix" type="fullscreen" @click.stop="pop" />
     </a-input>
     <div slot="content">
-      <a-textarea ref="textarea" :value="inputContent" :disabled="disabled" @input="handleInputChange" :style="{ height: height + 'px', width: width + 'px' }"/>
+      <a-textarea
+        v-if="language === 'textarea'"
+        ref="textarea"
+        :value="inputContent"
+        :disabled="disabled"
+        @input="handleInputChange"
+        :style="{ height: height + 'px', width: width + 'px' }"/>
+      <j-code-editor
+        v-else
+        ref="codeEditor"
+        :language="language"
+        :value="inputContent"
+        :fullScreen="false"
+        :disabled="disabled"
+        @change="handleCodeChange"
+        :auto-height="true"
+        :min-height="height || '50vh'"
+        :max-height="height || '50vh'"
+        :style="{ width: '50vw' }"/>
     </div>
   </a-popover>
 </template>
@@ -31,7 +49,7 @@
         required: false
       },
       height: {
-        type: Number,
+        type: [Number, String],
         default: 200,
         required: false
       },
@@ -56,6 +74,11 @@
       placeholder: {
         type: String,
         required: false
+      },
+      // 语言: textarea | vue | javascript
+      language: {
+        type: String,
+        default: 'textarea'
       }
 
     },
@@ -86,6 +109,10 @@
         this.inputContent = event.target.value
         this.$emit('change', this.inputContent)
       },
+      handleCodeChange(e) {
+        this.inputContent = e
+        this.$emit('change', this.inputContent)
+      },
       pop() {
         // disabled 不弹窗
         if (this.disabled) {
@@ -93,7 +120,9 @@
         }
         this.visible = true
         this.$nextTick(() => {
-          this.$refs.textarea.focus()
+          if (this.language === 'textarea') {
+            this.$refs.textarea.focus()
+          }
         })
       },
       getPopupContainer(node) {
