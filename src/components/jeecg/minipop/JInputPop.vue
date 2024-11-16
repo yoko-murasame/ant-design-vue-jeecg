@@ -2,7 +2,9 @@
   <a-popover trigger="contextmenu" v-model="visible" :placement="position" overlayClassName="j-input-pop">
     <!--"(node) => node.parentNode.parentNode"-->
     <div slot="title">
-      <span>{{ title }}</span>
+      <!--todo markdown帮助问价组件-->
+      <span v-if="!markdownPath">{{ popTitle || title }}</span>
+      <a v-else @click.stop="$refs.jsHelp.showModal()">{{ popTitle || title }}</a>
       <span style="float: right" title="关闭">
         <a-icon type="close" @click="visible=false"/>
       </span>
@@ -18,25 +20,30 @@
         :disabled="disabled"
         @input="handleInputChange"
         :style="{ height: height + 'px', width: width + 'px' }"/>
-      <j-code-editor
-        v-else
-        ref="codeEditor"
-        :language="language"
-        :value="inputContent"
-        :fullScreen="false"
-        :disabled="disabled"
-        @change="handleCodeChange"
-        :auto-height="true"
-        :min-height="height || '50vh'"
-        :max-height="height || '50vh'"
-        :style="{ width: '50vw' }"/>
+      <template v-else>
+        <j-code-editor
+          ref="codeEditor"
+          :language="language"
+          :value="inputContent"
+          :fullScreen="false"
+          :disabled="disabled"
+          @change="handleCodeChange"
+          :auto-height="true"
+          :min-height="height || '50vh'"
+          :max-height="height || '50vh'"
+          :style="{ width: '50vw' }"/>
+        <js-form-enhance-help v-if="markdownPath" ref="jsHelp" :title="popTitle" :url="baseHelpUrl + markdownPath"></js-form-enhance-help>
+      </template>
     </div>
   </a-popover>
 </template>
 
 <script>
+  import JsFormEnhanceHelp from '@comp/yoko/kform/JsFormEnhanceHelp.vue'
+
   export default {
     name: 'JInputPop',
+    components: { JsFormEnhanceHelp },
     props: {
       title: {
         type: String,
@@ -79,14 +86,23 @@
       language: {
         type: String,
         default: 'textarea'
+      },
+      // 帮助文件路径
+      markdownPath: {
+        type: String,
+        default: ''
+      },
+      // pop状态的标题
+      popTitle: {
+        type: String,
+        default: ''
       }
-
     },
     data() {
       return {
         visible: false,
-        inputContent: ''
-
+        inputContent: '',
+        baseHelpUrl: process.env.BASE_URL || '/'
       }
     },
 
