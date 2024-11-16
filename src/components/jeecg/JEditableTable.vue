@@ -345,6 +345,8 @@
                           :language="col.language || 'textarea'"
                           style="width: 100%;"
                           :value="jInputPopValues[id]"
+                          :pop-title="col.popTitle"
+                          :markdown-path="col.markdownPath"
                           :getCalendarContainer="getParentContainer"
                           :placeholder="replaceProps(col, col.placeholder)"
                           @change="(v)=>handleChangeJInputPopCommon(v,id,row,col)"

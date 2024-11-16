@@ -576,6 +576,8 @@ export default {
     },
     data() {
       return {
+        // 当前组件
+        vm: this,
         // 表单code
         code: '',
         // 是否展示审批模块
@@ -784,6 +786,7 @@ export default {
       getCardBindAttrs() {
         // console.log('获取slot绑定属性', this.$slots, this.$scopedSlots)
         return {
+          vm: this.vm,
           table: this.table,
           columns: this.tableColumn,
           dataSource: this.table.dataSource,

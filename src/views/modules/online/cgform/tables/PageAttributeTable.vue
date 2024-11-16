@@ -274,7 +274,11 @@ const commonPageOptions = [
             width: '160px',
             type: FormTypes.input_pop,
             defaultValue: '',
-            tooltip: 'slot渲染Vue代码(需在“自定义scopedSlots”中先定义任意插槽名称，然后在此输入Vue代码)'
+            tooltip: 'slot渲染Vue代码(需在“自定义scopedSlots”中先定义任意插槽名称，然后在此输入Vue代码)',
+            language: 'vue',
+            height: '70vh',
+            popTitle: 'slot渲染帮助文档',
+            markdownPath: 'static/online列表自定义slot.md'
           }
         ]
       }
