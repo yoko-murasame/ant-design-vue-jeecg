@@ -349,7 +349,8 @@ export const defaultLayoutSchemaList = [
       tabPosition: 'top',
       size: 'default',
       noFormItem: true,
-      animated: true
+      animated: true,
+      defaultActiveKey: ''
     },
     columns: [
       {

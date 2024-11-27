@@ -227,7 +227,8 @@
                   </span>
                   <j-code-editor
                     :line-numbers="true"
-                    height="2vh"
+                    min-height="15vh"
+                    max-height="15vh"
                     language="javascript"
                     v-decorator="['onlineInitQueryParamGetter', validatorRules.onlineInitQueryParamGetter]"
                     :fullScreen="true"
@@ -253,7 +254,8 @@
                   </span>
                   <j-code-editor
                     :line-numbers="true"
-                    height="2vh"
+                    min-height="15vh"
+                    max-height="15vh"
                     language="javascript"
                     v-decorator="['onlineVueWatchJsStr', validatorRules.onlineVueWatchJsStr]"
                     :fullScreen="true"

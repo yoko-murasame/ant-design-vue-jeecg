@@ -2,7 +2,7 @@
   <div v-bind="fullScreenParentProps">
     <a-icon v-if="fullScreen" class="full-screen-icon" :type="iconType" @click="()=>fullCoder=!fullCoder"/>
 
-    <div class="code-editor-cust full-screen-child" :style="{ 'min-height': minHeight, 'max-height': maxHeight }">
+    <div class="code-editor-cust full-screen-child" :style="{ 'min-height': minHeight, 'max-height': fullCoder ? 'max-content' :maxHeight }">
       <textarea ref="textarea" :id="uniqueId" :disabled="$attrs.disabled"></textarea>
       <span @click="nullTipClick" class="null-tip" :class="{'null-tip-hidden':hasCode}" :style="nullTipStyle">{{ placeholderShow }}</span>
       <template v-if="languageChange">
