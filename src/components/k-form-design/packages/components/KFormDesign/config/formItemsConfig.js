@@ -350,7 +350,7 @@ export const defaultLayoutSchemaList = [
       size: 'default',
       noFormItem: true,
       animated: true,
-      defaultActiveKey: ''
+      defaultActiveKey: 0
     },
     columns: [
       {
@@ -1073,7 +1073,8 @@ export const defaultSchemaListBackup = [
       tabPosition: 'top',
       size: 'default',
       noFormItem: true,
-      animated: true
+      animated: true,
+      defaultActiveKey: 0
     },
     columns: [
       {

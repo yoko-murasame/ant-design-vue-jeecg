@@ -241,6 +241,9 @@
             <RadioButton value="card">card</RadioButton>
           </Radio>
         </a-form-item>
+        <a-form-item v-if="selectItem.type === 'tabs'" label="默认标签页(下标从0开始)">
+          <InputNumber :min="0" v-model="options.defaultActiveKey" />
+        </a-form-item>
         <!-- 页签类型 end -->
         <!-- 页签大小 start -->
         <a-form-item v-if="isDefined(options.size)" label="大小">
@@ -445,7 +448,7 @@
         <OnlListSubProperties :select-item="selectItem"></OnlListSubProperties>
 
         <!-- JS增强-数据值改变后调用 -->
-        <a-form-item label="数据变更后调用。`value`：回调值，`key`：组件id" class="js-help">
+        <a-form-item v-if="!isLayout" label="数据变更后调用。`value`：回调值，`key`：组件id" class="js-help">
           <j-code-editor
             ref="codeEditorOnChange"
             language="javascript"
@@ -456,7 +459,7 @@
           <template slot="help"><a @click.stop="$refs.jsHelp.showModal()">查看JS增强帮助</a></template>
         </a-form-item>
         <!-- JS增强-数据值Input后调用 -->
-        <a-form-item label="数据值Input后调用。`value`：回调值，`key`：组件id" class="js-help">
+        <a-form-item v-if="!isLayout" label="数据值Input后调用。`value`：回调值，`key`：组件id" class="js-help">
           <j-code-editor
             ref="codeEditorOnInput"
             language="javascript"
@@ -640,6 +643,10 @@ export default {
   computed: {
     options() {
       return this.selectItem.options || {}
+    },
+    // 是否是布局组件（布局组件有的属性没有）
+    isLayout() {
+      return ['grid', 'tabs', 'card', 'batch', 'subtable', 'table'].includes(this.selectItem.type)
     }
   },
   props: {

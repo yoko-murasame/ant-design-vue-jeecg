@@ -3,7 +3,7 @@
   <a-tabs
     v-if="record.type === 'tabs'"
     class="grid-row"
-    :default-active-key="0"
+    :default-active-key="record.options.defaultActiveKey"
     :tabBarGutter="record.options.tabBarGutter"
     :type="record.options.type"
     :size="record.options.size"
@@ -213,6 +213,7 @@ export default {
   },
   data() {
     return {
+      // tabs支持外部切换tab页
       activeKey: 0
     }
   },
@@ -300,6 +301,14 @@ export default {
     }
   },
   watch: {
+    // 默认激活tab页
+    'record.options.defaultActiveKey': {
+      immediate: true,
+      handler(val) {
+        // console.log('watch::defaultActiveKey', val)
+        this.activeKey = val
+      }
+    },
     /**
      * @description: 监视validatorError对象，当检测到Tabs中有表单校验无法通过时，切换到最近校验失败的tab页。
      * @fix 修复嵌套布局下，验证error无法跳转tab问题
