@@ -17,11 +17,11 @@
             <div>1. 限制文件上传数量(默认online表单): {"uploadnum":1}</div>
             <div>2. <strong>限制大文本在列表页面的展示长度(online列表): {"showLength":20}</strong></div>
             <div>3. 设置popup是否支持多选(默认online表单): {"popupMulti":false}</div>
-            <div>4. 设置部门组件 存储字段和展示字段(默认online表单): {"store": "orgCode"} 存储字段变更为部门编码</div>
-            <div>5. 设置用户组件 存储字段和展示字段(默认online表单): {"store":"id", "text":"username"} 存储字段变更为用户ID,展示字段变更为用户账号</div>
+            <div>4. 设置部门组件 存储字段和展示字段(默认online表单): {"store": "orgCode"}，注：存储字段变更为部门编码</div>
+            <div>5. 设置用户组件 存储字段和展示字段(默认online表单): {"store":"id", "text":"username"}，注：存储字段变更为用户ID,展示字段变更为用户账号</div>
             <div>6. 设置部门/用户组件 是否多选(默认online表单): {"multiSelect":false}</div>
-            <div>7. <strong>设置 查询排序规则(online列表): {"orderRule": "asc"} 正序asc、倒序desc</strong></div>
-            <div>8. 设置 校验提示的文本信息(默认online表单): {"validateError": "这是自定义的提示信息"} 正序asc、倒序desc</div>
+            <div>7. <strong>设置 查询排序规则(online列表): {"orderRule": "asc"}，注：正序asc、倒序desc</strong></div>
+            <div>8. 设置 校验提示的文本信息(默认online表单): {"validateError": "这是自定义的提示信息"}</div>
           </div>
         </template>
         <a-input v-bind="props.buildProps()" :value="props.value" @input="e => onSetValue(props.rowId, {'fieldExtendJson': e.target.value})"></a-input>
