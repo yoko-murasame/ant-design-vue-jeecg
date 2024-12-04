@@ -69,10 +69,12 @@ export const BeforeOnlListSubReadyMixins =  {
               ['value', 'key', 'data', 'getData', 'setData',
                 'setOptions', 'changeDict',
                 'setRules', 'openRequired', 'closeRequired',
+                'getAllTabs', 'selectTabByName',
                 'hide', 'show', 'disable', 'enable', 'reset', 'formMeta'],
               [value, key, that.data, that.getData, that.setData,
                 that.setOptions, that.changeDict,
                 that.setRules, that.openRequired, that.closeRequired,
+                that.getAllTabs, that.selectTabByName,
                 that.hide, that.show, that.disable, that.enable, that.reset, that.value])
             .call()
             return res

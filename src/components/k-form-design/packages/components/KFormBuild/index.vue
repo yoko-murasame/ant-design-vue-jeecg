@@ -130,6 +130,7 @@ export default {
         'setOptions', 'changeDict',
         'setRules', 'openRequired', 'closeRequired',
         'parent',
+        'getAllTabs', 'selectTabByName',
         'hide', 'show', 'disable', 'enable', 'reset', 'formData', 'newFormData', 'formMeta']
     },
     /**
@@ -142,6 +143,7 @@ export default {
         this.setOptions, this.changeDict,
         this.setRules, this.openRequired, this.closeRequired,
         this.parent,
+        this.getAllTabs, this.selectTabByName,
         this.hide, this.show, this.disable, this.enable, this.reset, formData, this.newFormData, this.value]
     },
     /**
@@ -512,6 +514,46 @@ export default {
     // online子表组件的初始化前事件
     handleBeforeOnlListSubReady(e) {
       this.$emit('beforeOnlListSubReady', e)
+    },
+    // 获取所有tabs
+    getAllTabs(resArr = [], parentArr) {
+      parentArr = parentArr || this.value.list
+      if (parentArr && parentArr.length) {
+        parentArr.forEach(item => {
+          if (item.type === 'tabs') {
+            resArr.push(item)
+          }
+          // 递归找
+          if (Array.isArray(item.list)) {
+            this.getAllTabs(resArr, item.list)
+          }
+          if (['grid', 'tabs'].includes(item.type) && Array.isArray(item.columns)) {
+            this.getAllTabs(resArr, item.columns)
+          }
+        })
+      }
+      return resArr
+    },
+    // 根据tab名称手动选中tab
+    selectTabByName(tabName) {
+      const tabs = this.getAllTabs()
+      for (let j = 0; j < tabs.length; j++) {
+        const item = tabs[j]
+        let idx = 0
+        let target = null
+        for (let i = 0; i < item.columns.length; i++) {
+          if (item.columns[i].label === tabName) {
+            idx = i
+            target = item.columns[i]
+            break
+          }
+        }
+        if (target) {
+          console.log('KFormBuild::selectTabByName', target, idx)
+          this.$set(item.options, 'defaultActiveKey', idx)
+          break
+        }
+      }
     }
   },
   mounted() {

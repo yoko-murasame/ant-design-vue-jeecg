@@ -144,6 +144,8 @@ if (captain_name) {
 * `setRules`：批量设置表单组件的所有rules的值，参数为：['fieldA', 'fieldB']，key(属性名称)，value(属性值)
 * `openRequired`：开启表单项必填，**请注意预览模式下会更改表单项配置！务必先保存后预览！**，参数为：['fieldA', 'fieldB']
 * `closeRequired`：关闭表单项必填，**请注意预览模式下会更改表单项配置！务必先保存后预览！**，参数为：['fieldA', 'fieldB']
+* `getAllTabs`：获取当前表单的所有tab配置对象
+* `selectTabByName`：根据tab名称选中tab，参数为：name(tab名称)
 
 ```js
 // 注意不要申明成data，默认属性已经有data了
@@ -171,6 +173,10 @@ that.setRules(['fieldA', 'fieldB'], 'required', true)
 that.openRequired(['fieldA', 'fieldB'])
 // 关闭表单项必填
 that.closeRequired(['fieldA', 'fieldB'])
+// 获取当前表单的所有tab配置对象
+const tabs = getAllTabs()
+// 根据tab名称选中tab
+that.selectTabByName('选项2')
 ```
 
 
