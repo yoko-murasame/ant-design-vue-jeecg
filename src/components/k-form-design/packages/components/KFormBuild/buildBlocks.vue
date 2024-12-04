@@ -246,21 +246,75 @@ export default {
     // online子表组件的初始化前事件
     handleBeforeOnlListSubReady(e) {
       this.$emit('beforeOnlListSubReady', e)
+    },
+    /**
+     * 找到指定的表单项
+     * @param modelName 数据绑定model名称（字段名）
+     * @param parentArr 待查找的列表
+     * @returns {null}
+     */
+    findItemByModelName(modelName, parentArr = []) {
+      if (!parentArr.length) {
+        return null
+      }
+      for (let i = 0; i < parentArr.length; i++) {
+        if (parentArr[i].model === modelName) {
+          return parentArr[i]
+        } else if (Array.isArray(parentArr[i].list)) {
+          const temp = this.findItemByModelName(modelName, parentArr[i].list)
+          if (temp !== null) {
+            return temp
+          }
+        } else if (['grid', 'tabs'].includes(parentArr[i].type) && Array.isArray(parentArr[i].columns)) {
+          const temp = this.findItemByModelName(modelName, parentArr[i].columns)
+          if (temp !== null) {
+            return temp
+          }
+        }
+      }
+    },
+    /**
+     * 获取所有包含model（双向绑定字段）的表单项
+     * @param resArr
+     * @param parentArr
+     * @returns {*[]}
+     */
+    getAllModelItems(resArr = [], parentArr = []) {
+      if (!parentArr.length) {
+        return resArr
+      }
+      for (let i = 0; i < parentArr.length; i++) {
+        if (parentArr[i].hasOwnProperty('model')) {
+          // console.log('找到对象', parentArr[i])
+          resArr.push(parentArr[i])
+        }
+        // 递归找
+        if (Array.isArray(parentArr[i].list)) {
+          this.getAllModelItems(resArr, parentArr[i].list)
+        }
+        if (['grid', 'tabs'].includes(parentArr[i].type) && Array.isArray(parentArr[i].columns)) {
+          this.getAllModelItems(resArr, parentArr[i].columns)
+        }
+      }
+      return resArr
     }
   },
   watch: {
     /**
-     * @author: lizhichao<meteoroc@outlook.com>
      * @description: 监视validatorError对象，当检测到Tabs中有表单校验无法通过时，切换到最近校验失败的tab页。
+     * @fix 修复嵌套布局下，验证error无法跳转tab问题
      */
     validatorError: {
       deep: true,
       handler: function (n) {
+        // console.log('validatorError', n, this.record.columns)
         const errorItems = Object.keys(n)
         if (errorItems.length) {
           if (!this.record.columns) return false
           for (let i = 0; i < this.record.columns.length; i++) {
-            const err = this.record.columns[i].list.filter(item =>
+            const allModelItems = this.getAllModelItems([], this.record.columns[i].list)
+            // console.log('allModelItems', allModelItems)
+            const err = allModelItems.filter(item =>
               errorItems.includes(item.model)
             )
             if (err.length) {
