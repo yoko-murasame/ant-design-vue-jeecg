@@ -52,6 +52,9 @@ map $time_iso8601 $logDate { \
 # 加载自定义NginxServer块
 RUN sed -i "/include \/etc\/nginx\/conf.d\/\*.conf;/a include $NGINX_SERVER_CONF_PATH/*.conf;" /etc/nginx/nginx.conf
 
+# 时区
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
 # 端口放行-应用端口1
 EXPOSE $APP_1_PORT
 # 端口放行-应用端口2（可选）
