@@ -67,9 +67,13 @@ export default {
         <a-form-item label={'online主表主键字段名'} help="">
           <Input vModel={options.mainIdField} placeholder={'online主表主键字段名'}/>
         </a-form-item>
+        <a-form-item label={'online子表组件数据字段(仅复制，用于禁用、隐藏等api)'} help="">
+          <Input vModel={this.selectItem.model} disabled placeholder={'online子表组件数据字段(仅复制，用于禁用、隐藏等api)'}/>
+        </a-form-item>
         <a-form-item label={'其他属性'} help="">
           <kCheckbox v-model={options.cardMode} label="卡片模式"/>
           <kCheckbox v-model={options.bordered} label="边框"/>
+          <kCheckbox v-model={options.hidden} label="隐藏"/>
           <kCheckbox v-model={options.showQueryBlock} label="显示查询模块(卡片模式下无效)"/>
         </a-form-item>
         <a-form-item label={'圆角值'} help="">

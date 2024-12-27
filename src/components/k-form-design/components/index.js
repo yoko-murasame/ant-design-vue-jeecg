@@ -130,7 +130,9 @@ export const customComponents = [
       // 图片slot最大宽度
       imageSlotMaxWidth: 'auto',
       // 图片slot最大数量
-      imageSlotMaxNum: 0
+      imageSlotMaxNum: 0,
+      // 是否隐藏v-if
+      hidden: false
     }
   },
   {

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!hidden">
     <onl-cgform-auto-list
       v-if="isReady"
       v-bind="getOnlineListConfig"
@@ -87,6 +87,12 @@ export default {
       required: false,
       default: false
     },
+    // 禁用状态
+    hidden: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     // 卡片模式
     cardMode: {
       type: Boolean,
@@ -102,6 +108,9 @@ export default {
     }
   },
   created() {
+    // 和后端协商好的新子表标识（主要为了兼容老的子表），传入新子表标识，后端不会再处理全量的子表数据（老的子表是这么做的）
+    this.$set(this.formData, 'newSubTable', '1')
+    this.subTableName && this.$set(this.formData, this.subTableName, undefined)
   },
   model: {
     prop: 'value',
@@ -180,9 +189,6 @@ export default {
      */
     async onLoadDataBefore(that) {
       console.log('online子表列表数据加载前钩子，在这里处理自定义逻辑~', that, JSON.parse(JSON.stringify(this.formData)), this, this.record)
-      // 和后端协商好的新子表标识（主要为了兼容老的子表），传入新子表标识，后端不会再处理全量的子表数据（老的子表是这么做的）
-      this.$set(this.formData, 'newSubTable', '1')
-      this.$set(this.formData, this.subTableName, undefined)
       // 禁用状态
       that.buttonSwitch.disableAdd = this.disabled
       that.buttonSwitch.disableEdit = this.disabled
