@@ -572,6 +572,30 @@ export default {
           return async (that) => {}
         },
         required: false
+      },
+      // 当前表单选中行key .sync
+      selectedRowKeys: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      // 当前表单选中行 .sync
+      selectionRows: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      // kForm设计器表单保存后，会自动生成的表单编码 .sync
+      syncDesFormCode: {
+        type: String,
+        default: ''
+      },
+      // 当前online表名 .sync
+      syncTableName: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -627,9 +651,7 @@ export default {
           selectedRowKeys: [],
           selectionRows: [],
           // 分页参数
-          pagination: {
-
-          }
+          pagination: {}
         },
         metaPagination: {
           current: 1,
@@ -771,6 +793,22 @@ export default {
           }
         },
         immediate: true
+      },
+      // .sync绑定选择行key
+      selectedRowKeys(v) {
+        this.table.selectedRowKeys = v
+      },
+      // .sync绑定选择行
+      selectionRows(v) {
+        this.table.selectionRows = v
+      },
+      // .sync绑定设计器表单编码
+      syncDesFormCode(v) {
+        this.desFormCode = v
+      },
+      // .sync绑定当前表名
+      syncTableName(v) {
+        this.currentTableName = v
       }
     },
     computed: {
@@ -969,6 +1007,9 @@ export default {
         this.isOnlineForm = ''
         this.isDesForm = ''
         this.desFormCode = ''
+        this.$emit('update:syncDesFormCode', '')
+        this.currentTableName = ''
+        this.$emit('update:syncTableName', '')
         // 清空表单编码
         this.code = ''
         this.showDealBlock = false
@@ -1136,6 +1177,8 @@ export default {
         getAction(`${this.url.getColumns}${this.code}`).then(async(res) => {
           console.log('--onlineList-加载动态列>>', res)
           if (res.success) {
+            // 向上抛出表单加载动态列后的数据
+            this.$emit('onlineColumnsLoaded', res.result)
             if (res.result.checkboxFlag === 'Y') {
               this.checkboxFlag = true
             } else {
@@ -1168,9 +1211,11 @@ export default {
             this.dictOptions = res.result.dictOptions
             this.formTemplate = res.result.formTemplate
             this.description = res.result.description
-            this.currentTableName = res.result.currentTableName
             this.isDesForm = res.result.isDesForm
             this.desFormCode = res.result.desFormCode
+            this.$emit('update:syncDesFormCode', res.result.desFormCode)
+            this.currentTableName = res.result.currentTableName
+            this.$emit('update:syncTableName', res.result.currentTableName)
             // 如果不是kForm设计器表单，才走普通online表单
             this.isOnlineForm = !(this.isDesForm && this.desFormCode)
             this.initCgButtonList(res.result.cgButtonList)
@@ -1210,7 +1255,7 @@ export default {
             // 初始化查询条件，这里需要等待先加载
             await this.initQueryInfo(res.result.onlineInitQueryParamGetter)
             // 加载新路由，清空checkbox选中
-            this.table.selectedRowKeys = []
+            this.onClearSelected()
           } else {
             this.$message.warning(res.message)
           }
@@ -1310,7 +1355,8 @@ export default {
       handleChangeInTableSelect(selectedRowKeys, selectionRows) {
         this.table.selectedRowKeys = selectedRowKeys
         this.table.selectionRows = selectionRows
-        this.selectedRowKeys = selectedRowKeys
+        this.$emit('update:selectedRowKeys', selectedRowKeys)
+        this.$emit('update:selectionRows', selectionRows)
         this.$emit('handleChangeInTableSelect', selectedRowKeys, selectionRows)
       },
       handleTableChange(pagination, filters, sorter) {
@@ -1326,7 +1372,7 @@ export default {
         this.loadData()
       },
       async handleAdd() {
-        console.log('code', this.isDesForm, this.code, this.desFormCode, this.formTemplate)
+        // console.log('code', this.isDesForm, this.code, this.desFormCode, this.formTemplate)
         if (this.isDesForm === 'Y') {
           this.$refs.desformModal.open('add', this.desFormCode, null, '新增数据', false, this.code)
         } else {
@@ -1380,7 +1426,7 @@ export default {
         })
       },
       async handleEdit(record) {
-        console.log('handleEdit', record)
+        // console.log('handleEdit', record)
         if (this.isDesForm === 'Y') {
           this.$refs.desformModal.open('edit', this.desFormCode, record.id, '编辑数据', true, this.code)
         } else {
@@ -1522,6 +1568,8 @@ export default {
       onClearSelected() {
         this.table.selectedRowKeys = []
         this.table.selectionRows = []
+        this.$emit('update:selectedRowKeys', [])
+        this.$emit('update:selectionRows', [])
       },
       getImgView(text) {
         if (text && text.indexOf(',') > 0) {

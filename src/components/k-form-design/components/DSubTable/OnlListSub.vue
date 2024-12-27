@@ -5,8 +5,10 @@
       v-bind="getOnlineListConfig"
       :imageSlotMaxWidth="$attrs.imageSlotMaxWidth"
       :imageSlotMaxNum="$attrs.imageSlotMaxNum"
+      :selected-row-keys.sync="selectedRowKeys"
+      :selection-rows.sync="selectionRows"
+      :sync-table-name.sync="subTableName"
       @formSuccess="onFormSuccess"
-      @handleChangeInTableSelect="handleChangeInTableSelect"
     >
       <template #cardTitle="props" v-if="!disabled">
         <a-button @click="props.handleAdd" type="primary" icon="plus">{{ $attrs.addButtonName || '新增' }}</a-button>
@@ -94,7 +96,9 @@ export default {
   },
   data() {
     return {
-      selectedRowKeys: []
+      selectedRowKeys: [],
+      selectionRows: [],
+      subTableName: ''
     }
   },
   created() {
@@ -161,18 +165,11 @@ export default {
   },
   methods: {
     /**
-     * 处理批量删除
-     * @param selectedRowKeys
-     * @param selectionRows
-     */
-    handleChangeInTableSelect(selectedRowKeys, selectionRows) {
-      this.selectedRowKeys = selectedRowKeys
-    },
-    /**
      * 表单提交成功回调
      * @param data
      */
     onFormSuccess(data) {
+      console.log('子表表单提交成功回调', data)
       this.$emit('change', data)
       this.$emit('input', data)
     },
@@ -183,6 +180,9 @@ export default {
      */
     async onLoadDataBefore(that) {
       console.log('online子表列表数据加载前钩子，在这里处理自定义逻辑~', that, JSON.parse(JSON.stringify(this.formData)), this, this.record)
+      // 和后端协商好的新子表标识（主要为了兼容老的子表），传入新子表标识，后端不会再处理全量的子表数据（老的子表是这么做的）
+      this.$set(this.formData, 'newSubTable', '1')
+      this.$set(this.formData, this.subTableName, undefined)
       // 禁用状态
       that.buttonSwitch.disableAdd = this.disabled
       that.buttonSwitch.disableEdit = this.disabled
