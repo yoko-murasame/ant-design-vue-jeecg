@@ -1453,6 +1453,7 @@ export default {
         deleteAction(this.url.optPre + this.code + '/' + id).then((res) => {
           if (res.success) {
             this.$message.success(res.message)
+            this.$emit('formSuccess', { operation: 'delete', id })
             this.loadData()
           } else {
             this.$message.warning(res.message)
@@ -1464,8 +1465,8 @@ export default {
         await this.startProcess(data, true)
         this.$refs.desformModal && this.$refs.desformModal.close()
       },
-      handleFormSuccess(data) {
-        this.$emit('formSuccess', data)
+      handleFormSuccess(data = {}) {
+        this.$emit('formSuccess', { operation: 'submit', ...data })
         this.loadData()
       },
       // 高级查询，如果为默认online表单，会自动触发加载，但是kForm下，需要手动加载

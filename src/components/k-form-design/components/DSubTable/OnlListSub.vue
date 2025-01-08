@@ -175,6 +175,7 @@ export default {
   methods: {
     /**
      * 表单提交成功回调
+     * 提供绑定change事件，表单提交、表单删除会触发
      * @param data
      */
     onFormSuccess(data) {

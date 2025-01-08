@@ -59,7 +59,7 @@ export const customComponents = [
   //     }
   //   ]
   // },
-  // TODO 开发新子表组件
+  // 新子表组件OnlListSub已开发，这是旧版本组件，后续不再维护
   {
     type: 'subtable', // 表单类型
     label: '子表', // 标题文字
