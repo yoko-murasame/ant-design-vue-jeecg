@@ -73,7 +73,7 @@ online列表自定义slot Yoko.Shao 2024-11-16
 
 实例一：让字段渲染`a-tag`标签，可以点击绑定打开详情表单
 
-![Snipaste_2024-11-16_17-22-30.png](./assets/online列表自定义slot-1731748954164.png)
+![Snipaste_2024-11-16_17-22-30.png](/static/assets/online列表自定义slot-1731748954164.png)
 
 自定义scopedSlots中填写（随便写）：
 
