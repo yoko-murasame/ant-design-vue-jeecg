@@ -43,6 +43,8 @@ RUN mkdir -p $APP_1_PATH $APP_2_PATH $SSL_PATH $NGINX_LOCATION_CONF_PATH $NGINX_
 ADD nginx/ $NGINX_CONF_PATH/
 # 以root用户身份启动，防止日志权限问题
 RUN sed -i 's/^user  nginx;/user  root;/' /etc/nginx/nginx.conf
+# 去掉默认单文件访问日志
+RUN sed -i 's/access_log  \/var\/log\/nginx\/access.log  main;/# access_log  \/var\/log\/nginx\/access.log  main;/' /etc/nginx/nginx.conf
 # 提供日志分片变量
 RUN sed -i '/include \/etc\/nginx\/conf.d\/\*.conf;/i \
 map $time_iso8601 $logDate { \
@@ -170,6 +172,8 @@ CMD echo \
               try_files \$uri \$uri/ \$index_path; \
           } \
           access_log  /var/log/nginx/access-\$host-\$server_port-\$logDate.log; \
+          access_log  /dev/stdout; \
+          error_log   /dev/stderr; \
           open_log_file_cache max=10; \
       } " > /etc/nginx/conf.d/default.conf && echo \
       "server { \
@@ -269,6 +273,8 @@ CMD echo \
               try_files \$uri \$uri/ \$index_path; \
           } \
           access_log  /var/log/nginx/access-\$host-\$server_port-\$logDate.log; \
+          access_log  /dev/stdout; \
+          error_log   /dev/stderr; \
           open_log_file_cache max=10; \
       }" \
     > /etc/nginx/conf.d/custom.conf && \
