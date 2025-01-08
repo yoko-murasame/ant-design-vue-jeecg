@@ -1240,8 +1240,13 @@ export default {
             this.defColumns = [this.rowIndexColumn, ...res.result.columns]
             // 是否隐藏action列
             if (!res.result.hideActionButton) {
-              this.actionColumn.fixed = this.onlineFormConfig.actionFixed
-              this.defColumns.push(this.actionColumn)
+              this.actionColumn.fixed = this.onlineFormConfig.actionFixed || res.result.actionColumnFixed
+              if (this.actionColumn.fixed === 'left') {
+                this.defColumns.unshift(this.actionColumn)
+              }
+              if (this.actionColumn.fixed === 'right') {
+                this.defColumns.push(this.actionColumn)
+              }
             }
             // 设置列配置列表
             this.settingColumnsHandler(res.result.columns)

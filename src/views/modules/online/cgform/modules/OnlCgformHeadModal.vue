@@ -193,6 +193,19 @@
                   <a-switch v-decorator="['hideActionButton', validatorRules.hideActionButton ]" />
                 </a-form-item>
               </a-col>
+              <a-col :span="24/3">
+                <a-form-item
+                  style="width: 100%"
+                  :labelCol="threeCol.label"
+                  :wrapperCol="threeCol.wrapper"
+                  label="操作列固定位置">
+                  <a-select v-decorator="['actionColumnFixed', {initialValue: ''}]">
+                    <a-select-option value="right">右侧</a-select-option>
+                    <a-select-option value="left">左侧</a-select-option>
+                    <a-select-option value="">不固定</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
             </a-row>
           </a-list-item>
           <!--JS增强-->
@@ -578,6 +591,7 @@ export default {
           tableTxt: { rules: [{ required: true, message: '请输入表说明!' }] },
           viewTable: { rules: [{ required: false, message: '请选择是否是视图!' }], valuePropName: 'checked' },
           hideActionButton: { rules: [{ required: false, message: '请选择是否隐藏action按钮!' }], valuePropName: 'checked' },
+          actionColumnFixed: { rules: [{ required: false, message: '请选择操作列固定位置!' }] },
           idSequence: { rules: [{ required: true, message: '请输入序号名称!' }] },
           dataRulePerms: { rules: [{ required: false, message: '请选择数据权限标识!' }] },
           treeParentIdField: { rules: [{ required: true, message: '请输入树表单父ID!' }] },
@@ -717,7 +731,7 @@ export default {
         this.treeFieldAdded = record.isTree == 'Y'
         let pickAfter = pick(this.model, 'themeTemplate', 'tableName', 'dataRulePerms', 'scroll',
           'tableType', 'tableVersion', 'tableTxt', 'viewTable', 'isCheckbox', 'isDbSynch',
-          'isPage', 'isTree', 'hideActionButton', 'idSequence', 'idType', 'queryMode', 'relationType',
+          'isPage', 'isTree', 'hideActionButton', 'actionColumnFixed', 'idSequence', 'idType', 'queryMode', 'relationType',
           'subTableStr', 'tabOrderNum', 'treeParentIdField', 'treeIdField', 'treeFieldname',
           'formCategory', 'formTemplate', 'formTemplateMobile', 'isDesForm', 'desFormCode', 'onlineInitQueryParamGetter',
           'onlineVueWatchJsStr')
