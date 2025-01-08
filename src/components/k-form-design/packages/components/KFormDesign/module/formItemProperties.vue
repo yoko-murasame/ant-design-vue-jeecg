@@ -646,7 +646,7 @@ export default {
     },
     // 是否是布局组件（布局组件有的属性没有）
     isLayout() {
-      return ['grid', 'tabs', 'card', 'batch', 'subtable', 'table'].includes(this.selectItem.type)
+      return ['grid', 'tabs', 'card', 'batch', 'table'].includes(this.selectItem.type)
     }
   },
   props: {
