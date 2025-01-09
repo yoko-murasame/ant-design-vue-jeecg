@@ -67,22 +67,15 @@
         visible: false,
         uploading: false,
         fileList: [],
-        uploadAction: '',
         foreignKeys: '',
         validateStatus: 0
       }
     },
-    watch: {
-      url (val) {
-        if (val) {
-         this.uploadAction = window._CONFIG['domianURL'] + val
-        }
+    computed: {
+      uploadAction() {
+        return window._CONFIG['domianURL'] + this.url
       }
     },
-    created () {
-      this.uploadAction = window._CONFIG['domianURL'] + this.url
-    },
-
     methods: {
       handleClose() {
         this.visible = false
