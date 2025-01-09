@@ -80,8 +80,23 @@
 
         <a-form-item
           :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="表达式">
+          :wrapperCol="wrapperCol">
+          <span slot="label">
+            <a-tooltip :overlayStyle="{'min-width': '25vw'}">
+              <span>表达式</span>
+              <span slot="title">
+                说明：用于根据行数据动态计算按钮是否显示。<br/>
+                1、等于表达式：字段名#eq#值。<br/>
+                2、不等于表达式：字段名#ne#值。<br/>
+                3、判断空：字段名#empty#true。<br/>
+                4、非空：字段名#empty#false。<br/>
+                5、in表达式： 字段名#in#值。<br/>
+                举例：create_by#eq#Yoko 表示数据的 create_by 字段需要等于 Yoko 时才会显示按钮。<br/>
+                备注：目前只支持单个字段。<br/>
+              </span>
+              <a-icon class="question-circle" type="question-circle-o"/>
+            </a-tooltip>
+          </span>
           <a-input placeholder="请输入表达式" v-decorator="['exp']" />
         </a-form-item>
 
