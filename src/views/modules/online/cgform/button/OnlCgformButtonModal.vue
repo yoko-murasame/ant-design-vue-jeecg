@@ -30,9 +30,11 @@
           :wrapperCol="wrapperCol"
           label="按钮样式">
           <a-select placeholder="请选择按钮样式" @change="handleStyleChange" v-decorator="['buttonStyle']" :getPopupContainer="node => node.parentNode">
-            <a-select-option value="link">link</a-select-option>
-            <a-select-option value="button">button</a-select-option>
-            <a-select-option value="form">form</a-select-option>
+            <a-select-option value="link">link(放在更多按钮下拉列表的动态按钮)</a-select-option>
+            <a-select-option value="link-pre">link-pre(放在默认按钮前的动态按钮)</a-select-option>
+            <a-select-option value="link-after">link-after(放在默认按钮后&更多按钮前的动态按钮)</a-select-option>
+            <a-select-option value="button">button(和“新增”按钮同级的按钮)</a-select-option>
+            <a-select-option value="form">form(放在表单里的按钮)</a-select-option>
           </a-select>
         </a-form-item>
 

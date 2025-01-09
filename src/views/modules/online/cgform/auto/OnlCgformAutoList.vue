@@ -95,7 +95,7 @@
           </a-button>
           <a-button
             v-else-if=" item.optType === 'action' "
-            :key=" 'cgbtn'+index "
+            :key=" 'cgbtnAction'+index "
             @click="cgButtonActionHandler(item.buttonCode)"
             type="primary"
             :icon="item.buttonIcon">
@@ -258,6 +258,30 @@
           <!--表格按钮插槽-->
           <span slot="action" slot-scope="text, record">
             <slot name="cardTableAction" v-bind="{ ...getCardBindAttrs, record, text }">
+              <!--自定义JS增强按钮（放在默认按钮前的动态按钮）-->
+              <template v-if="cgButtonLinkPreList && cgButtonLinkPreList.length" v-for="(btnItem,btnIndex) in cgButtonLinkPreList">
+                <template v-if="showLinkButton(btnItem, record)">
+                  <a-popconfirm
+                    v-if="btnItem.optType === 'js-confirm'"
+                    :key="'cgbtnLinkPopPre'+btnIndex"
+                    :title="`确定${buttonAlias[btnItem.buttonCode] || btnItem.buttonName}?`"
+                    @confirm="() => cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
+                    <a href="javascript:void(0);">
+                      <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
+                      {{ buttonAlias[btnItem.buttonCode] || btnItem.buttonName }}
+                    </a>
+                  </a-popconfirm>
+                  <a
+                    v-else
+                    :key="'cgbtnLinkPre'+btnIndex"
+                    href="javascript:void(0);"
+                    @click="cgButtonLinkHandler(record, btnItem.buttonCode, btnItem.optType)">
+                    <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
+                    {{ buttonAlias[btnItem.buttonCode] || btnItem.buttonName }}
+                  </a>
+                  <a-divider type="vertical" v-last-divider :key="'cgbtnLinkPreKey'+btnIndex" />
+                </template>
+              </template>
               <!--流程-->
               <template v-if="hasBpmStatus">
                 <!--流程未发起、或者已结束并且配置了可循环发起-->
@@ -310,6 +334,31 @@
                   <a-divider type="vertical" v-last-divider />
                 </template>
               </template>
+              <!--自定义JS增强按钮（放在默认按钮后&更多按钮前的动态按钮）-->
+              <template v-if="cgButtonLinkAfterList && cgButtonLinkAfterList.length" v-for="(btnItem,btnIndex) in cgButtonLinkAfterList">
+                <template v-if="showLinkButton(btnItem, record)">
+                  <a-popconfirm
+                    v-if="btnItem.optType === 'js-confirm'"
+                    :key="'cgbtnLinkPopAfter'+btnIndex"
+                    :title="`确定${buttonAlias[btnItem.buttonCode] || btnItem.buttonName}?`"
+                    @confirm="() => cgButtonLinkHandler(record,btnItem.buttonCode,btnItem.optType)">
+                    <a href="javascript:void(0);">
+                      <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
+                      {{ buttonAlias[btnItem.buttonCode] || btnItem.buttonName }}
+                    </a>
+                  </a-popconfirm>
+                  <a
+                    v-else
+                    :key="'cgbtnLinkAfter'+btnIndex"
+                    href="javascript:void(0);"
+                    @click="cgButtonLinkHandler(record, btnItem.buttonCode, btnItem.optType)">
+                    <a-icon v-if="btnItem.buttonIcon" :type="btnItem.buttonIcon" />
+                    {{ buttonAlias[btnItem.buttonCode] || btnItem.buttonName }}
+                  </a>
+                  <a-divider type="vertical" v-last-divider :key="'cgbtnLinkAfterKey'+btnIndex" />
+                </template>
+              </template>
+              <!--渲染更多按钮-->
               <a-dropdown v-if="calculateHasMore(record)">
                 <a class="ant-dropdown-link">
                   更多 <a-icon type="down" />
@@ -381,7 +430,7 @@
                       </a-popconfirm>
                     </a-menu-item>
                   </template>
-                  <!--自定义JS增强按钮-->
+                  <!--自定义JS增强按钮（更多下拉中）-->
                   <template v-if="cgButtonLinkList && cgButtonLinkList.length>0" v-for="(btnItem,btnIndex) in cgButtonLinkList">
                     <a-menu-item :key=" 'cgbtnLink'+btnIndex " v-if="showLinkButton(btnItem,record)">
                       <template v-if="btnItem.optType === 'js-confirm'">
@@ -489,7 +538,7 @@ import TaskModule from '@views/modules/bpm/task/form/TaskModule'
 import {
   fixedButton,
   getDefaultButtonAlias,
-  getDefaultButtonSwitch,
+  getDefaultButtonSwitch
 } from '@views/modules/online/cgform/auth/manager/AuthButtonConfig'
 // eslint-disable-next-line camelcase
 import lodash_object, { debounce } from 'lodash'
@@ -634,8 +683,12 @@ export default {
         dictOptions: {
 
         },
-        cgButtonLinkPreList: [],
+        // 放在更多按钮下拉列表的动态按钮
         cgButtonLinkList: [],
+        // 放在默认按钮前的动态按钮
+        cgButtonLinkPreList: [],
+        // 放在默认按钮后&更多按钮前的动态按钮
+        cgButtonLinkAfterList: [],
         cgButtonList: [],
         queryInfo: [],
         // 查询参数，多个页面的查询参数用 code 作为键来区分
@@ -872,6 +925,8 @@ export default {
           bpmStatusFieldName: this.bpmStatusFieldName,
           hasBpmStatus: this.hasBpmStatus,
           cgButtonLinkList: this.cgButtonLinkList,
+          cgButtonLinkPreList: this.cgButtonLinkPreList,
+          cgButtonLinkAfterList: this.cgButtonLinkAfterList,
           getFullFormData: this.getFullFormData,
           openAnyForm: this.openAnyForm,
           sendTemplateAnnouncement: this.sendTemplateAnnouncement,
@@ -1686,6 +1741,8 @@ export default {
         }
       },
       initCgButtonList(btnList) {
+        let linkPreArr = []
+        let linkAfterArr = []
         let linkArr = []
         let buttonArr = []
         if (btnList && btnList.length > 0) {
@@ -1694,10 +1751,19 @@ export default {
             if (temp.buttonStyle === 'button') {
               buttonArr.push(temp)
             } else if (temp.buttonStyle === 'link') {
+              // 放在更多按钮下拉列表的动态按钮
               linkArr.push(temp)
+            } else if (temp.buttonStyle === 'link-pre') {
+              // 放在默认按钮前的动态按钮
+              linkPreArr.push(temp)
+            } else if (temp.buttonStyle === 'link-after') {
+              // 放在默认按钮后&更多按钮前的动态按钮
+              linkAfterArr.push(temp)
             }
           }
         }
+        this.cgButtonLinkPreList = [...linkPreArr]
+        this.cgButtonLinkAfterList = [...linkAfterArr]
         this.cgButtonLinkList = [...linkArr]
         this.cgButtonList = [...buttonArr]
       },
