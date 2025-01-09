@@ -13,8 +13,10 @@
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <a-form-item label="表类型">
-              <j-multi-select-tag dictCode="cgform_table_type" v-model="queryParam.tableType_MultiString"
-                                  placeholder="请选择"/>
+              <j-multi-select-tag
+                dictCode="cgform_table_type"
+                v-model="queryParam.tableType_MultiString"
+                placeholder="请选择"/>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
@@ -26,8 +28,11 @@
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <j-super-query :fieldList="superQueryFieldList" ref="superQueryModal" @handleSuperQuery="handleSuperQuery"
-                             style="margin-left: 8px">
+              <j-super-query
+                :fieldList="superQueryFieldList"
+                ref="superQueryModal"
+                @handleSuperQuery="handleSuperQuery"
+                style="margin-left: 8px">
                 <!-- 直接在内部写一个按钮即可，点击事件自动添加
                 <a-button type="primary" ghost icon="clock-circle" style="margin-left: 8px">高级查询</a-button> -->
               </j-super-query>
@@ -71,10 +76,17 @@
         <a style="margin-left: 24px" @click="onClearSelected">清空</a>
       </div>
 
-      <a-table ref="table" size="middle" bordered rowKey="id" :columns="columns" :dataSource="dataSource"
-               :pagination="ipagination" :loading="loading"
-               :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-               @change="handleTableChange">
+      <a-table
+        ref="table"
+        size="middle"
+        bordered
+        rowKey="id"
+        :columns="columns"
+        :dataSource="dataSource"
+        :pagination="ipagination"
+        :loading="loading"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+        @change="handleTableChange">
 
         <template slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
@@ -144,8 +156,13 @@
     <onl-cgform-head-modal ref="modalForm" @ok="modalFormOk"></onl-cgform-head-modal>
 
     <!-- 同步数据库提示框 -->
-    <a-modal :width="500" :height="300" title="同步数据库" :visible="syncModalVisible" @cancel="handleCancleDbSync"
-             style="top:5%;height: 95%;">
+    <a-modal
+      :width="500"
+      :height="300"
+      title="同步数据库"
+      :visible="syncModalVisible"
+      @cancel="handleCancleDbSync"
+      style="top:5%;height: 95%;">
       <template slot="footer">
         <a-button @click="handleCancleDbSync">关闭</a-button>
         <a-button type="primary" :loading="syncLoading" @click="handleDbSync">
@@ -207,7 +224,7 @@
 <script>
 import { deleteAction, getAction, postAction } from '@/api/manage'
 import { JeecgListMixin } from '@/mixins/JeecgListMixin'
-import { filterObj } from '@/utils/util';
+import { filterObj } from '@/utils/util'
 import Clipboard from 'clipboard'
 import { merge } from 'lodash'
 import DesignFormModal from '../desform/modules/DesignFormModal'
@@ -272,7 +289,7 @@ export default {
             } else if (record.themeTemplate === 'tab') {
               tbTypeText += '(TAB)'
             }
-            return tbTypeText;
+            return tbTypeText
           }
         },
         {
@@ -337,7 +354,7 @@ export default {
         removeRecord: '/online/cgform/head/removeRecord',
         copyOnline: '/online/cgform/head/copyOnline',
         designForm: '/desform/queryByCode',
-        add: "/desform/add"
+        add: '/desform/add'
       },
       tableTypeDictOptions: [],
       sexDictOptions: [],
@@ -381,12 +398,12 @@ export default {
       }
 
       // 获取查询条件
-      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters);
-      param.field = this.getQueryField();
-      param.pageNo = this.ipagination.current;
-      param.pageSize = this.ipagination.pageSize;
-      param.copyType = 0;
-      return filterObj(param);
+      var param = Object.assign(sqp, this.queryParam, this.isorter, this.filters)
+      param.field = this.getQueryField()
+      param.pageNo = this.ipagination.current
+      param.pageSize = this.ipagination.pageSize
+      param.copyType = 0
+      return filterObj(param)
     },
     handleCancleDbSync() {
       this.syncModalVisible = false
@@ -562,30 +579,30 @@ export default {
         return
       }
       if (this.selectedRowKeys.length <= 0) {
-        this.$message.warning('请选择一条记录！');
-        return;
+        this.$message.warning('请选择一条记录！')
+        return
       }
-      this.confirmVisible = true;
+      this.confirmVisible = true
     },
     doBatchDelete(flag) {
-      var ids = '';
+      var ids = ''
       for (var a = 0; a < this.selectedRowKeys.length; a++) {
-        ids += this.selectedRowKeys[a] + ',';
+        ids += this.selectedRowKeys[a] + ','
       }
-      var that = this;
-      this.loading = true;
+      var that = this
+      this.loading = true
       deleteAction(that.url.deleteBatch, { ids: ids, flag: flag }).then((res) => {
         if (res.success) {
-          this.$message.success(res.message);
-          this.loadData();
-          this.onClearSelected();
+          this.$message.success(res.message)
+          this.loadData()
+          this.onClearSelected()
         } else {
-          this.$message.warning(res.message);
+          this.$message.warning(res.message)
         }
       }).finally(() => {
-        this.loading = false;
+        this.loading = false
         this.confirmVisible = false
-      });
+      })
     },
     goAuthConfig(id) {
       this.$refs.authManager.show(id)
@@ -599,30 +616,30 @@ export default {
       }
       // 默认配置，用于新建表单时使用
       let jsonData = {
-        "list": [],
-        "config": {
-          "layout": "horizontal",
-          "labelCol": {
-            "xs": 4,
-            "sm": 4,
-            "md": 4,
-            "lg": 4,
-            "xl": 4,
-            "xxl": 4
+        'list': [],
+        'config': {
+          'layout': 'horizontal',
+          'labelCol': {
+            'xs': 4,
+            'sm': 4,
+            'md': 4,
+            'lg': 4,
+            'xl': 4,
+            'xxl': 4
           },
-          "labelWidth": 100,
-          "labelLayout": "flex",
-          "wrapperCol": {
-            "xs": 18,
-            "sm": 18,
-            "md": 18,
-            "lg": 18,
-            "xl": 18,
-            "xxl": 18
+          'labelWidth': 100,
+          'labelLayout': 'flex',
+          'wrapperCol': {
+            'xs': 18,
+            'sm': 18,
+            'md': 18,
+            'lg': 18,
+            'xl': 18,
+            'xxl': 18
           },
-          "hideRequiredMark": false,
-          "customStyle": "",
-          "onlineForm": record.tableName
+          'hideRequiredMark': false,
+          'customStyle': '',
+          'onlineForm': record.tableName
         }
       }
       // 查询design_form是否存在记录
@@ -631,16 +648,16 @@ export default {
         if (res.result == null) {
           // 不存在记录自动创建并关联表单
           let newFormData = {
-            "cgformCode": record.tableName,
-            "desformCode": record.tableName,
-            "desformDesignJson": JSON.stringify(jsonData),
-            "desformIcon": null,
-            "desformName": record.tableTxt,
-            "desformType": 1,
-            "izMobileView": 0,
-            "izOaShow": null,
-            "parentCode": null,
-            "parentId": null
+            'cgformCode': record.tableName,
+            'desformCode': record.tableName,
+            'desformDesignJson': JSON.stringify(jsonData),
+            'desformIcon': null,
+            'desformName': record.tableTxt,
+            'desformType': 1,
+            'izMobileView': 0,
+            'izOaShow': null,
+            'parentCode': null,
+            'parentId': null
           }
           postAction(this.url.add, newFormData)
           .then(res => {
@@ -650,7 +667,7 @@ export default {
           // 存在记录进行加载
           // console.log('存在记录', res.result, JSON.parse(res.result.desformDesignJson))
           // 递归合并防止labelCol等配置不存在导致报错
-          let mergeData = merge(JSON.parse(res.result.desformDesignJson), jsonData)
+          let mergeData = merge(jsonData, JSON.parse(res.result.desformDesignJson))
           res.result.desformDesignJson = JSON.stringify(mergeData)
           this.$refs.designFormModal.open(res.result)
         }

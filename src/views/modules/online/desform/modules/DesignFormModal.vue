@@ -136,8 +136,10 @@ export default {
       this.visible = true
       this.showCloseButton = true
       this.$nextTick(() => {
-        if (JSON.parse(this.savedJson) !== null) {
-          this.$refs.design.handleSetData(JSON.parse(this.savedJson))
+        const savedJson = JSON.parse(this.savedJson)
+        // console.log(savedJson, '表单设计器open')
+        if (savedJson !== null) {
+          this.$refs.design.handleSetData(savedJson)
         }
       })
     },
