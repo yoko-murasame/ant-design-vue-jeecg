@@ -271,7 +271,7 @@
                     <a @click="handleTrack(record)">
                       {{ getRealTrackName(record) }}
                     </a>
-                    <a-divider type="vertical" />
+                    <a-divider type="vertical" v-last-divider />
                   </template>
                 </template>
                 <!--流程过程中或流程结束-->
@@ -285,7 +285,7 @@
                     <a @click="handleTrack(record)">
                       {{ getRealTrackName(record) }}
                     </a>
-                    <a-divider type="vertical" />
+                    <a-divider type="vertical" v-last-divider />
                   </template>
                   <!--新版本审批功能-->
                   <template v-if="buttonSwitch.bpm_handle && record[bpmStatusFieldName] === '2' && record.bpmData">
@@ -293,13 +293,13 @@
                       <a @click="handleProcess(record)">
                         {{ buttonAlias.bpm_handle || '办理' }}
                       </a>
-                    <!--<a-divider type="vertical" />-->
+                    <!--<a-divider type="vertical" v-last-divider />-->
                     <!--<a @click="selectEntruster(record)">委托</a>-->
                     </template>
                     <template v-else>
                       <a @click="handleClaim(record)" >签收</a>
                     </template>
-                    <a-divider type="vertical" />
+                    <a-divider type="vertical" v-last-divider />
                   </template>
                 </template>
               </template>
@@ -307,10 +307,10 @@
               <template v-else>
                 <template v-if="buttonSwitch.update">
                   <a :disabled="buttonSwitch.disableEdit" @click="handleEdit(record)">{{ buttonAlias.update || '编辑' }}</a>
-                  <a-divider type="vertical"/>
+                  <a-divider type="vertical" v-last-divider />
                 </template>
               </template>
-              <a-dropdown>
+              <a-dropdown v-if="calculateHasMore(record)">
                 <a class="ant-dropdown-link">
                   更多 <a-icon type="down" />
                 </a>
@@ -634,6 +634,7 @@ export default {
         dictOptions: {
 
         },
+        cgButtonLinkPreList: [],
         cgButtonLinkList: [],
         cgButtonList: [],
         queryInfo: [],
@@ -1043,6 +1044,31 @@ export default {
             }
           }
         }
+      },
+      /**
+       * 计算是否包含更多按钮下拉列表
+       * @param record
+       * @returns {boolean}
+       */
+      calculateHasMore(record) {
+        // 普通按钮
+        const keys = this.hasBpmStatus ? ['bpm', 'delete', 'bpm_entrusted', 'bpm_finish', 'bpm_callback', 'bpm_admin_edit', 'bpm_admin_delete'] : ['detail', 'delete']
+        for (let key of keys) {
+          if (this.buttonSwitch[key]) {
+            return true
+          }
+        }
+        // 动态按钮
+        if (!this.cgButtonLinkList || !this.cgButtonLinkList.length) {
+          return false
+        }
+        for (let btnItem of this.cgButtonLinkList) {
+          // 需要和业务值进行表达式计算
+          if (this.showLinkButton(btnItem, record)) {
+            return true
+          }
+        }
+        return false
       },
       /**
        * 发送模板消息
