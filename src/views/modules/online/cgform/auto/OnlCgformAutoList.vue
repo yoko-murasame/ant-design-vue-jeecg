@@ -70,7 +70,7 @@
         <a-button
           v-if="buttonSwitch.add"
           :disabled="buttonSwitch.disableAdd"
-          @click="handleAdd"
+          @click="handleAdd()"
           type="primary"
           icon="plus">{{ onlineFormConfig.addButtonName || buttonAlias.add || '新增' }}</a-button>
         <a-button
@@ -1457,10 +1457,10 @@ export default {
         }
         this.loadData()
       },
-      async handleAdd() {
+      async handleAdd(record = {}, title = '新增数据') {
         // console.log('code', this.isDesForm, this.code, this.desFormCode, this.formTemplate)
         if (this.isDesForm === 'Y') {
-          this.$refs.desformModal.open('add', this.desFormCode, null, '新增数据', false, this.code)
+          this.$refs.desformModal.open('add', this.desFormCode, null, title, false, this.code, record)
         } else {
           await this.cgButtonJsHandler('beforeAdd')
           this.$refs.modal.add(this.formTemplate)
@@ -1511,10 +1511,10 @@ export default {
           }
         })
       },
-      async handleEdit(record) {
+      async handleEdit(record, title = '编辑数据') {
         // console.log('handleEdit', record)
         if (this.isDesForm === 'Y') {
-          this.$refs.desformModal.open('edit', this.desFormCode, record.id, '编辑数据', true, this.code)
+          this.$refs.desformModal.open('edit', this.desFormCode, record.id, title, true, this.code)
         } else {
           await this.cgButtonLinkHandler(record, 'beforeEdit', 'js')
           this.$refs.modal.edit(this.formTemplate, record.id)
@@ -1524,9 +1524,9 @@ export default {
         let btn = new ButtonExpHandler(item.exp, record)
         return btn.show
       },
-      handleDetail(record) {
+      handleDetail(record, title = '查看数据') {
         if (this.isDesForm === 'Y') {
-          this.$refs.desformModal.open('detail', this.desFormCode, record.id, '查看数据', true, this.code)
+          this.$refs.desformModal.open('detail', this.desFormCode, record.id, title, true, this.code)
         } else {
           this.$refs.modal.detail(this.formTemplate, record.id)
         }

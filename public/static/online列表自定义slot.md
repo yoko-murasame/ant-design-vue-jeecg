@@ -26,9 +26,9 @@ online列表自定义slot Yoko.Shao 2024-11-16
 * `scroll`: 列滚动控制
 * `getFormatDate`: 获取格式化的日期方法 `getFormatDate(text)`
 * `getPcaText`: 获取区域代码翻译方法 `getPcaText(code)`
-* `handleEdit`: 调用编辑方法 `handleEdit(record)`
+* `handleEdit`: 调用编辑方法 `handleEdit(record, title)`
 * `handleTrack`: 调用流程历史信息方法 `handleTrack(record)`
-* `handleDetail`: 调用详情方法 `handleDetail(record)`
+* `handleDetail`: 调用详情方法 `handleDetail(record, title)`
 * `handleProcess`: 调用流程审批方法 `handleProcess(record)`
 * `handleClaim`: 调用流程签收方法 `handleClaim(record)`
 * `startProcess`: 调用流程发起方法 `startProcess(record)`
@@ -41,7 +41,7 @@ online列表自定义slot Yoko.Shao 2024-11-16
 * `onClearSelected`: 调用清空选中行方法 `onClearSelected()`
 * `settingColumns`: 当前列表如果筛选了展示列，将在这里返回列表
 * `defColumns`: 当前列表所有列列表
-* `handleAdd`: 调用添加方法 `handleAdd()`
+* `handleAdd`: 调用添加方法 `handleAdd(record, title)`
 * `handleImportXls`: 调用导入方法 `handleImportXls()`
 * `handleExportXls`: 调用导出方法 `handleExportXls()`
 * `cgButtonList`: 和新增按钮一行的自定义按钮列表
