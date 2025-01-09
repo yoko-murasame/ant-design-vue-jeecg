@@ -28,6 +28,9 @@ import { CustomMethods } from '@/components/yoko/kform/CustomMethods'
 // ESign签名工具
 import ESign from '@/components/yoko/ESign'
 
+// 自定义指令
+import hasLastDivider from '@/utils/hasLastDivider'
+
 export default {
   install(Vue) {
     // kform设计器js增强默认工具方法
@@ -66,5 +69,7 @@ export default {
         url: 'data-source' // 设置大图片的url
       }
     })
+    // 自定义指令
+    Vue.use(hasLastDivider)
   }
 }
