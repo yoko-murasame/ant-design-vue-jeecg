@@ -72,6 +72,11 @@ export default {
       // this.iframeSrc = require('/表单设计器JS增强说明.html'); // 根据实际的HTML文件名修改路径
       // this.iframeSrc = '/表单设计器JS增强说明.html'
       axios.get(this.url).then(res => {
+        console.log(res, 'markdownValue')
+        if (res.data) {
+          // 替换所有 <%= BASE_URL %>
+          res.data = res.data.replaceAll('<%= BASE_URL %>', process.env.BASE_URL || '/')
+        }
         this.markdownValue = res.data
       })
     },
