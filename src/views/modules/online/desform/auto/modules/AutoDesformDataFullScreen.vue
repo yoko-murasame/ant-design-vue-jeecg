@@ -34,7 +34,8 @@
         :button-text="buttonAlias.modal_cancel || '取消'"
         key="back"
         @click="close" />
-      <a-button type="primary" @click="handleSuccess" v-if="!disableSubmit && buttonSwitch.modal_save">{{ buttonAlias.modal_save || '保存' }}</a-button>
+      <a-button type="primary" @click="handleSuccess(true)" v-if="!disableSubmit && buttonSwitch.modal_temp_save">{{ buttonAlias.modal_temp_save || '暂存' }}</a-button>
+      <a-button type="primary" @click="handleSuccess(false)" v-if="!disableSubmit && buttonSwitch.modal_save">{{ buttonAlias.modal_save || '保存' }}</a-button>
       <a-button
         type="primary"
         @click="saveAndSubmitBPM"
@@ -74,6 +75,7 @@ export default {
           bpm: false,
           // 表单按钮控制，默认开放
           modal_footer: true,
+          modal_temp_save: false,
           modal_save: true,
           modal_submit: true,
           modal_cancel: true
@@ -159,8 +161,8 @@ export default {
       // document.body.style.overflow = this.bodyOverflow
       // this.bodyOverflow = null
     },
-    async handleSuccess() {
-      const data = await this.$refs.desform.saveAllData()
+    async handleSuccess(tempSave = false) {
+      const data = await this.$refs.desform.saveAllData(false, tempSave)
       // this.$refs.desform.handleGetData()
       this.$emit('ok', data)
       this.close()

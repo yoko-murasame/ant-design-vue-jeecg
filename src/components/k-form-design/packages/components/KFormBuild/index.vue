@@ -9,7 +9,7 @@
       :layout="value.config.layout"
       :hideRequiredMark="value.config.hideRequiredMark"
       :form="form"
-      @submit="handleSubmit"
+      @submit="e => handleSubmit(e, false)"
       :style="value.config.customStyle" >
 
       <buildBlocks
@@ -284,7 +284,7 @@ export default {
         }
       }
     },
-    async handleSubmit(e) {
+    async handleSubmit(e, tempSave = false) {
       const that = this
       return new Promise(async (resolve, reject) => {
         // 提交按钮触发，并触发submit函数，返回getData函数
@@ -294,13 +294,13 @@ export default {
           if (typeof ex === 'string') {
             that.$message.error(ex)
           } else {
-            that.$message.error('表单未完成！')
+            that.$message.error('JS增强-表单提交前代码执行异常！')
           }
           reject(ex)
           return
         }
         let formData = null
-        try { formData = await that.getData() } catch (ex) {
+        try { formData = await that.getData(undefined, undefined, tempSave) } catch (ex) {
           reject(ex)
           return
         }
@@ -311,7 +311,7 @@ export default {
             if (typeof ex === 'string') {
               that.$message.error(ex)
             } else {
-              that.$message.error('数据保存后回调JS增强函数异常！')
+              that.$message.error('JS增强-数据保存后代码执行异常！')
             }
             throw ex
           }
@@ -325,7 +325,7 @@ export default {
       // 重置表单
       this.form.resetFields()
     },
-    getData(fields, throwEx = true) {
+    getData(fields, throwEx = true, tempSave = false) {
       // 提交函数，提供父级组件调用
       if (throwEx === undefined) {
         throwEx = true
@@ -333,7 +333,7 @@ export default {
       return new Promise((resolve, reject) => {
         try {
           this.form.validateFields(fields, (err, formValues) => {
-            if (err && throwEx) {
+            if (err && throwEx && !tempSave) {
               reject(err)
               /**
                * @author: lizhichao<meteoroc@outlook.com>
@@ -347,7 +347,7 @@ export default {
             console.log('获取数据', values)
             this.validatorError = {}
             this.$refs.buildBlocks.forEach(item => {
-              if (!item.validationSubform()) {
+              if (!item.validationSubform() && !tempSave) {
                 reject(err)
               }
             })

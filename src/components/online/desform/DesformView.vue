@@ -266,11 +266,11 @@ export default {
         this.show = true
       })
     },
-    async saveAllData(throwEx = false) {
+    async saveAllData(throwEx = false, tempSave = false) {
       const that = this
       return new Promise(async (resolve, reject) => {
         try {
-          const { formData, callback } = await that.$refs.kfb.handleSubmit()
+          const { formData, callback } = await that.$refs.kfb.handleSubmit(undefined, tempSave)
           if (this.innerTableId) {
             // let formData = await this.handleGetData()
 
