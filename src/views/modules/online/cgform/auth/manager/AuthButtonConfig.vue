@@ -53,6 +53,7 @@
     { code: 'bpm_callback', title: '流程-取回流程', status: 1, alias: '取回流程' },
     // 表单按钮控制，默认开放
     { code: 'modal_footer', title: '弹窗-整个底部', status: 0, alias: '弹窗footer' },
+    { code: 'modal_temp_save', title: '弹窗-暂存按钮', status: 1, alias: '暂存' },
     { code: 'modal_save', title: '弹窗-保存按钮', status: 0, alias: '保存' },
     { code: 'modal_submit', title: '弹窗-提交流程按钮', status: 0, alias: '保存并提交流程' },
     { code: 'modal_cancel', title: '弹窗-取消按钮', status: 0, alias: '取消' },

@@ -119,10 +119,11 @@ export function vxePackageToSuperQuery(columns, handler) {
  * @param form 主表单 form 对象
  * @param cases 接收一个数组，每项都是一个JVxeTable实例
  * @param autoJumpTab
+ * @param tempSave 是否为临时保存，如果是则不校验必填项
  * @returns {Promise<any>}
  * @author sunjianlei
  */
-export async function validateFormAndTables(form, cases, autoJumpTab) {
+export async function validateFormAndTables(form, cases, autoJumpTab, tempSave = false) {
   if (!(form && typeof form.validateFields === 'function')) {
     throw `form 参数需要的是一个form对象，而传入的却是${typeof form}`
   }
@@ -130,12 +131,12 @@ export async function validateFormAndTables(form, cases, autoJumpTab) {
   let values = await new Promise((resolve, reject) => {
     // 验证主表表单
     form.validateFields((err, values) => {
-      err ? reject({error: VALIDATE_FAILED, originError: err}) : resolve(values)
+      (err && !tempSave) ? reject({error: VALIDATE_FAILED, originError: err}) : resolve(values)
     })
   })
   Object.assign(dataMap, {formValue: values})
   // 验证所有子表的表单
-  let subData = await validateTables(cases, autoJumpTab)
+  let subData = await validateTables(cases, autoJumpTab, tempSave)
   // 合并最终数据
   dataMap = Object.assign(dataMap, {tablesValue: subData})
   return dataMap
@@ -173,8 +174,9 @@ export async function validateFormModelAndTables(form,formData, cases, autoJumpT
  *
  * @param cases 接收一个数组，每项都是一个JVxeTable实例
  * @param autoJumpTab 校验失败后，是否自动跳转tab选项
+ * @param tempSave 是否为临时保存，如果是则不校验必填项
  */
-export function validateTables(cases, autoJumpTab = true) {
+export function validateTables(cases, autoJumpTab = true, tempSave = false) {
   if (!Array.isArray(cases)) {
     throw `'validateTables'函数的'cases'参数需要的是一个数组，而传入的却是${typeof cases}`
   }
@@ -188,7 +190,7 @@ export function validateTables(cases, autoJumpTab = true) {
       let vm = cases[index]
       vm.validateTable().then(errMap => {
         // 校验通过
-        if (!errMap) {
+        if (!errMap || tempSave) {
           tablesData[index] = vm.getAll()
           // 判断校验是否全部完成，完成返回成功，否则继续进行下一步校验
           if (++index === cases.length) {

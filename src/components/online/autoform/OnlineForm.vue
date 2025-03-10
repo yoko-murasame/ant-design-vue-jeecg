@@ -44,7 +44,10 @@
     </a-tabs>
 
     <div style="width: 100%;text-align: center;margin-top:5px" v-if="showFooter">
-      <a-button icon="check" style="width: 126px" type="primary" @click="handleSubmit" :loading="submitLoading">
+      <a-button icon="check" style="width: 126px" type="primary" @click="handleSubmit(true)" :loading="submitLoading">
+        暂存
+      </a-button>
+      <a-button icon="check" style="width: 126px" type="primary" @click="handleSubmit(false)" :loading="submitLoading">
         提交
       </a-button>
     </div>
@@ -368,11 +371,11 @@
         }
       },
 
-      handleSubmit() {
+      handleSubmit(tempSave = false) {
         if (this.single) {
-          this.handleSingleSubmit()
+          this.handleSingleSubmit(tempSave)
         } else {
-          this.handleOne2ManySubmit()
+          this.handleOne2ManySubmit(tempSave)
         }
       },
       // 处理js增强 自定义 提交前事件
@@ -434,16 +437,16 @@
         }
         return arr2
       },
-      handleOne2ManySubmit() {
+      handleOne2ManySubmit(tempSave = false) {
         // 校验主表和一对多
         this.getAllSubFormOrTable().then(tables => {
           let arr = this.getHandleRefs(tables)
           if (arr && arr.length > 0) {
-            return validateFormAndTables(this.form, arr)
+            return validateFormAndTables(this.form, arr, true, tempSave)
           } else {
             return new Promise((resolve, reject) => {
               this.form.validateFields((err, values) => {
-                err ? reject() : resolve({ 'formValue': values })
+                (err && !tempSave) ? reject() : resolve({ 'formValue': values })
               })
             })
           }
@@ -485,9 +488,9 @@
           }
         })
       },
-      handleSingleSubmit() {
+      handleSingleSubmit(tempSave = false) {
         this.form.validateFields((err, values) => {
-          if (!err) {
+          if (!err || tempSave) {
             this.transFileListToString(values)
             let formData = Object.assign({}, this.model, values)
             console.log('提交的表单数据为', formData)

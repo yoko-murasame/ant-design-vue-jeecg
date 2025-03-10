@@ -51,7 +51,19 @@
         </a-button>
       </template>
 
-      <a-button v-if="buttonSwitch.modal_footer && buttonSwitch.modal_save && !disableSubmit" key="submit" type="primary" @click="handleSubmit" :loading="submitLoading">确定</a-button>
+      <a-button
+        v-if="buttonSwitch.modal_footer && buttonSwitch.modal_temp_save && !disableSubmit"
+        key="temp_submit"
+        type="primary"
+        @click="handleSubmit(true)"
+        :loading="submitLoading">暂存</a-button>
+
+      <a-button
+        v-if="buttonSwitch.modal_footer && buttonSwitch.modal_save && !disableSubmit"
+        key="submit"
+        type="primary"
+        @click="handleSubmit(false)"
+        :loading="submitLoading">确定</a-button>
       <a-button v-if="buttonSwitch.modal_footer && buttonSwitch.modal_cancel" key="back" @click="handleCancel">关闭</a-button>
     </template>
 
@@ -121,6 +133,7 @@
           return {
             // 表单按钮控制，默认开放
             modal_footer: true,
+            modal_temp_save: false,
             modal_save: true,
             modal_submit: true,
             modal_cancel: true
@@ -188,9 +201,9 @@
         this.visible = false;
         this.submitLoading = false
       },
-      handleSubmit () {
+      handleSubmit (tempSave = false) {
         this.submitLoading = true
-        this.$refs.onlineForm.handleSubmit();
+        this.$refs.onlineForm.handleSubmit(tempSave);
         setTimeout(()=>{
           this.submitLoading = false
         },3500)

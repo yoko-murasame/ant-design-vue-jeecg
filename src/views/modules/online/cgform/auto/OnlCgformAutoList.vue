@@ -459,7 +459,13 @@
       </slot>
 
       <!--原始的Online渲染表单-->
-      <onl-cgform-auto-modal v-if="isOnlineForm" @success="handleFormSuccess" ref="modal" :code="code" @schema="handleGetSchema" />
+      <onl-cgform-auto-modal
+        v-if="isOnlineForm"
+        @success="handleFormSuccess"
+        ref="modal"
+        :code="code"
+        :buttonSwitch="buttonSwitch"
+        @schema="handleGetSchema" />
 
       <j-import-modal ref="importModal" :url="getImportUrl()" @ok="importOk"></j-import-modal>
 
