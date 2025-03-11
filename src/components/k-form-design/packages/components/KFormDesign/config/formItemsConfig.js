@@ -306,6 +306,7 @@ export const defaultComoponetsSchemaList = [
     type: 'html',
     label: 'HTML',
     icon: 'icon-ai-code',
+    model: '',
     options: {
       noFormItem: true,
       hidden: false, // 是否隐藏，false显示，true隐藏

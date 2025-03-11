@@ -218,7 +218,7 @@ export default {
         'table',
         'alert',
         'text',
-        'html'
+        // 'html'
       ],
       schemaGroup: [],
       data: {

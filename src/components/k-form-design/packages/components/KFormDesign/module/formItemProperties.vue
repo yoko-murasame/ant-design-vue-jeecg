@@ -8,7 +8,7 @@
           <Input v-model="selectItem.label" placeholder="请输入" />
         </a-form-item>
 
-        <a-form-item v-if="!hideModel && isDefined(selectItem.model) && !isDefined(options.subtable) && !isDefined(options.onlineTable)" label="数据字段">
+        <a-form-item v-if="!hideModel && isDefined(selectItem.model) && !isDefined(options.subtable) && !isDefined(options.onlineTable) && selectItem.type !== 'html'" label="数据字段">
           <!-- <Input v-model="selectItem.model" placeholder="请输入" /> -->
           <a-select show-search v-model="selectItem.model" placeholder="选择">
             <a-select-option v-for="n in filedLists" :key="n.dbFieldName" :value="n.dbFieldName">{{
@@ -212,6 +212,9 @@
         <!-- 修改html -->
         <a-form-item v-if="selectItem.type === 'html'" label="默认值">
           <Textarea v-model="options.defaultValue" :autoSize="{ minRows: 4, maxRows: 8 }" />
+        </a-form-item>
+        <a-form-item v-if="selectItem.type === 'html'" label="model">
+          <Input v-model="selectItem.model" placeholder="绑定key(用于api显示隐藏调用)" disabled />
         </a-form-item>
         <a-form-item v-if="isDefined(options.format)" label="时间格式">
           <Input v-model="options.format" placeholder="时间格式如：YYYY-MM-DD HH:mm:ss" />
