@@ -20,6 +20,12 @@ export function postAction(url, parameter) {
   let signHeader = { 'X-Sign': sign, 'X-TIMESTAMP': signMd5Utils.getTimestamp() }
   // update-end--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
 
+  // 使用相对路径时，防止重复的请求代理头
+  const baseUrl = window._CONFIG['domianURL'] || '/jeecg-boot'
+  if (window._CONFIG['domianURL'] && url.startsWith(baseUrl)) {
+    url = url.replace(baseUrl, '')
+  }
+
   return axios({
     url: url,
     method: 'post',
