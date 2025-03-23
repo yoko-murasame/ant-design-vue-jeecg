@@ -198,20 +198,24 @@
             </slot>
           </template>
 
-          <template slot="dateSlot" slot-scope="text">
+          <template v-slot:dateSlot="text">
             <span>{{ getFormatDate(text) }}</span>
           </template>
 
-          <template slot="htmlSlot" slot-scope="text">
+          <template v-slot:htmlSlot="text">
             <div v-html="text"></div>
           </template>
 
-          <template slot="pcaSlot" slot-scope="text">
+          <template v-slot:pcaSlot="text">
             <div>{{ getPcaText(text) }}</div>
           </template>
 
-          <template v-if="onlineSubMode || cardMode" slot="imgSlot" slot-scope="text">
+          <!--<template v-if="onlineSubMode || cardMode" v-slot:imgSlot="text">-->
+          <template v-slot:imgSlot="text">
+            <span v-if="!text" style="font-size: 12px;font-style: italic;">无图片</span>
             <j-image-upload
+              v-else
+              visible-height="105px"
               :disabled="true"
               :value="text"
               :button-visible="false"
@@ -220,12 +224,13 @@
               url-suffix="x-oss-process=image/resize,w_120">
             </j-image-upload>
           </template>
-          <template v-else slot="imgSlot" slot-scope="text">
-            <span v-if="!text" style="font-size: 12px;font-style: italic;">无图片</span>
-            <img v-else :src="getImgView(text)" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>
-          </template>
+          <!--<template v-else v-slot:imgSlot="text">-->
+          <!--  <span v-if="!text" style="font-size: 12px;font-style: italic;">无图片</span>-->
+          <!--  <img v-else :src="getImgView(text)" height="25px" alt="" style="max-width:80px;font-size: 12px;font-style: italic;"/>-->
+          <!--</template>-->
 
-          <template v-if="onlineSubMode || cardMode" slot="fileSlot" slot-scope="text">
+          <!--<template v-if="onlineSubMode || cardMode" v-slot:fileSlot="text">-->
+          <template v-slot:fileSlot="text">
             <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
             <j-upload
               v-else
@@ -234,26 +239,27 @@
               file-type="all"
               accept-type="*"
               split-char=","
-              :disabled="true"
+              :disabled="false"
               :button-visible="false"
               :trigger-change="true"
               :return-url="true"
-              :number="10"
+              :number="3"
               :value="text"
+              @showVideo="showVideo"
             ></j-upload>
           </template>
-          <template v-else slot="fileSlot" slot-scope="text">
-            <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>
-            <a-button
-              v-else
-              :ghost="true"
-              type="primary"
-              icon="download"
-              size="small"
-              @click="downloadRowFile(text)">
-              下载
-            </a-button>
-          </template>
+          <!--<template v-else v-slot:fileSlot="text">-->
+          <!--  <span v-if="!text" style="font-size: 12px;font-style: italic;">无文件</span>-->
+          <!--  <a-button-->
+          <!--    v-else-->
+          <!--    :ghost="true"-->
+          <!--    type="primary"-->
+          <!--    icon="download"-->
+          <!--    size="small"-->
+          <!--    @click="downloadRowFile(text)">-->
+          <!--    下载-->
+          <!--  </a-button>-->
+          <!--</template>-->
 
           <!--表格按钮插槽-->
           <span slot="action" slot-scope="text, record">
@@ -1034,6 +1040,10 @@ export default {
     },
     methods: {
       moment,
+      showVideo(e) {
+        console.log(e, 'showVideo')
+        window.open(e)
+      },
       // TODO 放入后端配置JS增强，可自定义实现流转前保存事件
       async preSaveForm(flag, buttonName) {
         // TODO 流程按钮提交前会触发，表单自己实现相应的保存事件
