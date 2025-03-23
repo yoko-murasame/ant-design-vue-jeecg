@@ -239,7 +239,7 @@
               file-type="all"
               accept-type="*"
               split-char=","
-              :disabled="false"
+              :disabled="true"
               :button-visible="false"
               :trigger-change="true"
               :return-url="true"
