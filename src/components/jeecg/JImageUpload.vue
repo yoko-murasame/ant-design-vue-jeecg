@@ -1,5 +1,5 @@
 <template>
-  <div class="img" :style="{ width: visibleWidth }">
+  <div class="img" :style="{ width: visibleWidth, height: visibleHeight }">
     <a-upload
       name="file"
       listType="picture-card"
@@ -27,7 +27,7 @@
       <!--  暂无数据-->
       <!--</div>-->
       <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel()">
-        <img alt="example" style="width: 100%" :src="previewImage"/>
+        <img alt="example" :style="{ width: visibleWidth, height: visibleHeight }" :src="previewImage"/>
       </a-modal>
     </a-upload>
   </div>
@@ -97,6 +97,12 @@
       },
       // 作为列表组件展示时的限制宽度
       visibleWidth: {
+        type: [Number, String],
+        required: false,
+        default: 'auto'
+      },
+      // 作为列表组件展示时的限制高度
+      visibleHeight: {
         type: [Number, String],
         required: false,
         default: 'auto'
@@ -319,7 +325,7 @@
       },
       close () {
 
-      },
+      }
     },
     model: {
       prop: 'value',
