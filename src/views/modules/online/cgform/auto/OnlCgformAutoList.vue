@@ -1334,6 +1334,10 @@ export default {
               if (this.actionColumn.fixed === 'right') {
                 this.defColumns.push(this.actionColumn)
               }
+              if (!this.actionColumn.fixed) {
+                delete this.actionColumn.fixed
+                this.defColumns.push(this.actionColumn)
+              }
             }
             // 设置列配置列表
             this.settingColumnsHandler(res.result.columns)
