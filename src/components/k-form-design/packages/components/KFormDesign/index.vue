@@ -217,7 +217,7 @@ export default {
         'tabs',
         'table',
         'alert',
-        'text',
+        'text'
         // 'html'
       ],
       schemaGroup: [],
@@ -230,7 +230,8 @@ export default {
           labelLayout: 'flex',
           wrapperCol: { xs: 18, sm: 18, md: 18, lg: 18, xl: 18, xxl: 18 },
           hideRequiredMark: false,
-          customStyle: ''
+          customStyle: '',
+          modalWidth: 1200
         }
       },
       previewOptions: {
@@ -338,7 +339,7 @@ export default {
     handlePreview() {
       // 打开预览模态框
       this.$refs.previewModal.jsonData = this.data
-      this.$refs.previewModal.previewWidth = this.previewOptions.width
+      this.$refs.previewModal.previewWidth = this.data.config.modalWidth || this.previewOptions.width
       this.$refs.previewModal.visible = true
     },
     handleReset() {
@@ -370,7 +371,8 @@ export default {
           labelLayout: 'flex',
           wrapperCol: { xs: 18, sm: 18, md: 18, lg: 18, xl: 18, xxl: 18 },
           hideRequiredMark: false,
-          customStyle: ''
+          customStyle: '',
+          modalWidth: 1200
         }
       }
       this.handleSetSelectItem({ key: '' })

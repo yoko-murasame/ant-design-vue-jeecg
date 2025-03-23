@@ -94,7 +94,7 @@
           </div>
         </a-form-item>
         <a-form-item label="预览模态框宽度">
-          <InputNumber style="width:100%;" v-model="previewOptions.width" />
+          <InputNumber style="width:100%;" v-model="config.modalWidth" />
         </a-form-item>
         <a-form-item label="表单CSS">
           <Textarea v-model="config.customStyle" />
@@ -176,18 +176,18 @@
  * date 2019-11-20
  * description 表单属性设置面板组件
  */
-import kCheckbox from "../../KCheckbox/index.vue";
-import { pluginManager } from "../../../utils/index";
-const InputNumber = pluginManager.getComponent("number").component;
-const Radio = pluginManager.getComponent("radio").component;
-const RadioButton = pluginManager.getComponent("radioButton").component;
-const Textarea = pluginManager.getComponent("textarea").component;
-const Slider = pluginManager.getComponent("aSlider").component;
+import kCheckbox from '../../KCheckbox/index.vue'
+import { pluginManager } from '../../../utils/index'
 import { getAction } from '@api/manage'
 import JsFormEnhanceHelp from '@comp/yoko/kform/JsFormEnhanceHelp.vue'
+const InputNumber = pluginManager.getComponent('number').component
+const Radio = pluginManager.getComponent('radio').component
+const RadioButton = pluginManager.getComponent('radioButton').component
+const Textarea = pluginManager.getComponent('textarea').component
+const Slider = pluginManager.getComponent('aSlider').component
 
 export default {
-  name: "formProperties",
+  name: 'FormProperties',
   components: {
     kCheckbox,
     InputNumber,
@@ -209,19 +209,19 @@ export default {
   },
   methods: {
     handleChangeCol(e) {
-      this.config.labelCol.xs = this.config.labelCol.sm = this.config.labelCol.md = this.config.labelCol.lg = this.config.labelCol.xl = this.config.labelCol.xxl = e;
+      this.config.labelCol.xs = this.config.labelCol.sm = this.config.labelCol.md = this.config.labelCol.lg = this.config.labelCol.xl = this.config.labelCol.xxl = e
 
       this.config.wrapperCol.xs = this.config.wrapperCol.sm = this.config.wrapperCol.md = this.config.wrapperCol.lg = this.config.wrapperCol.xl = this.config.wrapperCol.xxl =
-        24 - e;
+        24 - e
     },
     // 绑定表单修改
     async change(value) {
       this.$set(this.config, 'onlineForm', value)
       const { result } = await getAction('/online/cgform/field/listByHeadCode', { headCode: value })
-      this.$emit('change', result,value)
-    },
+      this.$emit('change', result, value)
+    }
   },
-  watch:{
+  watch: {
     config: {
         immediate: false,
         handler(val) {
@@ -229,16 +229,16 @@ export default {
           if (val == null || val === '') {
             this.config = null
           } else {
-            this.config =val
+            this.config = val
             // 判断是否绑定表单
-            if(val.onlineForm){
+            if (val.onlineForm) {
               this.change(val.onlineForm)
             }
           }
         }
       }
   }
-};
+}
 </script>
 <style lang="less" scoped>
 /deep/ .js-help {
