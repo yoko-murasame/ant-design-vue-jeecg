@@ -12,6 +12,7 @@
     @change="handleChange"
     @input="handleMyInput"
     @beforeOnlListSubReady="handleBeforeOnlListSubReady"
+    @showVideo="showVideo"
     @hook:mounted="childMounted"
     :is="componentItem"
   ></component>
@@ -61,6 +62,7 @@
       @change="handleChange"
       @input="handleMyInput"
       @beforeOnlListSubReady="handleBeforeOnlListSubReady"
+      @showVideo="showVideo"
       v-decorator="[
         record.model, // input 的 name
         {
@@ -223,6 +225,10 @@ export default {
     }
   },
   methods: {
+    // 打开视频（上传组件的事件捕捉）
+    showVideo(e) {
+      window.open(e)
+    },
     // 判断isShowLabel === false兼容低版本处理
     isShowLabel(v) {
       return String(v) !== 'false'
