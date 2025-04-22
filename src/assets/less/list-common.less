@@ -1,0 +1,24 @@
+/*树形列表通用样式*/
+.tree_line {
+  position: relative;
+}
+.tree_line::after {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 1px;
+  position: absolute;
+  border-top: 0.5px dashed #aaa;
+  top: 10px;
+  left: -8px;
+}
+.tree_line::before {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 40px;
+  position: absolute;
+  border-left: 0.5px dashed #aaa;
+  left: -10px;
+  top: -30px;
+}
