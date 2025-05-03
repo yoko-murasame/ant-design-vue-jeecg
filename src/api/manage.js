@@ -13,7 +13,7 @@ const api = {
 export default api
 
 // post
-export function postAction(url, parameter) {
+export function postAction(url, parameter, AxiosRequestConfig = {}) {
   let sign = signMd5Utils.getSign(url, parameter)
   // 将签名和时间戳，添加在请求接口 Header
   // update-begin--author:taoyan---date:20220421--for: VUEN-410【签名改造】 X-TIMESTAMP牵扯
@@ -30,7 +30,8 @@ export function postAction(url, parameter) {
     url: url,
     method: 'post',
     data: parameter,
-    headers: signHeader
+    headers: signHeader,
+    ...AxiosRequestConfig
   })
 }
 
