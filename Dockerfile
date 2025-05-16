@@ -1,41 +1,32 @@
+# 项目特化Nginx打包配置，配合DockerCompose使用时请一并复制同级目录下的nginx配置目录
 FROM nginx
 MAINTAINER YOKO
 
 ENV LANG en_US.UTF-8
 
 # 主机名orIP（一般写服务器对外域名orIP）
-ENV APP_HOST_NAME www.abc.com
+ENV HOST_NAME www.abc.com
 # 访问协议：http / https
-ENV APP_PROTOCOL http
-
-# APP端口（默认提供了两个端口用于区分不同环境，默认放开第一个应用的端口和目录映射）
-ENV APP_PORT 80
-# APP目录
-ENV APP_PATH /var/www/html
-# SSL目录
-ENV SSL_PATH /var/ssl
-# 自定义的Nginx块配置路径
-ENV NGINX_CONF_PATH /var/conf
-# 自定义的Nginx location块配置
-ENV NGINX_LOCATION_CONF_PATH $NGINX_CONF_PATH/location
-# 自定义的Nginx server块配置
-ENV NGINX_SERVER_CONF_PATH $NGINX_CONF_PATH/server
-
+ENV PROTOCOL http
+# 端口
+ENV PORT 80
 # 接口上下文路径
-ENV API_CONTEXT_PATH jeecg-boot
+ENV API_CONTEXT_PATH /jeecg-boot
 # 接口代理地址（注意末尾的/）
 ENV API_PROXY_PASS http://127.0.0.1:8080/jeecg-boot/
 # 网关代理后的路径（会影响流程设计器等jsp页面）
-ENV API_GATEWAY_PROXY_PATH $APP_PROTOCOL://$APP_HOST_NAME:$APP_PORT/$API_CONTEXT_PATH/
+ENV API_GATEWAY_PROXY_PATH $PROTOCOL://$HOST_NAME:$PORT$API_CONTEXT_PATH/
 
 # html为默认的dist输出应用入口；custom为外部映射目录；目录`/etc/nginx/html`的作用是修复带变量的日志保存问题
-RUN mkdir -p $APP_PATH $SSL_PATH $NGINX_LOCATION_CONF_PATH $NGINX_SERVER_CONF_PATH /etc/nginx/html
-# 打包文件-编译文件（可选）
-#ADD dist/ $APP_PATH
-# 打包文件-证书文件（可选）
-#ADD ssl/ $SSL_PATH
-# 打包文件-自定义的Nginx配置文件
-ADD nginx/ $NGINX_CONF_PATH/
+RUN mkdir -p /var/www/html /var/ssl /var/conf/location /var/conf/server /etc/nginx/html
+
+## 打包文件-编译文件（可选）
+#ADD dist/ /var/www/html
+## 打包文件-证书文件（可选）
+#ADD ssl/ /var/ssl
+## 打包文件-自定义的Nginx配置文件
+#ADD nginx/ /var/conf/
+
 # 以root用户身份启动，防止日志权限问题
 RUN sed -i 's/^user  nginx;/user  root;/' /etc/nginx/nginx.conf
 # 去掉默认单文件访问日志
@@ -47,37 +38,37 @@ map $time_iso8601 $logDate { \
     default                       '\''default-date'\''; \
 }' /etc/nginx/nginx.conf
 # 加载自定义NginxServer块
-RUN sed -i "/include \/etc\/nginx\/conf.d\/\*.conf;/a include $NGINX_SERVER_CONF_PATH/*.conf;" /etc/nginx/nginx.conf
-
+RUN sed -i "/include \/etc\/nginx\/conf.d\/\*.conf;/a include /var/conf/server/*.conf;" /etc/nginx/nginx.conf
 # 时区
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 # 端口放行-应用端口
-EXPOSE $APP_PORT
-# 目录挂载-应用路径
-VOLUME $APP_PATH
-# 目录挂载-证书路径（可选）
-VOLUME $SSL_PATH
-# 目录挂载-自定义location块配置路径（可选）
-VOLUME $NGINX_LOCATION_CONF_PATH
-# 目录挂载-自定义server块配置路径（可选）
-VOLUME $NGINX_SERVER_CONF_PATH
-# 目录挂载-日志（可选）
-VOLUME /var/log/nginx
+EXPOSE $PORT
+
+## 目录挂载-应用路径
+#VOLUME /var/www
+## 目录挂载-证书路径（可选）
+#VOLUME /var/ssl
+## 目录挂载-自定义location块配置路径（可选）
+#VOLUME /var/conf/location
+## 目录挂载-自定义server块配置路径（可选）
+#VOLUME /var/conf/server
+## 目录挂载-日志（可选）
+#VOLUME /var/log/nginx
 
 # 启动入口
 CMD echo \
       "server {  \
-          server_name $APP_HOST_NAME; \
-          listen $APP_PORT; \
+          server_name $HOST_NAME; \
+          listen $PORT; \
           # # ssl配置-ssl端口 \
-          # listen $APP_PORT ssl; \
+          # listen $PORT ssl; \
           # # ssl配置-ssl证书，crt和pem都可以 \
-          # ssl_certificate $SSL_PATH/$APP_HOST_NAME.pem; \
+          # ssl_certificate /var/ssl/$HOST_NAME.pem; \
           # # ssl配置-ssl证书，key \
-          # ssl_certificate_key $SSL_PATH/$APP_HOST_NAME.key; \
+          # ssl_certificate_key /var/ssl/$HOST_NAME.key; \
           # # http重定向到https（务必开启） \
-          # error_page 497 https://$APP_HOST_NAME:$APP_PORT\$request_uri; \
+          # error_page 497 https://$HOST_NAME:$PORT\$request_uri; \
           # # SSL安全-设置 SSL 会话的超时时间 \
           # ssl_session_timeout 5m; \
           # # SSL安全-在共享内存中分配 10MB 用于缓存 SSL 会话 \
@@ -120,11 +111,11 @@ CMD echo \
               return 204; \
           } \
           # 引入自定义的location块配置 \
-          include $NGINX_LOCATION_CONF_PATH/*.conf; \
+          include /var/conf/location/*.conf; \
           # 后端接口 \
-          location ^~ /$API_CONTEXT_PATH/ { \
+          location ^~ $API_CONTEXT_PATH/ { \
               proxy_pass              $API_PROXY_PASS; \
-              proxy_set_header        Host $APP_HOST_NAME:$APP_PORT; \
+              proxy_set_header        Host $HOST_NAME:$PORT; \
               proxy_set_header        API-GATEWAY-PROXY-PATH $API_GATEWAY_PROXY_PATH; \
               proxy_set_header        X-Real-IP \$remote_addr; \
               proxy_set_header        X-Forwarded-For \$proxy_add_x_forwarded_for; \
@@ -149,13 +140,13 @@ CMD echo \
           } \
           # 先匹配非子应用，根目录访问 \
           location / { \
-              root   $APP_PATH; \
+              root   /var/www/html; \
               index  index.html index.htm; \
               try_files \$uri \$uri/ \index.html; \
           } \
           # 再匹配子应用，解决Router(mode: 'history')模式下，刷新路由地址不能找到页面的问题 \
           location ~* ^/(.+?)(/.*)?\$ { \
-              root   $APP_PATH; \
+              root   /var/www/html; \
               index  index.html index.htm; \
               #解决动态子应用的刷新问题 \
               set \$base_path /\$1; \
@@ -168,5 +159,6 @@ CMD echo \
           open_log_file_cache max=10; \
       } " > /etc/nginx/conf.d/default.conf &&  \
     cat /etc/nginx/conf.d/default.conf && \
+    mkdir -p /var/www/html && \
     nginx -t && \
     nginx -g "daemon off;";
