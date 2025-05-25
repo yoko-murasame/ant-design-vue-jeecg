@@ -142,7 +142,7 @@ CMD echo \
           location / { \
               root   /var/www/html; \
               index  index.html index.htm; \
-              try_files \$uri \$uri/ \index.html; \
+              try_files \$uri \$uri/ /index.html; \
           } \
           # 再匹配子应用，解决Router(mode: 'history')模式下，刷新路由地址不能找到页面的问题 \
           location ~* ^/(.+?)(/.*)?\$ { \
@@ -151,7 +151,7 @@ CMD echo \
               #解决动态子应用的刷新问题 \
               set \$base_path /\$1; \
               set \$index_path \$base_path/index.html; \
-              try_files \$uri \$uri/ \$index_path; \
+              try_files \$uri \$uri/ \$index_path /index.html; \
           } \
           access_log  /var/log/nginx/access-\$host-\$server_port-\$logDate.log; \
           access_log  /dev/stdout; \
